@@ -1,11 +1,12 @@
-# Blogger
+# Nest
 
 ## Description
 
-Blogger is an web application designed for creating and sharing blog posts. This new version of Blogger introduces several noteworthy features:
+Nest is an web application designed for creating and sharing blog posts. This new version of Blogger introduces several noteworthy features:
 
 - _Backend Improvement_: The application now utilizes **TypeScript** and **MySQL** instead of JavaScript and MongoDB for a more stable and reliable backend.
 - _Class Components_: The codebase has been refactored to follow the object-oriented programming paradigm, replacing functional components with class components.
+- _Strong Typing_: The application now utilizes **TypeScript** instead of JavaScript, ensuring better type safety and reducing runtime errors and bugs.
 - _Typed APIs_: **TypeScript** and **Express.js** have been employed to design and implement typed APIs, ensuring type safety and improved error handling.
 - _Clean and Maintainable Code_: The codebase adheres to **SOLID principles** and clean code practices, prioritizing readability, maintainability, and testability.
 - _Design Patterns_: Notable design patterns, such as the **DAO** and **Singleton** patterns, have been applied to abstract data access logic and object creation logic. This enhances code reusability and improves readability.
