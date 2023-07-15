@@ -1,28 +1,23 @@
-import { Blog, Space } from "../dataStore/types";
+import {
+  Blog,
+  Handler,
+  HandlerWithParams,
+  Space,
+  SpaceMember,
+} from "../dataStore/types";
 
-// getAllSpaces, for Dev purposes
-export interface AllSpacesReq_Dev {}
-export interface AllSpacesRes_Dev {
-  spaces: Space[];
-}
-
-// createSpace
 export type CreateSpaceReq = Pick<Space, "name" | "status" | "description">;
 export interface CreateSpaceRes {
-  space: Space;
-  admins: string;
-  members: string;
-  blogs: Blog[];
+  // space: Space;
+  // members: string;
+  // blogs: Blog[];
 }
 
-// getDefaultSpace
-export interface DefaultSpaceReq {}
-export interface DefaultSpaceRes {
+export type UpdateSpaceReq = Pick<Space, "description" | "name" | "status">;
+export interface UpdateSpaceRes {
   space: Space;
-  blogs: Blog[];
 }
 
-// getSpace
 export interface SpaceReq {}
 export interface SpaceRes {
   space: Space;
@@ -31,29 +26,49 @@ export interface SpaceRes {
   blogs: Blog[];
 }
 
-// updateSpace
-export type UpdateSpaceReq = Pick<Space, "description" | "name" | "status">;
-export interface UpdateSpaceRes {
+export interface DeleteSpaceReq {}
+export interface DeleteSpaceRes {}
+
+export interface DefaultSpaceReq {}
+export interface DefaultSpaceRes {
   space: Space;
+  blogs: Blog[];
 }
 
-// joinSpace
-export interface JoinSpaceReq {}
-export interface JoinSpaceRes {} // at master I return Space, here I will just send OK
+export interface JoinSpaceReq {} // locals.userId // params.spaceId
+export interface JoinSpaceRes {}
 
-// addUser
 export interface AddMemberReq {
-  spaceId: string;
   memberId: string;
 }
 export interface AddMemberRes {}
 
-// deleteSpace
-export interface DeleteSpaceReq {}
-export interface DeleteSpaceRes {}
+export interface MembersReq {}
+export interface MembersRes {
+  members: SpaceMember[];
+}
 
-// getUserSpaces
-export interface SpacesReq {}
-export interface SpacesRes {
-  spaces: Pick<Space, "id" | "name" | "status">[];
+// *Controller
+export interface spaceController {
+  createSpace: Handler<CreateSpaceReq, CreateSpaceRes>;
+  updateSpace: HandlerWithParams<
+    { spaceId: string },
+    UpdateSpaceReq,
+    UpdateSpaceRes
+  >;
+  getSpace: HandlerWithParams<{ spaceId: string }, SpaceReq, SpaceRes>;
+  deleteSpace: HandlerWithParams<
+    { spaceId: string },
+    DeleteSpaceReq,
+    DefaultSpaceRes
+  >;
+
+  getDefaultSpace: Handler<DefaultSpaceReq, DefaultSpaceRes>;
+  joinSpace: HandlerWithParams<{ spaceId: string }, JoinSpaceReq, JoinSpaceRes>;
+  addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
+  getSpaceMembers: HandlerWithParams<
+    { spaceId: string },
+    MembersReq,
+    MembersRes
+  >;
 }

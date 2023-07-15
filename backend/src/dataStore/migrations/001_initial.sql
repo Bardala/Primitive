@@ -35,11 +35,11 @@ CREATE TABLE IF NOT EXISTS blogs (
     FOREIGN KEY (spaceId) REFERENCES spaces(id)
 );
 
+-- todo: edit primary key in the database // done
 CREATE TABLE IF NOT EXISTS likes (
-    id VARCHAR(255) NOT NULL ,
     blogId VARCHAR(255) NOT NULL,
     userId VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id),
+    PRIMARY KEY (blogId, userId),
     FOREIGN KEY (blogId) REFERENCES blogs(id),
     FOREIGN KEY (userId) REFERENCES users(id)
 );
@@ -55,11 +55,20 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 
+-- todo: edit primary key in the database // done
 CREATE TABLE IF NOT EXISTS follows (
-    id VARCHAR(255) NOT NULL ,
+    -- id VARCHAR(255) NOT NULL ,
     followerId VARCHAR(255) NOT NULL,
     followingId VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id),
+    PRIMARY KEY (followingId, followerId),
     FOREIGN KEY (followerId) REFERENCES users(id),
     FOREIGN KEY (followingId) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS members (
+    memberId VARCHAR(255) NOT NULL,
+    spaceId VARCHAR(255) NOT NULL,
+    PRIMARY KEY (userId, spaceId),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (spaceId) REFERENCES spaces(id)
 );

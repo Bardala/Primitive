@@ -1,4 +1,5 @@
 import { BlogController } from "./controllers/blog.controller";
+import { SpaceController } from "./controllers/space.controller";
 import { UserController } from "./controllers/user.controller";
 import { db, initDb } from "./dataStore";
 import { requireAuth } from "./middleware/authMiddleware";
@@ -18,6 +19,7 @@ import asyncHandler from "express-async-handler";
 
   const userController = new UserController(db);
   const blogController = new BlogController(db);
+  const spaceController = new SpaceController(db);
 
   // *Auth Routes
   app.post("/api/v0/signup", asyncHandler(userController.signup));
@@ -57,6 +59,33 @@ import asyncHandler from "express-async-handler";
   app.get(
     "/api/v0/blogLikesList/:blogId",
     asyncHandler(blogController.getBlogLikesList),
+  );
+
+  // *Space Routes
+  app.post("/api/v0/space", asyncHandler(spaceController.createSpace));
+  app.put("/api/v0/space/:spaceId", asyncHandler(spaceController.updateSpace));
+  app.get("/api/v0/space/:spaceId", asyncHandler(spaceController.getSpace));
+  app.delete(
+    "/api/v0/space/:spaceId",
+    asyncHandler(spaceController.deleteSpace),
+  );
+
+  // todo: create default space for default home page and test the api
+  app.get(
+    "/api/v0/getDefaultSpace",
+    asyncHandler(spaceController.getDefaultSpace),
+  );
+  app.post(
+    "/api/v0/joinSpace/:spaceId",
+    asyncHandler(spaceController.joinSpace),
+  );
+  app.post(
+    "/api/v0/addMember/:spaceId",
+    asyncHandler(spaceController.addMember),
+  );
+  app.get(
+    "/api/v0/spaceMembers/:spaceId",
+    asyncHandler(spaceController.getSpaceMembers),
   );
 
   app.use(errorHandler);

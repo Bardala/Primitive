@@ -14,4 +14,6 @@ export enum Errors {
   PARAMS_MISSING = "Params missing",
   ALREADY_FOLLOWER = "You already follow this user",
   ALREADY_UNFOLLOWER = "You already unfollow this user",
+  USER_NOT_FOUND = "User not found",
+  SPACE_NOT_FOUND = "Space not found",
 }

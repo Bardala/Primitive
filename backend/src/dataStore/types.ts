@@ -26,6 +26,8 @@ export interface Space {
   timestamp?: string;
 }
 
+export type SpaceMember = Pick<User, "id" | "username">;
+
 export interface User {
   id: string;
   username: string;

@@ -1,9 +1,41 @@
 import { DataStoreDao } from "..";
-import { User, Blog, Comment, Space, Like, UserCard } from "../types";
+import {
+  User,
+  Blog,
+  Comment,
+  Space,
+  Like,
+  UserCard,
+  SpaceMember,
+} from "../types";
 import mysql, { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 
 export class SqlDataStore implements DataStoreDao {
+  async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
+    const query = `
+    SELECT users.username, users.id
+    FROM members RIGHT JOIN users
+    ON members.memberId = users.id
+    WHERE spaceId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
+    return rows as SpaceMember[];
+  }
+
+  async isMember(spaceId: string, memberId: string): Promise<boolean> {
+    const query = `
+    SELECT COUNT(*) AS res FROM members 
+    WHERE spaceId=? AND memberId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      spaceId,
+      memberId,
+    ]);
+    const result = rows[0]["res"] as number;
+    return result !== 1 ? false : true;
+  }
+
   async updateBlog(blog: Blog): Promise<void> {
     const query = `
     UPDATE blogs
@@ -223,7 +255,7 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async createSpace(space: Space): Promise<void> {
-    await this.pool.query(
+    await this.pool.query<RowDataPacket[]>(
       "INSERT INTO spaces SET description=?, id=?, name=?, ownerId=?, status=?",
       [space.description, space.id, space.name, space.ownerId, space.status],
     );
@@ -249,9 +281,9 @@ export class SqlDataStore implements DataStoreDao {
     return rows[0] as Space;
   }
 
-  async joinSpace(spaceId: string, memberId: string): Promise<void> {
+  async addMember(spaceId: string, memberId: string): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "UPDATE spaces SET members = members + ? WHERE id = ?",
+      "INSERT INTO members SET memberId=?, spaceId=?",
       [memberId, spaceId],
     );
   }
