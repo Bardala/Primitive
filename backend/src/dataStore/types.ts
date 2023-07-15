@@ -45,7 +45,7 @@ export interface UserCard {
 }
 
 export interface Like {
-  id: string;
+  id?: string;
   blogId: string;
   userId: string;
 }

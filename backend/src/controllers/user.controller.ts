@@ -13,11 +13,11 @@ import {
   GetUsersListRes,
   UnFollowUserReq,
   UnFollowUserRes,
-} from "../../api.types";
-import { SqlDataStore } from "../../dataStore/sql/SqlDataStore.class";
-import { Handler, HandlerWithParams } from "../../dataStore/types";
-import { Errors } from "../../errors";
-import { HTTP } from "../../httpStatusCodes";
+} from "../apiTypes/user.api.types";
+import { SqlDataStore } from "../dataStore/sql/SqlDataStore.class";
+import { Handler, HandlerWithParams } from "../dataStore/types";
+import { Errors } from "../errors";
+import { HTTP } from "../httpStatusCodes";
 import { createToken, hashPassword } from "../middleware/authMiddleware";
 import crypto from "crypto";
 import validator from "validator";

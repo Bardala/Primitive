@@ -1,7 +1,6 @@
-import { db } from "../../dataStore";
-// import { JwtObj } from "../../dataStore/types";
-import { Errors } from "../../errors";
-import { HTTP } from "../../httpStatusCodes";
+import { db } from "../dataStore";
+import { Errors } from "../errors";
+import { HTTP } from "../httpStatusCodes";
 import crypto from "crypto";
 import { RequestHandler } from "express";
 import jwt, { JwtPayload, TokenExpiredError, VerifyErrors } from "jsonwebtoken";

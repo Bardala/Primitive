@@ -4,6 +4,44 @@ import mysql, { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 
 export class SqlDataStore implements DataStoreDao {
+  async updateBlog(blog: Blog): Promise<void> {
+    const query = `
+    UPDATE blogs
+    SET title=?, content=?, spaceId=?
+    WHERE id=?
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [
+      blog.title,
+      blog.content,
+      blog.spaceId,
+      blog.id,
+    ]);
+  }
+  async getBlogComments(blogId: string): Promise<Comment[]> {
+    const query = `
+    SELECT * FROM comments WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
+
+    return rows as Comment[];
+  }
+  async blogLikes(blogId: string): Promise<number> {
+    const query = `
+    SELECT COUNT(*) FORM likes WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
+
+    return rows[0][0];
+  }
+  async blogLikesList(blogId: string): Promise<Like[]> {
+    const query = `
+    SELECT * FROM likes WHERE  blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
+
+    return rows as Like[];
+  }
+
   private pool!: Pool;
 
   async runDB() {
@@ -237,5 +275,12 @@ export class SqlDataStore implements DataStoreDao {
       "INSERT INTO likes id=?, blogId=?, userId=?",
       [like.id, like.blogId, like.userId],
     );
+  }
+
+  async removeLike(like: Like): Promise<void> {
+    const query = `
+    DELETE FROM likes WHERE blogId=? AND userId=?,
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [like.blogId, like.userId]);
   }
 }
