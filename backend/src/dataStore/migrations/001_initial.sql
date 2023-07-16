@@ -1,5 +1,5 @@
 --init database
-CREATE DATABASE IF NOT EXISTS blogger_system;
+CREATE DATABASE IF NOT EXISTS nest_system;
 
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(255) NOT NULL ,
@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS blogs (
     FOREIGN KEY (spaceId) REFERENCES spaces(id)
 );
 
--- todo: edit primary key in the database // done
 CREATE TABLE IF NOT EXISTS likes (
     blogId VARCHAR(255) NOT NULL,
     userId VARCHAR(255) NOT NULL,
@@ -55,9 +54,7 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 
--- todo: edit primary key in the database // done
 CREATE TABLE IF NOT EXISTS follows (
-    -- id VARCHAR(255) NOT NULL ,
     followerId VARCHAR(255) NOT NULL,
     followingId VARCHAR(255) NOT NULL,
     PRIMARY KEY (followingId, followerId),
