@@ -13,14 +13,16 @@ export interface Comment {
   id: string;
   content: string;
   blogId: string;
-  authorId: string;
+  userId: string;
   timestamp?: string;
 }
+
+export type SpaceStatus = "public" | "private";
 
 export interface Space {
   id: string;
   name: string;
-  status: string;
+  status: SpaceStatus;
   description: string;
   ownerId: string;
   timestamp?: string;

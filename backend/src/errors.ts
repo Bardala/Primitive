@@ -16,4 +16,6 @@ export enum Errors {
   ALREADY_UNFOLLOWER = "You already unfollow this user",
   USER_NOT_FOUND = "User not found",
   SPACE_NOT_FOUND = "Space not found",
+  BLOG_NOT_FOUND = "Blog not found",
+  COMMENT_NOT_FOUND = "Comment not found",
 }

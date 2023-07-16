@@ -12,6 +12,52 @@ import mysql, { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 
 export class SqlDataStore implements DataStoreDao {
+  private pool!: Pool;
+
+  async runDB() {
+    this.pool = mysql
+      .createPool({
+        host: process.env.MY_SQL_DB_HOST,
+        user: process.env.MY_SQL_DB_USER,
+        database: process.env.MY_SQL_DB_DATABASE,
+        password: process.env.MY_SQL_DB_PASSWORD,
+      })
+      .promise();
+
+    return this;
+  }
+
+  async createComment(comment: Comment): Promise<void> {
+    await this.pool.query<RowDataPacket[]>(
+      "INSERT INTO comments SET id=?, blogId=?, userId=?, content=?",
+      [comment.id, comment.blogId, comment.userId, comment.content],
+    );
+  }
+  async updateComment(comment: Pick<Comment, "content" | "id">): Promise<void> {
+    const query = `
+    UPDATE comments 
+    SET content=?
+    WHERE id=?
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [
+      comment.content,
+      comment.id,
+    ]);
+  }
+  async getComment(commentId: string): Promise<Comment> {
+    const query = `
+    SELECT * FROM comments WHERE id=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, commentId);
+    return rows[0] as Comment;
+  }
+  async deleteComment(commentId: string): Promise<void> {
+    const query = `
+    DELETE FROM comments WHERE id=?
+    `;
+    await this.pool.query(query, commentId);
+  }
+
   async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
     const query = `
     SELECT users.username, users.id
@@ -72,21 +118,6 @@ export class SqlDataStore implements DataStoreDao {
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
     return rows as Like[];
-  }
-
-  private pool!: Pool;
-
-  async runDB() {
-    this.pool = mysql
-      .createPool({
-        host: process.env.MY_SQL_DB_HOST,
-        user: process.env.MY_SQL_DB_USER,
-        database: process.env.MY_SQL_DB_DATABASE,
-        password: process.env.MY_SQL_DB_PASSWORD,
-      })
-      .promise();
-
-    return this;
   }
 
   async getFollowers(followingId: string): Promise<string[]> {
@@ -237,13 +268,6 @@ export class SqlDataStore implements DataStoreDao {
       [userId],
     );
     return rows[0] as Blog[];
-  }
-
-  async createComment(comment: Comment): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO comments SET id=?, blogId=?, userId=?, content=?",
-      [comment.id, comment.blogId, comment.authorId, comment.content],
-    );
   }
 
   async getComments(blogId: string): Promise<Comment[]> {

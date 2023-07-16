@@ -1,14 +1,21 @@
 // * Comment APIs
-import { Blog, Comment } from "../dataStore/types";
+import { Comment, Handler, HandlerWithParams } from "../dataStore/types";
 
 // createComment
 export type CreateCommentReq = Pick<Comment, "blogId" | "content">;
-export interface CreateCommentRes {
-  comment: Comment;
-}
+export interface CreateCommentRes {}
+export type UpdateCommentReq = Pick<Comment, "id" | "content">;
+export interface UpdateCommentRes {}
+export type DeleteCommentReq = Pick<Comment, "id">;
+export interface DeleteCommentRes {}
 
-// getComments
-export type BlogCommentsReq = Pick<Blog, "id">;
-export interface BlogCommentRes {
-  comments: Comment[];
+// * Controller Interface
+export interface commentController {
+  createComment: Handler<CreateCommentReq, CreateCommentRes>;
+  updateComment: Handler<UpdateCommentReq, UpdateCommentRes>;
+  deleteComment: HandlerWithParams<
+    { commentId: string },
+    DeleteCommentReq,
+    DeleteCommentRes
+  >;
 }
