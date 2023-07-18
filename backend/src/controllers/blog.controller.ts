@@ -11,23 +11,48 @@ import {
   CreateBlogRes,
   DeleteBlogReq,
   DeleteBlogRes,
-  blogController,
   updateBlogReq,
   updateBlogRes,
-} from "../apiTypes/blog.api.types";
+} from "../../../shared/src/api/blog.api.types";
+import { Errors } from "../../../shared/src/errors";
+import { Blog, Comment, Like } from "../../../shared/src/types";
 import { DataStoreDao } from "../dataStore";
-import {
-  Blog,
-  Comment,
-  Handler,
-  HandlerWithParams,
-  Like,
-} from "../dataStore/types";
-import { Errors } from "../errors";
 import { HTTP } from "../httpStatusCodes";
+import { Handler, HandlerWithParams } from "../types";
+
+// * Controller Interface
+export interface blogController {
+  createBlog: Handler<CreateBlogReq, CreateBlogRes>;
+  updateBlog: HandlerWithParams<
+    { blogId: string },
+    updateBlogReq,
+    updateBlogRes
+  >;
+  getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes>;
+  deleteBlog: HandlerWithParams<
+    { blogId: string },
+    DeleteBlogReq,
+    DeleteBlogRes
+  >;
+  getBlogComments: HandlerWithParams<
+    { blogId: string },
+    BlogCommentsReq,
+    BlogCommentsRes
+  >;
+  getBlogLikes: HandlerWithParams<
+    { blogId: string },
+    BlogLikesReq,
+    BlogLikesRes
+  >;
+  getBlogLikesList: HandlerWithParams<
+    { blogId: string },
+    BlogLikesListReq,
+    BlogLikesListRes
+  >;
+}
 
 export class BlogController implements blogController {
-  private db;
+  private db: DataStoreDao;
 
   constructor(db: DataStoreDao) {
     this.db = db;
@@ -78,8 +103,7 @@ export class BlogController implements blogController {
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
     const comments: Comment[] = await this.db.getBlogComments(blogId);
-
-    res.status(200).send({ comments });
+    return res.status(200).send({ comments });
   };
 
   getBlogLikes: HandlerWithParams<
@@ -107,7 +131,7 @@ export class BlogController implements blogController {
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
     const likes: Like[] = await this.db.blogLikesList(blogId);
-    res.status(200).send({ likes });
+    return res.status(200).send({ likes });
   };
 
   createBlog: Handler<CreateBlogReq, CreateBlogRes> = async (req, res) => {

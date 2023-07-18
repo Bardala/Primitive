@@ -1,10 +1,4 @@
-import {
-  Blog,
-  Handler,
-  HandlerWithParams,
-  Space,
-  SpaceMember,
-} from "../dataStore/types";
+import { Space, Blog, SpaceMember } from "../src/types";
 
 export type CreateSpaceReq = Pick<Space, "name" | "status" | "description">;
 export interface CreateSpaceRes {
@@ -46,29 +40,4 @@ export interface AddMemberRes {}
 export interface MembersReq {}
 export interface MembersRes {
   members: SpaceMember[];
-}
-
-// *Controller
-export interface spaceController {
-  createSpace: Handler<CreateSpaceReq, CreateSpaceRes>;
-  updateSpace: HandlerWithParams<
-    { spaceId: string },
-    UpdateSpaceReq,
-    UpdateSpaceRes
-  >;
-  getSpace: HandlerWithParams<{ spaceId: string }, SpaceReq, SpaceRes>;
-  deleteSpace: HandlerWithParams<
-    { spaceId: string },
-    DeleteSpaceReq,
-    DefaultSpaceRes
-  >;
-
-  getDefaultSpace: Handler<DefaultSpaceReq, DefaultSpaceRes>;
-  joinSpace: HandlerWithParams<{ spaceId: string }, JoinSpaceReq, JoinSpaceRes>;
-  addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
-  getSpaceMembers: HandlerWithParams<
-    { spaceId: string },
-    MembersReq,
-    MembersRes
-  >;
 }

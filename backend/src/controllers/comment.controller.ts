@@ -5,11 +5,21 @@ import {
   DeleteCommentRes,
   UpdateCommentReq,
   UpdateCommentRes,
-  commentController,
-} from "../apiTypes/comment.api.types";
+} from "../../../shared/src/api/comment.api.types";
+import { Errors } from "../../../shared/src/errors";
 import { DataStoreDao } from "../dataStore";
-import { Handler, HandlerWithParams } from "../dataStore/types";
-import { Errors } from "../errors";
+import { Handler, HandlerWithParams } from "../types";
+
+// * Controller Interface
+export interface commentController {
+  createComment: Handler<CreateCommentReq, CreateCommentRes>;
+  updateComment: Handler<UpdateCommentReq, UpdateCommentRes>;
+  deleteComment: HandlerWithParams<
+    { commentId: string },
+    DeleteCommentReq,
+    DeleteCommentRes
+  >;
+}
 
 export class CommentController implements commentController {
   private db: DataStoreDao;

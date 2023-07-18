@@ -13,16 +13,18 @@ import {
   GetUsersListRes,
   UnFollowUserReq,
   UnFollowUserRes,
-} from "../apiTypes/user.api.types";
+  UserBlogsReq,
+  UserBlogsRes,
+} from "../../../shared/src/api/user.api.types";
+import { Errors } from "../../../shared/src/errors";
 import { SqlDataStore } from "../dataStore/sql/SqlDataStore.class";
-import { Handler, HandlerWithParams } from "../dataStore/types";
-import { Errors } from "../errors";
 import { HTTP } from "../httpStatusCodes";
 import { createToken, hashPassword } from "../middleware/authMiddleware";
+import { Handler, HandlerWithParams } from "../types";
 import crypto from "crypto";
 import validator from "validator";
 
-interface userController {
+export interface userController {
   signup: Handler<SignUpReq, SignUpRes>;
   login: Handler<LoginReq, LoginRes>;
   getUsersList: Handler<GetUserCardReq, GetUserCardRes>;
@@ -42,6 +44,7 @@ interface userController {
     GetFollowersReq,
     GetFollowersRes
   >;
+  getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
 }
 
 export class UserController implements userController {
@@ -50,6 +53,7 @@ export class UserController implements userController {
   constructor(db: SqlDataStore) {
     this.db = db;
   }
+  getUserBlogs!: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
 
   getUserCard: HandlerWithParams<
     { id: string },

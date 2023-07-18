@@ -1,4 +1,4 @@
-import { Space, SpaceMember } from "../types";
+import { Blog, Space, SpaceMember } from "../../../../shared/src/types";
 
 export interface SpaceDao {
   createSpace(space: Space): Promise<void>;
@@ -7,6 +7,7 @@ export interface SpaceDao {
   deleteSpace(spaceId: string): Promise<void>;
 
   // getDefaultSpace(): Promise<Space | undefined>; // use getSpace
+  getBlogs(spaceId: string): Promise<Blog[]>;
   addMember(spaceId: string, memberId: string): Promise<void>;
   spaceMembers(spaceId: string): Promise<SpaceMember[]>;
   isMember(spaceId: string, memberId: string): Promise<boolean>;

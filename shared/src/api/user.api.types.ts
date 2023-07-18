@@ -1,4 +1,4 @@
-import { Blog, User, UserCard } from "../dataStore/types";
+import { Blog, User, UserCard } from "../types";
 
 export type SignUpReq = Pick<User, "email" | "password" | "username">;
 export interface SignUpRes {

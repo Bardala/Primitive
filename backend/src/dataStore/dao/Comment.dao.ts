@@ -1,4 +1,4 @@
-import { Comment } from "../types";
+import { Comment } from "../../../../shared/src/types";
 
 export interface CommentDao {
   createComment(comment: Comment): Promise<void>;

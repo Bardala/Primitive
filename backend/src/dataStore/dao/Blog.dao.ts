@@ -1,4 +1,4 @@
-import { Blog, Comment, Like } from "../types";
+import { Blog, Like, Comment } from "../../../../shared/src/types";
 
 export interface BlogDao {
   createBlog(blog: Blog): Promise<void>;
@@ -9,9 +9,4 @@ export interface BlogDao {
   getBlogComments(blogId: string): Promise<Comment[]>;
   blogLikes(blogId: string): Promise<number>;
   blogLikesList(blogId: string): Promise<Like[]>;
-
-  // todo: move this method to space doa
-  getBlogs(spaceId: string): Promise<Blog[]>;
-  // todo: move this method to user doa
-  getUserBlogs(userId: string): Promise<Blog[]>;
 }

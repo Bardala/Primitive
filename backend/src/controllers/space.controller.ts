@@ -14,17 +14,37 @@ import {
   UpdateSpaceRes,
   MembersReq,
   MembersRes,
-  spaceController,
-} from "../apiTypes/space.api.types";
+} from "../../../shared/src/api/space.api.types";
+import { Errors } from "../../../shared/src/errors";
+import { Space, SpaceMember } from "../../../shared/src/types";
 import { DataStoreDao } from "../dataStore";
-import {
-  Handler,
-  HandlerWithParams,
-  Space,
-  SpaceMember,
-} from "../dataStore/types";
-import { Errors } from "../errors";
 import { HTTP } from "../httpStatusCodes";
+import { Handler, HandlerWithParams } from "../types";
+
+// *Controller
+export interface spaceController {
+  createSpace: Handler<CreateSpaceReq, CreateSpaceRes>;
+  updateSpace: HandlerWithParams<
+    { spaceId: string },
+    UpdateSpaceReq,
+    UpdateSpaceRes
+  >;
+  getSpace: HandlerWithParams<{ spaceId: string }, SpaceReq, SpaceRes>;
+  deleteSpace: HandlerWithParams<
+    { spaceId: string },
+    DeleteSpaceReq,
+    DefaultSpaceRes
+  >;
+
+  getDefaultSpace: Handler<DefaultSpaceReq, DefaultSpaceRes>;
+  joinSpace: HandlerWithParams<{ spaceId: string }, JoinSpaceReq, JoinSpaceRes>;
+  addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
+  getSpaceMembers: HandlerWithParams<
+    { spaceId: string },
+    MembersReq,
+    MembersRes
+  >;
+}
 
 export class SpaceController implements spaceController {
   private db: DataStoreDao;

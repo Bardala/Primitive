@@ -7,7 +7,7 @@ import {
   Like,
   UserCard,
   SpaceMember,
-} from "../types";
+} from "../../../../shared/src/types";
 import mysql, { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 
@@ -25,6 +25,13 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  updateUser(_user: User): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  deleteUser(_userId: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async createComment(comment: Comment): Promise<void> {

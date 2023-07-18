@@ -1,4 +1,10 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.ts",
+  "author": "Bardala",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
@@ -26,10 +32,10 @@
   "scripts": {
     "start": "nodemon src/server.ts"
   },
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "server.ts",
-  "author": "Bardala",
-  "license": "ISC",
-  "description": ""
+  "nodemonConfig": {
+    "watch": [
+      ".",
+      "../shared"
+    ]
+  }
 }
