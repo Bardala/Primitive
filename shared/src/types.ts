@@ -46,8 +46,9 @@ export interface UserCard {
   isFollowing: number;
 }
 
+export type LikedUser = Pick<User, "id" | "username">;
+
 export interface Like {
-  id?: string;
   blogId: string;
   userId: string;
 }

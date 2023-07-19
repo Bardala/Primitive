@@ -1,4 +1,4 @@
-import { Blog, Like, Comment } from "../src/types";
+import { Blog, Comment, LikedUser } from "../types";
 
 // * Blog APIs
 export type CreateBlogReq = Pick<Blog, "title" | "content" | "spaceId">;
@@ -27,5 +27,11 @@ export interface BlogLikesRes {
 
 export interface BlogLikesListReq {}
 export interface BlogLikesListRes {
-  likes: Like[];
+  users: LikedUser[];
 }
+
+export interface CreateLikeReq {}
+export interface CreateLikeRes {}
+
+export interface RemoveLikeReq {}
+export interface RemoveLikeRes {}

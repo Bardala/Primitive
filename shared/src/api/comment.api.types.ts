@@ -1,5 +1,5 @@
 // * Comment APIs
-import { Comment } from "../src/types";
+import { Comment } from "../types";
 
 // createComment
 export type CreateCommentReq = Pick<Comment, "blogId" | "content">;

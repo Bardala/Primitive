@@ -1,4 +1,4 @@
-import { Space, Blog, SpaceMember } from "../src/types";
+import { Space, Blog, SpaceMember } from "../types";
 
 export type CreateSpaceReq = Pick<Space, "name" | "status" | "description">;
 export interface CreateSpaceRes {
