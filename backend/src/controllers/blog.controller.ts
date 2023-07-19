@@ -9,13 +9,17 @@ import {
   BlogRes,
   CreateBlogReq,
   CreateBlogRes,
+  CreateLikeReq,
+  CreateLikeRes,
   DeleteBlogReq,
   DeleteBlogRes,
+  RemoveLikeReq,
+  RemoveLikeRes,
   updateBlogReq,
   updateBlogRes,
 } from "../../../shared/src/api/blog.api.types";
 import { Errors } from "../../../shared/src/errors";
-import { Blog, Comment, Like } from "../../../shared/src/types";
+import { Blog, Comment, Like, LikedUser } from "../../../shared/src/types";
 import { DataStoreDao } from "../dataStore";
 import { HTTP } from "../httpStatusCodes";
 import { Handler, HandlerWithParams } from "../types";
@@ -39,6 +43,12 @@ export interface blogController {
     BlogCommentsReq,
     BlogCommentsRes
   >;
+  likeBlog: HandlerWithParams<{ blogId: string }, CreateLikeReq, CreateLikeRes>;
+  unLikeBlog: HandlerWithParams<
+    { blogId: string },
+    RemoveLikeReq,
+    RemoveLikeRes
+  >;
   getBlogLikes: HandlerWithParams<
     { blogId: string },
     BlogLikesReq,
@@ -57,6 +67,42 @@ export class BlogController implements blogController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+  likeBlog: HandlerWithParams<
+    { blogId: string },
+    CreateLikeReq,
+    CreateLikeRes
+  > = async (req, res) => {
+    const blogId = req.params.blogId;
+    const userId = res.locals.userId;
+
+    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!(await this.db.getBlog(blogId)))
+      return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+
+    const like: Like = { blogId, userId };
+    if (await this.db.isLiked(like)) return res.sendStatus(409);
+
+    await this.db.createLike(like);
+    return res.sendStatus(200);
+  };
+  unLikeBlog: HandlerWithParams<
+    { blogId: string },
+    RemoveLikeReq,
+    RemoveLikeRes
+  > = async (req, res) => {
+    const blogId = req.params.blogId;
+    const userId = res.locals.userId;
+
+    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!(await this.db.getBlog(blogId)))
+      return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+
+    const like: Like = { blogId, userId };
+    if (!(await this.db.isLiked(like))) return res.sendStatus(409);
+
+    await this.db.removeLike(like);
+    return res.sendStatus(200);
+  };
 
   updateBlog: HandlerWithParams<
     { blogId: string },
@@ -102,7 +148,7 @@ export class BlogController implements blogController {
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
-    const comments: Comment[] = await this.db.getBlogComments(blogId);
+    const comments: Comment[] = await this.db.getComments(blogId);
     return res.status(200).send({ comments });
   };
 
@@ -130,8 +176,8 @@ export class BlogController implements blogController {
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
-    const likes: Like[] = await this.db.blogLikesList(blogId);
-    return res.status(200).send({ likes });
+    const users: LikedUser[] = await this.db.blogLikesList(blogId);
+    return res.status(200).send({ users });
   };
 
   createBlog: Handler<CreateBlogReq, CreateBlogRes> = async (req, res) => {
@@ -165,6 +211,7 @@ export class BlogController implements blogController {
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
     await this.db.deleteBlog(blogId);
+    await this.db.deleteComments(blogId);
 
     return res.sendStatus(200);
   };

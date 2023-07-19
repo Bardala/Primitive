@@ -43,10 +43,11 @@ import asyncHandler from "express-async-handler";
   app.get("/api/v0/blog/:blogId", asyncHandler(blog.getBlog));
   app.delete("/api/v0/blog/:blogId", asyncHandler(blog.deleteBlog));
 
-  // todo: test the following apis after finishing comments and likes apis
-  app.get("/api/v0/blogComments/:blogId", asyncHandler(blog.getBlogComments));
-  app.get("/api/v0/blogLikes/:blogId", asyncHandler(blog.getBlogLikes));
-  app.get("/api/v0/blogLikesList/:blogId", asyncHandler(blog.getBlogLikesList));
+  app.get("/api/v0/blogComments/:blogId", asyncHandler(blog.getBlogComments)); // done
+  app.get("/api/v0/blogLikes/:blogId", asyncHandler(blog.getBlogLikes)); // done
+  app.get("/api/v0/blogLikesList/:blogId", asyncHandler(blog.getBlogLikesList)); //done
+  app.post("/api/v0/likeBlog/:blogId", asyncHandler(blog.likeBlog)); // done
+  app.delete("/api/v0/unLikeBlog/:blogId", asyncHandler(blog.unLikeBlog)); //done
 
   // *Space Routes
   app.post("/api/v0/space", asyncHandler(space.createSpace));

@@ -7,13 +7,13 @@ import {
   Like,
   UserCard,
   SpaceMember,
+  LikedUser,
 } from "../../../../shared/src/types";
 import mysql, { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
-
   async runDB() {
     this.pool = mysql
       .createPool({
@@ -25,6 +25,13 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async deleteComments(blogId: string): Promise<void> {
+    const query = `
+    DELETE FROM comments WHERE blogId=?
+    `;
+    await this.pool.query<RowDataPacket[]>(query, blogId);
   }
 
   updateUser(_user: User): Promise<void> {
@@ -102,7 +109,7 @@ export class SqlDataStore implements DataStoreDao {
       blog.id,
     ]);
   }
-  async getBlogComments(blogId: string): Promise<Comment[]> {
+  async getComments(blogId: string): Promise<Comment[]> {
     const query = `
     SELECT * FROM comments WHERE blogId=?
     `;
@@ -112,19 +119,22 @@ export class SqlDataStore implements DataStoreDao {
   }
   async blogLikes(blogId: string): Promise<number> {
     const query = `
-    SELECT COUNT(*) FORM likes WHERE blogId=?
+    SELECT COUNT(*) FROM likes WHERE blogId=?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
-    return rows[0][0];
+    return rows[0]["COUNT(*)"] as number;
   }
-  async blogLikesList(blogId: string): Promise<Like[]> {
+  async blogLikesList(blogId: string): Promise<LikedUser[]> {
     const query = `
-    SELECT * FROM likes WHERE  blogId=?
+    SELECT users.username, users.id
+    FROM likes RIGHT JOIN users
+    ON likes.userId = users.id
+    WHERE blogId=?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
-    return rows as Like[];
+    return rows as LikedUser[];
   }
 
   async getFollowers(followingId: string): Promise<string[]> {
@@ -133,7 +143,7 @@ export class SqlDataStore implements DataStoreDao {
     FROM users
     INNER JOIN follows ON users.id = follows.followerId
     WHERE follows.followingId = ?
-  `;
+    `;
 
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
 
@@ -178,13 +188,13 @@ export class SqlDataStore implements DataStoreDao {
   ): Promise<UserCard | undefined> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
       `
-      SELECT users.id, users.username, users.email, users.timestamp,  
-      (SELECT COUNT(*) FROM follows WHERE follows.followingId = users.id) AS followersNum,
-      (SELECT COUNT(*) FROM follows WHERE follows.followerId = users.id) AS followingNum,
-      (SELECT COUNT(*) FROM follows WHERE follows.followerId = ? AND follows.followingId = users.id) AS isFollowing
-      FROM users
-      WHERE users.id = ?
-    `,
+          SELECT users.id, users.username, users.email, users.timestamp,  
+          (SELECT COUNT(*) FROM follows WHERE follows.followingId = users.id) AS followersNum,
+          (SELECT COUNT(*) FROM follows WHERE follows.followerId = users.id) AS followingNum,
+          (SELECT COUNT(*) FROM follows WHERE follows.followerId = ? AND follows.followingId = users.id) AS isFollowing
+          FROM users
+          WHERE users.id = ?
+          `,
       [userId, cardOwnerId],
     );
 
@@ -276,14 +286,14 @@ export class SqlDataStore implements DataStoreDao {
     );
     return rows[0] as Blog[];
   }
-
-  async getComments(blogId: string): Promise<Comment[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM comments WHERE blogId = ?",
-      [blogId],
-    );
-    return rows[0] as Comment[];
-  }
+  // duplicated
+  // async getComments(blogId: string): Promise<Comment[]> {
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(
+  //     "SELECT * FROM comments WHERE blogId = ?",
+  //     [blogId],
+  //   );
+  //   return rows[0] as Comment[];
+  // }
 
   async createSpace(space: Space): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
@@ -335,15 +345,28 @@ export class SqlDataStore implements DataStoreDao {
 
   async createLike(like: Like): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO likes id=?, blogId=?, userId=?",
-      [like.id, like.blogId, like.userId],
+      "INSERT INTO likes SET blogId=?, userId=?",
+      [like.blogId, like.userId],
     );
   }
 
   async removeLike(like: Like): Promise<void> {
     const query = `
-    DELETE FROM likes WHERE blogId=? AND userId=?,
-    `;
+        DELETE FROM likes WHERE blogId=? AND userId=?
+        `;
     await this.pool.query<RowDataPacket[]>(query, [like.blogId, like.userId]);
+  }
+
+  async isLiked(like: Like): Promise<boolean> {
+    const query = `
+        SELECT blogId FROM likes 
+        WHERE
+        likes.blogId=? AND likes.userId=?
+        `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      like.blogId,
+      like.userId,
+    ]);
+    return rows[0] ? true : false;
   }
 }
