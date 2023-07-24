@@ -1,23 +1,19 @@
-import { Blog, BlogRes } from "@nest/shared";
-import { useQuery } from "@tanstack/react-query";
+import { TestGetSpace } from "./pages/TestGetSpace";
+import { SignUp } from "./pages/signup";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["getBlog", 1],
-    queryFn: (): Promise<BlogRes> =>
-      fetch("http://localhost:4001/api/v0/blog/1").then((res) => res.json()),
-  });
-
-  const blog: Blog | undefined = data?.blog;
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Something went wrong</div>;
-
   return (
-    <>
-      <div>Hello</div>
-      {blog && <div>{blog?.content}</div>}
-    </>
+    <div className="App">
+      <BrowserRouter>
+        {/* //todo: <NavBar /> */}
+        <Routes>
+          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/space/:id" element={<TestGetSpace />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

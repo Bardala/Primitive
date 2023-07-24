@@ -56,3 +56,5 @@ export interface Like {
 export interface JwtObject {
   userId: string;
 }
+
+export type WithError<T> = T & { error: string };

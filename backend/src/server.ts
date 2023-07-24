@@ -5,6 +5,7 @@ import { UserController } from "./controllers/user.controller";
 import { db, initDb } from "./dataStore";
 import { requireAuth } from "./middleware/authMiddleware";
 import { errorHandler } from "./middleware/errorHandler";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import asyncHandler from "express-async-handler";
@@ -17,11 +18,17 @@ import asyncHandler from "express-async-handler";
   const port = process.env.PORT;
 
   app.use(express.json());
+  app.use(cors());
 
   const user = new UserController(db);
   const blog = new BlogController(db);
   const space = new SpaceController(db);
   const comm = new CommentController(db);
+
+  app.use((req, res, next) => {
+    console.log(req.path, req.method, req.body, req.params, res.statusCode);
+    next();
+  });
 
   // *Auth Routes
   app.post("/api/v0/signup", asyncHandler(user.signup));
@@ -43,11 +50,11 @@ import asyncHandler from "express-async-handler";
   app.get("/api/v0/blog/:blogId", asyncHandler(blog.getBlog));
   app.delete("/api/v0/blog/:blogId", asyncHandler(blog.deleteBlog));
 
-  app.get("/api/v0/blogComments/:blogId", asyncHandler(blog.getBlogComments)); // done
-  app.get("/api/v0/blogLikes/:blogId", asyncHandler(blog.getBlogLikes)); // done
-  app.get("/api/v0/blogLikesList/:blogId", asyncHandler(blog.getBlogLikesList)); //done
-  app.post("/api/v0/likeBlog/:blogId", asyncHandler(blog.likeBlog)); // done
-  app.delete("/api/v0/unLikeBlog/:blogId", asyncHandler(blog.unLikeBlog)); //done
+  app.get("/api/v0/blogComments/:blogId", asyncHandler(blog.getBlogComments));
+  app.get("/api/v0/blogLikes/:blogId", asyncHandler(blog.getBlogLikes));
+  app.get("/api/v0/blogLikesList/:blogId", asyncHandler(blog.getBlogLikesList));
+  app.post("/api/v0/likeBlog/:blogId", asyncHandler(blog.likeBlog));
+  app.delete("/api/v0/unLikeBlog/:blogId", asyncHandler(blog.unLikeBlog));
 
   // *Space Routes
   app.post("/api/v0/space", asyncHandler(space.createSpace));
