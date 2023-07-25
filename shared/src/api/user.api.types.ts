@@ -3,6 +3,7 @@ import { Blog, User, UserCard } from "../types";
 export type SignUpReq = Pick<User, "email" | "password" | "username">;
 export interface SignUpRes {
   jwt: string;
+  username: string;
 }
 
 export interface LoginReq {
@@ -11,6 +12,7 @@ export interface LoginReq {
 }
 export interface LoginRes {
   jwt: string;
+  username: string;
 }
 
 export interface GetUserCardReq {}

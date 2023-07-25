@@ -1,3 +1,4 @@
+import { isLoggedIn } from "../fetch/auth";
 import { LoginRes } from "@nest/shared";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext } from "react";
@@ -15,9 +16,12 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const { data: currUser, refetch: refetchCurrUser } = useQuery(
     ["getCurrUser"],
     () => {
-      const token = JSON.parse(localStorage.getItem("token") || "");
-      console.log("token", token);
-      return token as LoginRes;
+      const currUser = JSON.parse(localStorage.getItem("currUser") || "{}");
+      return currUser as LoginRes;
+    },
+    {
+      enabled: isLoggedIn(),
+      onSuccess: (currUser) => console.log("data", currUser),
     },
   );
 

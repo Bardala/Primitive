@@ -4,7 +4,6 @@ import {
   LoginReq,
   LoginRes,
   SignUpReq,
-  SignUpRes,
   FollowUserReq,
   FollowUserRes,
   GetFollowersReq,
@@ -25,7 +24,7 @@ import crypto from "crypto";
 import validator from "validator";
 
 export interface userController {
-  signup: Handler<SignUpReq, SignUpRes>;
+  signup: Handler<SignUpReq, LoginRes>;
   login: Handler<LoginReq, LoginRes>;
   getUsersList: Handler<GetUserCardReq, GetUserCardRes>;
   getUserCard: HandlerWithParams<
@@ -139,7 +138,7 @@ export class UserController implements userController {
       .send({ usernames: await this.db.getUsersList() });
   };
 
-  signup: Handler<SignUpReq, SignUpRes> = async (req, res) => {
+  signup: Handler<SignUpReq, LoginRes> = async (req, res) => {
     const { email, username, password } = req.body;
 
     if (!email || !username || !password)
@@ -174,7 +173,7 @@ export class UserController implements userController {
 
     await this.db.createUser(user);
 
-    return res.send({ jwt: createToken(user.id) });
+    return res.send({ jwt: createToken(user.id), username: user.username });
   };
 
   login: Handler<LoginReq, LoginRes> = async (req, res) => {
@@ -190,6 +189,14 @@ export class UserController implements userController {
     if (!user)
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_LOGIN });
 
-    return res.status(200).send({ jwt: createToken(user.id) });
+    const match = user.password === hashPassword(req.body.password);
+    if (!match)
+      return res
+        .status(HTTP.BAD_REQUEST)
+        .send({ error: Errors.INVALID_PASSWORD });
+
+    return res
+      .status(200)
+      .send({ jwt: createToken(user.id), username: user.username });
   };
 }
