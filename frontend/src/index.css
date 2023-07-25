@@ -9,6 +9,7 @@
 
 :root {
   --primary: #1aac83;
+  --primary-hover: #20dba6e6;
   --red: #e7195a;
 }
 
@@ -24,3 +25,10 @@
 input.error {
   border: 1px solid var(--red);
 }
+
+.home {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 100px;
+}
+

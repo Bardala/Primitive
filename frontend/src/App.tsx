@@ -1,8 +1,10 @@
-import { NavBar } from "./components/NavBar";
-import { Login } from "./pages/Login";
-import { TestGetSpace } from "./pages/TestGetSpace";
-import { SignUp } from "./pages/signup";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { NavBar } from './components/NavBar';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { TestGetSpace } from './pages/TestGetSpace';
+import { SignUp } from './pages/signup';
 
 function App() {
   return (
@@ -10,7 +12,7 @@ function App() {
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/space/:id" element={<TestGetSpace />} />
