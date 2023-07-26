@@ -1,14 +1,13 @@
-import App from "./App";
-import { AuthContextProvider } from "./context/AuthContext";
-import "./index.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 // import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from 'react-dom/client';
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
+import App from './App';
+import { AuthContextProvider } from './context/AuthContext';
+import './index.css';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 const queryClient = new QueryClient();
 
@@ -17,8 +16,8 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <AuthContextProvider>
       <App />
+      <ReactQueryDevtools />
     </AuthContextProvider>
-    <ReactQueryDevtools />
-  </QueryClientProvider>,
+  </QueryClientProvider>
   // </React.StrictMode>,
 );

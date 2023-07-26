@@ -1,36 +1,77 @@
-.sidebar {
+.side-bar {
+  position: sticky;
+  top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  border: 8px;
+  background: #fafafa;
+  flex-wrap: nowrap;
+  width: auto;
+  height: auto;
 }
 
-.side-bar-buttons-container button {
-    background: #fff;
-    padding: 8px 16px 8px 16px;
-    border-radius: 8px;
-    font-family: "Poppins";
-    cursor: pointer;
-    font-size: 1rem;
+.side-bar {
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
 }
 
-.side-bar-buttons-container {
+.sidebar button .active {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.side-bar button {
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+  border-radius: 8px;
+  font-family: "Poppins";
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.side-bar button:hover {
+  color: var(--primary);
+  box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-bar form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
-.sidebar button:hover {
-  background: var(--primary-hover);
+.side-bar form textarea {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
 }
 
-label,
+
+.side-bar label,
 input {
   display: block;
 }
 
-input {
+.side-bar input, select {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -40,25 +81,11 @@ input {
   box-sizing: border-box;
 }
 
-form button {
+/* .side-bar form button {
   background: var(--primary);
   border: 0;
-  color: #fff;
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-}
-
-div.error {
-  padding: 10px;
-  background: #ffefef;
-  border: 1px solid var(--error);
-  color: var(--error);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-input.error {
-  border: 1px solid var(--error);
-}
+}  */

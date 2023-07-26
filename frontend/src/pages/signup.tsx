@@ -22,7 +22,7 @@ export const SignUp = () => {
       e.preventDefault();
 
       try {
-        const currUser = await fetchFn<SignUpReq, LoginRes>(`${HOST}/signup`, 'post', {
+        const currUser = await fetchFn<SignUpReq, LoginRes>(`${HOST}/signup`, 'POST', {
           email,
           password,
           username,
@@ -39,7 +39,7 @@ export const SignUp = () => {
 
   return (
     <>
-      <form onSubmit={e => singUpUser(e)} className="signup">
+      <form onSubmit={e => singUpUser(e)} className="login">
         <h3>Sign Up</h3>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />

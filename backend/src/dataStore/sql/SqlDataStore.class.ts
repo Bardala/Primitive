@@ -1,16 +1,17 @@
-import { DataStoreDao } from "..";
+import mysql, { RowDataPacket } from 'mysql2';
+import { Pool } from 'mysql2/promise';
+
+import { DataStoreDao } from '..';
 import {
-  User,
   Blog,
   Comment,
-  Space,
   Like,
-  UserCard,
-  SpaceMember,
   LikedUser,
-} from "../../../../shared/src/types";
-import mysql, { RowDataPacket } from "mysql2";
-import { Pool } from "mysql2/promise";
+  Space,
+  SpaceMember,
+  User,
+  UserCard,
+} from '../../../../shared/src/types';
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
@@ -35,28 +36,25 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   updateUser(_user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   deleteUser(_userId: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   async createComment(comment: Comment): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO comments SET id=?, blogId=?, userId=?, content=?",
-      [comment.id, comment.blogId, comment.userId, comment.content],
+      'INSERT INTO comments SET id=?, blogId=?, userId=?, content=?',
+      [comment.id, comment.blogId, comment.userId, comment.content]
     );
   }
-  async updateComment(comment: Pick<Comment, "content" | "id">): Promise<void> {
+  async updateComment(comment: Pick<Comment, 'content' | 'id'>): Promise<void> {
     const query = `
     UPDATE comments 
     SET content=?
     WHERE id=?
     `;
-    await this.pool.query<RowDataPacket[]>(query, [
-      comment.content,
-      comment.id,
-    ]);
+    await this.pool.query<RowDataPacket[]>(query, [comment.content, comment.id]);
   }
   async getComment(commentId: string): Promise<Comment> {
     const query = `
@@ -88,11 +86,8 @@ export class SqlDataStore implements DataStoreDao {
     SELECT COUNT(*) AS res FROM members 
     WHERE spaceId=? AND memberId=?
     `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
-      spaceId,
-      memberId,
-    ]);
-    const result = rows[0]["res"] as number;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+    const result = rows[0]['res'] as number;
     return result !== 1 ? false : true;
   }
 
@@ -123,7 +118,7 @@ export class SqlDataStore implements DataStoreDao {
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
-    return rows[0]["COUNT(*)"] as number;
+    return rows[0]['COUNT(*)'] as number;
   }
   async blogLikesList(blogId: string): Promise<LikedUser[]> {
     const query = `
@@ -147,45 +142,40 @@ export class SqlDataStore implements DataStoreDao {
 
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
 
-    return rows.map((obj) => obj.username);
+    return rows.map(obj => obj.username);
   }
 
   async createUser(user: User): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO users SET id=?, username=?, password=?, email=?",
-      [user.id, user.username, user.password, user.email],
+      'INSERT INTO users SET id=?, username=?, password=?, email=?',
+      [user.id, user.username, user.password, user.email]
     );
   }
 
   async getUserById(userId: string): Promise<User | undefined> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      `SELECT * FROM users WHERE id = ?`,
-      [userId],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>(`SELECT * FROM users WHERE id = ?`, [
+      userId,
+    ]);
     return rows[0] as User;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM users WHERE username = ?",
-      [username],
+      'SELECT * FROM users WHERE username = ?',
+      [username]
     );
 
     return rows[0] as User;
   }
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM users WHERE email = ?', [
+      email,
+    ]);
 
     return rows[0] as User;
   }
 
-  async getUserCard(
-    userId: string,
-    cardOwnerId: string,
-  ): Promise<UserCard | undefined> {
+  async getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
       `
           SELECT users.id, users.username, users.email, users.timestamp,  
@@ -195,30 +185,26 @@ export class SqlDataStore implements DataStoreDao {
           FROM users
           WHERE users.id = ?
           `,
-      [userId, cardOwnerId],
+      [userId, cardOwnerId]
     );
 
     return rows[0] as UserCard;
   }
 
   async getUsers(): Promise<User[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM users",
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM users');
     return rows as User[];
   }
 
   async getUsersList(): Promise<string[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT username FRoM users",
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT username FRoM users');
 
     // rows = [
     //   {username: 'islam'},
     //   {username: 'ali'},
     // ]
 
-    return rows.map((obj) => obj.username);
+    return rows.map(obj => obj.username);
   }
 
   async isFollow(followingId: string, userId: string): Promise<boolean> {
@@ -228,62 +214,54 @@ export class SqlDataStore implements DataStoreDao {
     followingId = ? AND followerId = ?
     `;
 
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
-      followingId,
-      userId,
-    ]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId, userId]);
 
     return rows[0] ? true : false;
   }
 
   async createFollow(followerId: string, followingId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO follows SET followerId=?, followingId=?",
-      [followerId, followingId],
-    );
+    await this.pool.query<RowDataPacket[]>('INSERT INTO follows SET followerId=?, followingId=?', [
+      followerId,
+      followingId,
+    ]);
   }
 
   async deleteFollow(followerId: string, followingId: string): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "DELETE FROM follows WHERE followerId=? AND followingId=?",
-      [followerId, followingId],
+      'DELETE FROM follows WHERE followerId=? AND followingId=?',
+      [followerId, followingId]
     );
   }
 
   async createBlog(blog: Blog): Promise<void> {
     await this.pool.query(
-      "INSERT INTO blogs SET id=?, title=?, content=?, userId=?, spaceId=?",
-      [blog.id, blog.title, blog.content, blog.userId, blog.spaceId],
+      'INSERT INTO blogs SET id=?, title=?, content=?, userId=?, spaceId=?, timestamp=?, author=?',
+      [blog.id, blog.title, blog.content, blog.userId, blog.spaceId, blog.timestamp, blog.author]
     );
   }
 
   async getBlogs(spaceId: string): Promise<Blog[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM blogs WHERE spaceId = ?",
-      [spaceId],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE spaceId = ?', [
+      spaceId,
+    ]);
     return rows as Blog[];
   }
 
   async getBlog(blogId: string): Promise<Blog | undefined> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM blogs WHERE id=?",
-      [blogId],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE id=?', [
+      blogId,
+    ]);
     return rows[0] as Blog;
   }
 
   async deleteBlog(blogId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>("DELETE FROM blogs WHERE id=?", [
-      blogId,
-    ]);
+    await this.pool.query<RowDataPacket[]>('DELETE FROM blogs WHERE id=?', [blogId]);
   }
 
   async getUserBlogs(userId: string): Promise<Blog[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM blogs WHERE userId = ?",
-      [userId],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE userId = ?', [
+      userId,
+    ]);
     return rows[0] as Blog[];
   }
   // duplicated
@@ -297,57 +275,54 @@ export class SqlDataStore implements DataStoreDao {
 
   async createSpace(space: Space): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO spaces SET description=?, id=?, name=?, ownerId=?, status=?",
-      [space.description, space.id, space.name, space.ownerId, space.status],
+      'INSERT INTO spaces SET description=?, id=?, name=?, ownerId=?, status=?',
+      [space.description, space.id, space.name, space.ownerId, space.status]
     );
   }
 
   getDefaultSpace(): Promise<Space | undefined> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   async getSpace(spaceId: string): Promise<Space | undefined> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM spaces WHERE id = ?",
-      [spaceId],
-    );
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM spaces WHERE id = ?', [
+      spaceId,
+    ]);
     return rows[0] as Space;
   }
 
   async updateSpace(space: Space): Promise<Space | undefined> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
-      "UPDATE spaces SET name=?, status=?, description=? WHERE id=?",
-      [space.name, space.status, space.description, space.id],
+      'UPDATE spaces SET name=?, status=?, description=? WHERE id=?',
+      [space.name, space.status, space.description, space.id]
     );
     return rows[0] as Space;
   }
 
   async addMember(spaceId: string, memberId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO members SET memberId=?, spaceId=?",
-      [memberId, spaceId],
-    );
-  }
-
-  async deleteSpace(spaceId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>("DELETE FROM spaces WHERE id=?", [
+    await this.pool.query<RowDataPacket[]>('INSERT INTO members SET memberId=?, spaceId=?', [
+      memberId,
       spaceId,
     ]);
   }
 
+  async deleteSpace(spaceId: string): Promise<void> {
+    await this.pool.query<RowDataPacket[]>('DELETE FROM spaces WHERE id=?', [spaceId]);
+  }
+
   async getSpaces(userId: string): Promise<Space[]> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
-      "SELECT * FROM spaces WHERE userId = ?",
-      userId,
+      'SELECT * FROM spaces WHERE userId = ?',
+      userId
     );
     return rows[0] as Space[];
   }
 
   async createLike(like: Like): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      "INSERT INTO likes SET blogId=?, userId=?",
-      [like.blogId, like.userId],
-    );
+    await this.pool.query<RowDataPacket[]>('INSERT INTO likes SET blogId=?, userId=?', [
+      like.blogId,
+      like.userId,
+    ]);
   }
 
   async removeLike(like: Like): Promise<void> {
@@ -363,10 +338,7 @@ export class SqlDataStore implements DataStoreDao {
         WHERE
         likes.blogId=? AND likes.userId=?
         `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
-      like.blogId,
-      like.userId,
-    ]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [like.blogId, like.userId]);
     return rows[0] ? true : false;
   }
 }

@@ -17,48 +17,24 @@ import {
   RemoveLikeRes,
   updateBlogReq,
   updateBlogRes,
-} from "../../../shared/src/api/blog.api.types";
-import { Errors } from "../../../shared/src/errors";
-import { Blog, Comment, Like, LikedUser } from "../../../shared/src/types";
-import { DataStoreDao } from "../dataStore";
-import { HTTP } from "../httpStatusCodes";
-import { Handler, HandlerWithParams } from "../types";
+} from '../../../shared/src/api/blog.api.types';
+import { Errors } from '../../../shared/src/errors';
+import { Blog, Comment, Like, LikedUser } from '../../../shared/src/types';
+import { DataStoreDao } from '../dataStore';
+import { HTTP } from '../httpStatusCodes';
+import { Handler, HandlerWithParams } from '../types';
 
 // * Controller Interface
 export interface blogController {
   createBlog: Handler<CreateBlogReq, CreateBlogRes>;
-  updateBlog: HandlerWithParams<
-    { blogId: string },
-    updateBlogReq,
-    updateBlogRes
-  >;
+  updateBlog: HandlerWithParams<{ blogId: string }, updateBlogReq, updateBlogRes>;
   getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes>;
-  deleteBlog: HandlerWithParams<
-    { blogId: string },
-    DeleteBlogReq,
-    DeleteBlogRes
-  >;
-  getBlogComments: HandlerWithParams<
-    { blogId: string },
-    BlogCommentsReq,
-    BlogCommentsRes
-  >;
+  deleteBlog: HandlerWithParams<{ blogId: string }, DeleteBlogReq, DeleteBlogRes>;
+  getBlogComments: HandlerWithParams<{ blogId: string }, BlogCommentsReq, BlogCommentsRes>;
   likeBlog: HandlerWithParams<{ blogId: string }, CreateLikeReq, CreateLikeRes>;
-  unLikeBlog: HandlerWithParams<
-    { blogId: string },
-    RemoveLikeReq,
-    RemoveLikeRes
-  >;
-  getBlogLikes: HandlerWithParams<
-    { blogId: string },
-    BlogLikesReq,
-    BlogLikesRes
-  >;
-  getBlogLikesList: HandlerWithParams<
-    { blogId: string },
-    BlogLikesListReq,
-    BlogLikesListRes
-  >;
+  unLikeBlog: HandlerWithParams<{ blogId: string }, RemoveLikeReq, RemoveLikeRes>;
+  getBlogLikes: HandlerWithParams<{ blogId: string }, BlogLikesReq, BlogLikesRes>;
+  getBlogLikesList: HandlerWithParams<{ blogId: string }, BlogLikesListReq, BlogLikesListRes>;
 }
 
 export class BlogController implements blogController {
@@ -67,11 +43,10 @@ export class BlogController implements blogController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
-  likeBlog: HandlerWithParams<
-    { blogId: string },
-    CreateLikeReq,
-    CreateLikeRes
-  > = async (req, res) => {
+  likeBlog: HandlerWithParams<{ blogId: string }, CreateLikeReq, CreateLikeRes> = async (
+    req,
+    res
+  ) => {
     const blogId = req.params.blogId;
     const userId = res.locals.userId;
 
@@ -85,11 +60,10 @@ export class BlogController implements blogController {
     await this.db.createLike(like);
     return res.sendStatus(200);
   };
-  unLikeBlog: HandlerWithParams<
-    { blogId: string },
-    RemoveLikeReq,
-    RemoveLikeRes
-  > = async (req, res) => {
+  unLikeBlog: HandlerWithParams<{ blogId: string }, RemoveLikeReq, RemoveLikeRes> = async (
+    req,
+    res
+  ) => {
     const blogId = req.params.blogId;
     const userId = res.locals.userId;
 
@@ -104,11 +78,10 @@ export class BlogController implements blogController {
     return res.sendStatus(200);
   };
 
-  updateBlog: HandlerWithParams<
-    { blogId: string },
-    updateBlogReq,
-    updateBlogRes
-  > = async (req, res) => {
+  updateBlog: HandlerWithParams<{ blogId: string }, updateBlogReq, updateBlogRes> = async (
+    req,
+    res
+  ) => {
     const userId = res.locals.userId;
     const blogId = req.params.blogId;
     const { content, title, spaceId } = req.body;
@@ -124,10 +97,7 @@ export class BlogController implements blogController {
     return res.sendStatus(200);
   };
 
-  getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes> = async (
-    req,
-    res,
-  ) => {
+  getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes> = async (req, res) => {
     const blogId = req.params.blogId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
@@ -139,11 +109,10 @@ export class BlogController implements blogController {
     return res.status(200).send({ blog });
   };
 
-  getBlogComments: HandlerWithParams<
-    { blogId: string },
-    BlogCommentsReq,
-    BlogCommentsRes
-  > = async (req, res) => {
+  getBlogComments: HandlerWithParams<{ blogId: string }, BlogCommentsReq, BlogCommentsRes> = async (
+    req,
+    res
+  ) => {
     const blogId = req.params.blogId;
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
@@ -152,11 +121,10 @@ export class BlogController implements blogController {
     return res.status(200).send({ comments });
   };
 
-  getBlogLikes: HandlerWithParams<
-    { blogId: string },
-    BlogLikesReq,
-    BlogLikesRes
-  > = async (req, res) => {
+  getBlogLikes: HandlerWithParams<{ blogId: string }, BlogLikesReq, BlogLikesRes> = async (
+    req,
+    res
+  ) => {
     const blogId = req.params.blogId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
@@ -166,27 +134,28 @@ export class BlogController implements blogController {
     return res.status(200).send({ likesNums });
   };
 
-  getBlogLikesList: HandlerWithParams<
-    { blogId: string },
-    BlogLikesListReq,
-    BlogLikesListRes
-  > = async (req, res) => {
-    const blogId = req.params.blogId;
+  getBlogLikesList: HandlerWithParams<{ blogId: string }, BlogLikesListReq, BlogLikesListRes> =
+    async (req, res) => {
+      const blogId = req.params.blogId;
 
-    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
+      if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+      if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
-    const users: LikedUser[] = await this.db.blogLikesList(blogId);
-    return res.status(200).send({ users });
-  };
+      const users: LikedUser[] = await this.db.blogLikesList(blogId);
+      return res.status(200).send({ users });
+    };
 
   createBlog: Handler<CreateBlogReq, CreateBlogRes> = async (req, res) => {
     const userId = res.locals.userId;
 
     const { title, content, spaceId } = req.body;
+    const user = await this.db.getUserById(userId);
 
     if (!title || !content || !spaceId)
       return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+    if (!user) return res.status(400).send({ error: Errors.USER_NOT_FOUND });
+
+    console.log(user);
 
     const blog: Blog = {
       title,
@@ -194,17 +163,18 @@ export class BlogController implements blogController {
       content,
       spaceId,
       userId,
+      author: user.username,
+      timestamp: Date.now(),
     };
 
     await this.db.createBlog(blog);
-    return res.sendStatus(200);
+    return res.status(200).send({ blog });
   };
 
-  deleteBlog: HandlerWithParams<
-    { blogId: string },
-    DeleteBlogReq,
-    DeleteBlogRes
-  > = async (req, res) => {
+  deleteBlog: HandlerWithParams<{ blogId: string }, DeleteBlogReq, DeleteBlogRes> = async (
+    req,
+    res
+  ) => {
     const blogId = req.params.blogId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });

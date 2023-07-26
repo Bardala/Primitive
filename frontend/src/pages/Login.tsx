@@ -18,7 +18,7 @@ export const Login = () => {
     async (e: React.FormEvent | React.MouseEvent) => {
       e.preventDefault();
       try {
-        const currUser = await fetchFn<LoginReq, LoginRes>(`${HOST}/login`, 'post', {
+        const currUser = await fetchFn<LoginReq, LoginRes>(`${HOST}/login`, 'POST', {
           login,
           password,
         });

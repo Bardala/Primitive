@@ -10,7 +10,7 @@ export const CreateSpaceForm = () => {
 
   const handleSubmit = async (e: FormEvent | MouseEvent) => {
     e.preventDefault();
-    await fetchFn<CreateSpaceReq, CreateSpaceRes>(`${HOST}/space`, 'post', {
+    await fetchFn<CreateSpaceReq, CreateSpaceRes>(`${HOST}/space`, 'POST', {
       name,
       status,
       description,

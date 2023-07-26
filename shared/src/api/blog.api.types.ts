@@ -1,15 +1,17 @@
-import { Blog, Comment, LikedUser } from "../types";
+import { Blog, Comment, LikedUser } from '../types';
 
 // * Blog APIs
-export type CreateBlogReq = Pick<Blog, "title" | "content" | "spaceId">;
-export interface CreateBlogRes {}
+export type CreateBlogReq = Pick<Blog, 'title' | 'content' | 'spaceId'>;
+export interface CreateBlogRes {
+  blog: Blog;
+}
 
 export interface BlogReq {} // params.blogId
 export interface BlogRes {
   blog: Blog;
 }
 
-export type updateBlogReq = Pick<Blog, "content" | "title" | "spaceId">; // params.blogId
+export type updateBlogReq = Pick<Blog, 'content' | 'title' | 'spaceId'>; // params.blogId
 export interface updateBlogRes {}
 
 export interface DeleteBlogReq {} // params.blogId

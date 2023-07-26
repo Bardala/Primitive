@@ -21,10 +21,13 @@ export const Sidebar = () => {
 
   return (
     <div className="side-bar">
-      <div className="side-bar-buttons-container">
-        <button onClick={e => handleShowCreateSpace(e)}>Create Space</button>
-        <button onClick={e => handleShowCreateBlog(e)}>Create Blog</button>
-      </div>
+      <button onClick={handleShowCreateSpace} className={showCreateSpace ? 'active' : ''}>
+        Create Space
+      </button>
+      <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
+        Create Blog
+      </button>
+
       {showCreateSpace && <CreateSpaceForm />}
       {showCreateBlog && <CreateBlogForm />}
     </div>

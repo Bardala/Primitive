@@ -1,14 +1,36 @@
+import { HOST, SpaceReq, SpaceRes } from '@nest/shared';
+import { useQuery } from '@tanstack/react-query';
+
+import { BlogList } from '../components/BlogList';
 import { Sidebar } from '../components/SideBar';
+import { useAuthContext } from '../context/AuthContext';
+import { ApiError, fetchFn } from '../fetch/auth';
 
 export const Home = () => {
+  const { currUser } = useAuthContext();
+
+  const spaceQuery = useQuery<SpaceRes, ApiError, SpaceRes>({
+    queryKey: ['space', '1'],
+    queryFn: () =>
+      fetchFn<SpaceReq, SpaceRes>(`${HOST}/getDefaultSpace`, 'GET', undefined, currUser?.jwt),
+    enabled: !!currUser?.jwt,
+  });
+
+  const blogs = spaceQuery.data?.blogs;
+  const error = spaceQuery.error;
+
+  if (spaceQuery.isLoading) return <div>Loading...</div>;
+  if (spaceQuery.error) {
+    return <div>{JSON.stringify(spaceQuery.error)}</div>;
+  }
+
   return (
     <div className="home">
       <main>
-        <h1>Home</h1>
+        {error && <p className="error">{error?.message}</p>}
+        {blogs?.length && <BlogList blogs={blogs} />}
       </main>
-      <div className="side-bar">
-        <Sidebar />
-      </div>
+      <Sidebar />
     </div>
   );
 };

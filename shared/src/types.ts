@@ -4,7 +4,8 @@ export interface Blog {
   content: string;
   userId: string;
   spaceId: string;
-  timestamp?: string;
+  author?: string;
+  timestamp?: number;
 }
 
 export interface Comment {
@@ -12,10 +13,11 @@ export interface Comment {
   content: string;
   blogId: string;
   userId: string;
+  author?: string;
   timestamp?: string;
 }
 
-export type SpaceStatus = "public" | "private";
+export type SpaceStatus = 'public' | 'private';
 
 export interface Space {
   id: string;
@@ -26,7 +28,7 @@ export interface Space {
   timestamp?: string;
 }
 
-export type SpaceMember = Pick<User, "id" | "username">;
+export type SpaceMember = Pick<User, 'id' | 'username'>;
 
 export interface User {
   id: string;
@@ -46,7 +48,7 @@ export interface UserCard {
   isFollowing: number;
 }
 
-export type LikedUser = Pick<User, "id" | "username">;
+export type LikedUser = Pick<User, 'id' | 'username'>;
 
 export interface Like {
   blogId: string;
@@ -58,3 +60,5 @@ export interface JwtObject {
 }
 
 export type WithError<T> = T & { error: string };
+
+export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
