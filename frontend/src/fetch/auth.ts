@@ -33,9 +33,12 @@ export const fetchFn = async <Req, Res>(
     },
     ...(body && { body: JSON.stringify(body) }),
   });
-  const data: WithError<Res> = await res.json();
 
-  if (!res.ok) throw new ApiError(res.status, data.error);
+  if (res.headers.get('Content-Type')?.includes('application/json')) {
+    const data: WithError<Res> = await res.json();
+    if (!res.ok) throw new ApiError(res.status, data.error);
+    return data;
+  }
 
-  return data;
+  return res.text() as Res;
 };

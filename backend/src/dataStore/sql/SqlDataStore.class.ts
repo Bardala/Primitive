@@ -28,6 +28,13 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
+  async deleteBlogLikes(blogId: string): Promise<void> {
+    const query = `
+    DELETE FROM likes WHERE blogId=?
+    `;
+    await this.pool.query(query, blogId);
+  }
+
   async deleteComments(blogId: string): Promise<void> {
     const query = `
     DELETE FROM comments WHERE blogId=?
@@ -255,7 +262,9 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async deleteBlog(blogId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>('DELETE FROM blogs WHERE id=?', [blogId]);
+    await this.deleteBlogLikes(blogId);
+    await this.deleteComments(blogId);
+    await this.pool.query('DELETE FROM blogs WHERE id=?', [blogId]);
   }
 
   async getUserBlogs(userId: string): Promise<Blog[]> {

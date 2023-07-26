@@ -4,6 +4,7 @@ import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import Markdown from 'markdown-to-jsx';
 import { Link, useParams } from 'react-router-dom';
 
+import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch/auth';
@@ -84,7 +85,7 @@ export const BlogDetails = () => {
               </div>
             </article>
 
-            {/* <BlogDetailsAction blog={blog} owner={blog.userId} user={currUser} /> */}
+            {currUser && <BlogDetailsAction blog={blog} owner={blog.userId} currUser={currUser} />}
           </div>
 
           {currUser && id && <Comments blogId={id} currUser={currUser} comments={comments!} />}

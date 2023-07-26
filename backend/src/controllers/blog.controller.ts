@@ -181,7 +181,6 @@ export class BlogController implements blogController {
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
     await this.db.deleteBlog(blogId);
-    await this.db.deleteComments(blogId);
 
     return res.sendStatus(200);
   };

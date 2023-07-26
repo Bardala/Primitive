@@ -18,6 +18,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/space/:id" element={<Space />} />
           <Route path="/b/:id" element={<BlogDetails />} />
+          <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
       </BrowserRouter>
     </div>

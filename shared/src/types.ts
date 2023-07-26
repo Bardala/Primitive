@@ -59,6 +59,14 @@ export interface JwtObject {
   userId: string;
 }
 
+export type StatusMessage =
+  | 'OK'
+  | 'Forbidden'
+  | 'Not Found'
+  | 'Internal Server Error'
+  | 'Bad Request'
+  | 'Unauthorized';
+
 export type WithError<T> = T & { error: string };
 
 export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
