@@ -20,7 +20,6 @@ export const Space = () => {
   });
 
   const blogs = spaceQuery.data?.blogs;
-  console.log('blogs', blogs);
 
   if (spaceQuery.isLoading) return <div>Loading...</div>;
   if (spaceQuery.error) {

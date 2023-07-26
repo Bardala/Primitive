@@ -44,8 +44,8 @@ export class SqlDataStore implements DataStoreDao {
 
   async createComment(comment: Comment): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      'INSERT INTO comments SET id=?, blogId=?, userId=?, content=?',
-      [comment.id, comment.blogId, comment.userId, comment.content]
+      'INSERT INTO comments SET id=?, blogId=?, userId=?, content=?, timestamp=?',
+      [comment.id, comment.blogId, comment.userId, comment.content, comment.timestamp]
     );
   }
   async updateComment(comment: Pick<Comment, 'content' | 'id'>): Promise<void> {

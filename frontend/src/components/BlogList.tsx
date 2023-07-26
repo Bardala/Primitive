@@ -7,14 +7,12 @@ import '../styles/blogList.css';
 import LikeBlogButton from './LikeButton';
 
 export const BlogList: React.FC<{ blogs: Blog[] }> = ({ blogs }) => {
-  console.log('blogs', blogs);
-
   return (
     <div className="blog-list">
       {blogs.map(blog => (
         <div className="blog-preview" key={blog.id}>
           <div className="blog-content">
-            <Link to={`/blogs/${blog.id}`} className="blog-link">
+            <Link to={`/b/${blog.id}`} className="blog-link">
               <div className="blog-header">
                 <h2>{blog.title}</h2>
               </div>

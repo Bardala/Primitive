@@ -1,0 +1,115 @@
+/* blog details page*/
+.blog-details {
+  padding: 50px;
+  margin: 20px 0;
+  border: 1px solid #fafafa;
+}
+
+.blog-details h2 {
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.blog-details div {
+  margin: 20px 0;
+  color: #000;
+}
+
+.blog-details a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+.blog-details .blog-body {
+  line-height: 1.5;
+  margin: 10px 0;
+  padding: 0 16px;
+  background-color: #fafafa;
+  color: #240f0f;
+}
+
+.blog-details button {
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.blog-content article:hover {
+  box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
+}
+
+.blog-content button:hover {
+  /* box-shadow: 1px 3px 5px 10px rgba(0, 0, 0, 0.1); */
+  background: #fa0000cb;
+}
+
+#read-blog {
+  margin-bottom: 100px;
+}
+
+/* comments */
+.comments {
+  margin: 20px 0;
+}
+
+.comments p {
+  color: var(--primary);
+  margin-top: 50px;
+  margin-bottom: 5px;
+}
+
+.comment {
+  padding: 10px;
+  border: 1px var(--primary);
+}
+
+.comment p {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-style: normal;
+  color: #4b1616;
+}
+
+.comment .comment-body:hover {
+  background: #fafafa;
+}
+
+.create-comment button:hover {
+  box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
+  background: #16e807;
+}
+
+.create-comment {
+  margin: 20px 0;
+}
+
+.create-comment p {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.create-comment textarea {
+  display: inline;
+  width: 250px;
+  height: 25px;
+  border: 1px solid #fafafa;
+  padding: 10px;
+  border-style: double;
+  border-color: var(--primary);
+  border-radius: 12px;
+}
+
+.create-comment button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px;
+}
+
+.create-comment .error {
+  color: var(--red);
+}

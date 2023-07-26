@@ -14,7 +14,7 @@ export interface Comment {
   blogId: string;
   userId: string;
   author?: string;
-  timestamp?: string;
+  timestamp?: number;
 }
 
 export type SpaceStatus = 'public' | 'private';

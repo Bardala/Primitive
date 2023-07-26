@@ -34,7 +34,6 @@ export const fetchFn = async <Req, Res>(
     ...(body && { body: JSON.stringify(body) }),
   });
   const data: WithError<Res> = await res.json();
-  console.log('data form fetchFn: ', data);
 
   if (!res.ok) throw new ApiError(res.status, data.error);
 

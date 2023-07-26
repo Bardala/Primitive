@@ -7,6 +7,7 @@ import {
   UpdateCommentRes,
 } from '../../../shared/src/api/comment.api.types';
 import { Errors } from '../../../shared/src/errors';
+import { Comment } from '../../../shared/src/types';
 import { DataStoreDao } from '../dataStore';
 import { Handler, HandlerWithParams } from '../types';
 
@@ -33,15 +34,18 @@ export class CommentController implements commentController {
     const user = await this.db.getUserById(userId);
     if (!user) return res.status(404).send({ error: Errors.USER_NOT_FOUND });
 
-    await this.db.createComment({
+    const comment: Comment = {
       userId,
       content,
       blogId,
       id: crypto.randomUUID(),
       author: user.username,
-    });
+      timestamp: Date.now(),
+    };
 
-    return res.sendStatus(200);
+    await this.db.createComment(comment);
+
+    return res.status(200).send({ comment });
   };
 
   updateComment: Handler<UpdateCommentReq, UpdateCommentRes> = async (req, res) => {

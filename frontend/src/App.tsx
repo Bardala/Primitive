@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
+import { BlogDetails } from './pages/BlogDetails';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Space } from './pages/Space';
@@ -16,6 +17,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/space/:id" element={<Space />} />
+          <Route path="/b/:id" element={<BlogDetails />} />
         </Routes>
       </BrowserRouter>
     </div>

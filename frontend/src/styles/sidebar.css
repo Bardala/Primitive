@@ -8,7 +8,7 @@
   border: 8px;
   background: #fafafa;
   flex-wrap: nowrap;
-  width: auto;
+  /* max-width: fit-content; */
   height: auto;
 }
 
@@ -80,12 +80,3 @@ input {
   border-radius: 4px;
   box-sizing: border-box;
 }
-
-/* .side-bar form button {
-  background: var(--primary);
-  border: 0;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-}  */
