@@ -1,0 +1,37 @@
+.like-button {
+  content: "favorite"; 
+  font-family: Material Icons;
+  color: white; 
+  background-color: transparent; 
+  border: none;
+  
+  width: auto; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+   transition: transform 0.3s;  
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
+}
+
+.like-button:hover {
+ transform: scale(0.9);  
+}
+
+.remove-like-button {
+  content: "favorite"; 
+  font-family: Material Icons; 
+  color: white; 
+  background-color: #f44336; 
+  border: none;
+  width: auto; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  box-shadow: inset 0 4px 8px 0 rgba(0,0,0,0.2); 
+}
+
+.remove-like-button:hover {
+   transform: scale(0.9);  
+}

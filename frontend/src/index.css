@@ -32,3 +32,16 @@ input.error {
   gap: 100px;
 }
 
+.delete button {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px;
+}
+
+.delete button:hover {
+  color: var(--red);
+  box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
+  background: #e7195a;
+}
+
