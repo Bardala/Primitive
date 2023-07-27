@@ -4,7 +4,7 @@ import Markdown from 'markdown-to-jsx';
 import { Link } from 'react-router-dom';
 
 import '../styles/blogList.css';
-import LikeBlogButton from './LikeButton';
+import { LikeBlogButton } from './LikeBlogButton';
 
 export const BlogList: React.FC<{ blogs: Blog[] }> = ({ blogs }) => {
   return (
