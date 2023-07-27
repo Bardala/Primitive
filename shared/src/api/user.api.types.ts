@@ -1,4 +1,4 @@
-import { Blog, Space, User, UserCard } from '../types';
+import { Blog, Space, StatusMessage, User, UserCard } from '../types';
 
 export type SignUpReq = Pick<User, 'email' | 'password' | 'username'>;
 export interface SignUpRes {
@@ -27,14 +27,18 @@ export interface GetUsersListRes {
 }
 
 export interface FollowUserReq {}
-export interface FollowUserRes {}
+export interface FollowUserRes {
+  message: StatusMessage;
+}
 
 export interface UnFollowUserReq {}
-export interface UnFollowUserRes {}
+export interface UnFollowUserRes {
+  message: StatusMessage;
+}
 
 export interface GetFollowersReq {}
 export interface GetFollowersRes {
-  followersUsername: string[];
+  followers: Pick<User, 'id' | 'username'>[];
 }
 
 export interface UserBlogsReq {}

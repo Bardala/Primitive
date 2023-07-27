@@ -89,6 +89,8 @@ export class UserController implements userController {
     if (!req.params.id) {
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
     }
+    if (!(await this.db.getUserById(req.params.id)))
+      return res.status(HTTP.NOT_FOUND).send({ error: Errors.USER_NOT_FOUND });
 
     if (await this.db.isFollow(req.params.id, res.locals.userId)) {
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.ALREADY_FOLLOWER });
@@ -123,7 +125,10 @@ export class UserController implements userController {
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
     }
 
-    return res.status(200).send({ followersUsername: await this.db.getFollowers(req.params.id) });
+    if (!(await this.db.getUserById(req.params.id)))
+      return res.status(HTTP.NOT_FOUND).send({ error: Errors.USER_NOT_FOUND });
+
+    return res.status(200).send({ followers: await this.db.getFollowers(req.params.id) });
   };
 
   getUsersList: Handler<GetUsersListReq, GetUsersListRes> = async (_req, res) => {

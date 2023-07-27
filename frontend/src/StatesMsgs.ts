@@ -1,5 +1,5 @@
 export enum STATE {
-  ERROR = 'Something went wrong, please try again later',
+  ERROR = 'Something went wrong',
   LOADING = 'Loading...',
   SUCCESS = 'Success',
 }

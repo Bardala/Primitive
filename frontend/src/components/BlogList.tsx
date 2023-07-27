@@ -20,7 +20,9 @@ export const BlogList: React.FC<{ blogs: Blog[] }> = ({ blogs }) => {
 
             <div className="blog-meta">
               <p className="author">
-                <strong>{blog.author}</strong>
+                <Link to={`/u/${blog.userId}`} className="blog-link">
+                  <strong>{blog.author}</strong>
+                </Link>
               </p>
               {/* <p className="comments-count">{blog.comments.length} comments</p> */}
 

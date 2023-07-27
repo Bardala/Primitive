@@ -31,7 +31,6 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
       ),
     {
       enabled: !!currUser?.jwt && !!blog.id,
-      onSuccess: data => console.log('likes', data),
       onError: err => console.error('err', err),
     }
   );
@@ -68,7 +67,6 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
     e.preventDefault();
     setIsLiked(!isLiked);
     isLiked ? postLike.mutate() : deleteLike.mutate();
-    console.log('Like button clicked');
   };
 
   return (

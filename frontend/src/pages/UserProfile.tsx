@@ -11,11 +11,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
+import { UserInfoCard } from '../components/UserInfoCard';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch/auth';
 import '../styles/user-profile.css';
-
-// import { UserInfoCard } from '../components/UserInfoCard';
 
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
@@ -31,7 +30,7 @@ export const UserProfile = () => {
         currUser?.jwt
       ),
     enabled: !!currUser?.jwt && !!id,
-    onSuccess: data => console.log('userCard', data),
+    onError: err => console.error(err),
   });
   const userSpacesQuery = useQuery({
     queryKey: ['userSpaces', id],
@@ -43,7 +42,7 @@ export const UserProfile = () => {
         currUser?.jwt
       ),
     enabled: !!currUser?.jwt && !!id,
-    onSuccess: data => console.log('userSpaces', data),
+    onError: err => console.error(err),
   });
   const userBlogsQuery = useQuery({
     queryKey: ['userBlogs', id],
@@ -55,7 +54,7 @@ export const UserProfile = () => {
         currUser?.jwt
       ),
     enabled: !!currUser?.jwt && !!id,
-    onSuccess: data => console.log('userBlogs', data),
+    onError: err => console.error(err),
   });
 
   const blogs = userBlogsQuery.data?.blogs;
@@ -70,7 +69,7 @@ export const UserProfile = () => {
         <div className="user-profile">
           <h1>{userCard.username} Page</h1>
 
-          {/* <UserInfoCard userCard={userCard} blogsLength={blogs?.length} /> */}
+          <UserInfoCard userCard={userCard} blogsLength={blogs?.length || 0} />
 
           <div className="user-spaces">
             <h2>Spaces</h2>

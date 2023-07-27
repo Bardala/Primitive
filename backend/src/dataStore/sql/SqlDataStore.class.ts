@@ -152,9 +152,9 @@ export class SqlDataStore implements DataStoreDao {
     return rows as LikedUser[];
   }
 
-  async getFollowers(followingId: string): Promise<string[]> {
+  async getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]> {
     const query = `
-    SELECT users.username
+    SELECT users.username, users.id
     FROM users
     INNER JOIN follows ON users.id = follows.followerId
     WHERE follows.followingId = ?
@@ -162,7 +162,7 @@ export class SqlDataStore implements DataStoreDao {
 
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
 
-    return rows.map(obj => obj.username);
+    return rows as Pick<User, 'id' | 'username'>[];
   }
 
   async createUser(user: User): Promise<void> {

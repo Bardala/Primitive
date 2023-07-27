@@ -12,7 +12,7 @@ export interface UserDao {
   getUsersList(): Promise<string[]>;
   createFollow(followerId: string, followingId: string): Promise<void>;
   deleteFollow(followerId: string, followingId: string): Promise<void>;
-  getFollowers(followingId: string): Promise<string[]>;
+  getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;
   getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
   getUserBlogs(userId: string): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
