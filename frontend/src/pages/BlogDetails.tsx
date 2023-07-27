@@ -4,6 +4,7 @@ import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import Markdown from 'markdown-to-jsx';
 import { Link, useParams } from 'react-router-dom';
 
+import { STATE } from '../StatesMsgs';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { useAuthContext } from '../context/AuthContext';
@@ -37,7 +38,8 @@ export const BlogDetails = () => {
 
   return (
     <div className="blog-details">
-      {/* {error && <p className="error">{error}</p>} */}
+      {blogQuery.isError && <p className="error">{STATE.ERROR}</p>}
+      {blogQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
       {blog && (
         <div>
           <div className="blog-content">
@@ -45,7 +47,7 @@ export const BlogDetails = () => {
               <h2>{blog.title}</h2>
               <div className="author-name">
                 Written by{' '}
-                <Link to={`/users/${blog.author}`}>
+                <Link to={`/u/${blog.userId}`}>
                   <strong>{blog.author}</strong>
                 </Link>
               </div>
@@ -88,6 +90,8 @@ export const BlogDetails = () => {
             {currUser && <BlogDetailsAction blog={blog} owner={blog.userId} currUser={currUser} />}
           </div>
 
+          {commentsQuery.isError && <p className="error">{STATE.ERROR}</p>}
+          {commentsQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
           {currUser && id && <Comments blogId={id} currUser={currUser} comments={comments!} />}
         </div>
       )}

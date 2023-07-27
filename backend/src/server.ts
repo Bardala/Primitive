@@ -44,6 +44,8 @@ import { errorHandler } from './middleware/errorHandler';
   app.get('/api/v0/getFollowers/:id', asyncHandler(user.getFollowers));
   app.get('/api/v0/usersList', asyncHandler(user.getUsersList));
   app.get('/api/v0/getUserCard/:id', asyncHandler(user.getUserCard));
+  app.get('/api/v0/getUserBlogs/:id', asyncHandler(user.getUserBlogs));
+  app.get('/api/v0/getUserSpaces/:id', asyncHandler(user.getUserSpaces));
 
   // *Blog Routes
   app.post('/api/v0/blog', asyncHandler(blog.createBlog));

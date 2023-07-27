@@ -5,6 +5,7 @@ import { BlogDetails } from './pages/BlogDetails';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Space } from './pages/Space';
+import { UserProfile } from './pages/UserProfile';
 import { SignUp } from './pages/signup';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/space/:id" element={<Space />} />
           <Route path="/b/:id" element={<BlogDetails />} />
           <Route path="*" element={<h1>Not Found</h1>} />
+          <Route path="/u/:id" element={<UserProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

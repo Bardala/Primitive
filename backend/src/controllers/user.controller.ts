@@ -17,6 +17,8 @@ import {
   UnFollowUserRes,
   UserBlogsReq,
   UserBlogsRes,
+  UserSpacesReq,
+  UserSpacesRes,
 } from '../../../shared/src/api/user.api.types';
 import { Errors } from '../../../shared/src/errors';
 import { SqlDataStore } from '../dataStore/sql/SqlDataStore.class';
@@ -33,6 +35,7 @@ export interface userController {
   deleteFollow: HandlerWithParams<{ id: string }, UnFollowUserReq, UnFollowUserRes>;
   getFollowers: HandlerWithParams<{ id: string }, GetFollowersReq, GetFollowersRes>;
   getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
+  getUserSpaces: HandlerWithParams<{ id: string }, UserSpacesReq, UserSpacesRes>;
 }
 
 export class UserController implements userController {
@@ -41,7 +44,30 @@ export class UserController implements userController {
   constructor(db: SqlDataStore) {
     this.db = db;
   }
-  getUserBlogs!: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
+
+  getUserSpaces: HandlerWithParams<{ id: string }, UserSpacesReq, UserSpacesRes> = async (
+    req,
+    res
+  ) => {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+    }
+
+    return res.status(HTTP.OK).send({ spaces: await this.db.getUserSpaces(userId) });
+  };
+
+  getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes> = async (
+    req,
+    res
+  ) => {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+    }
+
+    return res.status(HTTP.OK).send({ blogs: await this.db.getUserBlogs(userId) });
+  };
 
   getUserCard: HandlerWithParams<{ id: string }, GetUserCardReq, GetUserCardRes> = async (
     req,
@@ -130,6 +156,7 @@ export class UserController implements userController {
     };
 
     await this.db.createUser(user);
+    await this.db.addMember(this.db.defaultSpcId, user.id);
 
     return res.send({ jwt: createToken(user.id), username: user.username, id: user.id });
   };

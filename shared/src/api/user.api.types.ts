@@ -1,4 +1,4 @@
-import { Blog, User, UserCard } from '../types';
+import { Blog, Space, User, UserCard } from '../types';
 
 export type SignUpReq = Pick<User, 'email' | 'password' | 'username'>;
 export interface SignUpRes {
@@ -40,4 +40,9 @@ export interface GetFollowersRes {
 export interface UserBlogsReq {}
 export interface UserBlogsRes {
   blogs: Blog[];
+}
+
+export interface UserSpacesReq {}
+export interface UserSpacesRes {
+  spaces: Space[];
 }

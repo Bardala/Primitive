@@ -15,6 +15,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { ApiError, fetchFn } from '../fetch/auth';
 
 export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
+  // todo: update like status
   const { blog } = props;
   const { currUser } = useAuthContext();
   const [isLiked, setIsLiked] = useState(false);
@@ -65,8 +66,8 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
 
   const handleLikeButton = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
-    isLiked ? postLike.mutate() : deleteLike.mutate();
     setIsLiked(!isLiked);
+    isLiked ? postLike.mutate() : deleteLike.mutate();
     console.log('Like button clicked');
   };
 

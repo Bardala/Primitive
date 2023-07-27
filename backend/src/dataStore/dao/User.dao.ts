@@ -1,4 +1,4 @@
-import { Blog, User, UserCard } from "../../../../shared/src/types";
+import { Blog, Space, User, UserCard } from '../../../../shared/src/types';
 
 export interface UserDao {
   createUser(user: User): Promise<void>;
@@ -13,9 +13,7 @@ export interface UserDao {
   createFollow(followerId: string, followingId: string): Promise<void>;
   deleteFollow(followerId: string, followingId: string): Promise<void>;
   getFollowers(followingId: string): Promise<string[]>;
-  getUserCard(
-    userId: string,
-    cardOwnerId: string,
-  ): Promise<UserCard | undefined>;
+  getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
   getUserBlogs(userId: string): Promise<Blog[]>;
+  getUserSpaces(userId: string): Promise<Space[]>;
 }

@@ -39,6 +39,6 @@ export const fetchFn = async <Req, Res>(
     if (!res.ok) throw new ApiError(res.status, data.error);
     return data;
   }
-
+  console.log(res);
   return res.text() as Res;
 };

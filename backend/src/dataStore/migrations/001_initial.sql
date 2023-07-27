@@ -1,6 +1,7 @@
 --init database
 CREATE DATABASE IF NOT EXISTS nest_system;
 
+-- todo: edit timestamp to be bigint
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(255) NOT NULL ,
     username VARCHAR(255) UNIQUE NOT NULL,
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE INDEX email_UNIQUE (email ASC) VISIBLE
 );
 
+-- todo: edit timestamp to be bigint
 CREATE TABLE IF NOT EXISTS spaces (
     id VARCHAR(255) NOT NULL ,
     name VARCHAR(255) NOT NULL,
@@ -30,12 +32,13 @@ CREATE TABLE IF NOT EXISTS blogs (
     userId VARCHAR(255) NOT NULL,
     spaceId VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
-    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    timestamp BIGINT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (spaceId) REFERENCES spaces(id)
 );
 
+-- todo: add likeCounts column to let user add more than one like to a blog
 CREATE TABLE IF NOT EXISTS likes (
     blogId VARCHAR(255) NOT NULL,
     userId VARCHAR(255) NOT NULL,

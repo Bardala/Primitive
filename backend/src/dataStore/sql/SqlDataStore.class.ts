@@ -15,6 +15,8 @@ import {
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
+  public defaultSpcId = '1';
+
   async runDB() {
     this.pool = mysql
       .createPool({
@@ -26,6 +28,17 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async getUserSpaces(userId: string): Promise<Space[]> {
+    const query = `
+      SELECT s.*
+      FROM spaces s
+      JOIN members m ON s.id = m.spaceId
+      JOIN users u ON m.memberId = u.id
+      WHERE u.id=?;
+      `;
+    return this.pool.query<RowDataPacket[]>(query, userId).then(([rows]) => rows as Space[]);
   }
 
   async deleteBlogLikes(blogId: string): Promise<void> {
@@ -271,7 +284,7 @@ export class SqlDataStore implements DataStoreDao {
     const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE userId = ?', [
       userId,
     ]);
-    return rows[0] as Blog[];
+    return rows as Blog[];
   }
   // duplicated
   // async getComments(blogId: string): Promise<Comment[]> {
@@ -324,7 +337,7 @@ export class SqlDataStore implements DataStoreDao {
       'SELECT * FROM spaces WHERE userId = ?',
       userId
     );
-    return rows[0] as Space[];
+    return rows as Space[];
   }
 
   async createLike(like: Like): Promise<void> {

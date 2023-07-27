@@ -32,7 +32,7 @@ export const NavBar = () => {
           <div className="title-wrapper">
             <h1>Nest</h1>
             {currUser && (
-              <Link to={`/users/${currUser.username}`} className="username">
+              <Link to={`/u/${currUser.id}`} className="username">
                 {currUser.username}
               </Link>
             )}
