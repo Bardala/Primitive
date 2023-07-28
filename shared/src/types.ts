@@ -28,7 +28,11 @@ export interface Space {
   timestamp?: string;
 }
 
-export type SpaceMember = Pick<User, 'id' | 'username'>;
+export interface SpaceMember {
+  memberId: string;
+  spaceId: string;
+  isAdmin: boolean;
+}
 
 export interface User {
   id: string;

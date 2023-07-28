@@ -92,12 +92,15 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
+    // SELECT users.username, users.id
+    // FROM members RIGHT JOIN users
+    // ON members.memberId = users.id
+    // WHERE spaceId=?
+    // ORDER BY users.username ASC
     const query = `
-    SELECT users.username, users.id
-    FROM members RIGHT JOIN users
-    ON members.memberId = users.id
+    SELECT members.memberId, members.spaceId, members.isAdmin
+    FROM members
     WHERE spaceId=?
-    ORDER BY users.username ASC
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
     return rows as SpaceMember[];

@@ -4,7 +4,7 @@ import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch/auth';
+import { ApiError, fetchFn } from '../fetch/auth';
 
 export const CreateBlogForm = () => {
   const [title, setTitle] = useState('');
@@ -14,7 +14,7 @@ export const CreateBlogForm = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const createBlogMutation = useMutation({
+  const createBlogMutation = useMutation<CreateBlogRes, ApiError>({
     mutationFn: () =>
       fetchFn<CreateBlogReq, CreateBlogRes>(
         `${HOST}/blog`,
@@ -29,7 +29,7 @@ export const CreateBlogForm = () => {
       setContent('');
     },
     onError: err => {
-      console.log('err', err);
+      console.error('err', err);
     },
   });
 
@@ -40,8 +40,8 @@ export const CreateBlogForm = () => {
 
   return (
     <>
+      {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
       <form className="create-blog-from" onSubmit={handleSubmit}>
-        {createBlogMutation.isError && <p>{JSON.stringify(createBlogMutation.error)}</p>}
         <label htmlFor="title">Title</label>
         <input
           type="text"

@@ -1,22 +1,22 @@
-import { Space, Blog, SpaceMember } from "../types";
+import { Blog, Space, SpaceMember, StatusMessage } from '../types';
 
-export type CreateSpaceReq = Pick<Space, "name" | "status" | "description">;
+export type CreateSpaceReq = Pick<Space, 'name' | 'status' | 'description'>;
 export interface CreateSpaceRes {
   // space: Space;
   // members: string;
   // blogs: Blog[];
 }
 
-export type UpdateSpaceReq = Pick<Space, "description" | "name" | "status">;
+export type UpdateSpaceReq = Pick<Space, 'description' | 'name' | 'status'>;
 export interface UpdateSpaceRes {
   space: Space;
 }
 
+// todo: let SpaceRes returns just space, and add a new api call for getting space blogs
 export interface SpaceReq {}
 export interface SpaceRes {
   space: Space;
-  admins: string;
-  members: string;
+  members: SpaceMember[];
   blogs: Blog[];
 }
 
@@ -30,7 +30,9 @@ export interface DefaultSpaceRes {
 }
 
 export interface JoinSpaceReq {} // locals.userId // params.spaceId
-export interface JoinSpaceRes {}
+export interface JoinSpaceRes {
+  message: StatusMessage;
+}
 
 export interface AddMemberReq {
   memberId: string;

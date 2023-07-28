@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS follows (
 CREATE TABLE IF NOT EXISTS members (
     memberId VARCHAR(255) NOT NULL,
     spaceId VARCHAR(255) NOT NULL,
+    isAdmin BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (userId, spaceId),
     FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (spaceId) REFERENCES spaces(id)

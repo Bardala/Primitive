@@ -45,3 +45,24 @@ input.error {
   background: #e7195a;
 }
 
+/* Not Found Page */
+.not-found {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.not-found h2 {
+  font-size: 20px;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.not-found p {
+  margin: 10px 0;
+}
+
+.not-found a {
+  text-decoration: none;
+  color: var(--primary);
+}

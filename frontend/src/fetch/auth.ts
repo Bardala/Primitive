@@ -1,4 +1,4 @@
-import { RestMethod, WithError } from '@nest/shared';
+import { RestMethod } from '@nest/shared';
 
 import { Locals } from '../localStorage';
 
@@ -19,26 +19,26 @@ export const logOut = async (): Promise<void> => {
   localStorage.removeItem(Locals.CurrUser);
 };
 
-export const fetchFn = async <Req, Res>(
+export const fetchFn = async <Request, Response>(
   url: string,
   method: RestMethod,
-  body?: Req,
+  req?: Request,
   token?: string
-): Promise<Res> => {
-  const res = await window.fetch(url, {
-    method,
+): Promise<Response> => {
+  const res = await fetch(url, {
+    method: method,
     headers: {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     },
-    ...(body && { body: JSON.stringify(body) }),
+    ...(req && { body: JSON.stringify(req) }),
   });
 
   if (res.headers.get('Content-Type')?.includes('application/json')) {
-    const data: WithError<Res> = await res.json();
+    const data = await res.json();
     if (!res.ok) throw new ApiError(res.status, data.error);
     return data;
   }
   console.log(res);
-  return res.text() as Res;
+  return res.text() as Response;
 };

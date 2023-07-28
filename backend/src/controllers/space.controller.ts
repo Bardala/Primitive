@@ -98,7 +98,11 @@ export class SpaceController implements spaceController {
       return res.sendStatus(HTTP.FORBIDDEN);
     }
 
-    return res.status(200).send({ space, blogs: await this.db.getBlogs(spaceId) });
+    return res.status(200).send({
+      space,
+      blogs: await this.db.getBlogs(spaceId),
+      members: await this.db.spaceMembers(spaceId),
+    });
   };
 
   deleteSpace: HandlerWithParams<{ spaceId: string }, DeleteSpaceReq, DeleteSpaceRes> = async (
