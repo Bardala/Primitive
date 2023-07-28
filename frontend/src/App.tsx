@@ -6,6 +6,7 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Space } from './pages/Space';
 import { UserProfile } from './pages/UserProfile';
+import { UsersList } from './pages/UsersList';
 import { SignUp } from './pages/signup';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/b/:id" element={<BlogDetails />} />
           <Route path="*" element={<h1>Not Found</h1>} />
           <Route path="/u/:id" element={<UserProfile />} />
+          <Route path="/u" element={<UsersList />} />
         </Routes>
       </BrowserRouter>
     </div>

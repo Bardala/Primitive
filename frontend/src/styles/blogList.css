@@ -22,6 +22,12 @@
     transition: all 0.3s ease-in-out;
 }
 
+.blog-header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .blog-link {
     text-decoration: none;
     color: var(--primary);
@@ -34,10 +40,10 @@
     flex-direction: column;
 }
 
-.blog-header h2 {
+/* .blog-header h2 {
     font-size: 20px;
     margin-bottom: 10px;
-}
+} */
 
 .blog-meta {
     display: flex;
@@ -96,6 +102,9 @@
     text-align: right;
 }
 
+.author {
+  font-family: 'Roboto', sans-serif;
+}
 
 .author::before {
     background-image:

@@ -132,7 +132,16 @@ export class UserController implements userController {
   };
 
   getUsersList: Handler<GetUsersListReq, GetUsersListRes> = async (_req, res) => {
-    return res.status(HTTP.OK).send({ usernames: await this.db.getUsersList() });
+    return res.status(HTTP.OK).send({ usersList: await this.db.getUsersList() });
+  };
+
+  private isVALID_USERNAME = (username: string) => {
+    return (
+      validator.isAlphanumeric(username) &&
+      username.length >= 3 &&
+      username.length <= 20 &&
+      validator.isAlpha(username[0])
+    );
   };
 
   signup: Handler<SignUpReq, LoginRes> = async (req, res) => {
@@ -146,7 +155,7 @@ export class UserController implements userController {
     if (await this.db.getUserByUsername(username))
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.DUPLICATE_USERNAME });
 
-    if (!validator.isAlphanumeric(username))
+    if (!this.isVALID_USERNAME(username))
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_USERNAME });
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_EMAIL });

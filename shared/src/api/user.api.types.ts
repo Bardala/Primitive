@@ -21,9 +21,11 @@ export interface GetUserCardRes {
   userCard: UserCard;
 }
 
+export type UsersList = Pick<User, 'id' | 'username'>;
+
 export interface GetUsersListReq {}
 export interface GetUsersListRes {
-  usernames: string[];
+  usersList: UsersList[];
 }
 
 export interface FollowUserReq {}

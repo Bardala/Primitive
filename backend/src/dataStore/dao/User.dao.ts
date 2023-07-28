@@ -1,3 +1,4 @@
+import { UsersList } from '../../../../shared/src/api/user.api.types';
 import { Blog, Space, User, UserCard } from '../../../../shared/src/types';
 
 export interface UserDao {
@@ -9,7 +10,7 @@ export interface UserDao {
   getUserByEmail(email: string): Promise<User | undefined>;
 
   getUsers(): Promise<User[]>;
-  getUsersList(): Promise<string[]>;
+  getUsersList(): Promise<UsersList[]>;
   createFollow(followerId: string, followingId: string): Promise<void>;
   deleteFollow(followerId: string, followingId: string): Promise<void>;
   getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;

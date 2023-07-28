@@ -39,7 +39,7 @@ export const NavBar = () => {
           </div>
 
           <nav className="links">
-            <Link to="/users">users</Link>
+            <Link to="/u">users</Link>
             <Link to="/">Home</Link>
             <button onClick={handleClick}>logout</button>
           </nav>

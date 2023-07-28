@@ -2,6 +2,7 @@ import mysql, { RowDataPacket } from 'mysql2';
 import { Pool } from 'mysql2/promise';
 
 import { DataStoreDao } from '..';
+import { UsersList } from '../../../../shared/src/api/user.api.types';
 import {
   Blog,
   Comment,
@@ -216,15 +217,9 @@ export class SqlDataStore implements DataStoreDao {
     return rows as User[];
   }
 
-  async getUsersList(): Promise<string[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT username FRoM users');
-
-    // rows = [
-    //   {username: 'islam'},
-    //   {username: 'ali'},
-    // ]
-
-    return rows.map(obj => obj.username);
+  async getUsersList(): Promise<UsersList[]> {
+    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT username, id FRoM users');
+    return rows as UsersList[];
   }
 
   async isFollow(followingId: string, userId: string): Promise<boolean> {
