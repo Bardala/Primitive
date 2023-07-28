@@ -30,7 +30,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
     { enabled: !!currUser?.jwt && !!blog.id, onError: err => console.log(err) }
   );
 
-  const postLikeMutate = useMutation<CreateLikeReq, ApiError>(
+  const postLikeMutate = useMutation<CreateLikeRes, ApiError>(
     () =>
       fetchFn<CreateLikeReq, CreateLikeRes>(
         `${HOST}/likeBlog/${blog.id}`,
@@ -44,7 +44,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
     }
   );
 
-  const deleteLikeMutate = useMutation<RemoveLikeReq, ApiError>(
+  const deleteLikeMutate = useMutation<RemoveLikeRes, ApiError>(
     () =>
       fetchFn<RemoveLikeReq, RemoveLikeRes>(
         `${HOST}/unLikeBlog/${blog.id}`,

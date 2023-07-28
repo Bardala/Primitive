@@ -58,7 +58,7 @@ export class SpaceController implements spaceController {
 
     await this.db.createSpace(space);
     await this.db.addMember(space.id, ownerId);
-    return res.sendStatus(200);
+    return res.send({ space });
   };
 
   updateSpace: HandlerWithParams<{ spaceId: string }, UpdateSpaceReq, UpdateSpaceRes> = async (

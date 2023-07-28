@@ -2,7 +2,7 @@ import { Blog, Space, SpaceMember, StatusMessage } from '../types';
 
 export type CreateSpaceReq = Pick<Space, 'name' | 'status' | 'description'>;
 export interface CreateSpaceRes {
-  // space: Space;
+  space: Space;
   // members: string;
   // blogs: Blog[];
 }
