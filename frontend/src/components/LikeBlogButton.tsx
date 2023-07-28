@@ -60,7 +60,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
 
   const isLiked = () => {
     if (!currUser) return false;
-    return blogLikesQuery.data?.users.some(user => user.id === currUser?.id);
+    return blogLikesQuery.data?.users?.some(user => user.id === currUser?.id);
   };
 
   return (
@@ -73,7 +73,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => deleteLikeMutate.mutate()}
             disabled={deleteLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users.length} </span>{' '}
+            <span>{blogLikesQuery.data?.users?.length} </span>{' '}
             <i className="material-icons">favorite</i>
           </button>
         ) : (
@@ -82,7 +82,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => postLikeMutate.mutate()}
             disabled={postLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users.length} </span>{' '}
+            <span>{blogLikesQuery.data?.users?.length} </span>{' '}
             <i className="material-icons">favorite</i>
           </button>
         )}

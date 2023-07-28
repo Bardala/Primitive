@@ -1,8 +1,8 @@
 import { Blog } from '@nest/shared';
 import { formatDistanceToNow } from 'date-fns';
-import Markdown from 'markdown-to-jsx';
 import { Link } from 'react-router-dom';
 
+import { isArabic } from '../assists';
 import { LikeBlogButton } from './LikeBlogButton';
 
 export const BlogIcon: React.FC<{ blog: Blog }> = ({ blog }) => {
@@ -27,9 +27,11 @@ export const BlogIcon: React.FC<{ blog: Blog }> = ({ blog }) => {
         </div>
 
         <div className="blog-excerpt">
-          <Markdown>
-            {blog.content.length > 100 ? blog.content.slice(0, 100) + '...' : blog.content}
-          </Markdown>
+          {/* <Markdown> */}
+          <p className={isArabic(blog.content) ? 'arabic' : ''}>
+            {blog.content.length > 5000 ? blog.content.slice(0, 5000) + '...' : blog.content}
+          </p>
+          {/* </Markdown> */}
         </div>
       </div>
     </div>
