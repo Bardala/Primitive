@@ -1,28 +1,41 @@
 import { CreateSpaceReq, CreateSpaceRes, HOST, SpaceStatus } from '@nest/shared';
-import { FormEvent, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import { fetchFn } from '../fetch/auth';
+import { useAuthContext } from '../context/AuthContext';
+import { ApiError, fetchFn } from '../fetch/auth';
 
 export const CreateSpaceForm = () => {
+  const { currUser } = useAuthContext();
   const [name, setName] = useState('');
   const [status, setStatus] = useState<SpaceStatus>('public');
   const [description, setDescription] = useState('');
+  // const nav = useNavigate();
 
-  const handleSubmit = async (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    await fetchFn<CreateSpaceReq, CreateSpaceRes>(`${HOST}/space`, 'POST', {
-      name,
-      status,
-      description,
-    });
-  };
+  const createSpaceMutate = useMutation<CreateSpaceRes, ApiError>(
+    () =>
+      fetchFn<CreateSpaceReq, CreateSpaceRes>(
+        `${HOST}/space`,
+        'POST',
+        {
+          name,
+          status,
+          description,
+        },
+        currUser?.jwt
+      ),
+    {
+      onError: () => console.error('error'),
+      // onSuccess: () => nav('/u/currUser?.id'),
+    }
+  );
 
   return (
     <>
-      <form className="create-space-from">
-        <label htmlFor="name" onSubmit={e => handleSubmit(e)}>
-          Name
-        </label>
+      {createSpaceMutate.isSuccess && <p>Space created successfully</p>}
+      {createSpaceMutate.isError && <p>{createSpaceMutate.error.message}</p>}
+      <form className="create-space-from" onSubmit={() => createSpaceMutate.mutate()}>
+        <label htmlFor="name">Name</label>
         <input
           type="text"
           id="name"
@@ -47,7 +60,9 @@ export const CreateSpaceForm = () => {
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
-        <button type="submit">Create</button>
+        <button type="submit" disabled={createSpaceMutate.isLoading}>
+          Create
+        </button>
       </form>
     </>
   );
