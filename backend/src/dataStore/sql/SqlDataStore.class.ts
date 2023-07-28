@@ -97,6 +97,7 @@ export class SqlDataStore implements DataStoreDao {
     FROM members RIGHT JOIN users
     ON members.memberId = users.id
     WHERE spaceId=?
+    ORDER BY users.username ASC
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
     return rows as SpaceMember[];
@@ -128,6 +129,7 @@ export class SqlDataStore implements DataStoreDao {
   async getComments(blogId: string): Promise<Comment[]> {
     const query = `
     SELECT * FROM comments WHERE blogId=?
+    ORDER BY timestamp DESC
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
@@ -159,6 +161,7 @@ export class SqlDataStore implements DataStoreDao {
     FROM users
     INNER JOIN follows ON users.id = follows.followerId
     WHERE follows.followingId = ?
+    ORDER BY users.username ASC
     `;
 
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
@@ -256,9 +259,12 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async getBlogs(spaceId: string): Promise<Blog[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE spaceId = ?', [
-      spaceId,
-    ]);
+    const query = `
+    SELECT blogs.* FROM blogs
+    WHERE blogs.spaceId = ?
+    ORDER BY blogs.timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId]);
     return rows as Blog[];
   }
 
@@ -276,19 +282,14 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async getUserBlogs(userId: string): Promise<Blog[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>('SELECT * FROM blogs WHERE userId = ?', [
-      userId,
-    ]);
+    const query = `
+    SELECT blogs.* FROM blogs
+    WHERE blogs.userId = ?
+    ORDER BY blogs.timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
     return rows as Blog[];
   }
-  // duplicated
-  // async getComments(blogId: string): Promise<Comment[]> {
-  //   const [rows] = await this.pool.query<RowDataPacket[]>(
-  //     "SELECT * FROM comments WHERE blogId = ?",
-  //     [blogId],
-  //   );
-  //   return rows[0] as Comment[];
-  // }
 
   async createSpace(space: Space): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
@@ -328,10 +329,12 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async getSpaces(userId: string): Promise<Space[]> {
-    const [rows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT * FROM spaces WHERE userId = ?',
-      userId
-    );
+    const query = `
+    SELECT spaces.* FROM spaces
+    WHERE spaces.ownerId = ?
+    ORDER BY spaces.timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, userId);
     return rows as Space[];
   }
 
