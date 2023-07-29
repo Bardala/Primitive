@@ -1,9 +1,10 @@
-import { HOST, LoginReq, LoginRes } from '@nest/shared';
+import { ENDPOINT, LoginReq, LoginRes } from '@nest/shared';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { ApiError, fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 import { Locals } from '../localStorage';
 import '../styles/login.css';
 
@@ -18,10 +19,13 @@ export const Login = () => {
     async (e: React.FormEvent | React.MouseEvent) => {
       e.preventDefault();
       try {
-        const currUser = await fetchFn<LoginReq, LoginRes>(`${HOST}/login`, 'POST', {
-          login,
-          password,
-        });
+        const currUser = await fetchFn<LoginReq, LoginRes>(
+          ENDPOINT.LOGIN,
+          'POST',
+          { login, password },
+          undefined,
+          undefined
+        );
         localStorage.setItem(Locals.CurrUser, JSON.stringify(currUser));
         refetchCurrUser();
         nav('/');

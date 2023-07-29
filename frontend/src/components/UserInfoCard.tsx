@@ -1,9 +1,9 @@
 import {
+  ENDPOINT,
   FollowUserReq,
   FollowUserRes,
   GetFollowersReq,
   GetFollowersRes,
-  HOST,
   UnFollowUserReq,
   UnFollowUserRes,
   UserCard,
@@ -12,7 +12,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 
 export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }> = props => {
   const { userCard, blogsLength } = props;
@@ -22,10 +22,11 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
     ['followers', userCard.id],
     () =>
       fetchFn<GetFollowersReq, GetFollowersRes>(
-        `${HOST}/getFollowers/${userCard.id}`,
+        ENDPOINT.GET_FOLLOWERS,
         'GET',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [userCard.id]
       ),
     {
       enabled: !!currUser?.jwt && !!userCard.id,
@@ -36,10 +37,11 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
   const followMutation = useMutation(
     () =>
       fetchFn<FollowUserReq, FollowUserRes>(
-        `${HOST}/followUser/${userCard.id}`,
+        ENDPOINT.FOLLOW_USER,
         'POST',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [userCard.id]
       ),
     {
       onSuccess: () => followersQuery.refetch(),
@@ -49,10 +51,11 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
   const unfollowMutation = useMutation(
     () =>
       fetchFn<UnFollowUserReq, UnFollowUserRes>(
-        `${HOST}/unfollowUser/${userCard.id}`,
+        ENDPOINT.UNFOLLOW_USER,
         'DELETE',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [userCard.id]
       ),
     {
       onSuccess: () => followersQuery.refetch(),

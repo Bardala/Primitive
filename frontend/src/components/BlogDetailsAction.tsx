@@ -1,8 +1,8 @@
-import { Blog, DeleteBlogReq, DeleteBlogRes, HOST, LoginRes } from '@nest/shared';
+import { Blog, DeleteBlogReq, DeleteBlogRes, ENDPOINT, LoginRes } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 import { LikeBlogButton } from './LikeBlogButton';
 
 export const BlogDetailsAction: React.FC<{
@@ -18,10 +18,11 @@ export const BlogDetailsAction: React.FC<{
   const deleteMutate = useMutation(
     () =>
       fetchFn<DeleteBlogReq, DeleteBlogRes>(
-        `${HOST}/blog/${id}`,
+        ENDPOINT.DELETE_BLOG,
         'DELETE',
         undefined,
-        currUser?.jwt
+        currUser.jwt,
+        [id!]
       ),
     {
       onSuccess: () => {

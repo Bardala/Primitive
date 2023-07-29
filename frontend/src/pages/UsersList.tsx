@@ -1,9 +1,9 @@
-import { GetUsersListReq, GetUsersListRes, HOST } from '@nest/shared';
+import { ENDPOINT, GetUsersListReq, GetUsersListRes } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 import '../styles/users-list.css';
 
 export const UsersList = () => {
@@ -13,7 +13,7 @@ export const UsersList = () => {
     ['usersList'],
     () =>
       fetchFn<GetUsersListReq, GetUsersListRes>(
-        `${HOST}/usersList`,
+        ENDPOINT.GET_USERS_LIST,
         'GET',
         undefined,
         currUser?.jwt

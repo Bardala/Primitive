@@ -2,7 +2,7 @@
 import { Comment } from '../types';
 
 // createComment
-export type CreateCommentReq = Pick<Comment, 'blogId' | 'content'>;
+export type CreateCommentReq = Pick<Comment, 'content'>;
 export interface CreateCommentRes {
   comment: Comment;
 }

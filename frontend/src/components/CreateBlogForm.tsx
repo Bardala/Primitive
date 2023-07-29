@@ -1,10 +1,11 @@
-import { CreateBlogReq, CreateBlogRes, HOST } from '@nest/shared';
+import { CreateBlogReq, CreateBlogRes, ENDPOINT } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { ApiError, fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 
 export const CreateBlogForm = () => {
   const [title, setTitle] = useState('');
@@ -17,13 +18,13 @@ export const CreateBlogForm = () => {
   const createBlogMutation = useMutation<CreateBlogRes, ApiError>({
     mutationFn: () =>
       fetchFn<CreateBlogReq, CreateBlogRes>(
-        `${HOST}/blog`,
+        ENDPOINT.CREATE_BLOG,
         'POST',
-        { title, content, spaceId: id || '1' },
+        { title, content, spaceId: id! || '1' },
         currUser?.jwt
       ),
     onSuccess: data => {
-      queryClient.invalidateQueries(['space', id || '1']);
+      queryClient.invalidateQueries(['space', id || 'home']);
       console.log('data', data);
       setTitle('');
       setContent('');

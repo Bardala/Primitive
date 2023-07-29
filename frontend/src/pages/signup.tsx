@@ -1,9 +1,10 @@
-import { HOST, LoginRes, SignUpReq } from '@nest/shared';
+import { ENDPOINT, LoginRes, SignUpReq } from '@nest/shared';
 import { FormEvent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { ApiError, fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 import { Locals } from '../localStorage';
 import '../styles/login.css';
 
@@ -22,11 +23,13 @@ export const SignUp = () => {
       e.preventDefault();
 
       try {
-        const currUser = await fetchFn<SignUpReq, LoginRes>(`${HOST}/signup`, 'POST', {
-          email,
-          password,
-          username,
-        });
+        const currUser = await fetchFn<SignUpReq, LoginRes>(
+          ENDPOINT.SIGNUP,
+          'POST',
+          { email, password, username },
+          undefined,
+          undefined
+        );
         localStorage.setItem(Locals.CurrUser, JSON.stringify(currUser));
         refetchCurrUser();
         nav('/');

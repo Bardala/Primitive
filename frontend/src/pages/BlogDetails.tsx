@@ -1,4 +1,4 @@
-import { BlogCommentsReq, BlogCommentsRes, BlogReq, BlogRes, HOST } from '@nest/shared';
+import { BlogCommentsReq, BlogCommentsRes, BlogReq, BlogRes, ENDPOINT } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import Markdown from 'markdown-to-jsx';
@@ -8,7 +8,7 @@ import { STATE } from '../StatesMsgs';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 import '../styles/blogDetails.css';
 
 export const BlogDetails = () => {
@@ -17,7 +17,7 @@ export const BlogDetails = () => {
 
   const blogQuery = useQuery(
     ['blog', id],
-    () => fetchFn<BlogReq, BlogRes>(`${HOST}/blog/${id}`, 'GET', undefined, currUser?.jwt),
+    () => fetchFn<BlogReq, BlogRes>(ENDPOINT.GET_BLOG, 'GET', undefined, currUser?.jwt, [id!]),
     { enabled: !!currUser?.jwt && !!id }
   );
 
@@ -25,10 +25,11 @@ export const BlogDetails = () => {
     ['comments', id],
     () =>
       fetchFn<BlogCommentsReq, BlogCommentsRes>(
-        `${HOST}/blogComments/${id}`,
+        ENDPOINT.GET_BLOG_COMMENTS,
         'GET',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [id!]
       ),
     { enabled: !!currUser?.jwt && !!id }
   );

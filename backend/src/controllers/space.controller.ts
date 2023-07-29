@@ -123,6 +123,7 @@ export class SpaceController implements spaceController {
   };
 
   getDefaultSpace: Handler<DefaultSpaceReq, DefaultSpaceRes> = async (_, res) => {
+    console.log('default space');
     const defaultSpace = await this.db.getSpace('1');
     if (!defaultSpace) return res.sendStatus(404);
 

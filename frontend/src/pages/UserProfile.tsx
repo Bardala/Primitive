@@ -1,7 +1,7 @@
 import {
+  ENDPOINT,
   GetUserCardReq,
   GetUserCardRes,
-  HOST,
   UserBlogsReq,
   UserBlogsRes,
   UserSpacesReq,
@@ -13,7 +13,7 @@ import { Link, useParams } from 'react-router-dom';
 import { BlogList } from '../components/BlogList';
 import { UserInfoCard } from '../components/UserInfoCard';
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 import '../styles/user-profile.css';
 
 export const UserProfile = () => {
@@ -24,10 +24,11 @@ export const UserProfile = () => {
     queryKey: ['userCard', id],
     queryFn: () =>
       fetchFn<GetUserCardReq, GetUserCardRes>(
-        `${HOST}/getUserCard/${id}`,
+        ENDPOINT.GET_USER_CARD,
         'GET',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [id!]
       ),
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),
@@ -36,10 +37,11 @@ export const UserProfile = () => {
     queryKey: ['userSpaces', id],
     queryFn: () =>
       fetchFn<UserSpacesReq, UserSpacesRes>(
-        `${HOST}/getUserSpaces/${id}`,
+        ENDPOINT.GET_USER_SPACES,
         'GET',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [id!]
       ),
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),
@@ -48,10 +50,11 @@ export const UserProfile = () => {
     queryKey: ['userBlogs', id],
     queryFn: () =>
       fetchFn<UserBlogsReq, UserBlogsRes>(
-        `${HOST}/getUserBlogs/${id}`,
+        ENDPOINT.GET_USER_BLOGS,
         'GET',
         undefined,
-        currUser?.jwt
+        currUser?.jwt,
+        [id!]
       ),
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),

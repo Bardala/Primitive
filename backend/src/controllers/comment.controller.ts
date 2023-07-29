@@ -13,7 +13,7 @@ import { Handler, HandlerWithParams } from '../types';
 
 // * Controller Interface
 export interface commentController {
-  createComment: Handler<CreateCommentReq, CreateCommentRes>;
+  createComment: HandlerWithParams<{ blogId: string }, CreateCommentReq, CreateCommentRes>;
   updateComment: Handler<UpdateCommentReq, UpdateCommentRes>;
   deleteComment: HandlerWithParams<{ commentId: string }, DeleteCommentReq, DeleteCommentRes>;
 }
@@ -24,8 +24,11 @@ export class CommentController implements commentController {
     this.db = db;
   }
 
-  createComment: Handler<CreateCommentReq, CreateCommentRes> = async (req, res) => {
-    const [userId, { content, blogId }] = [res.locals.userId, req.body];
+  createComment: HandlerWithParams<{ blogId: string }, CreateCommentReq, CreateCommentRes> = async (
+    req,
+    res
+  ) => {
+    const [userId, { content }, { blogId }] = [res.locals.userId, req.body, req.params];
 
     if (!content || !blogId) return res.status(404).send({ error: Errors.ALL_FIELDS_REQUIRED });
     if (!(await this.db.getBlog(blogId)))

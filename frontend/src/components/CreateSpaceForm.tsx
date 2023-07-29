@@ -1,10 +1,11 @@
-import { CreateSpaceReq, CreateSpaceRes, HOST, SpaceStatus } from '@nest/shared';
+import { CreateSpaceReq, CreateSpaceRes, ENDPOINT, SpaceStatus } from '@nest/shared';
 import { useMutation } from '@tanstack/react-query';
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { ApiError, fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 
 export const CreateSpaceForm = () => {
   const { currUser } = useAuthContext();
@@ -16,13 +17,9 @@ export const CreateSpaceForm = () => {
   const createSpaceMutate = useMutation<CreateSpaceRes, ApiError>(
     () =>
       fetchFn<CreateSpaceReq, CreateSpaceRes>(
-        `${HOST}/space`,
+        ENDPOINT.CREATE_SPACE,
         'POST',
-        {
-          name,
-          status,
-          description,
-        },
+        { name, status, description },
         currUser?.jwt
       ),
     {

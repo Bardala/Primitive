@@ -1,11 +1,11 @@
-import { Comment, CreateCommentReq, CreateCommentRes, HOST, LoginRes } from '@nest/shared';
+import { Comment, CreateCommentReq, CreateCommentRes, ENDPOINT, LoginRes } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import Markdown from 'markdown-to-jsx';
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { fetchFn } from '../fetch/auth';
+import { fetchFn } from '../fetch';
 
 export const Comments: React.FC<{ blogId: string; currUser: LoginRes; comments: Comment[] }> = ({
   blogId,
@@ -20,10 +20,11 @@ export const Comments: React.FC<{ blogId: string; currUser: LoginRes; comments: 
   const createCommMutation = useMutation({
     mutationFn: () =>
       fetchFn<CreateCommentReq, CreateCommentRes>(
-        `${HOST}/comment`,
+        ENDPOINT.CREATE_COMMENT,
         'POST',
-        { content: commContent, blogId: id! },
-        currUser?.jwt
+        { content: commContent },
+        currUser.jwt,
+        [id!]
       ),
     onSuccess: data => {
       queryClient.invalidateQueries(['comments', blogId]);

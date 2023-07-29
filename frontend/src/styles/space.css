@@ -1,0 +1,45 @@
+/* .space-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+} */
+
+.space-page h1 {
+  font-family: Arial, sans-serif;
+  font-size: 36px;
+  color: #333333;
+}
+
+.space-page nav {
+  margin-top: 10px;
+}
+
+.space-page .join-button {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: white;
+  background-color: #0078d4;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.space-page button:hover {
+  background-color: #005a9e;
+}
+
+.space-page .space-description {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: #333333;
+  margin-top: 20px;
+}
+
+.space-page .not-found {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: #333333;
+}
