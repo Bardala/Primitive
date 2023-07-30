@@ -37,22 +37,22 @@ import { errorHandler } from './middleware/errorHandler';
   app.post(ENDPOINT.LOGIN, asyncHandler(user.login));
 
   // *User
-  app.get(ENDPOINT.GET_USER_CARD, asyncHandler(user.getUserCard));
+  app.get(ENDPOINT.GET_USER_CARD, requireAuth, asyncHandler(user.getUserCard));
   app.post(ENDPOINT.FOLLOW_USER, requireAuth, asyncHandler(user.createFollow));
   app.delete(ENDPOINT.UNFOLLOW_USER, requireAuth, asyncHandler(user.deleteFollow));
-  app.get(ENDPOINT.GET_FOLLOWERS, asyncHandler(user.getFollowers));
-  app.get(ENDPOINT.GET_USERS_LIST, asyncHandler(user.getUsersList));
-  app.get(ENDPOINT.GET_USER_BLOGS, asyncHandler(user.getUserBlogs));
-  app.get(ENDPOINT.GET_USER_SPACES, asyncHandler(user.getUserSpaces));
+  app.get(ENDPOINT.GET_FOLLOWERS, requireAuth, asyncHandler(user.getFollowers));
+  app.get(ENDPOINT.GET_USERS_LIST, requireAuth, asyncHandler(user.getUsersList));
+  app.get(ENDPOINT.GET_USER_BLOGS, requireAuth, asyncHandler(user.getUserBlogs));
+  app.get(ENDPOINT.GET_USER_SPACES, requireAuth, asyncHandler(user.getUserSpaces));
 
   // *Blog
   app.post(ENDPOINT.CREATE_BLOG, requireAuth, asyncHandler(blog.createBlog));
   app.put(ENDPOINT.UPDATE_BLOG, requireAuth, asyncHandler(blog.updateBlog));
-  app.get(ENDPOINT.GET_BLOG, asyncHandler(blog.getBlog));
+  app.get(ENDPOINT.GET_BLOG, requireAuth, asyncHandler(blog.getBlog));
   app.delete(ENDPOINT.DELETE_BLOG, requireAuth, asyncHandler(blog.deleteBlog));
-  app.get(ENDPOINT.GET_BLOG_COMMENTS, asyncHandler(blog.getBlogComments));
-  app.get(ENDPOINT.GET_BLOG_LIKES, asyncHandler(blog.getBlogLikes));
-  app.get(ENDPOINT.GET_BLOG_LIKES_LIST, asyncHandler(blog.getBlogLikesList));
+  app.get(ENDPOINT.GET_BLOG_COMMENTS, requireAuth, asyncHandler(blog.getBlogComments));
+  app.get(ENDPOINT.GET_BLOG_LIKES, requireAuth, asyncHandler(blog.getBlogLikes));
+  app.get(ENDPOINT.GET_BLOG_LIKES_LIST, requireAuth, asyncHandler(blog.getBlogLikesList));
   app.post(ENDPOINT.LIKE_BLOG, requireAuth, asyncHandler(blog.likeBlog));
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
 
@@ -64,13 +64,13 @@ import { errorHandler } from './middleware/errorHandler';
   // *Space
   app.post(ENDPOINT.CREATE_SPACE, requireAuth, asyncHandler(space.createSpace));
   app.put(ENDPOINT.UPDATE_SPACE, requireAuth, asyncHandler(space.updateSpace));
-  app.get(ENDPOINT.GET_SPACE, asyncHandler(space.getSpace));
+  app.get(ENDPOINT.GET_SPACE, requireAuth, asyncHandler(space.getSpace));
   app.delete(ENDPOINT.DELETE_SPACE, requireAuth, asyncHandler(space.deleteSpace));
 
-  app.get(ENDPOINT.GET_DEFAULT_SPACE, asyncHandler(space.getDefaultSpace));
+  app.get(ENDPOINT.GET_DEFAULT_SPACE, requireAuth, asyncHandler(space.getDefaultSpace));
   app.post(ENDPOINT.JOIN_SPACE, requireAuth, asyncHandler(space.joinSpace));
   app.post(ENDPOINT.ADD_MEMBER, requireAuth, asyncHandler(space.addMember));
-  app.get(ENDPOINT.GET_SPACE_MEMBERS, asyncHandler(space.getSpaceMembers));
+  app.get(ENDPOINT.GET_SPACE_MEMBERS, requireAuth, asyncHandler(space.getSpaceMembers));
 
   app.use(errorHandler);
   app.listen(port, () => {

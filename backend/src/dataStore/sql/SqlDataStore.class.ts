@@ -92,11 +92,6 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
-    // SELECT users.username, users.id
-    // FROM members RIGHT JOIN users
-    // ON members.memberId = users.id
-    // WHERE spaceId=?
-    // ORDER BY users.username ASC
     const query = `
     SELECT members.memberId, members.spaceId, members.isAdmin
     FROM members
@@ -108,12 +103,11 @@ export class SqlDataStore implements DataStoreDao {
 
   async isMember(spaceId: string, memberId: string): Promise<boolean> {
     const query = `
-    SELECT COUNT(*) AS res FROM members 
+    SELECT memberId FROM members 
     WHERE spaceId=? AND memberId=?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
-    const result = rows[0]['res'] as number;
-    return result !== 1 ? false : true;
+    return !!rows[0];
   }
 
   async updateBlog(blog: Blog): Promise<void> {

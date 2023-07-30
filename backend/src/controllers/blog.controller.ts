@@ -51,8 +51,10 @@ export class BlogController implements blogController {
     const userId = res.locals.userId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!(await this.db.getBlog(blogId)))
-      return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    const blog = await this.db.getBlog(blogId);
+    if (!blog) return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    if (!(await this.db.isMember(blog.spaceId, userId)))
+      return res.status(403).send({ error: Errors.PRIVATE_BLOG });
 
     const like: Like = { blogId, userId };
     if (await this.db.isLiked(like)) return res.sendStatus(409);
@@ -60,6 +62,7 @@ export class BlogController implements blogController {
     await this.db.createLike(like);
     return res.sendStatus(200);
   };
+
   unLikeBlog: HandlerWithParams<{ blogId: string }, RemoveLikeReq, RemoveLikeRes> = async (
     req,
     res
@@ -68,8 +71,9 @@ export class BlogController implements blogController {
     const userId = res.locals.userId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!(await this.db.getBlog(blogId)))
-      return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    const blog = await this.db.getBlog(blogId);
+    if (!blog) return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    if (!(await this.db.isMember(blog.spaceId, userId))) return res.sendStatus(403);
 
     const like: Like = { blogId, userId };
     if (!(await this.db.isLiked(like))) return res.sendStatus(409);
@@ -89,9 +93,11 @@ export class BlogController implements blogController {
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
     if (!content || !title || !spaceId)
       return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
-    if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
+    let blog = await this.db.getBlog(blogId);
+    if (!blog) return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    if (blog.userId !== userId) return res.sendStatus(403);
 
-    const blog: Blog = { id: blogId, content, title, userId, spaceId };
+    blog = { id: blogId, content, title, userId, spaceId };
 
     await this.db.updateBlog(blog);
     return res.sendStatus(200);
@@ -103,8 +109,12 @@ export class BlogController implements blogController {
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
 
     const blog: Blog | undefined = await this.db.getBlog(blogId);
-
-    if (!blog) return res.sendStatus(HTTP.NOT_FOUND);
+    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+    if (
+      (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
+      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
+    )
+      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
 
     return res.status(200).send({ blog });
   };
@@ -115,7 +125,13 @@ export class BlogController implements blogController {
   ) => {
     const blogId = req.params.blogId;
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
+    const blog: Blog | undefined = await this.db.getBlog(blogId);
+    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+    if (
+      (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
+      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
+    )
+      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
 
     const comments: Comment[] = await this.db.getComments(blogId);
     return res.status(200).send({ comments });
@@ -139,7 +155,13 @@ export class BlogController implements blogController {
       const blogId = req.params.blogId;
 
       if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-      if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
+      const blog: Blog | undefined = await this.db.getBlog(blogId);
+      if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+      if (
+        (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
+        !(await this.db.isMember(blog?.spaceId, res.locals.userId))
+      )
+        return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
 
       const users: LikedUser[] = await this.db.blogLikesList(blogId);
       return res.status(200).send({ users });
@@ -154,8 +176,11 @@ export class BlogController implements blogController {
     if (!title || !content || !spaceId)
       return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
     if (!user) return res.status(400).send({ error: Errors.USER_NOT_FOUND });
-
-    console.log(user);
+    if (
+      (await this.db.getSpace(spaceId))?.status === 'private' &&
+      !(await this.db.isMember(spaceId, res.locals.userId))
+    )
+      return res.sendStatus(403);
 
     const blog: Blog = {
       title,
@@ -178,10 +203,11 @@ export class BlogController implements blogController {
     const blogId = req.params.blogId;
 
     if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
+    const blog = await this.db.getBlog(blogId);
+    if (!blog) return res.sendStatus(404);
+    if (blog.userId !== res.locals.userId) return res.sendStatus(403);
 
     await this.db.deleteBlog(blogId);
-
     return res.sendStatus(200);
   };
 }

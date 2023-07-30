@@ -97,16 +97,20 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
           </>
         )}
       </div>
-
+      {userCard.username === currUser?.username && (
+        <>
+          <p>Id: {userCard.id}</p>
+          <p>Email: {userCard.email}</p>
+        </>
+      )}
       <p>Username: {userCard.username}</p>
-      <p>Email: {userCard.email}</p>
       <p>Followers: {followersQuery.data?.followers?.length || 0}</p>
       {/* <p>Following: {userCard.following.length}</p> */}
       {/* <p>Spaces: {userCard.spaces.length}</p> */}
       <p>Blogs: {blogsLength}</p>
       {/* <p>Comments: {userCard.comments.length}</p> */}
       <p>
-        From{' '}
+        Joined from{' '}
         {formatDistanceToNow(new Date(userCard.timestamp), {
           addSuffix: true,
         })}

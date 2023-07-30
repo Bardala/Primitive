@@ -39,8 +39,7 @@ export const CreateSpaceForm = () => {
 
   return (
     <>
-      {createSpaceMutate.isSuccess && <p>Space created successfully</p>}
-      {createSpaceMutate.isError && <p>{createSpaceMutate.error.message}</p>}
+      {createSpaceMutate.isError && <p className="error">{createSpaceMutate.error.message}</p>}
 
       <form className="create-space-from" onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>

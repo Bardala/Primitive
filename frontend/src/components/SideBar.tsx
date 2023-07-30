@@ -1,16 +1,25 @@
-import { Space } from '@nest/shared';
+import { Space, SpaceMember } from '@nest/shared';
+import { set } from 'date-fns';
 import { FormEvent, useState } from 'react';
 
+import { useAuthContext } from '../context/AuthContext';
 import '../styles/sidebar.css';
 import { CreateBlogForm } from './CreateBlogForm';
 import { CreateSpaceForm } from './CreateSpaceForm';
+import { SideChat } from './SideChat';
+import { SpaceMembers } from './SpaceMembers';
 
-export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
+export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
+  space,
+  members,
+}) => {
+  const { currUser } = useAuthContext();
   const [showCreateSpace, setShowCreateSpace] = useState(false);
   const [showCreateBlog, setShowCreateBlog] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
   const [showEditSpace, setShowEditSpace] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const handleShowCreateSpace = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
@@ -21,6 +30,7 @@ export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
     e.preventDefault();
     setShowCreateBlog(!showCreateBlog);
     setShowCreateSpace(false);
+    setShowMembers(false);
   };
   // const handleShowAddMember = (e: FormEvent | MouseEvent) => {
   //   e.preventDefault();
@@ -30,10 +40,20 @@ export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
   // };
   const handleShowMembers = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
+    setShowCreateBlog(false);
     setShowMembers(!showMembers);
     setShowAddMember(false);
     setShowEditSpace(false);
   };
+  const handleShowChat = (e: FormEvent | MouseEvent) => {
+    e.preventDefault();
+    setShowChat(!showChat);
+    setShowCreateBlog(false);
+    setShowMembers(false);
+    setShowAddMember(false);
+    setShowEditSpace(false);
+  };
+
   // const handleShowEditSpace = (e: FormEvent | MouseEvent) => {
   //   e.preventDefault();
   //   setShowEditSpace(!showEditSpace);
@@ -41,9 +61,14 @@ export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
   //   setShowMembers(false);
   // };
 
+  const isMember = () => {
+    return members?.some(member => member.memberId === currUser?.id);
+  };
+  const isDefaultSpace = space?.id === '1';
+
   return (
     <div className="side-bar">
-      {space.id === '1' ? (
+      {isDefaultSpace ? (
         <>
           <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
             Create Blog
@@ -55,13 +80,17 @@ export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
         </>
       ) : (
         <>
-          <h3>{space.name}</h3>
-          <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
-            Create Blog
-          </button>
-          <button onClick={handleShowMembers} className={showMembers ? 'active' : ''}>
-            Show members
-          </button>
+          <h3>{space?.name}</h3>
+          {isMember() && (
+            <>
+              <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
+                Create Blog
+              </button>
+              <button onClick={handleShowMembers} className={showMembers ? 'active' : ''}>
+                Show members
+              </button>
+            </>
+          )}
           {
             //todo:
             // isAdmin() && <>
@@ -72,14 +101,20 @@ export const Sidebar: React.FC<{ space: Space }> = ({ space }) => {
 
           {/* <button onClick={handleShowAddMember} className={showAddMember ? 'active' : ''} />
           <button onClick={handleShowEditSpace} className={showEditSpace ? 'active' : ''} /> */}
+
+          {/* //todo: create space chat */}
+          <button className="chat-button" onClick={handleShowChat}>
+            Chat
+          </button>
         </>
       )}
 
       {showCreateSpace && <CreateSpaceForm />}
       {showCreateBlog && <CreateBlogForm />}
       {showAddMember && <div>add member</div>}
-      {showMembers && <div>members</div>}
+      {showMembers && <SpaceMembers users={members!} />}
       {showEditSpace && <div>edit space</div>}
+      {showChat && <div>chat</div>}
     </div>
   );
 };

@@ -31,7 +31,7 @@ export interface DefaultSpaceRes {
 
 export interface JoinSpaceReq {} // locals.userId // params.spaceId
 export interface JoinSpaceRes {
-  message: StatusMessage;
+  member: SpaceMember;
 }
 
 export interface AddMemberReq {

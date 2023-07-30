@@ -95,7 +95,7 @@ export class SpaceController implements spaceController {
     if (!space) return res.sendStatus(400);
 
     if (space.status === 'private' && !(await this.db.isMember(spaceId, userId))) {
-      return res.sendStatus(HTTP.FORBIDDEN);
+      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_SPACE });
     }
 
     return res.status(200).send({
@@ -147,7 +147,9 @@ export class SpaceController implements spaceController {
     if (await this.db.isMember(spaceId, userId)) return res.sendStatus(HTTP.CONFLICT);
 
     await this.db.addMember(spaceId, userId);
-    return res.sendStatus(200);
+
+    const member: SpaceMember = { spaceId, memberId: userId, isAdmin: false };
+    return res.send({ member });
   };
 
   addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes> = async (
