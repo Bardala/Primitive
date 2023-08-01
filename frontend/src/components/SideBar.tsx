@@ -1,13 +1,12 @@
 import { Space, SpaceMember } from '@nest/shared';
-import { set } from 'date-fns';
 import { FormEvent, useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
-import '../styles/sidebar.css';
+// import '../styles/sidebar.css';
 import { CreateBlogForm } from './CreateBlogForm';
 import { CreateSpaceForm } from './CreateSpaceForm';
-import { SideChat } from './SideChat';
 import { SpaceMembers } from './SpaceMembers';
+import { Chat } from './Chat';
 
 export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
   space,
@@ -25,12 +24,15 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
     e.preventDefault();
     setShowCreateSpace(!showCreateSpace);
     setShowCreateBlog(false);
+    setShowChat(false);
   };
   const handleShowCreateBlog = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
     setShowCreateBlog(!showCreateBlog);
     setShowCreateSpace(false);
     setShowMembers(false);
+        setShowChat(false);
+
   };
   // const handleShowAddMember = (e: FormEvent | MouseEvent) => {
   //   e.preventDefault();
@@ -44,6 +46,7 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
     setShowMembers(!showMembers);
     setShowAddMember(false);
     setShowEditSpace(false);
+    setShowChat(false);
   };
   const handleShowChat = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
@@ -114,7 +117,7 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
       {showAddMember && <div>add member</div>}
       {showMembers && <SpaceMembers users={members!} />}
       {showEditSpace && <div>edit space</div>}
-      {showChat && <div>chat</div>}
+      {showChat && <Chat space={space}/>}
     </div>
   );
 };

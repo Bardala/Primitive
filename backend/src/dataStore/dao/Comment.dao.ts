@@ -1,8 +1,8 @@
-import { Comment } from "../../../../shared/src/types";
+import { Comment } from '@nest/shared/src/';
 
 export interface CommentDao {
   createComment(comment: Comment): Promise<void>;
-  updateComment(comment: Pick<Comment, "content" | "id">): Promise<void>;
+  updateComment(comment: Pick<Comment, 'content' | 'id'>): Promise<void>;
   getComment(commentId: string): Promise<Comment>;
   deleteComment(commentId: string): Promise<void>;
 }

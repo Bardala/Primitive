@@ -22,6 +22,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     },
     {
       enabled: isLoggedIn(),
+      refetchOnWindowFocus: false,
       // onSuccess: (currUser) => console.log("currUser", currUser),
     }
   );

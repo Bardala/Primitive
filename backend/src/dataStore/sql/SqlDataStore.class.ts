@@ -2,17 +2,18 @@ import mysql, { RowDataPacket } from 'mysql2';
 import { Pool } from 'mysql2/promise';
 
 import { DataStoreDao } from '..';
-import { UsersList } from '../../../../shared/src/api/user.api.types';
 import {
-  Blog,
-  Comment,
-  Like,
-  LikedUser,
   Space,
-  SpaceMember,
   User,
+  SpaceMember,
+  Blog,
+  LikedUser,
   UserCard,
-} from '../../../../shared/src/types';
+  UsersList,
+  Like,
+  ChatMessage,
+  Comment,
+} from '@nest/shared';
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
@@ -29,6 +30,44 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async getSpaceChat(spaceId: string): Promise<ChatMessage[]> {
+    const query = `
+    SELECT * FROM chat WHERE spaceId=?
+    ORDER BY timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
+    return rows as ChatMessage[];
+  }
+
+  async createMessage(message: ChatMessage): Promise<void> {
+    const query = `
+    INSERT INTO chat SET id=?, userId=?, spaceId=?, content=?, timestamp=?, username=?
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [
+      message.id,
+      message.userId,
+      message.spaceId,
+      message.content,
+      message.timestamp,
+      message.username,
+    ]);
+  }
+
+  async getMessage(messageId: string): Promise<ChatMessage> {
+    const query = `
+    SELECT * FROM chat WHERE id=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, messageId);
+    return rows[0] as ChatMessage;
+  }
+
+  async deleteMessage(messageId: string): Promise<void> {
+    const query = `
+    DELETE FROM chat WHERE id=?
+    `;
+    await this.pool.query(query, messageId);
   }
 
   async getUserSpaces(userId: string): Promise<Space[]> {

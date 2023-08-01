@@ -1,16 +1,12 @@
-import { BlogDao } from "./dao/Blog.dao";
-import { CommentDao } from "./dao/Comment.dao";
-import { LikeDao } from "./dao/Like.dao";
-import { SpaceDao } from "./dao/Space.dao";
-import { UserDao } from "./dao/User.dao";
-import { SqlDataStore } from "./sql/SqlDataStore.class";
+import { BlogDao } from './dao/Blog.dao';
+import { CommentDao } from './dao/Comment.dao';
+import { LikeDao } from './dao/Like.dao';
+import { SpaceDao } from './dao/Space.dao';
+import { UserDao } from './dao/User.dao';
+import { ChatDao } from './dao/chat.dao';
+import { SqlDataStore } from './sql/SqlDataStore.class';
 
-export interface DataStoreDao
-  extends UserDao,
-    BlogDao,
-    CommentDao,
-    SpaceDao,
-    LikeDao {}
+export interface DataStoreDao extends UserDao, BlogDao, CommentDao, SpaceDao, LikeDao, ChatDao {}
 
 export let db: SqlDataStore;
 

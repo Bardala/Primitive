@@ -1,4 +1,4 @@
-import { Blog, Comment, LikedUser } from '../../../../shared/src/types';
+import { Blog, Comment, LikedUser } from '@nest/shared/src/';
 
 export interface BlogDao {
   createBlog(blog: Blog): Promise<void>;

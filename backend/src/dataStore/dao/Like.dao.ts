@@ -1,4 +1,4 @@
-import { Like } from '../../../../shared/src/types';
+import { Like } from '@nest/shared/src/';
 
 export interface LikeDao {
   createLike(like: Like): Promise<void>;

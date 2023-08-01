@@ -1,3 +1,4 @@
+import { Like, Blog, LikedUser, Comment } from '@nest/shared';
 import {
   BlogCommentsReq,
   BlogCommentsRes,
@@ -19,7 +20,6 @@ import {
   updateBlogRes,
 } from '../../../shared/src/api/blog.api.types';
 import { Errors } from '../../../shared/src/errors';
-import { Blog, Comment, Like, LikedUser } from '../../../shared/src/types';
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 import { Handler, HandlerWithParams } from '../types';

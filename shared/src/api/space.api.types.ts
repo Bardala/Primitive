@@ -1,4 +1,4 @@
-import { Blog, Space, SpaceMember, StatusMessage } from '../types';
+import { Blog, ChatMessage, Space, SpaceMember } from '../types';
 
 export type CreateSpaceReq = Pick<Space, 'name' | 'status' | 'description'>;
 export interface CreateSpaceRes {
@@ -42,4 +42,9 @@ export interface AddMemberRes {}
 export interface MembersReq {}
 export interface MembersRes {
   members: SpaceMember[];
+}
+
+export interface ChatReq {}
+export interface ChatRes {
+  messages: ChatMessage[];
 }

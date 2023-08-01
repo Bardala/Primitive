@@ -1,6 +1,7 @@
 export enum Errors {
   POST_ID_MISSING = 'Post id is missing',
   ALL_FIELDS_REQUIRED = 'All Fields Are Required',
+  EMPTY_FIELD = 'Empty Field',
   INVALID_USERNAME = 'Invalid username, must be only letters',
   INVALID_EMAIL = 'Invalid email',
   WEAK_PASSWORD = 'Weak password',

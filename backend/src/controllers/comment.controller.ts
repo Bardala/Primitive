@@ -1,13 +1,13 @@
 import {
   CreateCommentReq,
   CreateCommentRes,
-  DeleteCommentReq,
-  DeleteCommentRes,
   UpdateCommentReq,
   UpdateCommentRes,
-} from '../../../shared/src/api/comment.api.types';
-import { Errors } from '../../../shared/src/errors';
-import { Comment } from '../../../shared/src/types';
+  DeleteCommentReq,
+  DeleteCommentRes,
+  Errors,
+  Comment,
+} from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
 import { Handler, HandlerWithParams } from '../types';
 

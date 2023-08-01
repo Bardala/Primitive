@@ -1,4 +1,4 @@
-import { Blog, Space, SpaceMember } from "../../../../shared/src/types";
+import { Blog, ChatMessage, Space, SpaceMember } from '@nest/shared';
 
 export interface SpaceDao {
   createSpace(space: Space): Promise<void>;
@@ -8,6 +8,8 @@ export interface SpaceDao {
 
   // getDefaultSpace(): Promise<Space | undefined>; // use getSpace
   getBlogs(spaceId: string): Promise<Blog[]>;
+  getSpaceChat(spaceId: string): Promise<ChatMessage[]>;
+
   addMember(spaceId: string, memberId: string): Promise<void>;
   spaceMembers(spaceId: string): Promise<SpaceMember[]>;
   isMember(spaceId: string, memberId: string): Promise<boolean>;

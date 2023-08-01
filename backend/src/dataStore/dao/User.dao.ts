@@ -1,5 +1,4 @@
-import { UsersList } from '../../../../shared/src/api/user.api.types';
-import { Blog, Space, User, UserCard } from '../../../../shared/src/types';
+import { Blog, Space, User, UserCard, UsersList } from "@nest/shared";
 
 export interface UserDao {
   createUser(user: User): Promise<void>;

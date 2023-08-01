@@ -52,6 +52,15 @@ export interface UserCard {
   isFollowing: number;
 }
 
+export type ChatMessage = {
+  id: string;
+  userId: string;
+  username: string;
+  spaceId: string;
+  content: string;
+  timestamp: number;
+};
+
 export type LikedUser = Pick<User, 'id' | 'username'>;
 
 export interface Like {

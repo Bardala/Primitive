@@ -45,6 +45,7 @@ export const UserProfile = () => {
       ),
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),
+    refetchOnWindowFocus: false,
   });
   const userBlogsQuery = useQuery({
     queryKey: ['userBlogs', id],
@@ -58,6 +59,7 @@ export const UserProfile = () => {
       ),
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),
+    refetchOnWindowFocus: false,
   });
 
   const blogs = userBlogsQuery.data?.blogs;

@@ -11,6 +11,7 @@ import { UserController } from './controllers/user.controller';
 import { db, initDb } from './dataStore';
 import { requireAuth } from './middleware/authMiddleware';
 import { errorHandler } from './middleware/errorHandler';
+import { ChatController } from './controllers/chat.controller';
 
 (async () => {
   dotenv.config();
@@ -26,6 +27,7 @@ import { errorHandler } from './middleware/errorHandler';
   const blog = new BlogController(db);
   const space = new SpaceController(db);
   const comm = new CommentController(db);
+  const chat = new ChatController(db);
 
   app.use((req, res, next) => {
     console.log(req.path, req.method, req.body, req.params, res.statusCode);
@@ -71,6 +73,11 @@ import { errorHandler } from './middleware/errorHandler';
   app.post(ENDPOINT.JOIN_SPACE, requireAuth, asyncHandler(space.joinSpace));
   app.post(ENDPOINT.ADD_MEMBER, requireAuth, asyncHandler(space.addMember));
   app.get(ENDPOINT.GET_SPACE_MEMBERS, requireAuth, asyncHandler(space.getSpaceMembers));
+  app.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(space.getChat)); //todo 
+
+  //* Message
+  app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage)); //todo
+  app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage)); //todo
 
   app.use(errorHandler);
   app.listen(port, () => {

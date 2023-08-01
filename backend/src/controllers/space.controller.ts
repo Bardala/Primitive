@@ -1,23 +1,26 @@
 import {
-  AddMemberReq,
-  AddMemberRes,
   CreateSpaceReq,
   CreateSpaceRes,
-  DefaultSpaceReq,
-  DefaultSpaceRes,
-  DeleteSpaceReq,
-  DeleteSpaceRes,
-  JoinSpaceReq,
-  JoinSpaceRes,
-  MembersReq,
-  MembersRes,
-  SpaceReq,
-  SpaceRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
-} from '../../../shared/src/api/space.api.types';
-import { Errors } from '../../../shared/src/errors';
-import { Space, SpaceMember } from '../../../shared/src/types';
+  SpaceReq,
+  SpaceRes,
+  DeleteSpaceReq,
+  DefaultSpaceRes,
+  DefaultSpaceReq,
+  JoinSpaceReq,
+  JoinSpaceRes,
+  AddMemberReq,
+  AddMemberRes,
+  MembersReq,
+  MembersRes,
+  Errors,
+  Space,
+  DeleteSpaceRes,
+  SpaceMember,
+  ChatReq,
+  ChatRes,
+} from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 import { Handler, HandlerWithParams } from '../types';
@@ -33,6 +36,7 @@ export interface spaceController {
   joinSpace: HandlerWithParams<{ spaceId: string }, JoinSpaceReq, JoinSpaceRes>;
   addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes>;
+  getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes>;
 }
 
 export class SpaceController implements spaceController {
@@ -40,6 +44,17 @@ export class SpaceController implements spaceController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+  getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes> = async (req, res) => {
+    const userId = res.locals.userId;
+    const { spaceId } = req.params;
+
+    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!(await this.db.getSpace(spaceId))) return res.status(404);
+    if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
+
+    const messages = await this.db.getSpaceChat(spaceId);
+    return res.send({ messages });
+  };
 
   createSpace: Handler<CreateSpaceReq, CreateSpaceRes> = async (req, res) => {
     const { description, name, status } = req.body;

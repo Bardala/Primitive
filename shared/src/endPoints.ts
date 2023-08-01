@@ -42,4 +42,9 @@ export enum ENDPOINT {
   JOIN_SPACE = '/api/v0/space/:spaceId/join',
   ADD_MEMBER = '/api/v0/space/:spaceId/member',
   GET_SPACE_MEMBERS = '/api/v0/space/:spaceId/members',
+  Get_SPACE_CHAT = '/api/v0/space/:spaceId/chat',
+
+  //* Message
+  CREATE_MESSAGE = '/api/v0/space/:spaceId/message',
+  DELETE_MESSAGE = '/api/v0/message/:msgId',
 }

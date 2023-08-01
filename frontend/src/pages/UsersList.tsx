@@ -22,6 +22,7 @@ export const UsersList = () => {
     {
       enabled: !!currUser?.jwt,
       onError: err => console.log(err),
+      refetchOnWindowFocus: false,
     }
   );
 
