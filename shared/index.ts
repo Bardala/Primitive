@@ -6,3 +6,4 @@ export * from './src/api/user.api.types';
 export * from './src/api/chat.api.types';
 export * from './src/errors';
 export * from './src/endPoints';
+export * from './src/api/feeds.api.types';

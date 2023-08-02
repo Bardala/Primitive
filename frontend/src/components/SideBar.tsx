@@ -10,7 +10,7 @@ import { CreateSpace } from './CreateSpace';
 import { EditSpaceForm } from './EditSpace';
 import { SpaceMembers } from './SpaceMembers';
 
-export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
+export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
   space,
   members,
 }) => {
@@ -18,9 +18,9 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
   const { state, dispatch } = useSideBarReducer();
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
-  const isDefaultSpace = space?.id === '1';
+  const isDefaultSpace = space?.id !== '1';
   const isAdmin =
-    space.ownerId === currUser?.id ||
+    space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
   return (
@@ -86,7 +86,7 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
           <button className="chat-button" onClick={() => dispatch({ type: 'showChat' })}>
             Chat
           </button>
-          {state.showChat && <Chat space={space} />}
+          {state.showChat && <Chat space={space!} />}
         </>
       )}
     </div>

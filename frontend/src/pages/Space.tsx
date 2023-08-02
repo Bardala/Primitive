@@ -75,6 +75,7 @@ export const Space = () => {
       <div className="home">
         <main className="space-page">
           <h1>Space: {spaceQuery.data?.space?.name}</h1>
+          <h2>{spaceQuery.data?.space?.status} Space</h2>
           {joinSpaceMutate.isError && <p>{JSON.stringify(joinSpaceMutate.error)}</p>}
           <nav>
             <>

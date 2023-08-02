@@ -1,5 +1,6 @@
 import { ChatReq, ChatRes, CreateMsgReq, CreateMsgRes, ENDPOINT, Space } from '@nest/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import { FormEvent, useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -55,10 +56,15 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
           {chatQuery.data?.messages.map(msg => (
             <li key={msg.id}>
               <p>{msg.content}</p>
-              <p>{msg.username}</p>
+              <p>
+                {msg.username}
+                {',  '}
+                {formatDistantToNow(new Date(msg?.timestamp as number), { addSuffix: true })}
+              </p>
             </li>
           ))}
         </ul>
+
         <form onSubmit={handleSubmit} className="msg-form">
           <input
             type="text"

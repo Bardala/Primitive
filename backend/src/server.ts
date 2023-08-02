@@ -79,6 +79,9 @@ import { ChatController } from './controllers/chat.controller';
   app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage));
   app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage));
 
+  // *Feeds
+  app.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(space.feeds));
+
   app.use(errorHandler);
   app.listen(port, () => {
     console.log(`Server listening on port ${port}`);

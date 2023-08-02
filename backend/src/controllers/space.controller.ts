@@ -20,6 +20,8 @@ import {
   SpaceMember,
   ChatReq,
   ChatRes,
+  FeedsReq,
+  FeedsRes,
 } from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
@@ -37,6 +39,7 @@ export interface spaceController {
   addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes>;
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes>;
+  feeds: Handler<FeedsReq, FeedsRes>;
 }
 
 export class SpaceController implements spaceController {
@@ -44,6 +47,12 @@ export class SpaceController implements spaceController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+
+  feeds: Handler<FeedsReq, FeedsRes> = async (_, res) => {
+    const feeds = await this.db.getFeeds(res.locals.userId);
+    return res.send({ feeds });
+  };
+
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes> = async (req, res) => {
     const userId = res.locals.userId;
     const { spaceId } = req.params;
@@ -116,7 +125,6 @@ export class SpaceController implements spaceController {
     return res.status(200).send({
       space,
       blogs: await this.db.getBlogs(spaceId),
-      members: await this.db.spaceMembers(spaceId),
     });
   };
 

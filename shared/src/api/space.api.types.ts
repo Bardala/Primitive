@@ -16,7 +16,6 @@ export interface UpdateSpaceRes {
 export interface SpaceReq {}
 export interface SpaceRes {
   space: Space;
-  members: SpaceMember[];
   blogs: Blog[];
 }
 

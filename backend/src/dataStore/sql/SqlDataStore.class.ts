@@ -32,6 +32,22 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
+  async getFeeds(userId: string): Promise<Blog[]> {
+    // todo: add pagination and add post
+    // todo: return also public blogs which its owners are followed by the user
+
+    //? this returns all blogs from all spaces that the user is a member of
+    const query = `
+    SELECT blogs.* FROM blogs
+    WHERE blogs.spaceId IN (
+      SELECT spaceId FROM members WHERE memberId = ?
+    )
+    ORDER BY blogs.timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, userId);
+    return rows as Blog[];
+  }
+
   async isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean> {
     const query = `
       SELECT isAdmin FROM members

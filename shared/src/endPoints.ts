@@ -47,4 +47,7 @@ export enum ENDPOINT {
   //* Message
   CREATE_MESSAGE = '/api/v0/space/:spaceId/message',
   DELETE_MESSAGE = '/api/v0/message/:msgId',
+
+  // *Feeds
+  GET_FEEDS = '/api/v0/feeds',
 }

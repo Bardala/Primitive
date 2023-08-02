@@ -21,6 +21,12 @@ export const BlogIcon: React.FC<{ blog: Blog }> = ({ blog }) => {
           </Link>
 
           <LikeBlogButton blog={blog} />
+
+          {blog.spaceId !== '1' && (
+            <Link to={`/space/${blog?.spaceId}`} className="space-link">
+              Spaced
+            </Link>
+          )}
           <time className="created-at" dateTime={String(blog.timestamp)}>
             {formatDistanceToNow(new Date(blog.timestamp as number))}
           </time>

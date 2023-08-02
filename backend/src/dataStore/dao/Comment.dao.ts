@@ -1,4 +1,4 @@
-import { Comment } from '@nest/shared/src/';
+import { Comment } from '@nest/shared';
 
 export interface CommentDao {
   createComment(comment: Comment): Promise<void>;
