@@ -1,7 +1,7 @@
 import { Space, SpaceMember } from '@nest/shared';
-import { FormEvent, useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
+import { useSideBarReducer } from '../hooks/sideBar';
 import { AddMember } from './AddMember';
 import { Chat } from './Chat';
 // import '../styles/sidebar.css';
@@ -15,119 +15,78 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
   members,
 }) => {
   const { currUser } = useAuthContext();
-  const [showCreateSpace, setShowCreateSpace] = useState(false);
-  const [showCreateBlog, setShowCreateBlog] = useState(false);
-  const [showAddMember, setShowAddMember] = useState(false);
-  const [showMembers, setShowMembers] = useState(false);
-  const [showEditSpace, setShowEditSpace] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-
-  const handleShowCreateSpace = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowCreateSpace(!showCreateSpace);
-    setShowCreateBlog(false);
-    setShowChat(false);
-  };
-  const handleShowCreateBlog = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowCreateBlog(!showCreateBlog);
-    setShowCreateSpace(false);
-    setShowMembers(false);
-    setShowChat(false);
-  };
-  const handleShowAddMember = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowAddMember(!showAddMember);
-    setShowMembers(false);
-    setShowEditSpace(false);
-    setShowChat(false);
-  };
-  const handleShowMembers = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowCreateBlog(false);
-    setShowMembers(!showMembers);
-    setShowAddMember(false);
-    setShowEditSpace(false);
-    setShowChat(false);
-  };
-  const handleShowChat = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowChat(!showChat);
-    setShowCreateBlog(false);
-    setShowMembers(false);
-    setShowAddMember(false);
-    setShowEditSpace(false);
-  };
-
-  const handleShowEditSpace = (e: FormEvent | MouseEvent) => {
-    e.preventDefault();
-    setShowEditSpace(!showEditSpace);
-    setShowAddMember(false);
-    setShowMembers(false);
-    setShowChat(false);
-  };
+  const { state, dispatch } = useSideBarReducer();
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
-
-  const isAdmin = () => {
-    if (space.ownerId === currUser?.id) return true;
-    return members?.some(member => member.memberId === currUser?.id && member.isAdmin);
-  };
   const isDefaultSpace = space?.id === '1';
+  const isAdmin =
+    space.ownerId === currUser?.id ||
+    members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
   return (
     <div className="side-bar">
       {isDefaultSpace ? (
         <>
-          <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
+          <button
+            onClick={() => dispatch({ type: 'showCreateBlog' })}
+            className={state.showCreateBlog ? 'active' : ''}
+          >
             Create Blog
           </button>
-          {showCreateBlog && <CreateBlogForm />}
+          {state.showCreateBlog && <CreateBlogForm />}
 
-          <button onClick={handleShowCreateSpace} className={showCreateSpace ? 'active' : ''}>
+          <button
+            onClick={() => dispatch({ type: 'showCreateSpace' })}
+            className={state.showCreateSpace ? 'active' : ''}
+          >
             Create Space
           </button>
-          {showCreateSpace && <CreateSpace />}
+          {state.showCreateSpace && <CreateSpace />}
         </>
       ) : (
         <>
           <h3>{space?.name}</h3>
           {isMember && (
             <>
-              <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
+              <button
+                onClick={() => dispatch({ type: 'showCreateBlog' })}
+                className={state.showCreateBlog ? 'active' : ''}
+              >
                 Create Blog
               </button>
-              {showCreateBlog && <CreateBlogForm />}
-              <button onClick={handleShowMembers} className={showMembers ? 'active' : ''}>
+              {state.showCreateBlog && <CreateBlogForm />}
+              <button
+                onClick={() => dispatch({ type: 'showMembers' })}
+                className={state.showMembers ? 'active' : ''}
+              >
                 Show members
               </button>
-              {showMembers && <SpaceMembers users={members!} />}
+              {state.showMembers && <SpaceMembers users={members!} />}
             </>
           )}
-          {
-            //todo:
-            isAdmin() && (
-              <>
-                <button onClick={handleShowAddMember} className={showAddMember ? 'active' : ''}>
-                  add member
-                </button>
-                {showAddMember && <AddMember />}
-                <button onClick={handleShowEditSpace} className={showEditSpace ? 'active' : ''}>
-                  edit space
-                </button>
-                {showEditSpace && <EditSpaceForm />}
-              </>
-            )
-          }
+          {isAdmin && (
+            <>
+              <button
+                onClick={() => dispatch({ type: 'showAddMember' })}
+                className={state.showAddMember ? 'active' : ''}
+              >
+                add member
+              </button>
+              {state.showAddMember && <AddMember />}
+              <button
+                onClick={() => dispatch({ type: 'showEditSpace' })}
+                className={state.showEditSpace ? 'active' : ''}
+              >
+                edit space
+              </button>
+              {state.showEditSpace && <EditSpaceForm />}
+            </>
+          )}
 
-          {/* <button onClick={handleShowAddMember} className={showAddMember ? 'active' : ''} />
-          <button onClick={handleShowEditSpace} className={showEditSpace ? 'active' : ''} /> */}
-
-          {/* //todo: create space chat */}
-          <button className="chat-button" onClick={handleShowChat}>
+          <button className="chat-button" onClick={() => dispatch({ type: 'showChat' })}>
             Chat
           </button>
-          {showChat && <Chat space={space} />}
+          {state.showChat && <Chat space={space} />}
         </>
       )}
     </div>
