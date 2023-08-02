@@ -16,7 +16,7 @@ export const SpaceForm: React.FC<{
           type="text"
           id="name"
           name="name"
-          value={state.name || initialSpace?.name}
+          value={state.name}
           onChange={e => dispatch({ type: 'SET_NAME', payload: e.target.value })}
         />
 
@@ -24,7 +24,7 @@ export const SpaceForm: React.FC<{
         <select
           name="status"
           id="status"
-          value={state.status || initialSpace?.status}
+          value={state.status}
           onChange={e => dispatch({ type: 'SET_STATUS', payload: e.target.value as SpaceStatus })}
         >
           <option value="public">Public</option>
@@ -35,7 +35,7 @@ export const SpaceForm: React.FC<{
         <textarea
           name="description"
           id="description"
-          value={state.description || initialSpace?.description}
+          value={state.description}
           onChange={e => dispatch({ type: 'SET_DESCRIPTION', payload: e.target.value })}
         />
         <button type="submit" disabled={isLoading}>
