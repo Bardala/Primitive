@@ -1,4 +1,4 @@
-.side-bar {
+/* .side-bar {
   position: sticky;
   top: 0;
   display: flex;
@@ -8,7 +8,6 @@
   border: 8px;
   background: #fafafa;
   flex-wrap: nowrap;
-  /* max-width: fit-content; */
   height: auto;
 }
 
@@ -79,4 +78,4 @@ input {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
-}
+} */

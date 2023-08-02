@@ -72,7 +72,7 @@ export class SpaceController implements spaceController {
     };
 
     await this.db.createSpace(space);
-    await this.db.addMember(space.id, ownerId);
+    await this.db.addMember({ spaceId: space.id, memberId: ownerId, isAdmin: true });
     return res.send({ space });
   };
 
@@ -161,7 +161,7 @@ export class SpaceController implements spaceController {
     if (space.status === 'private') return res.sendStatus(HTTP.FORBIDDEN);
     if (await this.db.isMember(spaceId, userId)) return res.sendStatus(HTTP.CONFLICT);
 
-    await this.db.addMember(spaceId, userId);
+    await this.db.addMember({ spaceId, memberId: userId, isAdmin: false });
 
     const member: SpaceMember = { spaceId, memberId: userId, isAdmin: false };
     return res.send({ member });
@@ -171,21 +171,32 @@ export class SpaceController implements spaceController {
     req,
     res
   ) => {
-    const [spaceId, memberId, userId] = [req.params.spaceId, req.body.memberId, res.locals.userId];
+    const [spaceId, { member, isAdmin }, userId] = [
+      req.params.spaceId,
+      req.body,
+      res.locals.userId,
+    ];
 
     if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!memberId) return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
-    if (!(await this.db.getUserById(memberId)))
-      return res.status(404).send({ error: Errors.USER_NOT_FOUND });
+    if (!member || isAdmin === undefined)
+      return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+    const newMember =
+      (await this.db.getUserByUsername(member)) || (await this.db.getUserById(member));
 
-    const space = await this.db.getSpace(spaceId);
-    if (!space) return res.sendStatus(404);
+    if (!newMember) return res.status(404).send({ error: Errors.USER_NOT_FOUND });
 
-    if (space.ownerId !== userId) return res.sendStatus(403);
-    if (await this.db.isMember(spaceId, memberId)) return res.sendStatus(HTTP.CONFLICT);
+    //? if not space mysql will return with error because of unique constraint on spaceId and memberId
+    // const space = await this.db.getSpace(spaceId);
+    // if (!space) return res.sendStatus(404);
 
-    await this.db.addMember(spaceId, memberId);
-    return res.sendStatus(200);
+    if (!(await this.db.isSpaceAdmin(spaceId, userId))) return res.sendStatus(403);
+
+    //? if user is already a member, return 409, mysql wont let that happen and it will return with error
+    //? because of unique constraint on spaceId and memberId: goto error handler
+    // if (await this.db.isMember(spaceId, memberId)) return res.sendStatus(HTTP.CONFLICT);
+    const addedMember = { spaceId, memberId: newMember.id, isAdmin };
+    await this.db.addMember(addedMember);
+    return res.status(200).send({ member: addedMember });
   };
 
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes> = async (

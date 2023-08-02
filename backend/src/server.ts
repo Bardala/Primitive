@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { ENDPOINT } from '../../shared/src/endPoints';
+import { ENDPOINT } from '@nest/shared';
 import { BlogController } from './controllers/blog.controller';
 import { CommentController } from './controllers/comment.controller';
 import { SpaceController } from './controllers/space.controller';
@@ -73,11 +73,11 @@ import { ChatController } from './controllers/chat.controller';
   app.post(ENDPOINT.JOIN_SPACE, requireAuth, asyncHandler(space.joinSpace));
   app.post(ENDPOINT.ADD_MEMBER, requireAuth, asyncHandler(space.addMember));
   app.get(ENDPOINT.GET_SPACE_MEMBERS, requireAuth, asyncHandler(space.getSpaceMembers));
-  app.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(space.getChat)); //todo 
+  app.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(space.getChat));
 
   //* Message
-  app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage)); //todo
-  app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage)); //todo
+  app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage));
+  app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage));
 
   app.use(errorHandler);
   app.listen(port, () => {

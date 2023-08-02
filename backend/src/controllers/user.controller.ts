@@ -170,7 +170,7 @@ export class UserController implements userController {
     };
 
     await this.db.createUser(user);
-    await this.db.addMember(this.db.defaultSpcId, user.id);
+    await this.db.addMember({ spaceId: this.db.defaultSpcId, memberId: user.id, isAdmin: false });
 
     return res.send({ jwt: createToken(user.id), username: user.username, id: user.id });
   };

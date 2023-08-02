@@ -2,11 +2,12 @@ import { Space, SpaceMember } from '@nest/shared';
 import { FormEvent, useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
+import { AddMember } from './AddMember';
+import { Chat } from './Chat';
 // import '../styles/sidebar.css';
 import { CreateBlogForm } from './CreateBlogForm';
 import { CreateSpaceForm } from './CreateSpaceForm';
 import { SpaceMembers } from './SpaceMembers';
-import { Chat } from './Chat';
 
 export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
   space,
@@ -31,15 +32,15 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
     setShowCreateBlog(!showCreateBlog);
     setShowCreateSpace(false);
     setShowMembers(false);
-        setShowChat(false);
-
+    setShowChat(false);
   };
-  // const handleShowAddMember = (e: FormEvent | MouseEvent) => {
-  //   e.preventDefault();
-  //   setShowAddMember(!showAddMember);
-  //   setShowMembers(false);
-  //   setShowEditSpace(false);
-  // };
+  const handleShowAddMember = (e: FormEvent | MouseEvent) => {
+    e.preventDefault();
+    setShowAddMember(!showAddMember);
+    setShowMembers(false);
+    setShowEditSpace(false);
+    setShowChat(false);
+  };
   const handleShowMembers = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
     setShowCreateBlog(false);
@@ -57,15 +58,19 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
     setShowEditSpace(false);
   };
 
-  // const handleShowEditSpace = (e: FormEvent | MouseEvent) => {
-  //   e.preventDefault();
-  //   setShowEditSpace(!showEditSpace);
-  //   setShowAddMember(false);
-  //   setShowMembers(false);
-  // };
+  const handleShowEditSpace = (e: FormEvent | MouseEvent) => {
+    e.preventDefault();
+    setShowEditSpace(!showEditSpace);
+    setShowAddMember(false);
+    setShowMembers(false);
+    setShowChat(false);
+  };
 
-  const isMember = () => {
-    return members?.some(member => member.memberId === currUser?.id);
+  const isMember = members?.some(member => member.memberId === currUser?.id);
+
+  const isAdmin = () => {
+    if (space.ownerId === currUser?.id) return true;
+    return members?.some(member => member.memberId === currUser?.id && member.isAdmin);
   };
   const isDefaultSpace = space?.id === '1';
 
@@ -76,30 +81,42 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
           <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
             Create Blog
           </button>
+          {showCreateBlog && <CreateBlogForm />}
 
           <button onClick={handleShowCreateSpace} className={showCreateSpace ? 'active' : ''}>
             Create Space
           </button>
+          {showCreateSpace && <CreateSpaceForm />}
         </>
       ) : (
         <>
           <h3>{space?.name}</h3>
-          {isMember() && (
+          {isMember && (
             <>
               <button onClick={handleShowCreateBlog} className={showCreateBlog ? 'active' : ''}>
                 Create Blog
               </button>
+              {showCreateBlog && <CreateBlogForm />}
               <button onClick={handleShowMembers} className={showMembers ? 'active' : ''}>
                 Show members
               </button>
+              {showMembers && <SpaceMembers users={members!} />}
             </>
           )}
           {
             //todo:
-            // isAdmin() && <>
-            //   <button onClick={handleShowAddMember} className={showAddMember ? 'active': ''}/>
-            //   <button onClick={handleShowEditSpace} className={showEditSpace ? 'active': ''}/>
-            // </>
+            isAdmin() && (
+              <>
+                <button onClick={handleShowAddMember} className={showAddMember ? 'active' : ''}>
+                  add member
+                </button>
+                {showAddMember && <AddMember />}
+                <button onClick={handleShowEditSpace} className={showEditSpace ? 'active' : ''}>
+                  edit space
+                </button>
+                {showEditSpace && <div>edit space</div>}
+              </>
+            )
           }
 
           {/* <button onClick={handleShowAddMember} className={showAddMember ? 'active' : ''} />
@@ -109,15 +126,9 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
           <button className="chat-button" onClick={handleShowChat}>
             Chat
           </button>
+          {showChat && <Chat space={space} />}
         </>
       )}
-
-      {showCreateSpace && <CreateSpaceForm />}
-      {showCreateBlog && <CreateBlogForm />}
-      {showAddMember && <div>add member</div>}
-      {showMembers && <SpaceMembers users={members!} />}
-      {showEditSpace && <div>edit space</div>}
-      {showChat && <Chat space={space}/>}
     </div>
   );
 };

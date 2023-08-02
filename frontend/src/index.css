@@ -11,6 +11,7 @@
   --primary: #1aac83;
   --secondary: #f2f2f2;
   --red: #e7195a;
+  --success: #5adb4e;
 }
 
 .error {
@@ -18,6 +19,15 @@
   background: #ffefef;
   border: 1px solid var(--red);
   color: var(--red);
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.success {
+  padding: 10px;
+  background: #ffefef;
+  border: 1px solid var(--success);
+  color: var(--success);
   border-radius: 4px;
   margin: 20px 0;
 }
@@ -92,16 +102,13 @@ input.error {
   top: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border: 8px;
   background: #fafafa;
   flex-wrap: nowrap;
   /* max-width: fit-content; */
   height: auto;
-}
-
-.side-bar {
   max-height: calc(100vh - 20px);
   overflow-y: auto;
 }
@@ -198,23 +205,25 @@ input {
   align-items: center;
   background-color: #f0f0f0;
   border-radius: 8px;
-  padding: 8px;
+  padding: 8px 0 8px 8px;
   margin: 8px;
 }
 
 .space-chat-msgs {
-  list-style: none;
-  overflow-y: scroll;
-  height: 300px;
-  width: inherit;
-  padding-left: 8px;
-  padding-right: 4px;
+    list-style: none;
+    overflow-y: scroll;
+    display: flex;
+    height: 300px;
+    width: 260px;
+    padding-left: 8px;
+    padding-right: 4px;
+    flex-direction: column-reverse;
 }
 
 .space-chat-msgs li {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 10px;
   margin-right: 5px;
 }
@@ -250,4 +259,60 @@ input {
   border-radius: 10px;
   border: none;
   padding: 10px;
+}
+
+.space-user-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.space-user-list ul {
+  list-style: none;
+  overflow-y: scroll;
+  height: 300px;
+  width: inherit;
+  padding-left: 8px;
+  padding-right: 4px;
+  display: flex;
+  padding-left: 8px;
+  padding-right: 4px;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+.space-user-list li {
+    padding: 15px;
+    /* border: 1px solid #ddd; */
+    border-radius: 8px;
+    cursor: pointer;
+    list-style: none;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+
+.space-user-list li:hover {
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.space-user-list li a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+.space-user-list li .username {
+  font-weight: bold;
+  font-size: 12px;
+  margin-right: 8px;
 }

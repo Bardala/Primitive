@@ -35,9 +35,12 @@ export interface JoinSpaceRes {
 }
 
 export interface AddMemberReq {
-  memberId: string;
+  member: string; // userId || username
+  isAdmin: boolean;
 }
-export interface AddMemberRes {}
+export interface AddMemberRes {
+  member: SpaceMember;
+}
 
 export interface MembersReq {}
 export interface MembersRes {

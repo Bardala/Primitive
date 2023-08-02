@@ -45,5 +45,5 @@ export const fetchFn = async <Request, Response>(
     return data;
   }
 
-  return res.text() as Response;
+  return {} as Response;
 };

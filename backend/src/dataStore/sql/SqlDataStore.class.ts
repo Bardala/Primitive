@@ -32,6 +32,15 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
+  async isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean> {
+    const query = `
+      SELECT isAdmin FROM members
+      WHERE spaceId=? AND memberId=?
+      `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+    return rows[0] ? rows[0].isAdmin : false;
+  }
+
   async getSpaceChat(spaceId: string): Promise<ChatMessage[]> {
     const query = `
     SELECT * FROM chat WHERE spaceId=?
@@ -353,11 +362,11 @@ export class SqlDataStore implements DataStoreDao {
     return rows[0] as Space;
   }
 
-  async addMember(spaceId: string, memberId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>('INSERT INTO members SET memberId=?, spaceId=?', [
-      memberId,
-      spaceId,
-    ]);
+  async addMember(member: SpaceMember): Promise<void> {
+    await this.pool.query<RowDataPacket[]>(
+      'INSERT INTO members SET memberId=?, spaceId=?, isAdmin=?',
+      [member.memberId, member.spaceId, member.isAdmin]
+    );
   }
 
   async deleteSpace(spaceId: string): Promise<void> {

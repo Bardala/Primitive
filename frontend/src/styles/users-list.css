@@ -13,7 +13,6 @@
 
 .user-list li {
   padding: 15px;
-  border: 1px solid #ddd;
   border-radius: 8px;
   /* margin: 10px 0; */
   cursor: pointer;
@@ -25,8 +24,6 @@
   display: flex;
   align-items: center;
 }
-
-
 
 .user-list li:hover {
   box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);

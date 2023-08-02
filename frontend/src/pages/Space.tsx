@@ -15,7 +15,8 @@ import { Sidebar } from '../components/SideBar';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
-import '../styles/space.css';
+
+// import '../styles/space.css';
 
 export const Space = () => {
   const { currUser } = useAuthContext();

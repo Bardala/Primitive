@@ -10,7 +10,8 @@ export interface SpaceDao {
   getBlogs(spaceId: string): Promise<Blog[]>;
   getSpaceChat(spaceId: string): Promise<ChatMessage[]>;
 
-  addMember(spaceId: string, memberId: string): Promise<void>;
+  addMember(member: SpaceMember): Promise<void>;
   spaceMembers(spaceId: string): Promise<SpaceMember[]>;
   isMember(spaceId: string, memberId: string): Promise<boolean>;
+  isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean>;
 }
