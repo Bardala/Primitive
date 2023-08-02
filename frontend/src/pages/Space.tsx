@@ -28,7 +28,6 @@ export const Space = () => {
     queryFn: () =>
       fetchFn<SpaceReq, SpaceRes>(ENDPOINT.GET_SPACE, 'GET', undefined, currUser?.jwt, [id!]),
     enabled: !!currUser && !!id,
-    onSuccess: data => console.log('members', data.members),
   });
 
   const membersQuery = useQuery<MembersRes, ApiError>(

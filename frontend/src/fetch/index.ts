@@ -45,5 +45,6 @@ export const fetchFn = async <Request, Response>(
     return data;
   }
 
-  return {} as Response;
+  if (!res.ok) throw new ApiError(res.status, res.statusText);
+  return res as unknown as Response;
 };

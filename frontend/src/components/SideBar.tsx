@@ -6,7 +6,8 @@ import { AddMember } from './AddMember';
 import { Chat } from './Chat';
 // import '../styles/sidebar.css';
 import { CreateBlogForm } from './CreateBlogForm';
-import { CreateSpaceForm } from './CreateSpaceForm';
+import { CreateSpace } from './CreateSpace';
+import { EditSpaceForm } from './EditSpace';
 import { SpaceMembers } from './SpaceMembers';
 
 export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
@@ -86,7 +87,7 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
           <button onClick={handleShowCreateSpace} className={showCreateSpace ? 'active' : ''}>
             Create Space
           </button>
-          {showCreateSpace && <CreateSpaceForm />}
+          {showCreateSpace && <CreateSpace />}
         </>
       ) : (
         <>
@@ -114,7 +115,7 @@ export const Sidebar: React.FC<{ space: Space; members?: SpaceMember[] }> = ({
                 <button onClick={handleShowEditSpace} className={showEditSpace ? 'active' : ''}>
                   edit space
                 </button>
-                {showEditSpace && <div>edit space</div>}
+                {showEditSpace && <EditSpaceForm />}
               </>
             )
           }
