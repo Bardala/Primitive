@@ -76,8 +76,8 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => deleteLikeMutate.mutate()}
             disabled={deleteLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users?.length} </span>
-            <i className="material-icons">favorite</i>
+            <span>{blogLikesQuery.data?.users?.length} 🤍</span>
+            {/* <i className="material-icons">favorite</i> */}
           </button>
         ) : (
           <button
@@ -85,8 +85,8 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => postLikeMutate.mutate()}
             disabled={postLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users?.length} </span>
-            <i className="material-icons">favorite</i>
+            <span>{blogLikesQuery.data?.users?.length} ❤️ </span>
+            {/* <i className="material-icons">favorite</i> */}
           </button>
         )}
       </div>

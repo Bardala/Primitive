@@ -18,14 +18,13 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
   const { state, dispatch } = useSideBarReducer();
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
-  const isDefaultSpace = space?.id !== '1';
   const isAdmin =
     space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
   return (
     <div className="side-bar">
-      {isDefaultSpace ? (
+      {!space ? (
         <>
           <button
             onClick={() => dispatch({ type: 'showCreateBlog' })}

@@ -8,6 +8,7 @@ import { STATE } from '../StatesMsgs';
 import { isArabic } from '../assists';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
+import { LikeBlogButton } from '../components/LikeBlogButton';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
@@ -66,6 +67,8 @@ export const BlogDetails = () => {
                     addSuffix: true,
                   })}
                 </p>
+
+                <LikeBlogButton blog={blog} />
 
                 <p className="comments-counts"> {comments?.length} comments</p>
               </div>

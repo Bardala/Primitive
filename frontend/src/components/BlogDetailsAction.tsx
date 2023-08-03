@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { fetchFn } from '../fetch';
-import { LikeBlogButton } from './LikeBlogButton';
 
 export const BlogDetailsAction: React.FC<{
   blog: Blog;
@@ -42,7 +41,6 @@ export const BlogDetailsAction: React.FC<{
 
   return (
     <>
-      <LikeBlogButton blog={blog} />
       {isCurrUserOwnBlog && (
         <button onClick={handleDelete} disabled={deleteMutate.isLoading} className="delete-button">
           Delete

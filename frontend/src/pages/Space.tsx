@@ -76,7 +76,7 @@ export const Space = () => {
         <main className="space-page">
           <h1>Space: {spaceQuery.data?.space?.name}</h1>
           <h2>{spaceQuery.data?.space?.status} Space</h2>
-          {joinSpaceMutate.isError && <p>{JSON.stringify(joinSpaceMutate.error)}</p>}
+          {joinSpaceMutate.isError && <p>{joinSpaceMutate.error.message}</p>}
           <nav>
             <>
               {!isMember() && (
@@ -102,7 +102,7 @@ export const Space = () => {
             </>
           )}
         </main>
-        <Sidebar space={spaceQuery.data?.space!} members={membersQuery.data?.members} />
+        <Sidebar space={spaceQuery.data?.space} members={membersQuery.data?.members} />
       </div>
     </>
   );

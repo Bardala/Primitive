@@ -33,6 +33,7 @@ export const UserProfile = () => {
     enabled: !!currUser?.jwt && !!id,
     onError: err => console.error(err),
   });
+
   const userSpacesQuery = useQuery({
     queryKey: ['userSpaces', id],
     queryFn: () =>
@@ -47,6 +48,7 @@ export const UserProfile = () => {
     onError: err => console.error(err),
     refetchOnWindowFocus: false,
   });
+
   const userBlogsQuery = useQuery({
     queryKey: ['userBlogs', id],
     queryFn: () =>
