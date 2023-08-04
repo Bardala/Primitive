@@ -1,4 +1,5 @@
 import {
+  DefaultSpaceId,
   ENDPOINT,
   JoinSpaceReq,
   JoinSpaceRes,
@@ -15,6 +16,7 @@ import { Sidebar } from '../components/SideBar';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { Home } from './Home';
 
 // import '../styles/space.css';
 
@@ -69,6 +71,7 @@ export const Space = () => {
 
   if (spaceQuery.isLoading) return <div>Loading...</div>;
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error?.message}</p>;
+  if (id === DefaultSpaceId) return <Home />;
 
   return (
     <>

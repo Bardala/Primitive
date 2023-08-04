@@ -1,7 +1,6 @@
 import { BlogCommentsReq, BlogCommentsRes, BlogReq, BlogRes, ENDPOINT } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
-import Markdown from 'markdown-to-jsx';
 import { Link, useParams } from 'react-router-dom';
 
 import { STATE } from '../StatesMsgs';
@@ -9,6 +8,7 @@ import { isArabic } from '../assists';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { LikeBlogButton } from '../components/LikeBlogButton';
+import { MyMarkdown } from '../components/MyMarkdown';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
@@ -58,7 +58,7 @@ export const BlogDetails = () => {
                 </Link>
               </div>
               <p className={isArabic(blog.content) ? 'arabic' : ''} id="blog-content">
-                <Markdown>{blog.content}</Markdown>
+                <MyMarkdown markdown={blog.content} />
               </p>
 
               <div className="blog-meta">
@@ -85,26 +85,3 @@ export const BlogDetails = () => {
     </div>
   );
 };
-
-// <Markdown
-//   className="blog-body"
-//   options={{
-//     overrides: {
-//       h1: {
-//         props: {
-//           style: { color: 'green' },
-//         },
-//       },
-//       h2: {
-//         props: {
-//           style: { color: 'green' },
-//         },
-//       },
-//       img: {
-//         props: {
-//           style: { maxWidth: '50%' },
-//         },
-//       },
-//     },
-//   }}
-// >

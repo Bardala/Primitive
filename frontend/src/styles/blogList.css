@@ -1,7 +1,7 @@
 /* blog list */
 .blog-list {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 12px auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     grid-gap: 20px;

@@ -1,7 +1,8 @@
-import { Space, SpaceMember } from '@nest/shared';
+import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { useSideBarReducer } from '../hooks/sideBar';
+import { useSideBarReducer } from '../hooks/sideBarReducer';
 import { AddMember } from './AddMember';
 import { Chat } from './Chat';
 // import '../styles/sidebar.css';
@@ -16,6 +17,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
+  const nav = useNavigate();
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
@@ -30,9 +32,13 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
             onClick={() => dispatch({ type: 'showCreateBlog' })}
             className={state.showCreateBlog ? 'active' : ''}
           >
-            Create Blog
+            Create Micro Blog
           </button>
           {state.showCreateBlog && <CreateBlogForm />}
+
+          <button onClick={() => nav(`/new/b/Default/${DefaultSpaceId}`)}>
+            Create Blog with preview
+          </button>
 
           <button
             onClick={() => dispatch({ type: 'showCreateSpace' })}
@@ -54,6 +60,13 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
                 Create Blog
               </button>
               {state.showCreateBlog && <CreateBlogForm />}
+
+              <button
+                onClick={() => nav(`/new/b/${(space! as Space).name}/${(space! as Space)?.id!}`)}
+              >
+                Create Blog with preview
+              </button>
+
               <button
                 onClick={() => dispatch({ type: 'showMembers' })}
                 className={state.showMembers ? 'active' : ''}

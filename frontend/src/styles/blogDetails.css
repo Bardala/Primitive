@@ -29,8 +29,12 @@
   color: #240f0f;
 }
 
-.blog-content article:hover {
+/* .blog-content article:hover {
   box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+} */
+.blog-content article {
+  padding: 16px;
 }
 
 #read-blog {
