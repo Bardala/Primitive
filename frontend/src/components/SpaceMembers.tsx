@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 export const SpaceMembers: React.FC<{ users: SpaceMember[] }> = ({ users }) => {
   return (
     <div className="space-user-list">
-      <h2>List of users</h2>
-      {/* {error && <div className="error">error</div>} */}
+      <h3>{users.length} users</h3>
       <ul>
         {users &&
           users.map(user => (

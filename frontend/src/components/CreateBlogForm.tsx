@@ -43,16 +43,16 @@ export const CreateBlogForm = () => {
     <>
       {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
       <form className="create-blog-from" onSubmit={handleSubmit}>
-        <label htmlFor="title">Title</label>
         <input
+          placeholder="Title"
           type="text"
           id="title"
           name="title"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        <label htmlFor="content">Content</label>
         <textarea
+          placeholder="Content"
           name="content"
           id="content"
           value={content}

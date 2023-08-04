@@ -5,8 +5,8 @@
   border: 1px solid #fafafa;
 }
 
-.blog-details h2 {
-  font-size: 24px;
+.blog-details .blog-title {
+  /* font-size: 24px; */
   color: var(--primary);
   margin-bottom: 8px;
 }
@@ -46,22 +46,27 @@
   margin: 20px 0;
 }
 
-.comments p {
+/* .comments p {
   color: var(--primary);
   margin-top: 50px;
   margin-bottom: 5px;
-}
+} */
 
 .comment {
   padding: 10px;
   border: 1px var(--primary);
 }
 
-.comment p {
+/* .comment p {
   margin-top: 10px;
   margin-bottom: 5px;
   font-style: normal;
   color: #4b1616;
+} */
+
+.comment-body {
+  font-weight: bold;
+  color: var(--font-color);
 }
 
 .comment .comment-body:hover {
@@ -75,19 +80,18 @@
 
 .create-comment {
   margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.create-comment p {
-  font-weight: bold;
-  color: var(--primary);
-}
 
 .create-comment textarea {
   display: inline;
-  width: 250px;
   height: 25px;
   border: 1px solid #fafafa;
   padding: 10px;
+  margin: 10px 0;
   border-style: double;
   border-color: var(--primary);
   border-radius: 12px;
@@ -102,4 +106,17 @@
 
 .create-comment .error {
   color: var(--red);
+}
+
+.delete-button button {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px;
+}
+
+.delete-button button:hover {
+  color: var(--red);
+  box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
+  background: #e7195a;
 }

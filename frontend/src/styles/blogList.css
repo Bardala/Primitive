@@ -53,6 +53,7 @@ time {
     display: grid;
     font-size: 18px;
     color: #666;
+    font-weight: 600;
     margin-bottom: 5px;
     padding: 5px;
     display: block;
@@ -141,6 +142,7 @@ time {
     font-weight: bold;
     font-style: italic;
     text-align: right;
+    font-size: 14px;
 }
 
 .author {

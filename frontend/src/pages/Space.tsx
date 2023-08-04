@@ -55,18 +55,6 @@ export const Space = () => {
     return membersQuery.data?.members?.some(member => member.memberId === currUser?.id);
   };
 
-  // todo: move to sidebar
-  // todo: make a separate api for getting members
-  // const addMemberMutate = useMutation(
-  //   () => fetchFn(`${HOST}/addMember/${id}`, 'POST', undefined, currUser?.jwt),
-  //   {
-  //     onSuccess: () => spaceQuery.refetch(),
-  //   }
-  // );
-  // const isAdmin = () => {
-  //   return spaceQuery.data?.members?.some(member => member.memberId === currUser?.id && member.isAdmin);
-  // };
-
   const blogs = spaceQuery.data?.blogs;
 
   if (spaceQuery.isLoading) return <div>Loading...</div>;
@@ -77,8 +65,10 @@ export const Space = () => {
     <>
       <div className="home">
         <main className="space-page">
-          <h1>Space: {spaceQuery.data?.space?.name}</h1>
-          <h2>{spaceQuery.data?.space?.status} Space</h2>
+          <div className="space-header">
+            <h1>Space: {spaceQuery.data?.space?.name}</h1>
+            <span>{spaceQuery.data?.space?.status}</span>
+          </div>
           {joinSpaceMutate.isError && <p>{joinSpaceMutate.error.message}</p>}
           <nav>
             <>
@@ -93,7 +83,8 @@ export const Space = () => {
               )}
             </>
           </nav>
-          <span className="space-description">{spaceQuery.data?.space?.description}</span>
+          {/** //todo: move the description to the sidebar */}
+          {/* <span className="space-description">{spaceQuery.data?.space?.description}</span> */}
 
           {blogs?.length ? (
             <BlogList blogs={blogs} />

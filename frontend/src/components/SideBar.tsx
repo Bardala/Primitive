@@ -26,9 +26,13 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 
   return (
     <div className="side-bar">
-      {!space ? (
+      {
         <>
+          <h3 hidden={!space} className="space-name">
+            {space?.name}
+          </h3>
           <button
+            hidden={!!space && !isMember}
             onClick={() => dispatch({ type: 'showCreateBlog' })}
             className={state.showCreateBlog ? 'active' : ''}
           >
@@ -36,71 +40,60 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
           </button>
           {state.showCreateBlog && <CreateBlogForm />}
 
-          <button onClick={() => nav(`/new/b/Default/${DefaultSpaceId}`)}>
+          <button
+            hidden={!!space && !isMember}
+            onClick={() => nav(`/new/b/Default/${DefaultSpaceId}`)}
+          >
             Create Blog with preview
           </button>
 
           <button
+            hidden={!!space}
             onClick={() => dispatch({ type: 'showCreateSpace' })}
             className={state.showCreateSpace ? 'active' : ''}
           >
             Create Space
           </button>
           {state.showCreateSpace && <CreateSpace />}
-        </>
-      ) : (
-        <>
-          <h3>{space?.name}</h3>
-          {isMember && (
-            <>
-              <button
-                onClick={() => dispatch({ type: 'showCreateBlog' })}
-                className={state.showCreateBlog ? 'active' : ''}
-              >
-                Create Blog
-              </button>
-              {state.showCreateBlog && <CreateBlogForm />}
 
-              <button
-                onClick={() => nav(`/new/b/${(space! as Space).name}/${(space! as Space)?.id!}`)}
-              >
-                Create Blog with preview
-              </button>
+          <button
+            hidden={!(!!space && isMember)}
+            onClick={() => dispatch({ type: 'showMembers' })}
+            className={state.showMembers ? 'active' : ''}
+          >
+            Show members
+          </button>
+          {state.showMembers && <SpaceMembers users={members!} />}
 
-              <button
-                onClick={() => dispatch({ type: 'showMembers' })}
-                className={state.showMembers ? 'active' : ''}
-              >
-                Show members
-              </button>
-              {state.showMembers && <SpaceMembers users={members!} />}
-            </>
-          )}
-          {isAdmin && (
-            <>
-              <button
-                onClick={() => dispatch({ type: 'showAddMember' })}
-                className={state.showAddMember ? 'active' : ''}
-              >
-                add member
-              </button>
-              {state.showAddMember && <AddMember />}
-              <button
-                onClick={() => dispatch({ type: 'showEditSpace' })}
-                className={state.showEditSpace ? 'active' : ''}
-              >
-                edit space
-              </button>
-              {state.showEditSpace && <EditSpaceForm />}
-            </>
-          )}
+          <button
+            hidden={!(!!space && isAdmin)}
+            onClick={() => dispatch({ type: 'showAddMember' })}
+            className={state.showAddMember ? 'active' : ''}
+          >
+            add member
+          </button>
+          {state.showAddMember && <AddMember />}
+          <button
+            hidden={!(!!space && isAdmin)}
+            onClick={() => dispatch({ type: 'showEditSpace' })}
+            className={state.showEditSpace ? 'active' : ''}
+          >
+            edit space
+          </button>
+          {state.showEditSpace && <EditSpaceForm />}
 
-          <button className="chat-button" onClick={() => dispatch({ type: 'showChat' })}>
+          {/**(if space exists, and if isMember) it will be visible */}
+          <button
+            hidden={!(!!space && isMember)}
+            className="chat-button"
+            onClick={() => dispatch({ type: 'showChat' })}
+          >
             Chat
           </button>
           {state.showChat && <Chat space={space!} />}
+          {/** //todo: hide all buttons while chat */}
         </>
-      )}
+      }
     </div>
   );
 };

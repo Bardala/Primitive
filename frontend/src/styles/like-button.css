@@ -1,8 +1,8 @@
 .like-button {
   display: flex;
   content: "favorite"; 
-  font-family: Material Icons;
-  color: white; 
+  font-family: "Quicksand";
+  /* color: white;  */
   background-color: transparent; 
   border: none;
   
@@ -21,8 +21,8 @@
 .remove-like-button {
   display: flex;
   content: "favorite"; 
-  font-family: Material Icons; 
-  color: white; 
+  font-family: "Quicksand"; 
+  /* color: white;  */
   background-color: #f44336; 
   border: none;
   width: auto; 

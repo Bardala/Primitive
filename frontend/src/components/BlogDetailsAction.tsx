@@ -42,7 +42,12 @@ export const BlogDetailsAction: React.FC<{
   return (
     <>
       {isCurrUserOwnBlog && (
-        <button onClick={handleDelete} disabled={deleteMutate.isLoading} className="delete-button">
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={deleteMutate.isLoading}
+          className="delete-button"
+        >
           Delete
         </button>
       )}

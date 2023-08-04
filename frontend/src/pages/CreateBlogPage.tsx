@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { isArabic } from '../assists';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
@@ -60,7 +61,10 @@ export const CreateBlogPage: React.FC = () => {
         />
 
         <label className="body-label">Blog body:</label>
-        <MyMarkdown markdown={content} />
+        <p className={isArabic(content) ? 'arabic' : ''}>
+          <MyMarkdown markdown={content} />
+        </p>
+
         <textarea
           className="body-textarea"
           value={content}

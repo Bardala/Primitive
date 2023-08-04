@@ -11,17 +11,17 @@ export const SpaceForm: React.FC<{
   return (
     <>
       <form className="create-space-from" onSubmit={handleSubmit}>
-        <label htmlFor="name">Name</label>
         <input
           type="text"
           id="name"
           name="name"
           value={state.name}
+          placeholder="Space name"
           onChange={e => dispatch({ type: 'SET_NAME', payload: e.target.value })}
         />
 
-        <label htmlFor="status">Status</label>
         <select
+          placeholder="Status"
           name="status"
           id="status"
           value={state.status}
@@ -31,8 +31,8 @@ export const SpaceForm: React.FC<{
           <option value="private">Private</option>
         </select>
 
-        <label htmlFor="description">Description</label>
         <textarea
+          placeholder="Description"
           name="description"
           id="description"
           value={state.description}

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   return (
@@ -14,7 +14,7 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
             <SyntaxHighlighter
               {...props}
               children={String(children).replace(/\n$/, '')}
-              style={oneLight}
+              style={dark}
               language={match[1]}
               PreTag="div"
             />

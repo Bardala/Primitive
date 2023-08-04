@@ -7,6 +7,7 @@ interface State {
   showMembers: boolean;
   showEditSpace: boolean;
   showChat: boolean;
+  hideAll: boolean;
 }
 
 type Action =
@@ -30,6 +31,7 @@ export const useSideBarReducer = () => {
           showMembers: false,
           showEditSpace: false,
           showChat: false,
+          hideAll: false,
         };
       case 'showCreateBlog':
         return {
@@ -40,6 +42,7 @@ export const useSideBarReducer = () => {
           showMembers: false,
           showEditSpace: false,
           showChat: false,
+          hideAll: false,
         };
       case 'showAddMember':
         return {
@@ -50,6 +53,7 @@ export const useSideBarReducer = () => {
           showMembers: false,
           showEditSpace: false,
           showChat: false,
+          hideAll: false,
         };
       case 'showMembers':
         return {
@@ -60,6 +64,7 @@ export const useSideBarReducer = () => {
           showMembers: !state.showMembers,
           showEditSpace: false,
           showChat: false,
+          hideAll: false,
         };
       case 'showEditSpace':
         return {
@@ -70,6 +75,7 @@ export const useSideBarReducer = () => {
           showMembers: false,
           showEditSpace: !state.showEditSpace,
           showChat: false,
+          hideAll: false,
         };
       case 'showChat':
         return {
@@ -80,6 +86,7 @@ export const useSideBarReducer = () => {
           showMembers: false,
           showEditSpace: false,
           showChat: !state.showChat,
+          hideAll: !state.hideAll,
         };
       default:
         return state;
@@ -95,6 +102,7 @@ export const useSideBarReducer = () => {
     showMembers: false,
     showEditSpace: false,
     showChat: false,
+    hideAll: false,
   } as never);
 
   return { state, dispatch };
