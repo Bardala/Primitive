@@ -1,19 +1,17 @@
-import { Blog } from '@nest/shared';
+import { Short } from '@nest/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 
 import { isArabic } from '../assists';
 import { LikeBlogButton } from './LikeBlogButton';
 
-export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
+export const ShortIcon: React.FC<{ post: Short }> = ({ post }) => {
   return (
     <div className="blog-preview" key={post.id}>
       <div className="blog-content">
-        <Link to={`/b/${post.id}`} className="blog-link">
-          <div className="blog-header">
-            <h2>{post.title}</h2>
-          </div>
-        </Link>
+        <div className="blog-header">
+          <h2>{post.title}</h2>
+        </div>
 
         <div className="blog-meta">
           <Link to={`/u/${post.userId}`} className="author-link">

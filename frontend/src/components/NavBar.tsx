@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -8,6 +8,12 @@ import '../styles/navBar.css';
 export const NavBar = () => {
   const { refetchCurrUser, currUser } = useAuthContext();
   const nav = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      nav('/login');
+    }
+  }, [nav]);
 
   const handleClick = useCallback(() => {
     logOut();

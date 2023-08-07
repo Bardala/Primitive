@@ -6,7 +6,7 @@ import {
   DeleteCommentReq,
   DeleteCommentRes,
   Errors,
-  Comment,
+  CommentWithUser,
 } from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
 import { Handler, HandlerWithParams } from '../types';
@@ -37,7 +37,7 @@ export class CommentController implements commentController {
     const user = await this.db.getUserById(userId);
     if (!user) return res.status(404).send({ error: Errors.USER_NOT_FOUND });
 
-    const comment: Comment = {
+    const comment: CommentWithUser = {
       userId,
       content,
       blogId,

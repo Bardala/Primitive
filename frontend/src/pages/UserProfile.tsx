@@ -1,71 +1,18 @@
-import {
-  ENDPOINT,
-  GetUserCardReq,
-  GetUserCardRes,
-  Space,
-  UserBlogsReq,
-  UserBlogsRes,
-  UserSpacesReq,
-  UserSpacesRes,
-} from '@nest/shared';
-import { useQuery } from '@tanstack/react-query';
+import { Space } from '@nest/shared';
 import { FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
 import { UserInfoCard } from '../components/UserInfoCard';
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
+import { useProfileData } from '../hooks/useProfileData';
 import '../styles/user-profile.css';
 
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
   const { id } = useParams();
-  const isMyPage = currUser?.id === id;
 
-  const userCardQuery = useQuery({
-    queryKey: ['userCard', id],
-    queryFn: () =>
-      fetchFn<GetUserCardReq, GetUserCardRes>(
-        ENDPOINT.GET_USER_CARD,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id!]
-      ),
-    enabled: !!currUser?.jwt && !!id,
-    onError: err => console.error(err),
-  });
-
-  const userSpacesQuery = useQuery({
-    queryKey: ['userSpaces', id],
-    queryFn: () =>
-      fetchFn<UserSpacesReq, UserSpacesRes>(
-        ENDPOINT.GET_USER_SPACES,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id!]
-      ),
-    enabled: isMyPage && !!currUser?.jwt && !!id,
-    onError: err => console.error(err),
-    refetchOnWindowFocus: false,
-  });
-
-  const userBlogsQuery = useQuery({
-    queryKey: ['userBlogs', id],
-    queryFn: () =>
-      fetchFn<UserBlogsReq, UserBlogsRes>(
-        ENDPOINT.GET_USER_BLOGS,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id!]
-      ),
-    enabled: !!currUser?.jwt && !!id,
-    onError: err => console.error(err),
-    refetchOnWindowFocus: false,
-  });
+  const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage } = useProfileData(id!);
 
   const blogs = userBlogsQuery.data?.blogs;
   const spaces = userSpacesQuery.data?.spaces;
@@ -135,7 +82,7 @@ export const UserProfile = () => {
             {userBlogsQuery.isLoading && <p>Loading...</p>}
 
             {!!blogs ? (
-              <BlogList blogs={blogs} />
+              <BlogList posts={blogs} />
             ) : (
               !userBlogsQuery.isLoading &&
               !userBlogsQuery.isError && (

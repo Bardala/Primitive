@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload, TokenExpiredError, VerifyErrors } from 'jsonwebtoken';
 
-import { Errors } from '../../../shared/src/errors';
+import { Errors } from '@nest/shared';
 import { db } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 
@@ -44,5 +44,5 @@ export function hashPassword(password: string): string {
 }
 
 export function createToken(id: string): string {
-  return jwt.sign({ id }, generateJwtSecret()!, { expiresIn: '45d' });
+  return jwt.sign({ id }, generateJwtSecret()!, { expiresIn: '3h' });
 }

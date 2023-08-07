@@ -1,17 +1,23 @@
-import { Comment, CreateCommentReq, CreateCommentRes, ENDPOINT, LoginRes } from '@nest/shared';
+import {
+  CommentWithUser,
+  CreateCommentReq,
+  CreateCommentRes,
+  ENDPOINT,
+  LoginRes,
+} from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import Markdown from 'markdown-to-jsx';
 import { FormEvent, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { fetchFn } from '../fetch';
 
-export const Comments: React.FC<{ blogId: string; currUser: LoginRes; comments: Comment[] }> = ({
-  blogId,
-  currUser,
-  comments,
-}) => {
+export const Comments: React.FC<{
+  blogId: string;
+  currUser: LoginRes;
+  comments: CommentWithUser[];
+}> = ({ blogId, currUser, comments }) => {
   const { id } = useParams();
 
   const [commContent, setCommContent] = useState('');
@@ -45,7 +51,6 @@ export const Comments: React.FC<{ blogId: string; currUser: LoginRes; comments: 
     <>
       <div className="blog-comments">
         <form onSubmit={handleSubmit} className="create-comment">
-          <p>Create Comment</p>
           <textarea
             placeholder="write your comment"
             value={commContent}
@@ -65,7 +70,9 @@ export const Comments: React.FC<{ blogId: string; currUser: LoginRes; comments: 
             comments?.map(comment => (
               <div className="comment" key={comment.id}>
                 <Markdown className="comment-body">{comment.content}</Markdown>
-                <p className="comment-author">{comment.author}</p>
+                <Link className="comment-author" to={`/u/${comment.userId}`}>
+                  {comment.author}
+                </Link>
                 <p className="created-at">
                   {formatDistanceToNow(new Date(comment.timestamp as number))} ago
                 </p>

@@ -1,5 +1,3 @@
-import { BlogCommentsReq, BlogCommentsRes, BlogReq, BlogRes, ENDPOINT } from '@nest/shared';
-import { useQuery } from '@tanstack/react-query';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import { Link, useParams } from 'react-router-dom';
 
@@ -10,33 +8,15 @@ import { Comments } from '../components/Comments';
 import { LikeBlogButton } from '../components/LikeBlogButton';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
-import { ApiError } from '../fetch/auth';
+import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 
 export const BlogDetails = () => {
-  const { currUser } = useAuthContext();
   const { id } = useParams();
+  const { currUser } = useAuthContext();
 
-  const blogQuery = useQuery<BlogRes, ApiError>(
-    ['blog', id],
-    () => fetchFn<BlogReq, BlogRes>(ENDPOINT.GET_BLOG, 'GET', undefined, currUser?.jwt, [id!]),
-    { enabled: !!currUser?.jwt && !!id }
-  );
+  const { blogQuery, commentsQuery } = useBlogPage(id!);
   const blogError = blogQuery.error;
-
-  const commentsQuery = useQuery(
-    ['comments', id],
-    () =>
-      fetchFn<BlogCommentsReq, BlogCommentsRes>(
-        ENDPOINT.GET_BLOG_COMMENTS,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id!]
-      ),
-    { enabled: !!currUser?.jwt && !!id }
-  );
 
   const blog = blogQuery.data?.blog;
   const comments = commentsQuery.data?.comments;
@@ -68,7 +48,7 @@ export const BlogDetails = () => {
                   })}
                 </p>
 
-                <LikeBlogButton blog={blog} />
+                <LikeBlogButton post={blog} />
 
                 <p className="comments-counts"> {comments?.length} comments</p>
               </div>

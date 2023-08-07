@@ -15,8 +15,11 @@ export interface Comment {
   content: string;
   blogId: string;
   userId: string;
-  author?: string;
+  // author?: string; // todo: remove and use CommentWithUser instead
   timestamp?: number;
+}
+export interface CommentWithUser extends Comment {
+  author: string;
 }
 
 export type SpaceStatus = 'public' | 'private';
@@ -34,6 +37,7 @@ export interface SpaceMember {
   memberId: string;
   spaceId: string;
   isAdmin: boolean;
+  username?: string;
 }
 
 export interface User {
@@ -69,6 +73,30 @@ export interface Like {
   blogId: string;
   userId: string;
 }
+
+export type Short = {
+  id: string;
+  title: string;
+  content: string;
+  userId: string;
+  spaceId: string;
+  author?: string;
+  timestamp?: number;
+};
+// export type ShComment = {
+//   id: string;
+//   content: string;
+//   shortId: string;
+//   userId: string;
+//   author?: string;
+//   timestamp?: number;
+// };
+// export type ShCommentWithUser = ShComment & { username: string };
+// export type ShLike = {
+//   shortId: string;
+//   userId: string;
+// };
+// export type ShLikedUser = Pick<User, 'id' | 'username'>;
 
 export interface JwtObject {
   userId: string;

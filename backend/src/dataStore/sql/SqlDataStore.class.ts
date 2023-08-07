@@ -13,9 +13,20 @@ import {
   Like,
   ChatMessage,
   Comment,
+  CommentWithUser,
 } from '@nest/shared';
 
 export class SqlDataStore implements DataStoreDao {
+  async getPostLikes(postId: string): Promise<LikedUser[]> {
+    const query = `
+    SELECT users.username, users.id
+    FROM likes RIGHT JOIN users
+    ON likes.userId = users.id
+    WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, postId);
+    return rows as LikedUser[];
+  }
   private pool!: Pool;
   public defaultSpcId = '1';
 
@@ -30,6 +41,99 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async getShComments(shortId: string): Promise<CommentWithUser[]> {
+    const query = `
+    SELECT * FROM Comments WHERE blogId=?
+    ORDER BY timestamp DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
+    return rows as CommentWithUser[];
+  }
+
+  async deleteShComments(shortId: string): Promise<void> {
+    const query = `
+    DELETE FROM Comments WHERE blogId=?
+    `;
+    await this.pool.query(query, shortId);
+  }
+
+  async shortLikes(shortId: string): Promise<number> {
+    const query = `
+    SELECT COUNT(*) As likes FROM shLikes WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
+    return rows[0]['likes'] as number;
+  }
+
+  async shortLikesList(shortId: string): Promise<LikedUser[]> {
+    const query = `
+    SELECT userId, username 
+    FROM likes 
+    RIGHT JOIN users 
+    ON likes.userId = users.id WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
+    return rows as LikedUser[];
+  }
+
+  // async getShorts(spaceId: string): Promise<Short[]> {
+  //   const query = `
+  //   SELECT * FROM shorts WHERE spaceId=?
+  //   ORDER BY timestamp DESC
+  //   `;
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
+  //   return rows as Short[];
+  // }
+
+  // async createShort(short: Short): Promise<void> {
+  //   const query = `
+  //   INSERT INTO shorts SET id=?, title=?, content=?, userId=?, spaceId=?, timestamp=?, author=?
+  //   `;
+  //   await this.pool.query<RowDataPacket[]>(query, [
+  //     short.id,
+  //     short.title,
+  //     short.content,
+  //     short.userId,
+  //     short.spaceId,
+  //     short.timestamp,
+  //     short.author,
+  //   ]);
+  // }
+
+  // async updateShort(short: Short): Promise<void> {
+  //   const query = `
+  //   UPDATE shorts
+  //   SET title=?, content=?, spaceId=?
+  //   WHERE id=?
+  //   `;
+  //   await this.pool.query<RowDataPacket[]>(query, [
+  //     short.title,
+  //     short.content,
+  //     short.spaceId,
+  //     short.id,
+  //   ]);
+  // }
+  // async getShort(shortId: string): Promise<Short | undefined> {
+  //   const query = `
+  //   SELECT * FROM shorts WHERE id=?
+  //   `;
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
+  //   return rows[0] as Short;
+  // }
+  // async deleteShort(shortId: string): Promise<void> {
+  //   const query = `
+  //   DELETE FROM shorts WHERE id=?
+  //   `;
+  //   await this.pool.query(query, shortId);
+  // }
+
+  async deleteMember(spaceId: string, memberId: string): Promise<void> {
+    const query = `
+    DELETE FROM members WHERE spaceId=? AND memberId=?
+    `;
+    await this.pool.query(query, [spaceId, memberId]);
   }
 
   async getFeeds(userId: string): Promise<Blog[]> {
@@ -157,8 +261,8 @@ export class SqlDataStore implements DataStoreDao {
 
   async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
     const query = `
-    SELECT members.memberId, members.spaceId, members.isAdmin
-    FROM members
+    SELECT members.*, users.username 
+    FROM members JOIN users ON members.memberId = users.id
     WHERE spaceId=?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
@@ -187,14 +291,16 @@ export class SqlDataStore implements DataStoreDao {
       blog.id,
     ]);
   }
-  async getComments(blogId: string): Promise<Comment[]> {
+  async getComments(blogId: string): Promise<CommentWithUser[]> {
     const query = `
-    SELECT * FROM comments WHERE blogId=?
-    ORDER BY timestamp DESC
+    SELECT comments.*, users.username AS author
+    FROM comments
+    JOIN users ON comments.userId = users.id
+    WHERE comments.blogId = ?
+    ORDER BY comments.timestamp DESC;
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
-
-    return rows as Comment[];
+    return rows as CommentWithUser[];
   }
   async blogLikes(blogId: string): Promise<number> {
     const query = `

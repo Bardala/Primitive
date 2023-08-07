@@ -38,6 +38,19 @@ CREATE TABLE IF NOT EXISTS blogs (
     FOREIGN KEY (spaceId) REFERENCES spaces(id)
 );
 
+CREATE TABLE IF NOT EXISTS shorts (
+    id VARCHAR(255) NOT NULL ,
+    title VARCHAR(50) NOT NULL,
+    content VARCHAR(550) NOT NULL,
+    userId VARCHAR(255) NOT NULL,
+    spaceId VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    timestamp BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (spaceId) REFERENCES spaces(id)
+);
+
 -- todo: add likeCounts column to let user add more than one like to a blog
 CREATE TABLE IF NOT EXISTS likes (
     blogId VARCHAR(255) NOT NULL,
@@ -47,11 +60,21 @@ CREATE TABLE IF NOT EXISTS likes (
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 
+-- CREATE TABLE IF NOT EXISTS likes (
+--     blogId VARCHAR(255), 
+--     shortId VARCHAR(255), 
+--     userId VARCHAR(255) NOT NULL, 
+--     PRIMARY KEY (blogId, shortId, userId), 
+--     FOREIGN KEY (blogId) REFERENCES blogs(id), 
+--     FOREIGN KEY (shortId) 
+--     REFERENCES shorts(id), 
+--     FOREIGN KEY (userId) REFERENCES users(id) 
+-- );
+
 CREATE TABLE IF NOT EXISTS comments (
     id VARCHAR(255) NOT NULL ,
     blogId VARCHAR(255) NOT NULL,
     userId VARCHAR(255) NOT NULL,
-    author VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY (id),

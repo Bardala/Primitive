@@ -22,6 +22,12 @@ import {
   ChatRes,
   FeedsReq,
   FeedsRes,
+  DeleteMemReq,
+  DeleteMemRes,
+  LeaveSpaceReq,
+  LeaveSpaceRes,
+  SpaceBlogsReq,
+  SpaceBlogsRes,
 } from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
@@ -40,6 +46,14 @@ export interface spaceController {
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes>;
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes>;
   feeds: Handler<FeedsReq, FeedsRes>;
+  blogs: HandlerWithParams<{ spaceId: string }, SpaceBlogsReq, SpaceBlogsRes>;
+  // shorts: HandlerWithParams<{ spaceId: string }, SpaceShortsReq, SpaceShortsRes>;
+  deleteMember: HandlerWithParams<
+    { spaceId: string; memberId: string },
+    DeleteMemReq,
+    DeleteMemRes
+  >;
+  leaveSpace: HandlerWithParams<{ spaceId: string }, LeaveSpaceReq, LeaveSpaceRes>;
 }
 
 export class SpaceController implements spaceController {
@@ -47,6 +61,69 @@ export class SpaceController implements spaceController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+
+  blogs: HandlerWithParams<{ spaceId: string }, SpaceBlogsReq, SpaceBlogsRes> = async (
+    req,
+    res
+  ) => {
+    const [{ spaceId }, { userId }] = [req.params, res.locals];
+
+    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+
+    if ((await this.db.getSpace(spaceId))?.status === 'public')
+      return res.send({ blogs: await this.db.getBlogs(spaceId) });
+
+    if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
+
+    return res.send({ blogs: await this.db.getBlogs(spaceId) });
+  };
+
+  // shorts: HandlerWithParams<{ spaceId: string }, SpaceShortsReq, SpaceShortsRes> = async (
+  //   req,
+  //   res
+  // ) => {
+  //   const [{ spaceId }, { userId }] = [req.params, res.locals];
+
+  //   if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+
+  //   if ((await this.db.getSpace(spaceId))?.status === 'public')
+  //     return res.send({ shorts: await this.db.getShorts(spaceId) });
+
+  //   if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
+
+  //   return res.send({ shorts: await this.db.getShorts(spaceId) });
+  // };
+
+  deleteMember: HandlerWithParams<
+    { spaceId: string; memberId: string },
+    DeleteMemReq,
+    DeleteMemRes
+  > = async (req, res) => {
+    const [spaceId, memberId, userId] = [
+      req.params.spaceId,
+      req.params.memberId,
+      res.locals.userId,
+    ];
+
+    if (!spaceId || !memberId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!(await this.db.isSpaceAdmin(spaceId, userId))) return res.sendStatus(403);
+    if (!(await this.db.isMember(spaceId, memberId))) return res.sendStatus(404);
+
+    await this.db.deleteMember(spaceId, memberId);
+    return res.sendStatus(200);
+  };
+  leaveSpace: HandlerWithParams<{ spaceId: string }, LeaveSpaceReq, LeaveSpaceRes> = async (
+    req,
+    res
+  ) => {
+    const [spaceId, userId] = [req.params.spaceId, res.locals.userId];
+
+    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
+
+    await this.db.deleteMember(spaceId, userId);
+    return res.sendStatus(200);
+  };
 
   feeds: Handler<FeedsReq, FeedsRes> = async (_, res) => {
     const feeds = await this.db.getFeeds(res.locals.userId);
@@ -124,7 +201,8 @@ export class SpaceController implements spaceController {
 
     return res.status(200).send({
       space,
-      blogs: await this.db.getBlogs(spaceId),
+      // blogs: await this.db.getBlogs(spaceId),
+      // shorts: await this.db.getShorts(spaceId),
     });
   };
 
@@ -150,9 +228,10 @@ export class SpaceController implements spaceController {
     const defaultSpace = await this.db.getSpace('1');
     if (!defaultSpace) return res.sendStatus(404);
 
-    const blogs = await this.db.getBlogs(defaultSpace.id);
+    // const blogs = await this.db.getBlogs(defaultSpace.id);
+    // const shorts = await this.db.getShorts(defaultSpace.id);
 
-    return res.status(200).send({ space: defaultSpace, blogs });
+    return res.status(200).send({ space: defaultSpace });
   };
 
   joinSpace: HandlerWithParams<{ spaceId: string }, JoinSpaceReq, JoinSpaceRes> = async (

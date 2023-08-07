@@ -1,10 +1,10 @@
 // * Comment APIs
-import { Comment } from '../types';
+import { Comment, CommentWithUser } from '../types';
 
 // createComment
 export type CreateCommentReq = Pick<Comment, 'content'>;
 export interface CreateCommentRes {
-  comment: Comment;
+  comment: CommentWithUser;
 }
 export type UpdateCommentReq = Pick<Comment, 'id' | 'content'>;
 export interface UpdateCommentRes {}

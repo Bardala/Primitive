@@ -26,6 +26,18 @@ export enum ENDPOINT {
   LIKE_BLOG = '/api/v0/blog/:blogId/like',
   UNLIKE_BLOG = '/api/v0/blog/:blogId/unlike',
 
+  //* Short
+  CREATE_SHORT = '/api/v0/space/:spaceId/short',
+  UPDATE_SHORT = '/api/v0/short/:shortId',
+  GET_SHORT = '/api/v0/short/:shortId',
+  DELETE_SHORT = '/api/v0/short/:shortId',
+
+  GET_SHORT_COMMENTS = '/api/v0/short/:shortId/comments',
+  GET_SHORT_LIKES = '/api/v0/short/:shortId/likes',
+  GET_SHORT_LIKES_LIST = '/api/v0/short/:shortId/likes/list',
+  LIKE_SHORT = '/api/v0/short/:shortId/like',
+  UNLIKE_SHORT = '/api/v0/short/:shortId/unlike',
+
   // *Comment
   CREATE_COMMENT = '/api/v0/blog/:blogId/comment',
   UPDATE_COMMENT = '/api/v0/comment/:commentId',
@@ -43,10 +55,18 @@ export enum ENDPOINT {
   ADD_MEMBER = '/api/v0/space/:spaceId/member',
   GET_SPACE_MEMBERS = '/api/v0/space/:spaceId/members',
   Get_SPACE_CHAT = '/api/v0/space/:spaceId/chat',
+  DELETE_MEMBER = '/api/v0/space/:spaceId/member/:memberId',
+  LEAVE_SPACE = '/api/v0/space/:spaceId/leave',
+  GET_SPACE_SHORTS = '/api/v0/space/:spaceId/shorts',
 
   //* Message
   CREATE_MESSAGE = '/api/v0/space/:spaceId/message',
   DELETE_MESSAGE = '/api/v0/message/:msgId',
+
+  // *Like
+  LIKE_POST = '/api/v0/post/:postId/like',
+  UNLIKE_POST = '/api/v0/post/:postId/unlike',
+  GET_POST_LIKES = '/api/v0/post/:postId/likes',
 
   // *Feeds
   GET_FEEDS = '/api/v0/feeds',

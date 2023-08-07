@@ -11,7 +11,7 @@ export const SpaceMembers: React.FC<{ users: SpaceMember[] }> = ({ users }) => {
             <li key={user.memberId}>
               <Link to={`/u/${user.memberId}`}>
                 <p className="username">
-                  {user.isAdmin && <strong>admin</strong>} {user.memberId}
+                  {!!user.isAdmin && <i>admin</i>} {user.username}
                 </p>
                 {/* <div className="counts-container">
                   <p className="followers-count"> {user.followers.length} followers </p>

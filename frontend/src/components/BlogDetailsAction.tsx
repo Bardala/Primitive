@@ -37,11 +37,11 @@ export const BlogDetailsAction: React.FC<{
     deleteMutate.mutate();
   };
 
-  const isCurrUserOwnBlog = currUser?.id === owner;
+  const currUserOwnBlog = currUser?.id === owner;
 
   return (
     <>
-      {isCurrUserOwnBlog && (
+      {currUserOwnBlog && (
         <button
           type="button"
           onClick={handleDelete}

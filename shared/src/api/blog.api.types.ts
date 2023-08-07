@@ -1,4 +1,4 @@
-import { Blog, Comment, LikedUser, StatusMessage } from '../types';
+import { Blog, CommentWithUser, LikedUser, StatusMessage } from '../types';
 
 // * Blog APIs
 export type CreateBlogReq = Pick<Blog, 'title' | 'content' | 'spaceId'>;
@@ -11,7 +11,7 @@ export interface BlogRes {
   blog: Blog;
 }
 
-export type updateBlogReq = Pick<Blog, 'content' | 'title' | 'spaceId'>; // params.blogId
+export type updateBlogReq = Pick<Blog, 'content' | 'title'>; // params.blogId
 export interface updateBlogRes {}
 
 export interface DeleteBlogReq {} // params.blogId
@@ -21,7 +21,7 @@ export interface DeleteBlogRes {
 
 export interface BlogCommentsReq {} // params.blogId
 export interface BlogCommentsRes {
-  comments: Comment[];
+  comments: CommentWithUser[];
 }
 
 export interface BlogLikesReq {} // params.blogId

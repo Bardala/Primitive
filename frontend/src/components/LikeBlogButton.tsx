@@ -1,74 +1,14 @@
-import {
-  Blog,
-  BlogLikesListReq,
-  BlogLikesListRes,
-  CreateLikeReq,
-  CreateLikeRes,
-  ENDPOINT,
-  RemoveLikeReq,
-  RemoveLikeRes,
-} from '@nest/shared';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Blog, Short } from '@nest/shared';
 
-import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
-import { ApiError } from '../fetch/auth';
+import { useLikeButton } from '../hooks/useLike';
 import '../styles/like-button.css';
 
-export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
-  const { blog } = props;
-  const { currUser } = useAuthContext();
-
-  const blogLikesQuery = useQuery<BlogLikesListRes, ApiError>(
-    ['blogLikes', blog.id],
-    () =>
-      fetchFn<BlogLikesListReq, BlogLikesListRes>(
-        ENDPOINT.GET_BLOG_LIKES_LIST,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [blog.id]
-      ),
-    {
-      enabled: !!currUser?.jwt && !!blog.id,
-      onError: err => console.log(err),
-    }
-  );
-
-  const postLikeMutate = useMutation<CreateLikeRes, ApiError>(
-    () =>
-      fetchFn<CreateLikeReq, CreateLikeRes>(ENDPOINT.LIKE_BLOG, 'POST', undefined, currUser?.jwt, [
-        blog.id,
-      ]),
-    {
-      onSuccess: () => blogLikesQuery.refetch(),
-      onError: err => console.error('postLike error', err),
-    }
-  );
-
-  const deleteLikeMutate = useMutation<RemoveLikeRes, ApiError>(
-    () =>
-      fetchFn<RemoveLikeReq, RemoveLikeRes>(
-        ENDPOINT.UNLIKE_BLOG,
-        'DELETE',
-        undefined,
-        currUser?.jwt,
-        [blog.id]
-      ),
-    {
-      onSuccess: () => blogLikesQuery.refetch(),
-      onError: err => console.error('deleteLike error', err),
-    }
-  );
-
-  const isLiked = () => {
-    if (!currUser) return false;
-    return blogLikesQuery.data?.users?.some(user => user.id === currUser?.id);
-  };
+export const LikeBlogButton: React.FC<{ post: Blog | Short }> = props => {
+  const { post } = props;
+  const { blogLikesQuery, postLikeMutate, deleteLikeMutate, isLiked } = useLikeButton(post.id);
 
   return (
     <>
-      {/* {postLikeMutate.isError && <p className="error">{postLikeMutate.error.message}</p>} */}
       <div className="like-button-wrapper">
         {isLiked() ? (
           <button
@@ -76,8 +16,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => deleteLikeMutate.mutate()}
             disabled={deleteLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users?.length} 🤍</span>
-            {/* <i className="material-icons">favorite</i> */}
+            <span>{blogLikesQuery.data?.users?.length} ❤️</span>
           </button>
         ) : (
           <button
@@ -85,8 +24,7 @@ export const LikeBlogButton: React.FC<{ blog: Blog }> = props => {
             onClick={() => postLikeMutate.mutate()}
             disabled={postLikeMutate.isLoading}
           >
-            <span>{blogLikesQuery.data?.users?.length} ❤️ </span>
-            {/* <i className="material-icons">favorite</i> */}
+            <span>{blogLikesQuery.data?.users?.length} 🤍 </span>
           </button>
         )}
       </div>

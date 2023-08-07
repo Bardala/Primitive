@@ -21,4 +21,6 @@ export enum Errors {
   COMMENT_NOT_FOUND = 'Comment not found',
   PRIVATE_SPACE = 'Private space, you need to be a member to access it',
   PRIVATE_BLOG = 'Private blog, it is posted in a private space',
+  SHORT_NOT_FOUND = 'Short not found',
+  PRIVATE_SHORT = 'Private short, it is posted in a private space',
 }

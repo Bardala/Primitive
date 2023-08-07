@@ -1,25 +1,29 @@
-import { Like, Blog, LikedUser, Comment } from '@nest/shared';
 import {
+  Blog,
   BlogCommentsReq,
   BlogCommentsRes,
-  BlogLikesListReq,
-  BlogLikesListRes,
-  BlogLikesReq,
-  BlogLikesRes,
   BlogReq,
   BlogRes,
   CreateBlogReq,
   CreateBlogRes,
-  CreateLikeReq,
-  CreateLikeRes,
   DeleteBlogReq,
   DeleteBlogRes,
-  RemoveLikeReq,
-  RemoveLikeRes,
+  Errors,
   updateBlogReq,
   updateBlogRes,
-} from '../../../shared/src/api/blog.api.types';
-import { Errors } from '../../../shared/src/errors';
+  CommentWithUser,
+  CreateLikeReq,
+  BlogLikesListReq,
+  BlogLikesListRes,
+  BlogLikesReq,
+  BlogLikesRes,
+  CreateLikeRes,
+  Like,
+  LikedUser,
+  RemoveLikeReq,
+  RemoveLikeRes,
+} from '@nest/shared';
+
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 import { Handler, HandlerWithParams } from '../types';
@@ -30,6 +34,7 @@ export interface blogController {
   updateBlog: HandlerWithParams<{ blogId: string }, updateBlogReq, updateBlogRes>;
   getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes>;
   deleteBlog: HandlerWithParams<{ blogId: string }, DeleteBlogReq, DeleteBlogRes>;
+
   getBlogComments: HandlerWithParams<{ blogId: string }, BlogCommentsReq, BlogCommentsRes>;
   likeBlog: HandlerWithParams<{ blogId: string }, CreateLikeReq, CreateLikeRes>;
   unLikeBlog: HandlerWithParams<{ blogId: string }, RemoveLikeReq, RemoveLikeRes>;
@@ -81,62 +86,6 @@ export class BlogController implements blogController {
     await this.db.removeLike(like);
     return res.sendStatus(200);
   };
-
-  updateBlog: HandlerWithParams<{ blogId: string }, updateBlogReq, updateBlogRes> = async (
-    req,
-    res
-  ) => {
-    const userId = res.locals.userId;
-    const blogId = req.params.blogId;
-    const { content, title, spaceId } = req.body;
-
-    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!content || !title || !spaceId)
-      return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
-    let blog = await this.db.getBlog(blogId);
-    if (!blog) return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
-    if (blog.userId !== userId) return res.sendStatus(403);
-
-    blog = { id: blogId, content, title, userId, spaceId };
-
-    await this.db.updateBlog(blog);
-    return res.sendStatus(200);
-  };
-
-  getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes> = async (req, res) => {
-    const blogId = req.params.blogId;
-
-    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-
-    const blog: Blog | undefined = await this.db.getBlog(blogId);
-    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
-    if (
-      (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
-      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
-    )
-      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
-
-    return res.status(200).send({ blog });
-  };
-
-  getBlogComments: HandlerWithParams<{ blogId: string }, BlogCommentsReq, BlogCommentsRes> = async (
-    req,
-    res
-  ) => {
-    const blogId = req.params.blogId;
-    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    const blog: Blog | undefined = await this.db.getBlog(blogId);
-    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
-    if (
-      (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
-      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
-    )
-      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
-
-    const comments: Comment[] = await this.db.getComments(blogId);
-    return res.status(200).send({ comments });
-  };
-
   getBlogLikes: HandlerWithParams<{ blogId: string }, BlogLikesReq, BlogLikesRes> = async (
     req,
     res
@@ -167,6 +116,60 @@ export class BlogController implements blogController {
       return res.status(200).send({ users });
     };
 
+  updateBlog: HandlerWithParams<{ blogId: string }, updateBlogReq, updateBlogRes> = async (
+    req,
+    res
+  ) => {
+    const userId = res.locals.userId;
+    const blogId = req.params.blogId;
+    const { content, title } = req.body;
+
+    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!content || !title) return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+    let blog = await this.db.getBlog(blogId);
+    if (!blog) return res.status(400).send({ error: Errors.BLOG_NOT_FOUND });
+    if (blog.userId !== userId) return res.sendStatus(403);
+
+    blog = { id: blogId, content, title, userId, spaceId: blog.spaceId };
+
+    await this.db.updateBlog(blog);
+    return res.sendStatus(200);
+  };
+
+  getBlog: HandlerWithParams<{ blogId: string }, BlogReq, BlogRes> = async (req, res) => {
+    const blogId = req.params.blogId;
+
+    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+
+    const blog: Blog | undefined = await this.db.getBlog(blogId);
+    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+    if (
+      (await this.db.getSpace(blog.spaceId))?.status === 'private' &&
+      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
+    )
+      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
+
+    return res.status(200).send({ blog });
+  };
+
+  getBlogComments: HandlerWithParams<{ blogId: string }, BlogCommentsReq, BlogCommentsRes> = async (
+    req,
+    res
+  ) => {
+    const blogId = req.params.blogId;
+    if (!blogId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    const blog: Blog | undefined = await this.db.getBlog(blogId);
+    if (!blog) return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+    if (
+      (await this.db.getSpace(blog?.spaceId))?.status === 'private' &&
+      !(await this.db.isMember(blog?.spaceId, res.locals.userId))
+    )
+      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_BLOG });
+
+    const comments: CommentWithUser[] = await this.db.getComments(blogId);
+    return res.status(200).send({ comments });
+  };
+
   createBlog: Handler<CreateBlogReq, CreateBlogRes> = async (req, res) => {
     const userId = res.locals.userId;
 
@@ -177,7 +180,7 @@ export class BlogController implements blogController {
       return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
     if (!user) return res.status(400).send({ error: Errors.USER_NOT_FOUND });
     if (
-      (await this.db.getSpace(spaceId))?.status === 'private' &&
+      // (await this.db.getSpace(spaceId))?.status === 'private' &&
       !(await this.db.isMember(spaceId, res.locals.userId))
     )
       return res.sendStatus(403);

@@ -28,11 +28,15 @@ import { ChatController } from './controllers/chat.controller';
   const space = new SpaceController(db);
   const comm = new CommentController(db);
   const chat = new ChatController(db);
+  // const short = new ShortController(db);
+  // const like = new LikeController(db);
 
   app.use((req, res, next) => {
     console.log(req.path, req.method, req.body, req.params, res.statusCode);
     next();
   });
+
+  app.get('/health', (_, res) => res.send('😊'));
 
   // *Auth Routes
   app.post(ENDPOINT.SIGNUP, asyncHandler(user.signup));
@@ -52,11 +56,20 @@ import { ChatController } from './controllers/chat.controller';
   app.put(ENDPOINT.UPDATE_BLOG, requireAuth, asyncHandler(blog.updateBlog));
   app.get(ENDPOINT.GET_BLOG, requireAuth, asyncHandler(blog.getBlog));
   app.delete(ENDPOINT.DELETE_BLOG, requireAuth, asyncHandler(blog.deleteBlog));
+
   app.get(ENDPOINT.GET_BLOG_COMMENTS, requireAuth, asyncHandler(blog.getBlogComments));
   app.get(ENDPOINT.GET_BLOG_LIKES, requireAuth, asyncHandler(blog.getBlogLikes));
   app.get(ENDPOINT.GET_BLOG_LIKES_LIST, requireAuth, asyncHandler(blog.getBlogLikesList));
   app.post(ENDPOINT.LIKE_BLOG, requireAuth, asyncHandler(blog.likeBlog));
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
+
+  //* Short
+  // app.post(ENDPOINT.CREATE_SHORT, requireAuth, asyncHandler(short.createShort));
+  // app.put(ENDPOINT.UPDATE_SHORT, requireAuth, asyncHandler(short.updateShort));
+  // app.get(ENDPOINT.GET_SHORT, requireAuth, asyncHandler(short.getShort));
+  // app.delete(ENDPOINT.DELETE_SHORT, requireAuth, asyncHandler(short.deleteShort));
+
+  // app.get(ENDPOINT.GET_SHORT_COMMENTS, requireAuth, asyncHandler(short.shortComments));
 
   // *Comment
   app.post(ENDPOINT.CREATE_COMMENT, requireAuth, asyncHandler(comm.createComment));
@@ -74,6 +87,15 @@ import { ChatController } from './controllers/chat.controller';
   app.post(ENDPOINT.ADD_MEMBER, requireAuth, asyncHandler(space.addMember));
   app.get(ENDPOINT.GET_SPACE_MEMBERS, requireAuth, asyncHandler(space.getSpaceMembers));
   app.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(space.getChat));
+  app.delete(ENDPOINT.DELETE_MEMBER, requireAuth, asyncHandler(space.deleteMember));
+  app.delete(ENDPOINT.LEAVE_SPACE, requireAuth, asyncHandler(space.leaveSpace));
+  app.get(ENDPOINT.GET_SPACE_BLOGS, requireAuth, asyncHandler(space.blogs));
+  // app.get(ENDPOINT.GET_SPACE_SHORTS, requireAuth, asyncHandler(space.shorts));
+
+  // *Like
+  // app.post(ENDPOINT.LIKE_POST, requireAuth, asyncHandler(like.likePost));
+  // app.delete(ENDPOINT.UNLIKE_POST, requireAuth, asyncHandler(like.unLikePost));
+  // app.get(ENDPOINT.GET_POST_LIKES, requireAuth, asyncHandler(like.getPostLikes));
 
   //* Message
   app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage));

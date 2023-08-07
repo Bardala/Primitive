@@ -1,4 +1,4 @@
-import { Blog, Comment, LikedUser } from '@nest/shared';
+import { Blog, CommentWithUser, LikedUser } from '@nest/shared';
 
 export interface BlogDao {
   createBlog(blog: Blog): Promise<void>;
@@ -6,7 +6,7 @@ export interface BlogDao {
   getBlog(blogId: string): Promise<Blog | undefined>;
   deleteBlog(blogId: string): Promise<void>;
 
-  getComments(blogId: string): Promise<Comment[]>;
+  getComments(blogId: string): Promise<CommentWithUser[]>;
   deleteComments(blogId: string): Promise<void>;
   blogLikes(blogId: string): Promise<number>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;

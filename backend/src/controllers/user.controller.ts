@@ -1,30 +1,30 @@
 import crypto from 'crypto';
 import validator from 'validator';
 
-import {
-  FollowUserReq,
-  FollowUserRes,
-  GetFollowersReq,
-  GetFollowersRes,
-  GetUserCardReq,
-  GetUserCardRes,
-  GetUsersListReq,
-  GetUsersListRes,
-  LoginReq,
-  LoginRes,
-  SignUpReq,
-  UnFollowUserReq,
-  UnFollowUserRes,
-  UserBlogsReq,
-  UserBlogsRes,
-  UserSpacesReq,
-  UserSpacesRes,
-} from '../../../shared/src/api/user.api.types';
-import { Errors } from '../../../shared/src/errors';
 import { SqlDataStore } from '../dataStore/sql/SqlDataStore.class';
 import { HTTP } from '../httpStatusCodes';
 import { createToken, hashPassword } from '../middleware/authMiddleware';
 import { Handler, HandlerWithParams } from '../types';
+import {
+  SignUpReq,
+  LoginRes,
+  LoginReq,
+  GetUserCardReq,
+  GetUserCardRes,
+  FollowUserReq,
+  FollowUserRes,
+  UnFollowUserReq,
+  UnFollowUserRes,
+  GetFollowersReq,
+  GetFollowersRes,
+  UserBlogsReq,
+  UserBlogsRes,
+  UserSpacesReq,
+  UserSpacesRes,
+  Errors,
+  GetUsersListReq,
+  GetUsersListRes,
+} from '@nest/shared';
 
 export interface userController {
   signup: Handler<SignUpReq, LoginRes>;

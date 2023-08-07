@@ -1,30 +1,32 @@
-import { CreateBlogReq, CreateBlogRes, ENDPOINT } from '@nest/shared';
+import { CreateBlogReq, CreateBlogRes, DefaultSpaceId, ENDPOINT } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ShortLength, isArabic } from '../assists';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
 
-export const CreateBlogForm = () => {
+export const ShortForm = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const { currUser } = useAuthContext();
+  const remaining = ShortLength - content.length;
 
   const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const createBlogMutation = useMutation<CreateBlogRes, ApiError>({
+  const createShortMutation = useMutation<CreateBlogRes, ApiError>({
     mutationFn: () =>
       fetchFn<CreateBlogReq, CreateBlogRes>(
         ENDPOINT.CREATE_BLOG,
         'POST',
-        { title, content, spaceId: id! || '1' },
+        { title, content, spaceId: id || DefaultSpaceId },
         currUser?.jwt
       ),
     onSuccess: data => {
-      queryClient.invalidateQueries(['space', id || 'home']);
+      queryClient.invalidateQueries(['blogs', id || DefaultSpaceId]);
       console.log('data', data);
       setTitle('');
       setContent('');
@@ -36,12 +38,12 @@ export const CreateBlogForm = () => {
 
   const handleSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
-    createBlogMutation.mutate();
+    createShortMutation.mutate();
   };
 
   return (
     <>
-      {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
+      {createShortMutation.isError && <p className="error">{createShortMutation.error.message}</p>}
       <form className="create-blog-from" onSubmit={handleSubmit}>
         <input
           placeholder="Title"
@@ -57,12 +59,15 @@ export const CreateBlogForm = () => {
           id="content"
           value={content}
           onChange={e => setContent(e.target.value)}
+          maxLength={ShortLength}
+          className={isArabic(content) ? 'arabic' : ''}
         />
+        <i className="remaining-char">{remaining} remaining characters</i>
 
-        <button type="submit" disabled={createBlogMutation.isLoading}>
+        <button type="submit" disabled={createShortMutation.isLoading}>
           Create
         </button>
-        {createBlogMutation.isLoading && <p>Creating...</p>}
+        {createShortMutation.isLoading && <p>Creating...</p>}
       </form>
     </>
   );

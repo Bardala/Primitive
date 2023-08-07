@@ -16,7 +16,7 @@ export const SpaceForm: React.FC<{
           id="name"
           name="name"
           value={state.name}
-          placeholder="Space name"
+          placeholder="space name"
           onChange={e => dispatch({ type: 'SET_NAME', payload: e.target.value })}
         />
 
@@ -32,7 +32,7 @@ export const SpaceForm: React.FC<{
         </select>
 
         <textarea
-          placeholder="Description"
+          placeholder="description"
           name="description"
           id="description"
           value={state.description}

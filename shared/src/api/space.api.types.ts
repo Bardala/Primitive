@@ -16,7 +16,8 @@ export interface UpdateSpaceRes {
 export interface SpaceReq {}
 export interface SpaceRes {
   space: Space;
-  blogs: Blog[];
+  // blogs: Blog[];
+  // shorts: Short[];
 }
 
 export interface DeleteSpaceReq {}
@@ -25,7 +26,18 @@ export interface DeleteSpaceRes {}
 export interface DefaultSpaceReq {}
 export interface DefaultSpaceRes {
   space: Space;
+  // blogs: Blog[];
+  // shorts: Short[];
+}
+
+export interface SpaceBlogsReq {}
+export interface SpaceBlogsRes {
   blogs: Blog[];
+}
+
+export interface SpaceShortsReq {}
+export interface SpaceShortsRes {
+  // shorts: Short[];
 }
 
 export interface JoinSpaceReq {} // locals.userId // params.spaceId
@@ -50,3 +62,9 @@ export interface ChatReq {}
 export interface ChatRes {
   messages: ChatMessage[];
 }
+
+export interface DeleteMemReq {}
+export interface DeleteMemRes {}
+
+export interface LeaveSpaceReq {}
+export interface LeaveSpaceRes {}
