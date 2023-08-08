@@ -17,16 +17,6 @@ import {
 } from '@nest/shared';
 
 export class SqlDataStore implements DataStoreDao {
-  async getPostLikes(postId: string): Promise<LikedUser[]> {
-    const query = `
-    SELECT users.username, users.id
-    FROM likes RIGHT JOIN users
-    ON likes.userId = users.id
-    WHERE blogId=?
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, postId);
-    return rows as LikedUser[];
-  }
   private pool!: Pool;
   public defaultSpcId = '1';
 
@@ -41,6 +31,17 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async getPostLikes(postId: string): Promise<LikedUser[]> {
+    const query = `
+    SELECT users.username, users.id
+    FROM likes RIGHT JOIN users
+    ON likes.userId = users.id
+    WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, postId);
+    return rows as LikedUser[];
   }
 
   async getShComments(shortId: string): Promise<CommentWithUser[]> {

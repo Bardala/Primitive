@@ -31,6 +31,8 @@ export const CreateBlogPage: React.FC = () => {
       <h4>
         Add a New Blog to <i>{spaceName}</i> Space
       </h4>
+      {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
+
       <div className="create">
         <form onSubmit={e => handleSubmit(e)}>
           <input
@@ -62,7 +64,6 @@ export const CreateBlogPage: React.FC = () => {
           </article>
         </div>
       </div>
-      {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
     </>
   );
 };
