@@ -1,5 +1,3 @@
-// todo: rename the file .d.ts
-
 export interface Blog {
   id: string;
   title: string;
@@ -15,7 +13,6 @@ export interface Comment {
   content: string;
   blogId: string;
   userId: string;
-  // author?: string; // todo: remove and use CommentWithUser instead
   timestamp?: number;
 }
 export interface CommentWithUser extends Comment {
