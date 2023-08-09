@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import validator from 'validator';
 
-import { SqlDataStore } from '../dataStore/sql/SqlDataStore.class';
 import { HTTP } from '../httpStatusCodes';
 import { createToken, hashPassword } from '../middleware/authMiddleware';
 import { Handler, HandlerWithParams } from '../types';
@@ -25,11 +24,12 @@ import {
   GetUsersListReq,
   GetUsersListRes,
 } from '@nest/shared';
+import { DataStoreDao } from '../dataStore';
 
 export interface userController {
   signup: Handler<SignUpReq, LoginRes>;
   login: Handler<LoginReq, LoginRes>;
-  getUsersList: Handler<GetUserCardReq, GetUserCardRes>;
+  getUsersList: Handler<GetUsersListReq, GetUsersListRes>;
   getUserCard: HandlerWithParams<{ id: string }, GetUserCardReq, GetUserCardRes>;
   createFollow: HandlerWithParams<{ id: string }, FollowUserReq, FollowUserRes>;
   deleteFollow: HandlerWithParams<{ id: string }, UnFollowUserReq, UnFollowUserRes>;
@@ -39,9 +39,9 @@ export interface userController {
 }
 
 export class UserController implements userController {
-  private db: SqlDataStore;
+  private db: DataStoreDao;
 
-  constructor(db: SqlDataStore) {
+  constructor(db: DataStoreDao) {
     this.db = db;
   }
 

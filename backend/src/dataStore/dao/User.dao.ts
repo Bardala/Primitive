@@ -1,4 +1,4 @@
-import { Blog, Space, User, UserCard, UsersList } from "@nest/shared";
+import { Blog, Space, User, UserCard, UsersList } from '@nest/shared';
 
 export interface UserDao {
   createUser(user: User): Promise<void>;
@@ -16,4 +16,5 @@ export interface UserDao {
   getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
   getUserBlogs(userId: string): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
+  isFollow(followingId: string, userId: string): Promise<boolean>;
 }

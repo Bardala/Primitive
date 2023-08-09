@@ -9,15 +9,16 @@ import {
 } from '@nest/shared';
 import { HandlerWithParams } from '../types';
 import { SqlDataStore } from '../dataStore/sql/SqlDataStore.class';
+import { DataStoreDao } from '../dataStore';
 
 interface likeController {
   likePost: HandlerWithParams<{ postId: string }, LikePostReq, LikePostRes>;
   unLikePost: HandlerWithParams<{ postId: string }, UnLikePostReq, UnLikePostRes>;
-  getPostLikes: HandlerWithParams<{ postId: string }, LikePostReq, LikePostRes>;
+  getPostLikes: HandlerWithParams<{ postId: string }, GetPostLikesReq, GetPostLikesRes>;
 }
 
 export class LikeController implements likeController {
-  private db: SqlDataStore;
+  private db: DataStoreDao;
   constructor(db: SqlDataStore) {
     this.db = db;
   }
