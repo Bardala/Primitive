@@ -2,6 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
+import http from 'http';
 
 import { ENDPOINT } from '@nest/shared';
 import { BlogController } from './controllers/blog.controller';
@@ -12,6 +13,7 @@ import { db, initDb } from './dataStore';
 import { requireAuth } from './middleware/authMiddleware';
 import { errorHandler } from './middleware/errorHandler';
 import { ChatController } from './controllers/chat.controller';
+import { initSockets } from './Sockets.class';
 
 (async () => {
   dotenv.config();
@@ -19,6 +21,10 @@ import { ChatController } from './controllers/chat.controller';
 
   const app = express();
   const port = process.env.PORT;
+  const server = http.createServer(app);
+  app.use(express.static('public'));
+
+  initSockets(server);
 
   app.use(express.json());
   app.use(cors());
@@ -105,7 +111,8 @@ import { ChatController } from './controllers/chat.controller';
   app.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(space.feeds));
 
   app.use(errorHandler);
-  app.listen(port, () => {
+
+  server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
   });
 })();

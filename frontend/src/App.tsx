@@ -8,6 +8,7 @@ import { Login } from './pages/Login';
 import { Space } from './pages/Space';
 import { UserProfile } from './pages/UserProfile';
 import { UsersList } from './pages/UsersList';
+import { Chat } from './pages/chat';
 import { SignUp } from './pages/signup';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/u/:id" element={<UserProfile />} />
           <Route path="/u" element={<UsersList />} />
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
+          <Route path="/chat" element={<Chat />} />
         </Routes>
       </BrowserRouter>
     </div>
