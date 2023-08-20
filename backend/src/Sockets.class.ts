@@ -4,18 +4,29 @@ import http from 'http';
 class Connection {
   io: Server;
   socket: Socket;
+  spaceId: string | string[] | undefined;
 
   constructor(io: Server, socket: Socket) {
     this.io = io;
     this.socket = socket;
-    socket.on('chat message', msg => {
-      console.log(msg);
-      io.emit('chat message', msg);
-    });
 
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
+    socket.on('join_room', this.handleJoinRoom.bind(this));
+    socket.on('from_client', this.handleMsgs.bind(this));
+    socket.on('disconnect', this.handleDisconnect.bind(this));
+  }
+
+  private handleJoinRoom(spaceId: string) {
+    this.socket.join(spaceId);
+    console.log(`User ${this.socket.id} joined room ${spaceId}`);
+  }
+
+  private handleMsgs(data: { message: string; spaceId: string }) {
+    console.log(data);
+    this.io.to(data.spaceId).emit('from_server', data.message);
+  }
+
+  private handleDisconnect() {
+    console.log('user disconnected');
   }
 }
 

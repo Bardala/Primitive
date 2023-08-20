@@ -26,7 +26,7 @@ function App() {
           <Route path="/u/:id" element={<UserProfile />} />
           <Route path="/u" element={<UsersList />} />
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:id" element={<Chat />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { socket } from '../socket';
 
@@ -8,19 +9,22 @@ type State = {
 };
 
 export const Chat = () => {
+  const { id: spaceId } = useParams();
   const [state, setState] = useState<State>({
     message: '',
     messages: [],
   });
 
   useEffect(() => {
-    socket.on('chat message', msg => {
+    socket.emit('join_room', spaceId);
+
+    socket.on('from_server', msg => {
       setState(state => ({
         ...state,
         messages: [...state.messages, msg],
       }));
     });
-  }, []);
+  }, [spaceId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -31,7 +35,7 @@ export const Chat = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('chat message', state.message);
+    socket.emit('from_client', { message: state.message, spaceId });
     setState({
       ...state,
       message: '',
