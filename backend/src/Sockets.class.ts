@@ -1,5 +1,6 @@
-import { Server, Socket } from 'socket.io';
 import http from 'http';
+import { Server, Socket } from 'socket.io';
+import { ChatMessage } from '@nest/shared';
 
 class Connection {
   io: Server;
@@ -20,9 +21,8 @@ class Connection {
     console.log(`User ${this.socket.id} joined room ${spaceId}`);
   }
 
-  private handleMsgs(data: { message: string; spaceId: string }) {
-    console.log(data);
-    this.io.to(data.spaceId).emit('from_server', data.message);
+  private handleMsgs(data: { message: ChatMessage; spaceId: string }) {
+    this.socket.broadcast.to(data.spaceId).emit('from_server', data.message);
   }
 
   private handleDisconnect() {

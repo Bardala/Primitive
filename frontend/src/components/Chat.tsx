@@ -1,46 +1,11 @@
-import { ChatReq, ChatRes, CreateMsgReq, CreateMsgRes, ENDPOINT, Space } from '@nest/shared';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Space } from '@nest/shared';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 
-import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
-import { ApiError } from '../fetch/auth';
+import { useChat } from '../hooks/useChat';
 
 export const Chat: React.FC<{ space: Space }> = ({ space }) => {
-  const { currUser } = useAuthContext();
-  const [newMsg, setNewMsg] = useState('');
-  const queryClient = useQueryClient();
-
-  const chatQuery = useQuery<ChatRes, ApiError>(
-    ['chat', space.id],
-    () =>
-      fetchFn<ChatReq, ChatRes>(ENDPOINT.Get_SPACE_CHAT, 'GET', undefined, currUser?.jwt, [
-        space.id,
-      ]),
-    {
-      enabled: !!currUser?.jwt && !!space.id,
-    }
-  );
-  const chatErr = chatQuery.error;
-
-  const msgMutate = useMutation<CreateMsgRes, ApiError>(
-    () =>
-      fetchFn<CreateMsgReq, CreateMsgRes>(
-        ENDPOINT.CREATE_MESSAGE,
-        'POST',
-        { content: newMsg },
-        currUser?.jwt,
-        [space.id]
-      ),
-    {
-      onSuccess: data => {
-        queryClient.invalidateQueries(['chat', space.id]);
-        setNewMsg('');
-      },
-      onError: err => console.error(err),
-    }
-  );
+  const { msgMutate, chatQuery, chatErr, setNewMsg, newMsg } = useChat(space);
 
   const handleSubmit = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
