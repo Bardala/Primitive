@@ -1,25 +1,13 @@
-import { Blog, DefaultSpaceId, Short } from '@nest/shared';
-import { useEffect, useState } from 'react';
+import { DefaultSpaceId } from '@nest/shared';
 
 import { BlogList } from '../components/BlogList';
 import { Sidebar } from '../components/SideBar';
 import { useSpace } from '../hooks/useSpace';
 
 export const Home = () => {
-  const { blogsQuery, spaceQuery, homeFeedsQuery: feedsQuery } = useSpace(DefaultSpaceId);
+  const { spaceQuery, homeFeedsQuery: feedsQuery } = useSpace(DefaultSpaceId);
   const error = spaceQuery.error;
-  const [blogs, setBlogs] = useState<Blog[] | Short[]>([]);
-
-  // todo: update that from backend
-  useEffect(() => {
-    const blogs = [
-      ...((blogsQuery.data?.blogs as Blog[]) || []),
-      ...((feedsQuery.data?.feeds?.filter(
-        b => b.spaceId !== spaceQuery.data?.space.id
-      ) as Blog[]) || []),
-    ].sort((a, b) => (b.timestamp as number) - (a.timestamp as number));
-    setBlogs(blogs);
-  }, [spaceQuery.data, feedsQuery.data, blogsQuery.data?.blogs]);
+  const feeds = feedsQuery.data?.feeds;
 
   if (spaceQuery.isLoading) return <div>Loading...</div>;
   if (spaceQuery.error) {
@@ -30,7 +18,7 @@ export const Home = () => {
     <div className="home">
       <main>
         {error && <p className="error">{error?.message}</p>}
-        {blogs?.length && <BlogList posts={blogs} />}
+        {feeds?.length && <BlogList posts={feeds} />}
       </main>
       <Sidebar />
     </div>

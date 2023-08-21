@@ -138,7 +138,7 @@ export class SqlDataStore implements DataStoreDao {
   }
 
   async getFeeds(userId: string): Promise<Blog[]> {
-    // todo: add pagination and add post
+    // todo: add Finite Scroll and add post
     // todo: return also public blogs which its owners are followed by the user
 
     //? this returns all blogs from all spaces that the user is a member of

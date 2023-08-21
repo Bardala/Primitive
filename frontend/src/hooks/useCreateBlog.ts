@@ -10,6 +10,8 @@ export const useCreateBlog = (spaceId: string, title: string, content: string) =
   const { currUser } = useAuthContext();
   const queryClient = useQueryClient();
   const nav = useNavigate();
+  const key = spaceId === DefaultSpaceId ? ['feeds', DefaultSpaceId] : ['blogs', spaceId];
+  const navToSpace = () => (spaceId === DefaultSpaceId ? nav('/') : nav(`/space/${spaceId}`));
 
   const createBlogMutation = useMutation<CreateBlogRes, ApiError>({
     mutationFn: () =>
@@ -20,8 +22,8 @@ export const useCreateBlog = (spaceId: string, title: string, content: string) =
         currUser?.jwt
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['space', spaceId || 'home']);
-      spaceId === DefaultSpaceId ? nav('/') : nav(`/space/${spaceId}`);
+      queryClient.invalidateQueries(key);
+      navToSpace();
     },
     onError: err => {
       console.error('err', err);

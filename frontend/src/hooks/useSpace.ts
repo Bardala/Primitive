@@ -1,4 +1,5 @@
 import {
+  DefaultSpaceId,
   ENDPOINT,
   FeedsReq,
   FeedsRes,
@@ -39,7 +40,7 @@ export const useSpace = (id: string) => {
         currUser?.jwt,
         [id!]
       ),
-    { enabled: !!currUser && !!id, refetchOnWindowFocus: false }
+    { enabled: !!currUser && !!id && id !== DefaultSpaceId, refetchOnWindowFocus: false }
   );
 
   // const shortsQuery = useQuery<SpaceShortsRes, ApiError>(
@@ -75,7 +76,7 @@ export const useSpace = (id: string) => {
   );
 
   const homeFeedsQuery = useQuery<FeedsRes, ApiError>({
-    queryKey: ['feeds', id],
+    queryKey: ['feeds', DefaultSpaceId],
     queryFn: () => fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS, 'GET', undefined, currUser?.jwt),
     enabled: !!currUser?.jwt,
     refetchOnWindowFocus: false,

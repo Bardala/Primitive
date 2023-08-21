@@ -14,8 +14,9 @@ export const ShortForm = () => {
   const { currUser } = useAuthContext();
   const remaining = ShortLength - content.length;
 
-  const { id } = useParams();
+  const id = useParams().id || DefaultSpaceId;
   const queryClient = useQueryClient();
+  const key = id === DefaultSpaceId ? ['feeds', DefaultSpaceId] : ['blogs', id];
 
   const createShortMutation = useMutation<CreateBlogRes, ApiError>({
     mutationFn: () =>
@@ -25,14 +26,10 @@ export const ShortForm = () => {
         { title, content, spaceId: id || DefaultSpaceId },
         currUser?.jwt
       ),
-    onSuccess: data => {
-      queryClient.invalidateQueries(['blogs', id || DefaultSpaceId]);
-      console.log('data', data);
+    onSuccess: () => {
+      queryClient.invalidateQueries(key);
       setTitle('');
       setContent('');
-    },
-    onError: err => {
-      console.error('err', err);
     },
   });
 

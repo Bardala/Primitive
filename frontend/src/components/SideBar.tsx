@@ -40,7 +40,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 
       <button
         hidden={!!space && !isMember}
-        onClick={() => nav(`/new/b/${space?.name}/${space?.id || DefaultSpaceId}`)}
+        onClick={() => nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`)}
       >
         Create Blog
       </button>
