@@ -2,7 +2,7 @@ import { Short } from '@nest/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 
-import { isArabic } from '../assists';
+import { isArabic } from '../utils/assists';
 import { LikeBlogButton } from './LikeBlogButton';
 
 export const ShortIcon: React.FC<{ post: Short }> = ({ post }) => {

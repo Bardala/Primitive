@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
-import { socket } from '../socket';
+import { socket } from '../utils/socket';
 
 export const useChat = (space: Space) => {
   const [newMsg, setNewMsg] = useState('');

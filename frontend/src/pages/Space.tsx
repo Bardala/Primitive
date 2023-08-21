@@ -14,8 +14,8 @@ export const Space = () => {
     (a, b) => (b.timestamp as number) - (a.timestamp as number)
   );
 
-  if (spaceQuery.isLoading) return <div>Loading...</div>;
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error?.message}</p>;
+  if (spaceQuery.isLoading) return <div>Loading...</div>;
   if (id === DefaultSpaceId) return <Home />;
 
   return (

@@ -3,10 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ShortLength, isArabic } from '../assists';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { ShortLength, isArabic } from '../utils/assists';
 
 export const ShortForm = () => {
   const [title, setTitle] = useState('');
@@ -44,7 +44,7 @@ export const ShortForm = () => {
   return (
     <>
       {createShortMutation.isError && <p className="error">{createShortMutation.error.message}</p>}
-      <form className="create-blog-from" onSubmit={handleSubmit}>
+      <form className="create-blog-form" onSubmit={handleSubmit}>
         <input
           placeholder="Title"
           type="text"

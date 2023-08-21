@@ -76,22 +76,22 @@ export const UserProfile = () => {
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}
 
-          <div>
-            <h2>blogs</h2>
-            {userBlogsQuery.isError && <div className="error">Something wrong</div>}
-            {userBlogsQuery.isLoading && <p>Loading...</p>}
+          {/* <> */}
+          {/* <h2>blogs</h2> */}
+          {userBlogsQuery.isError && <div className="error">Something wrong</div>}
+          {userBlogsQuery.isLoading && <p>Loading...</p>}
 
-            {!!blogs ? (
-              <BlogList posts={blogs} />
-            ) : (
-              !userBlogsQuery.isLoading &&
-              !userBlogsQuery.isError && (
-                <div className="not-found">
-                  <p>There isn't blogs</p>
-                </div>
-              )
-            )}
-          </div>
+          {!!blogs ? (
+            <BlogList posts={blogs} />
+          ) : (
+            !userBlogsQuery.isLoading &&
+            !userBlogsQuery.isError && (
+              <div className="not-found">
+                <p>There isn't blogs</p>
+              </div>
+            )
+          )}
+          {/* </> */}
         </div>
       )}
     </>

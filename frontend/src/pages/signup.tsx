@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
-import { Locals } from '../localStorage';
 import '../styles/login.css';
+import { Locals } from '../utils/localStorage';
 
 export const SignUp = () => {
   const nav = useNavigate();

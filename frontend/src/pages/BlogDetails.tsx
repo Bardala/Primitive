@@ -1,8 +1,6 @@
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import { Link, useParams } from 'react-router-dom';
 
-import { STATE } from '../StatesMsgs';
-import { isArabic } from '../assists';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { LikeBlogButton } from '../components/LikeBlogButton';
@@ -10,17 +8,19 @@ import { MyMarkdown } from '../components/MyMarkdown';
 import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
+import { STATE } from '../utils/StatesMsgs';
+import { isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
   const { currUser } = useAuthContext();
 
   const { blogQuery, commentsQuery } = useBlogPage(id!);
-  const blogError = blogQuery.error;
 
   const blog = blogQuery.data?.blog;
   const comments = commentsQuery.data?.comments;
-  if (blogError) return <p className="error">{blogError.message}</p>;
+
+  if (blogQuery.isError) return <p className="error">{blogQuery.error.message}</p>;
 
   return (
     <div className="blog-details">
@@ -37,9 +37,9 @@ export const BlogDetails = () => {
                   <strong>{blog.author}</strong>
                 </Link>
               </div>
-              <p className={isArabic(blog.content) ? 'arabic' : ''} id="blog-content">
+              <div className={isArabic(blog.content) ? 'arabic' : ''} id="blog-content">
                 <MyMarkdown markdown={blog.content} />
-              </p>
+              </div>
 
               <div className="blog-meta">
                 <p className="created-at">

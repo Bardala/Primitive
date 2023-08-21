@@ -1,10 +1,10 @@
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { isArabic } from '../assists';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useCreateBlog } from '../hooks/useCreateBlog';
 import '../styles/create-blog-page.css';
+import { isArabic } from '../utils/assists';
 
 export const CreateBlogPage: React.FC = () => {
   const { spaceId, spaceName } = useParams();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { socket } from '../socket';
+import { socket } from '../utils/socket';
 
 type State = {
   message: string;

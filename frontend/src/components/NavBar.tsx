@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,18 +9,21 @@ import '../styles/navBar.css';
 export const NavBar = () => {
   const { refetchCurrUser, currUser } = useAuthContext();
   const nav = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!isLoggedIn()) {
       nav('/login');
+      queryClient.removeQueries();
     }
-  }, [nav]);
+  }, [nav, queryClient]);
 
   const handleClick = useCallback(() => {
     logOut();
     refetchCurrUser();
+    queryClient.removeQueries();
     nav('/login');
-  }, [nav, refetchCurrUser]);
+  }, [nav, queryClient, refetchCurrUser]);
 
   return (
     <header className="navbar">

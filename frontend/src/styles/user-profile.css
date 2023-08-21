@@ -74,12 +74,12 @@
 }
 
 .card-header button {
-    background-color: #00a0d2;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
+  background-color: #00a0d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 .follow {
@@ -118,6 +118,7 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
+
 .space {
   width: 200px;
   height: 100px;
@@ -140,4 +141,25 @@
 /* User space link hover effect */
 .space-link:hover {
   background-color: #f2f2f2;
+}
+
+@media screen and (max-width: 600px) {
+  .user-profile {
+    max-width: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  .user-info {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .user-profile h1 {
+    font-size: 24px;
+  }
+
+  .user-profile h2 {
+    font-size: 18px;
+  }
 }

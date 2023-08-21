@@ -120,3 +120,9 @@
   box-shadow: 1px 3px 5px 2px rgba(0, 0, 0, 0.1);
   background: #e7195a;
 }
+
+@media screen and (max-width: 600px) {
+  .blog-details {
+    padding: 4px;
+  }
+}
