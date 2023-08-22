@@ -14,6 +14,7 @@ import { requireAuth } from './middleware/authMiddleware';
 import { errorHandler } from './middleware/errorHandler';
 import { ChatController } from './controllers/chat.controller';
 import { initSockets } from './Sockets.class';
+import { checkEmptyInput } from './middleware/checkReqBody';
 
 (async () => {
   dotenv.config();
@@ -45,12 +46,12 @@ import { initSockets } from './Sockets.class';
   app.get('/health', (_, res) => res.send('😊'));
 
   // *Auth Routes
-  app.post(ENDPOINT.SIGNUP, asyncHandler(user.signup));
-  app.post(ENDPOINT.LOGIN, asyncHandler(user.login));
+  app.post(ENDPOINT.SIGNUP, checkEmptyInput, asyncHandler(user.signup));
+  app.post(ENDPOINT.LOGIN, checkEmptyInput, asyncHandler(user.login));
 
   // *User
   app.get(ENDPOINT.GET_USER_CARD, requireAuth, asyncHandler(user.getUserCard));
-  app.post(ENDPOINT.FOLLOW_USER, requireAuth, asyncHandler(user.createFollow));
+  app.post(ENDPOINT.FOLLOW_USER, requireAuth, checkEmptyInput, asyncHandler(user.createFollow));
   app.delete(ENDPOINT.UNFOLLOW_USER, requireAuth, asyncHandler(user.deleteFollow));
   app.get(ENDPOINT.GET_FOLLOWERS, requireAuth, asyncHandler(user.getFollowers));
   app.get(ENDPOINT.GET_USERS_LIST, requireAuth, asyncHandler(user.getUsersList));
@@ -58,15 +59,15 @@ import { initSockets } from './Sockets.class';
   app.get(ENDPOINT.GET_USER_SPACES, requireAuth, asyncHandler(user.getUserSpaces));
 
   // *Blog
-  app.post(ENDPOINT.CREATE_BLOG, requireAuth, asyncHandler(blog.createBlog));
-  app.put(ENDPOINT.UPDATE_BLOG, requireAuth, asyncHandler(blog.updateBlog));
+  app.post(ENDPOINT.CREATE_BLOG, requireAuth, checkEmptyInput, asyncHandler(blog.createBlog));
+  app.put(ENDPOINT.UPDATE_BLOG, requireAuth, checkEmptyInput, asyncHandler(blog.updateBlog));
   app.get(ENDPOINT.GET_BLOG, requireAuth, asyncHandler(blog.getBlog));
   app.delete(ENDPOINT.DELETE_BLOG, requireAuth, asyncHandler(blog.deleteBlog));
 
   app.get(ENDPOINT.GET_BLOG_COMMENTS, requireAuth, asyncHandler(blog.getBlogComments));
   app.get(ENDPOINT.GET_BLOG_LIKES, requireAuth, asyncHandler(blog.getBlogLikes));
   app.get(ENDPOINT.GET_BLOG_LIKES_LIST, requireAuth, asyncHandler(blog.getBlogLikesList));
-  app.post(ENDPOINT.LIKE_BLOG, requireAuth, asyncHandler(blog.likeBlog));
+  app.post(ENDPOINT.LIKE_BLOG, requireAuth, checkEmptyInput, asyncHandler(blog.likeBlog));
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
   app.get(ENDPOINT.TEST_INFINITE_SCROLL, requireAuth, asyncHandler(blog.testInfiniteScrollBlogs));
 
@@ -79,19 +80,19 @@ import { initSockets } from './Sockets.class';
   // app.get(ENDPOINT.GET_SHORT_COMMENTS, requireAuth, asyncHandler(short.shortComments));
 
   // *Comment
-  app.post(ENDPOINT.CREATE_COMMENT, requireAuth, asyncHandler(comm.createComment));
-  app.put(ENDPOINT.UPDATE_COMMENT, requireAuth, asyncHandler(comm.updateComment));
+  app.post(ENDPOINT.CREATE_COMMENT, requireAuth, checkEmptyInput, asyncHandler(comm.createComment));
+  app.put(ENDPOINT.UPDATE_COMMENT, requireAuth, checkEmptyInput, asyncHandler(comm.updateComment));
   app.delete(ENDPOINT.DELETE_COMMENT, requireAuth, asyncHandler(comm.deleteComment));
 
   // *Space
-  app.post(ENDPOINT.CREATE_SPACE, requireAuth, asyncHandler(space.createSpace));
-  app.put(ENDPOINT.UPDATE_SPACE, requireAuth, asyncHandler(space.updateSpace));
+  app.post(ENDPOINT.CREATE_SPACE, requireAuth, checkEmptyInput, asyncHandler(space.createSpace));
+  app.put(ENDPOINT.UPDATE_SPACE, requireAuth, checkEmptyInput, asyncHandler(space.updateSpace));
   app.get(ENDPOINT.GET_SPACE, requireAuth, asyncHandler(space.getSpace));
   app.delete(ENDPOINT.DELETE_SPACE, requireAuth, asyncHandler(space.deleteSpace));
 
   app.get(ENDPOINT.GET_DEFAULT_SPACE, requireAuth, asyncHandler(space.getDefaultSpace));
-  app.post(ENDPOINT.JOIN_SPACE, requireAuth, asyncHandler(space.joinSpace));
-  app.post(ENDPOINT.ADD_MEMBER, requireAuth, asyncHandler(space.addMember));
+  app.post(ENDPOINT.JOIN_SPACE, requireAuth, checkEmptyInput, asyncHandler(space.joinSpace));
+  app.post(ENDPOINT.ADD_MEMBER, requireAuth, checkEmptyInput, asyncHandler(space.addMember));
   app.get(ENDPOINT.GET_SPACE_MEMBERS, requireAuth, asyncHandler(space.getSpaceMembers));
   app.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(space.getChat));
   app.delete(ENDPOINT.DELETE_MEMBER, requireAuth, asyncHandler(space.deleteMember));
@@ -105,7 +106,7 @@ import { initSockets } from './Sockets.class';
   // app.get(ENDPOINT.GET_POST_LIKES, requireAuth, asyncHandler(like.getPostLikes));
 
   //* Message
-  app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, asyncHandler(chat.createMessage));
+  app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, checkEmptyInput, asyncHandler(chat.createMessage));
   app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage));
 
   // *Feeds
