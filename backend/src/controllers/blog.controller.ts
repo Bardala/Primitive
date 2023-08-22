@@ -22,6 +22,8 @@ import {
   LikedUser,
   RemoveLikeReq,
   RemoveLikeRes,
+  SpaceBlogsReq,
+  SpaceBlogsRes,
 } from '@nest/shared';
 
 import { DataStoreDao } from '../dataStore';
@@ -212,5 +214,22 @@ export class BlogController implements blogController {
 
     await this.db.deleteBlog(blogId);
     return res.sendStatus(200);
+  };
+
+  testInfiniteScrollBlogs: HandlerWithParams<
+    { page: string; pageSize: string },
+    SpaceBlogsReq,
+    SpaceBlogsRes
+  > = async (req, res) => {
+    if (!req.params.page || !req.params.pageSize)
+      return res.status(400).send({ error: Errors.PARAMS_MISSING });
+
+    const page = parseInt(req.params.page);
+    const pageSize = parseInt(req.params.pageSize);
+
+    const offset = (page - 1) * pageSize;
+
+    const blogs = await this.db.testInfiniteScroll(pageSize, offset);
+    return res.status(200).send({ blogs });
   };
 }

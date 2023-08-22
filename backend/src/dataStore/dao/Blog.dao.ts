@@ -10,4 +10,6 @@ export interface BlogDao {
   deleteComments(blogId: string): Promise<void>;
   blogLikes(blogId: string): Promise<number>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;
+  //* test
+  testInfiniteScroll(pageSize: number, offset: number): Promise<Blog[]>;
 }

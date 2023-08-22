@@ -12,6 +12,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 
 export const Comments: React.FC<{
   blogId: string;
@@ -23,7 +24,7 @@ export const Comments: React.FC<{
   const [commContent, setCommContent] = useState('');
   const queryClient = useQueryClient();
 
-  const createCommMutation = useMutation({
+  const createCommMutation = useMutation<CreateCommentRes, ApiError>({
     mutationFn: () =>
       fetchFn<CreateCommentReq, CreateCommentRes>(
         ENDPOINT.CREATE_COMMENT,
@@ -60,7 +61,7 @@ export const Comments: React.FC<{
             Add comment
           </button>
         </form>
-        {createCommMutation.isError && <p className="error">Something went wrong</p>}
+        {createCommMutation.isError && <p className="error">{createCommMutation.error.message}</p>}
 
         <div className="comments">
           <p>Comments</p>

@@ -68,6 +68,7 @@ import { initSockets } from './Sockets.class';
   app.get(ENDPOINT.GET_BLOG_LIKES_LIST, requireAuth, asyncHandler(blog.getBlogLikesList));
   app.post(ENDPOINT.LIKE_BLOG, requireAuth, asyncHandler(blog.likeBlog));
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
+  app.get(ENDPOINT.TEST_INFINITE_SCROLL, requireAuth, asyncHandler(blog.testInfiniteScrollBlogs));
 
   //* Short
   // app.post(ENDPOINT.CREATE_SHORT, requireAuth, asyncHandler(short.createShort));

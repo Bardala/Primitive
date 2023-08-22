@@ -33,6 +33,7 @@ export interface DefaultSpaceRes {
 export interface SpaceBlogsReq {}
 export interface SpaceBlogsRes {
   blogs: Blog[];
+  page?: number;
 }
 
 export interface SpaceShortsReq {}

@@ -4,13 +4,11 @@ import { ApiError } from './auth';
 
 function extractParams(endPoint: ENDPOINT, params: string[]): string {
   const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
-  let res = '';
-  if (apiParamsCount !== params.length) {
-    throw new Error('params count mismatch');
-  }
-  for (let i = 0; i < apiParamsCount; i++) {
-    res = String(endPoint).replace(/:\w+/, params[i]);
-  }
+  let res = String(endPoint);
+
+  if (apiParamsCount !== params.length) throw new Error('params count mismatch');
+
+  for (let i = 0; i < apiParamsCount; i++) res = res.replace(/:\w+/, params[i]);
 
   return HOST + res;
 }

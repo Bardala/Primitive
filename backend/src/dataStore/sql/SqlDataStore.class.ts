@@ -33,6 +33,17 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
+  async testInfiniteScroll(pageSize: number, offset: number): Promise<Blog[]> {
+    const query = `
+    SELECT * FROM blogs
+    WHERE spaceId = '1'
+    ORDER BY timestamp DESC 
+    LIMIT ? OFFSET ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [pageSize, offset]);
+    return rows as Blog[];
+  }
+
   async getPostLikes(postId: string): Promise<LikedUser[]> {
     const query = `
     SELECT users.username, users.id
