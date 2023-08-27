@@ -8,6 +8,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { useProfileData } from '../hooks/useProfileData';
 import '../styles/user-profile.css';
 
+// todo: add infinite scroll
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
   const { id } = useParams();

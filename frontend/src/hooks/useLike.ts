@@ -6,8 +6,6 @@ import {
   ENDPOINT,
   RemoveLikeReq,
   RemoveLikeRes,
-  ShortLikesListReq,
-  ShortLikesListRes,
 } from '@nest/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -24,23 +22,6 @@ export const useLikeButton = (id: string) => {
     () =>
       fetchFn<BlogLikesListReq, BlogLikesListRes>(
         ENDPOINT.GET_BLOG_LIKES_LIST,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id]
-      ),
-    {
-      enabled: !!currUser?.jwt && !!id,
-      onError: err => console.log(err),
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const shortLikesQuery = useQuery<ShortLikesListRes, ApiError>(
-    ['likes', id],
-    () =>
-      fetchFn<ShortLikesListReq, ShortLikesListRes>(
-        ENDPOINT.GET_SHORT_LIKES,
         'GET',
         undefined,
         currUser?.jwt,
@@ -85,11 +66,8 @@ export const useLikeButton = (id: string) => {
 
   const isLiked = () => {
     if (!currUser) return false;
-    return (
-      blogLikesQuery.data?.users?.some(user => user.id === currUser?.id) ||
-      shortLikesQuery.data?.users?.some(user => user.id === currUser?.id)
-    );
+    return blogLikesQuery.data?.users?.some(user => user.id === currUser?.id);
   };
 
-  return { blogLikesQuery, shortLikesQuery, postLikeMutate, deleteLikeMutate, isLiked };
+  return { blogLikesQuery, postLikeMutate, deleteLikeMutate, isLiked };
 };

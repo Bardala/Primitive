@@ -12,7 +12,8 @@ import {
   SpaceReq,
   SpaceRes,
 } from '@nest/shared';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
@@ -43,19 +44,6 @@ export const useSpace = (id: string) => {
     { enabled: !!currUser && !!id && id !== DefaultSpaceId, refetchOnWindowFocus: false }
   );
 
-  // const shortsQuery = useQuery<SpaceShortsRes, ApiError>(
-  //   ['shorts', id],
-  //   () =>
-  //     fetchFn<SpaceShortsReq, SpaceShortsRes>(
-  //       ENDPOINT.GET_SPACE_SHORTS,
-  //       'GET',
-  //       undefined,
-  //       currUser?.jwt,
-  //       [id!]
-  //     ),
-  //   { enabled: !!currUser?.jwt && !!id, refetchOnWindowFocus: false }
-  // );
-
   const membersQuery = useQuery<MembersRes, ApiError>(
     ['members', id],
     () =>
@@ -75,10 +63,12 @@ export const useSpace = (id: string) => {
     }
   );
 
+  // Disable for now
   const homeFeedsQuery = useQuery<FeedsRes, ApiError>({
     queryKey: ['feeds', DefaultSpaceId],
     queryFn: () => fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS, 'GET', undefined, currUser?.jwt),
-    enabled: !!currUser?.jwt,
+    // enabled: !!currUser?.jwt,
+    enabled: false,
     refetchOnWindowFocus: false,
   });
 
@@ -87,10 +77,42 @@ export const useSpace = (id: string) => {
   return {
     spaceQuery,
     blogsQuery,
-    // shortsQuery,
     membersQuery,
     joinSpaceMutate,
     homeFeedsQuery,
     isMember,
+  };
+};
+
+export const useFeeds = () => {
+  const pageSize = 3;
+  const { currUser } = useAuthContext();
+  const [isEnd, setIsEnd] = useState(false);
+  const key = ['feeds'];
+  const fetchFeeds = ({ pageParam = 1 }) => {
+    return fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, 'GET', undefined, currUser?.jwt, [
+      pageParam + '',
+    ]);
+  };
+
+  const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, fetchFeeds, {
+    enabled: !!currUser?.jwt,
+    refetchOnWindowFocus: false,
+    getNextPageParam: lastPage => {
+      return lastPage.page + 1;
+    },
+    onSuccess: data => {
+      if (data.pages[data.pages.length - 1].feeds.length < pageSize) {
+        setIsEnd(true);
+      }
+    },
+  });
+
+  return {
+    feeds: feedsQuery.data?.pages.flatMap(page => page.feeds) || [],
+    isLoading: feedsQuery.isLoading,
+    isError: feedsQuery.isError,
+    fetchNextPage: feedsQuery.fetchNextPage,
+    isEnd,
   };
 };

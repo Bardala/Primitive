@@ -1,4 +1,4 @@
-export enum Errors {
+export enum ERROR {
   POST_ID_MISSING = 'Post id is missing',
   ALL_FIELDS_REQUIRED = 'All Fields Are Required',
   EMPTY_FIELD = 'Empty Field',
@@ -11,7 +11,7 @@ export enum Errors {
   INVALID_PASSWORD = 'Invalid password',
   INVALID_TOKEN = 'Invalid token',
   UNAUTHORIZED = 'Unauthorized',
-  TOKENEXPIRED = 'Token expired',
+  TOKEN_EXPIRED = 'Token expired',
   PARAMS_MISSING = 'Params missing',
   ALREADY_FOLLOWER = 'You already follow this user',
   ALREADY_UNFOLLOWER = 'You already unfollow this user',
@@ -23,4 +23,5 @@ export enum Errors {
   PRIVATE_BLOG = 'Private blog, it is posted in a private space',
   SHORT_NOT_FOUND = 'Short not found',
   PRIVATE_SHORT = 'Private short, it is posted in a private space',
+  EXPIRE_API = 'Expire api',
 }

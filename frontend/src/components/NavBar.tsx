@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -11,12 +11,12 @@ export const NavBar = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      nav('/login');
-      queryClient.removeQueries();
-    }
-  }, [nav, queryClient]);
+  // useEffect(() => {
+  //   if (!isLoggedIn()) {
+  //     window.location.reload();
+  //     queryClient.removeQueries();
+  //   }
+  // }, [queryClient]);
 
   const handleClick = useCallback(() => {
     logOut();

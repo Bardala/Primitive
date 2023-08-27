@@ -2,14 +2,14 @@ import crypto from 'crypto';
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload, TokenExpiredError, VerifyErrors } from 'jsonwebtoken';
 
-import { Errors } from '@nest/shared';
+import { ERROR } from '@nest/shared';
 import { db } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 
 export const requireAuth: RequestHandler<any, any> = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
-  if (!token) return res.status(401).json({ error: Errors.UNAUTHORIZED });
+  if (!token) return res.status(401).json({ error: ERROR.UNAUTHORIZED });
 
   let payload: JwtPayload;
   try {
@@ -17,13 +17,13 @@ export const requireAuth: RequestHandler<any, any> = async (req, res, next) => {
   } catch (err) {
     const verifyError = err as VerifyErrors;
     if (verifyError instanceof TokenExpiredError) {
-      return res.status(HTTP.UNAUTHORIZED).send({ error: Errors.TOKENEXPIRED });
+      return res.status(HTTP.UNAUTHORIZED).send({ error: ERROR.TOKEN_EXPIRED });
     }
-    return res.status(HTTP.UNAUTHORIZED).send({ error: Errors.INVALID_TOKEN });
+    return res.status(HTTP.UNAUTHORIZED).send({ error: ERROR.INVALID_TOKEN });
   }
 
   const user = await db.getUserById(payload.id);
-  if (!user) return res.status(HTTP.UNAUTHORIZED).send({ error: Errors.INVALID_TOKEN });
+  if (!user) return res.status(HTTP.UNAUTHORIZED).send({ error: ERROR.INVALID_TOKEN });
 
   res.locals.userId = user.id;
 

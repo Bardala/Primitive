@@ -111,7 +111,7 @@ import { checkEmptyInput } from './middleware/checkReqBody';
 
   // *Feeds
   app.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(space.feeds));
-
+  app.get(ENDPOINT.GET_FEEDS_PAGE, requireAuth, asyncHandler(space.feedsPagination));
   app.use(errorHandler);
 
   server.listen(port, () => {

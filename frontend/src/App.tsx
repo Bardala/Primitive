@@ -8,9 +8,7 @@ import { Login } from './pages/Login';
 import { Space } from './pages/Space';
 import { UserProfile } from './pages/UserProfile';
 import { UsersList } from './pages/UsersList';
-import { Chat } from './pages/chat';
 import { SignUp } from './pages/signup';
-import { TestInfiniteScroll } from './pages/testInifinteScroll';
 
 function App() {
   return (
@@ -27,8 +25,6 @@ function App() {
           <Route path="/u/:id" element={<UserProfile />} />
           <Route path="/u" element={<UsersList />} />
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
-          <Route path="/chat/:id" element={<Chat />} />
-          <Route path="/t" element={<TestInfiniteScroll />} />
         </Routes>
       </BrowserRouter>
     </div>

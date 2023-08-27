@@ -1,8 +1,7 @@
-import { Blog, DeleteBlogReq, DeleteBlogRes, ENDPOINT, LoginRes } from '@nest/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Blog, LoginRes } from '@nest/shared';
+import { useParams } from 'react-router-dom';
 
-import { fetchFn } from '../fetch';
+import { useDeleteBlog } from '../hooks/useBlog';
 
 export const BlogDetailsAction: React.FC<{
   blog: Blog;
@@ -10,34 +9,13 @@ export const BlogDetailsAction: React.FC<{
   currUser: LoginRes;
 }> = props => {
   const { blog, owner, currUser } = props;
-  const nav = useNavigate();
   const { id } = useParams();
-  const queryClient = useQueryClient();
-
-  const deleteMutate = useMutation(
-    () =>
-      fetchFn<DeleteBlogReq, DeleteBlogRes>(
-        ENDPOINT.DELETE_BLOG,
-        'DELETE',
-        undefined,
-        currUser.jwt,
-        [id!]
-      ),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['space', blog.spaceId]);
-        queryClient.invalidateQueries(['blog', id]);
-        blog.spaceId === '1' ? nav('/') : nav(`/space/${blog.spaceId}`);
-      },
-      onError: err => console.error('err', err),
-    }
-  );
+  const { deleteBlogMutate } = useDeleteBlog(id!, blog);
+  const currUserOwnBlog = currUser?.id === owner;
 
   const handleDelete = () => {
-    deleteMutate.mutate();
+    deleteBlogMutate.mutate();
   };
-
-  const currUserOwnBlog = currUser?.id === owner;
 
   return (
     <>
@@ -45,13 +23,13 @@ export const BlogDetailsAction: React.FC<{
         <button
           type="button"
           onClick={handleDelete}
-          disabled={deleteMutate.isLoading}
+          disabled={deleteBlogMutate.isLoading}
           className="delete-button"
         >
           Delete
         </button>
       )}
-      {/* {deleteError && <p className="error">{deleteError}</p>} */}
+      {deleteBlogMutate.isError && <p className="error">{deleteBlogMutate.error.message}</p>}
     </>
   );
 };

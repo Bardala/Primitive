@@ -1,5 +1,5 @@
 import {
-  Errors,
+  ERROR,
   GetPostLikesReq,
   GetPostLikesRes,
   LikePostReq,
@@ -28,7 +28,7 @@ export class LikeController implements likeController {
     res
   ) => {
     const [{ postId }, { userId }] = [req.params, res.locals];
-    if (!postId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!postId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     await this.db.removeLike({ blogId: postId, userId });
     return res.sendStatus(200);
   };
@@ -37,14 +37,14 @@ export class LikeController implements likeController {
     res
   ) => {
     const [{ postId }] = [req.params];
-    if (!postId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!postId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     const likes = await this.db.getPostLikes(postId);
     return res.status(200).send({ users: likes });
   };
 
   likePost: HandlerWithParams<{ postId: string }, LikePostReq, LikePostRes> = async (req, res) => {
     const [{ postId }, { userId }] = [req.params, res.locals];
-    if (!postId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!postId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     await this.db.createLike({ blogId: postId, userId });
     return res.sendStatus(200);
   };

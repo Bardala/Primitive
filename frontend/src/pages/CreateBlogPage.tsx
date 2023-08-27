@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { MyMarkdown } from '../components/MyMarkdown';
-import { useCreateBlog } from '../hooks/useCreateBlog';
+import { useCreateBlog } from '../hooks/useBlog';
 import '../styles/create-blog-page.css';
 import { isArabic } from '../utils/assists';
 

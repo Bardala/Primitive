@@ -11,5 +11,5 @@ export interface BlogDao {
   blogLikes(blogId: string): Promise<number>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;
   //* test
-  testInfiniteScroll(pageSize: number, offset: number): Promise<Blog[]>;
+  testInfiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;
 }

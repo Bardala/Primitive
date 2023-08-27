@@ -14,7 +14,7 @@ import {
   AddMemberRes,
   MembersReq,
   MembersRes,
-  Errors,
+  ERROR,
   Space,
   DeleteSpaceRes,
   SpaceMember,
@@ -68,7 +68,7 @@ export class SpaceController implements spaceController {
   ) => {
     const [{ spaceId }, { userId }] = [req.params, res.locals];
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     if ((await this.db.getSpace(spaceId))?.status === 'public')
       return res.send({ blogs: await this.db.getBlogs(spaceId) });
@@ -105,7 +105,7 @@ export class SpaceController implements spaceController {
       res.locals.userId,
     ];
 
-    if (!spaceId || !memberId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId || !memberId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!(await this.db.isSpaceAdmin(spaceId, userId))) return res.sendStatus(403);
     if (!(await this.db.isMember(spaceId, memberId))) return res.sendStatus(404);
 
@@ -118,7 +118,7 @@ export class SpaceController implements spaceController {
   ) => {
     const [spaceId, userId] = [req.params.spaceId, res.locals.userId];
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
 
     await this.db.deleteMember(spaceId, userId);
@@ -126,15 +126,31 @@ export class SpaceController implements spaceController {
   };
 
   feeds: Handler<FeedsReq, FeedsRes> = async (_, res) => {
+    return res.send({ error: ERROR.EXPIRE_API });
     const feeds = await this.db.getFeeds(res.locals.userId);
     return res.send({ feeds });
+  };
+
+  feedsPagination: HandlerWithParams<{ page: string }, FeedsReq, FeedsRes> = async (req, res) => {
+    if (!req.params.page) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+
+    const page = parseInt(req.params.page);
+    const pageSize = 3;
+
+    const offset = (page - 1) * pageSize;
+
+    console.log('page', page, 'offset', offset);
+
+    const feeds = await this.db.testInfiniteScroll(res.locals.userId, pageSize, offset);
+    console.log(feeds.length);
+    return res.send({ feeds, page });
   };
 
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes> = async (req, res) => {
     const userId = res.locals.userId;
     const { spaceId } = req.params;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!(await this.db.getSpace(spaceId))) return res.status(404);
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
@@ -147,7 +163,7 @@ export class SpaceController implements spaceController {
     const ownerId = res.locals.userId;
 
     if (!description || !name || !status)
-      return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+      return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     const space: Space = {
       id: crypto.randomUUID(),
@@ -170,9 +186,9 @@ export class SpaceController implements spaceController {
     const spaceId = req.params.spaceId;
     const userId = res.locals.userId;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!description || !name || !status)
-      return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+      return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     const space = await this.db.getSpace(spaceId);
     if (!space) return res.sendStatus(404);
@@ -190,13 +206,13 @@ export class SpaceController implements spaceController {
     const spaceId = req.params.spaceId;
     const userId = res.locals.userId;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const space = await this.db.getSpace(spaceId);
     if (!space) return res.sendStatus(400);
 
     if (space.status === 'private' && !(await this.db.isMember(spaceId, userId))) {
-      return res.status(HTTP.FORBIDDEN).send({ error: Errors.PRIVATE_SPACE });
+      return res.status(HTTP.FORBIDDEN).send({ error: ERROR.PRIVATE_SPACE });
     }
 
     return res.status(200).send({
@@ -213,7 +229,7 @@ export class SpaceController implements spaceController {
     const spaceId = req.params.spaceId;
     const userId = res.locals.userId;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const space = await this.db.getSpace(spaceId);
     if (!space) return res.sendStatus(404);
@@ -241,10 +257,10 @@ export class SpaceController implements spaceController {
     const spaceId = req.params.spaceId;
     const userId = res.locals.userId;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const space = await this.db.getSpace(spaceId);
-    if (!space) return res.status(404).send({ error: Errors.SPACE_NOT_FOUND });
+    if (!space) return res.status(404).send({ error: ERROR.SPACE_NOT_FOUND });
     if (space.status === 'private') return res.sendStatus(HTTP.FORBIDDEN);
     if (await this.db.isMember(spaceId, userId)) return res.sendStatus(HTTP.CONFLICT);
 
@@ -264,13 +280,13 @@ export class SpaceController implements spaceController {
       res.locals.userId,
     ];
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!member || isAdmin === undefined)
-      return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+      return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
     const newMember =
       (await this.db.getUserByUsername(member)) || (await this.db.getUserById(member));
 
-    if (!newMember) return res.status(404).send({ error: Errors.USER_NOT_FOUND });
+    if (!newMember) return res.status(404).send({ error: ERROR.USER_NOT_FOUND });
 
     //? if not space mysql will return with error because of unique constraint on spaceId and memberId
     // const space = await this.db.getSpace(spaceId);
@@ -292,7 +308,7 @@ export class SpaceController implements spaceController {
   ) => {
     const [spaceId, userId] = [req.params.spaceId, res.locals.userId];
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const space = await this.db.getSpace(spaceId);
     if (!space) return res.sendStatus(404);

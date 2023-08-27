@@ -1,42 +1,28 @@
-import { CreateBlogReq, CreateBlogRes, DefaultSpaceId, ENDPOINT } from '@nest/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FormEvent, useState } from 'react';
+import { DefaultSpaceId } from '@nest/shared';
+import { FormEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
-import { ApiError } from '../fetch/auth';
+import { useCreateShort } from '../hooks/useBlog';
 import { ShortLength, isArabic } from '../utils/assists';
 
 export const ShortForm = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const { currUser } = useAuthContext();
   const remaining = ShortLength - content.length;
-
   const id = useParams().id || DefaultSpaceId;
-  const queryClient = useQueryClient();
-  const key = id === DefaultSpaceId ? ['feeds', DefaultSpaceId] : ['blogs', id];
-
-  const createShortMutation = useMutation<CreateBlogRes, ApiError>({
-    mutationFn: () =>
-      fetchFn<CreateBlogReq, CreateBlogRes>(
-        ENDPOINT.CREATE_BLOG,
-        'POST',
-        { title, content, spaceId: id || DefaultSpaceId },
-        currUser?.jwt
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries(key);
-      setTitle('');
-      setContent('');
-    },
-  });
+  const { createShortMutation } = useCreateShort(id, title, content);
 
   const handleSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
     createShortMutation.mutate();
   };
+
+  useEffect(() => {
+    if (createShortMutation.isSuccess) {
+      setTitle('');
+      setContent('');
+    }
+  }, [createShortMutation.isSuccess]);
 
   return (
     <>
@@ -65,6 +51,7 @@ export const ShortForm = () => {
           Create
         </button>
         {createShortMutation.isLoading && <p>Creating...</p>}
+        {createShortMutation.isSuccess && <p className="success">Created successfully!</p>}
       </form>
     </>
   );

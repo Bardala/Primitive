@@ -6,6 +6,7 @@ import { Sidebar } from '../components/SideBar';
 import { useSpace } from '../hooks/useSpace';
 import { Home } from './Home';
 
+// todo: add infinite scroll
 export const Space = () => {
   const { id } = useParams();
   const { spaceQuery, blogsQuery, membersQuery, joinSpaceMutate, isMember } = useSpace(id!);

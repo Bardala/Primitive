@@ -20,7 +20,7 @@ import {
   UserBlogsRes,
   UserSpacesReq,
   UserSpacesRes,
-  Errors,
+  ERROR,
   GetUsersListReq,
   GetUsersListRes,
 } from '@nest/shared';
@@ -51,7 +51,7 @@ export class UserController implements userController {
   ) => {
     const userId = req.params.id;
     if (!userId) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
 
     return res.status(HTTP.OK).send({ spaces: await this.db.getUserSpaces(userId) });
@@ -63,7 +63,7 @@ export class UserController implements userController {
   ) => {
     const userId = req.params.id;
     if (!userId) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
 
     return res.status(HTTP.OK).send({ blogs: await this.db.getUserBlogs(userId) });
@@ -74,7 +74,7 @@ export class UserController implements userController {
     res
   ) => {
     if (!req.params.id) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
 
     return res.status(HTTP.OK).send({
@@ -87,13 +87,13 @@ export class UserController implements userController {
     res
   ) => {
     if (!req.params.id) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
     if (!(await this.db.getUserById(req.params.id)))
-      return res.status(HTTP.NOT_FOUND).send({ error: Errors.USER_NOT_FOUND });
+      return res.status(HTTP.NOT_FOUND).send({ error: ERROR.USER_NOT_FOUND });
 
     if (await this.db.isFollow(req.params.id, res.locals.userId)) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.ALREADY_FOLLOWER });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.ALREADY_FOLLOWER });
     }
 
     await this.db.createFollow(res.locals.userId, req.params.id);
@@ -105,12 +105,12 @@ export class UserController implements userController {
     res
   ) => {
     if (!req.params.id) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
 
     // todo check Is already an unfollower
     if (!(await this.db.isFollow(req.params.id, res.locals.userId))) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.ALREADY_UNFOLLOWER });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.ALREADY_UNFOLLOWER });
     }
 
     await this.db.deleteFollow(res.locals.userId, req.params.id);
@@ -122,11 +122,11 @@ export class UserController implements userController {
     res
   ) => {
     if (!req.params.id) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.PARAMS_MISSING });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
     }
 
     if (!(await this.db.getUserById(req.params.id)))
-      return res.status(HTTP.NOT_FOUND).send({ error: Errors.USER_NOT_FOUND });
+      return res.status(HTTP.NOT_FOUND).send({ error: ERROR.USER_NOT_FOUND });
 
     return res.status(200).send({ followers: await this.db.getFollowers(req.params.id) });
   };
@@ -148,19 +148,19 @@ export class UserController implements userController {
     const { email, username, password } = req.body;
 
     if (!email || !username || !password)
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.ALL_FIELDS_REQUIRED });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     if (await this.db.getUserByEmail(email))
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.DUPLICATE_EMAIL });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.DUPLICATE_EMAIL });
     if (await this.db.getUserByUsername(username))
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.DUPLICATE_USERNAME });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.DUPLICATE_USERNAME });
 
     if (!this.isVALID_USERNAME(username))
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_USERNAME });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_USERNAME });
     if (!validator.isEmail(email))
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_EMAIL });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
     if (!validator.isStrongPassword(password))
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.WEAK_PASSWORD });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.WEAK_PASSWORD });
 
     const user = {
       email,
@@ -177,16 +177,16 @@ export class UserController implements userController {
 
   login: Handler<LoginReq, LoginRes> = async (req, res) => {
     if (!req.body.login || !req.body.password)
-      return res.status(HTTP.BAD_REQUEST).send({ error: Errors.ALL_FIELDS_REQUIRED });
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     const user =
       (await this.db.getUserByEmail(req.body.login)) ||
       (await this.db.getUserByUsername(req.body.login));
 
-    if (!user) return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_LOGIN });
+    if (!user) return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_LOGIN });
 
     const match = user.password === hashPassword(req.body.password);
-    if (!match) return res.status(HTTP.BAD_REQUEST).send({ error: Errors.INVALID_PASSWORD });
+    if (!match) return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_PASSWORD });
 
     return res
       .status(200)

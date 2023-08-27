@@ -5,7 +5,7 @@ import {
   UpdateCommentRes,
   DeleteCommentReq,
   DeleteCommentRes,
-  Errors,
+  ERROR,
   CommentWithUser,
 } from '@nest/shared';
 import { DataStoreDao } from '../dataStore';
@@ -30,12 +30,12 @@ export class CommentController implements commentController {
   ) => {
     const [userId, { content }, { blogId }] = [res.locals.userId, req.body, req.params];
 
-    if (!content || !blogId) return res.status(404).send({ error: Errors.ALL_FIELDS_REQUIRED });
+    if (!content || !blogId) return res.status(404).send({ error: ERROR.ALL_FIELDS_REQUIRED });
     if (!(await this.db.getBlog(blogId)))
-      return res.status(404).send({ error: Errors.BLOG_NOT_FOUND });
+      return res.status(404).send({ error: ERROR.BLOG_NOT_FOUND });
 
     const user = await this.db.getUserById(userId);
-    if (!user) return res.status(404).send({ error: Errors.USER_NOT_FOUND });
+    if (!user) return res.status(404).send({ error: ERROR.USER_NOT_FOUND });
 
     const comment: CommentWithUser = {
       userId,
@@ -55,10 +55,10 @@ export class CommentController implements commentController {
     const { id, content } = req.body;
     const userId = res.locals.userId;
 
-    if (!id || !content) return res.status(400).send({ error: Errors.ALL_FIELDS_REQUIRED });
+    if (!id || !content) return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     const comm = await this.db.getComment(id);
-    if (!comm) return res.status(404).send({ error: Errors.COMMENT_NOT_FOUND });
+    if (!comm) return res.status(404).send({ error: ERROR.COMMENT_NOT_FOUND });
     if (comm.userId !== userId) return res.sendStatus(403);
 
     comm.content = content;
@@ -71,9 +71,9 @@ export class CommentController implements commentController {
     async (req, res) => {
       const [commentId, userId] = [req.params.commentId, res.locals.userId];
 
-      if (!commentId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+      if (!commentId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
       const commentFromDb = await this.db.getComment(commentId);
-      if (!commentFromDb) return res.status(404).send({ error: Errors.COMMENT_NOT_FOUND });
+      if (!commentFromDb) return res.status(404).send({ error: ERROR.COMMENT_NOT_FOUND });
       if (commentFromDb.userId !== userId) return res.sendStatus(403);
 
       await this.db.deleteComment(commentId);

@@ -1,4 +1,4 @@
-import { ENDPOINT, Errors, HOST, RestMethod } from '@nest/shared';
+import { ENDPOINT, ERROR, HOST, RestMethod } from '@nest/shared';
 
 import { ApiError } from './auth';
 
@@ -35,11 +35,15 @@ export const fetchFn = async <Request, Response>(
   if (res.headers.get('Content-Type')?.includes('application/json')) {
     const data = await res.json();
     if (!res.ok)
-      if (data.error === Errors.TOKENEXPIRED) {
+      if (data.error === ERROR.TOKEN_EXPIRED) {
         localStorage.removeItem('currUser');
         window.location.reload();
         throw new ApiError(res.status, data.error);
+      } else if (data.error === ERROR.UNAUTHORIZED) {
+        window.location.href = '/login';
+        throw new ApiError(res.status, data.error);
       } else throw new ApiError(res.status, data.error);
+
     return data;
   }
 

@@ -3,7 +3,7 @@ import {
   CreateMsgRes,
   DeleteBlogRes,
   DeleteMsgReq,
-  Errors,
+  ERROR,
   ChatMessage,
 } from '@nest/shared';
 import { HandlerWithParams } from '../types';
@@ -28,8 +28,8 @@ export class ChatController implements chatController {
     const { spaceId } = req.params;
     const { content } = req.body;
 
-    if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-    if (!content) return res.status(400).send({ error: Errors.EMPTY_FIELD });
+    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+    if (!content) return res.status(400).send({ error: ERROR.EMPTY_FIELD });
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
     //? I think that I shouldn't ensure does space exist here,
@@ -54,7 +54,7 @@ export class ChatController implements chatController {
     const { userId } = res.locals;
     const { msgId } = req.params;
 
-    if (!msgId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
+    if (!msgId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const msg = await this.db.getMessage(msgId);
     if (!msg) return res.sendStatus(404);
