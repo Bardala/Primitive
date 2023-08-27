@@ -13,7 +13,7 @@ import {
   SpaceRes,
 } from '@nest/shared';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
@@ -106,6 +106,17 @@ export const useFeeds = () => {
         setIsEnd(true);
       }
     },
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 5) {
+        feedsQuery.fetchNextPage();
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   });
 
   return {
