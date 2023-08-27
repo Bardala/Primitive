@@ -48,7 +48,6 @@ export const UserProfile = () => {
                 <h2>Spaces</h2>
                 {userSpacesQuery.isError && <div className="error">Something wrong</div>}
                 {userSpacesQuery.isLoading && <p>Loading...</p>}
-                {/**search about specific space in your spaces */}
                 <input
                   type="text"
                   placeholder="search"
@@ -77,8 +76,6 @@ export const UserProfile = () => {
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}
 
-          {/* <> */}
-          {/* <h2>blogs</h2> */}
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}
 
@@ -92,7 +89,6 @@ export const UserProfile = () => {
               </div>
             )
           )}
-          {/* </> */}
         </div>
       )}
     </>

@@ -13,12 +13,13 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { useAuthContext } from '../context/AuthContext';
 import { fetchFn } from '../fetch';
+import { ApiError } from '../fetch/auth';
 
 export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }> = props => {
   const { userCard, blogsLength } = props;
   let { currUser } = useAuthContext();
 
-  const followersQuery = useQuery(
+  const followersQuery = useQuery<GetFollowersRes, ApiError>(
     ['followers', userCard.id],
     () =>
       fetchFn<GetFollowersReq, GetFollowersRes>(
@@ -34,7 +35,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
     }
   );
 
-  const followMutation = useMutation(
+  const followMutation = useMutation<FollowUserRes, ApiError>(
     () =>
       fetchFn<FollowUserReq, FollowUserRes>(
         ENDPOINT.FOLLOW_USER,
@@ -48,7 +49,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
       onError: err => console.error('followMutation error', err),
     }
   );
-  const unfollowMutation = useMutation(
+  const unfollowMutation = useMutation<UnFollowUserRes, ApiError>(
     () =>
       fetchFn<UnFollowUserReq, UnFollowUserRes>(
         ENDPOINT.UNFOLLOW_USER,
@@ -63,10 +64,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
     }
   );
 
-  const isFollowing = () => {
-    if (!currUser) return false;
-    return followersQuery.data?.followers.some(follower => follower.id === currUser?.id);
-  };
+  const isFollowing = followersQuery.data?.followers.some(follower => follower.id === currUser?.id);
 
   return (
     <div className="user-information">
@@ -74,9 +72,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
         <h2 className="page">{userCard.username} card</h2>
         {currUser && currUser.username !== userCard.username && (
           <>
-            {/* {followMutation.isError && <p className="error">{STATE.ERROR}</p>} */}
-            {/* {unfollowMutation && <p className="error">{STATE.ERROR}</p>} */}
-            {isFollowing() ? (
+            {isFollowing ? (
               <button
                 onClick={() => unfollowMutation.mutate()}
                 disabled={unfollowMutation.isLoading}

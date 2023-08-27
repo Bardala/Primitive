@@ -464,8 +464,10 @@ export class SqlDataStore implements DataStoreDao {
 
   async getUserBlogs(userId: string): Promise<Blog[]> {
     const query = `
-    SELECT blogs.* FROM blogs
-    WHERE blogs.userId = ?
+    SELECT blogs.*
+    FROM blogs
+    JOIN spaces ON blogs.spaceId = spaces.id
+    WHERE blogs.userId = ? AND spaces.status = 'public'
     ORDER BY blogs.timestamp DESC
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
