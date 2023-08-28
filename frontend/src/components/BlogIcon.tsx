@@ -33,10 +33,7 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
         </div>
 
         <div className="blog-excerpt">
-          <p className={isArabic(post.content) ? 'arabic' : ''}>
-            {/* <MyMarkdown markdown={post.content.slice(0, 500)} /> */}
-            {post.content}
-          </p>
+          <p className={isArabic(post.content) ? 'arabic' : ''}>{post.content}</p>
         </div>
       </div>
     </div>

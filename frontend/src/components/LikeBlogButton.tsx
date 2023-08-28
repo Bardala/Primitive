@@ -10,23 +10,14 @@ export const LikeBlogButton: React.FC<{ post: Blog | Short }> = props => {
   return (
     <>
       <div className="like-button-wrapper">
-        {isLiked() ? (
-          <button
-            className="remove-like-button"
-            onClick={() => deleteLikeMutate.mutate()}
-            disabled={deleteLikeMutate.isLoading}
-          >
-            <span>{blogLikesQuery.data?.users?.length} ❤️</span>
-          </button>
-        ) : (
-          <button
-            className="like-button"
-            onClick={() => postLikeMutate.mutate()}
-            disabled={postLikeMutate.isLoading}
-          >
-            <span>{blogLikesQuery.data?.users?.length} 🤍 </span>
-          </button>
-        )}
+        <button
+          className="like-button"
+          onClick={() => (isLiked() ? deleteLikeMutate.mutate() : postLikeMutate.mutate())}
+        >
+          <span>
+            {blogLikesQuery.data?.users.length} {isLiked() ? '❤️' : '🤍'}
+          </span>
+        </button>
       </div>
     </>
   );

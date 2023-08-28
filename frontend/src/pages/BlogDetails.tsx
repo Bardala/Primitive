@@ -9,7 +9,6 @@ import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { STATE } from '../utils/StatesMsgs';
-import { isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
@@ -37,7 +36,7 @@ export const BlogDetails = () => {
                   <strong>{blog.author}</strong>
                 </Link>
               </div>
-              <div className={isArabic(blog.content) ? 'arabic' : ''} id="blog-content">
+              <div id="blog-content">
                 <MyMarkdown markdown={blog.content} />
               </div>
 
@@ -59,7 +58,7 @@ export const BlogDetails = () => {
 
           {commentsQuery.isError && <p className="error">{STATE.ERROR}</p>}
           {commentsQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
-          {currUser && id && <Comments blogId={id} currUser={currUser} comments={comments!} />}
+          {currUser && id && <Comments blogId={id} comments={comments!} />}
         </div>
       )}
     </div>

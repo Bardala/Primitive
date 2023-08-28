@@ -1,68 +1,26 @@
-import {
-  ENDPOINT,
-  FollowUserReq,
-  FollowUserRes,
-  GetFollowersReq,
-  GetFollowersRes,
-  UnFollowUserReq,
-  UnFollowUserRes,
-  UserCard,
-} from '@nest/shared';
+import { FollowUserRes, GetFollowersRes, UnFollowUserRes, UserCard } from '@nest/shared';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { followUserApi, unfollowUserApi, userFollowersApi } from '../utils/api';
 
 export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }> = props => {
   const { userCard, blogsLength } = props;
   let { currUser } = useAuthContext();
+  const key = ['followers', userCard.id];
 
-  const followersQuery = useQuery<GetFollowersRes, ApiError>(
-    ['followers', userCard.id],
-    () =>
-      fetchFn<GetFollowersReq, GetFollowersRes>(
-        ENDPOINT.GET_FOLLOWERS,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [userCard.id]
-      ),
-    {
-      enabled: !!currUser?.jwt && !!userCard.id,
-      onError: err => console.error('err', err),
-    }
-  );
+  const followersQuery = useQuery<GetFollowersRes, ApiError>(key, userFollowersApi(userCard.id), {
+    enabled: !!currUser?.jwt && !!userCard.id,
+  });
 
-  const followMutation = useMutation<FollowUserRes, ApiError>(
-    () =>
-      fetchFn<FollowUserReq, FollowUserRes>(
-        ENDPOINT.FOLLOW_USER,
-        'POST',
-        undefined,
-        currUser?.jwt,
-        [userCard.id]
-      ),
-    {
-      onSuccess: () => followersQuery.refetch(),
-      onError: err => console.error('followMutation error', err),
-    }
-  );
-  const unfollowMutation = useMutation<UnFollowUserRes, ApiError>(
-    () =>
-      fetchFn<UnFollowUserReq, UnFollowUserRes>(
-        ENDPOINT.UNFOLLOW_USER,
-        'DELETE',
-        undefined,
-        currUser?.jwt,
-        [userCard.id]
-      ),
-    {
-      onSuccess: () => followersQuery.refetch(),
-      onError: err => console.error('unfollowMutation error', err),
-    }
-  );
+  const followMutation = useMutation<FollowUserRes, ApiError>(followUserApi(userCard.id), {
+    onSuccess: () => followersQuery.refetch(),
+  });
+  const unfollowMutation = useMutation<UnFollowUserRes, ApiError>(unfollowUserApi(userCard.id), {
+    onSuccess: () => followersQuery.refetch(),
+  });
 
   const isFollowing = followersQuery.data?.followers.some(follower => follower.id === currUser?.id);
 

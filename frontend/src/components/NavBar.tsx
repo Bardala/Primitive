@@ -7,6 +7,8 @@ import { isLoggedIn, logOut } from '../fetch/auth';
 import '../styles/navBar.css';
 
 export const NavBar = () => {
+  const url = window.location.pathname.split('/')[1];
+
   const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
   const nav = useNavigate();
@@ -14,17 +16,19 @@ export const NavBar = () => {
 
   useEffect(() => {
     if (!isLoggedIn() && !signUp) {
-      nav('/login');
       queryClient.removeQueries();
+      nav('/login');
     }
-  }, [nav, queryClient, signUp]);
+
+    url === 'login' && isLoggedIn() && nav('/');
+  }, [nav, queryClient, signUp, url]);
 
   const handleClick = useCallback(() => {
     logOut();
     refetchCurrUser();
-    queryClient.removeQueries();
+    window.location.reload();
     nav('/login');
-  }, [nav, queryClient, refetchCurrUser]);
+  }, [nav, refetchCurrUser]);
 
   return (
     <header className="navbar">

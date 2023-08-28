@@ -1,48 +1,32 @@
-import { ENDPOINT, GetUsersListReq, GetUsersListRes } from '@nest/shared';
+import { GetUsersListRes } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
 import '../styles/users-list.css';
+import { userListApi } from '../utils/api';
 
 export const UsersList = () => {
   const { currUser } = useAuthContext();
+  const key = ['usersList'];
 
-  const usersListQuery = useQuery<GetUsersListRes, ApiError>(
-    ['usersList'],
-    () =>
-      fetchFn<GetUsersListReq, GetUsersListRes>(
-        ENDPOINT.GET_USERS_LIST,
-        'GET',
-        undefined,
-        currUser?.jwt
-      ),
-    {
-      enabled: !!currUser?.jwt,
-      onError: err => console.log(err),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const usersListQuery = useQuery<GetUsersListRes, ApiError>(key, userListApi(), {
+    enabled: !!currUser?.jwt,
+    refetchOnWindowFocus: false,
+  });
 
   const users = usersListQuery.data?.usersList;
 
   return (
     <div className="user-list">
       <h2>List of users</h2>
-      {/* {error && <div className="error">error</div>} */}
       <ul>
         {users &&
           users.map(user => (
             <li key={user.id}>
               <Link to={`/u/${user.id}`}>
                 <p className="username">{user.username}</p>
-                {/* <div className="counts-container">
-                  <p className="followers-count"> {user.followers.length} followers </p>
-                  <p className="blogs-count">{user.blogs.length} blogs</p>
-                  <p className="comments-count">{user.comments.length} comments</p>
-                </div> */}
               </Link>
             </li>
           ))}

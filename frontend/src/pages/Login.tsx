@@ -1,12 +1,11 @@
-import { ENDPOINT, LoginReq, LoginRes } from '@nest/shared';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
 import '../styles/login.css';
-import { Locals } from '../utils/localStorage';
+import { loginApi } from '../utils/api';
+import { LOCALS } from '../utils/localStorage';
 
 export const Login = () => {
   const nav = useNavigate();
@@ -19,14 +18,8 @@ export const Login = () => {
     async (e: React.FormEvent | React.MouseEvent) => {
       e.preventDefault();
       try {
-        const currUser = await fetchFn<LoginReq, LoginRes>(
-          ENDPOINT.LOGIN,
-          'POST',
-          { login, password },
-          undefined,
-          undefined
-        );
-        localStorage.setItem(Locals.CurrUser, JSON.stringify(currUser));
+        const currUser = await loginApi(login, password);
+        localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
         refetchCurrUser();
         nav('/');
       } catch (err) {

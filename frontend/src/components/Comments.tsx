@@ -1,44 +1,27 @@
-import {
-  CommentWithUser,
-  CreateCommentReq,
-  CreateCommentRes,
-  ENDPOINT,
-  LoginRes,
-} from '@nest/shared';
+import { CommentWithUser, CreateCommentRes } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import Markdown from 'markdown-to-jsx';
-import { FormEvent, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { createCommApi } from '../utils/api';
+import { MyMarkdown } from './MyMarkdown';
 
-export const Comments: React.FC<{
+export const Comments: FC<{
   blogId: string;
-  currUser: LoginRes;
   comments: CommentWithUser[];
-}> = ({ blogId, currUser, comments }) => {
+}> = ({ blogId, comments }) => {
   const { id } = useParams();
-
-  const [commContent, setCommContent] = useState('');
+  const key = ['comments', blogId];
+  const [content, setContent] = useState('');
   const queryClient = useQueryClient();
 
-  const createCommMutation = useMutation<CreateCommentRes, ApiError>({
-    mutationFn: () =>
-      fetchFn<CreateCommentReq, CreateCommentRes>(
-        ENDPOINT.CREATE_COMMENT,
-        'POST',
-        { content: commContent },
-        currUser.jwt,
-        [id!]
-      ),
+  const createCommMutation = useMutation<CreateCommentRes, ApiError>(createCommApi(content, id!), {
     onSuccess: data => {
-      queryClient.invalidateQueries(['comments', blogId]);
-      console.log('data', data);
-      setCommContent('');
+      queryClient.invalidateQueries(key);
+      setContent('');
     },
-    onError: err => console.log('err', err),
   });
 
   const handleSubmit = (e: MouseEvent | FormEvent) => {
@@ -54,8 +37,8 @@ export const Comments: React.FC<{
         <form onSubmit={handleSubmit} className="create-comment">
           <textarea
             placeholder="write your comment"
-            value={commContent}
-            onChange={e => setCommContent(e.target.value)}
+            value={content}
+            onChange={e => setContent(e.target.value)}
           ></textarea>
           <button className="add-comment" disabled={isPending}>
             Add comment
@@ -70,7 +53,7 @@ export const Comments: React.FC<{
           ) : (
             comments?.map(comment => (
               <div className="comment" key={comment.id}>
-                <Markdown className="comment-body">{comment.content}</Markdown>
+                <MyMarkdown markdown={comment.content} />
                 <Link className="comment-author" to={`/u/${comment.userId}`}>
                   {comment.author}
                 </Link>

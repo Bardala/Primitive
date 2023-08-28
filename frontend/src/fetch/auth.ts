@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Locals } from '../utils/localStorage';
+import { LOCALS } from '../utils/localStorage';
 
 export class ApiError extends Error {
   public status: number;
@@ -12,18 +12,18 @@ export class ApiError extends Error {
 }
 
 export const isLoggedIn = (): boolean => {
-  return !!localStorage.getItem(Locals.CurrUser);
+  return !!localStorage.getItem(LOCALS.CURR_USER);
 };
 
 export const logOut = async (): Promise<void> => {
-  localStorage.removeItem(Locals.CurrUser);
+  localStorage.removeItem(LOCALS.CURR_USER);
 };
 
 export const useLogOut = () => {
   const queryClient = useQueryClient();
 
   const logOut = async (): Promise<void> => {
-    localStorage.removeItem(Locals.CurrUser);
+    localStorage.removeItem(LOCALS.CURR_USER);
     queryClient.removeQueries();
   };
 

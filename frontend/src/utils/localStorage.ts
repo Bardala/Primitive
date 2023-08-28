@@ -1,3 +1,3 @@
-export enum Locals {
-  CurrUser = "currUser",
+export enum LOCALS {
+  CURR_USER = 'currUser',
 }

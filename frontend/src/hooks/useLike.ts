@@ -1,68 +1,27 @@
-import {
-  BlogLikesListReq,
-  BlogLikesListRes,
-  CreateLikeReq,
-  CreateLikeRes,
-  ENDPOINT,
-  RemoveLikeReq,
-  RemoveLikeRes,
-} from '@nest/shared';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { BlogLikesListRes, CreateLikeRes, RemoveLikeRes } from '@nest/shared';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { blogLikesApi, createLikeApi, deleteLikeApi } from '../utils/api';
 
 export const useLikeButton = (id: string) => {
   const { currUser } = useAuthContext();
-  const queryClient = useQueryClient();
+  const key = ['likes', id];
 
-  const blogLikesQuery = useQuery<BlogLikesListRes, ApiError>(
-    ['likes', id],
-    () =>
-      fetchFn<BlogLikesListReq, BlogLikesListRes>(
-        ENDPOINT.GET_BLOG_LIKES_LIST,
-        'GET',
-        undefined,
-        currUser?.jwt,
-        [id]
-      ),
-    {
-      enabled: !!currUser?.jwt && !!id,
-      onError: err => console.log(err),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const blogLikesQuery = useQuery<BlogLikesListRes, ApiError>(key, blogLikesApi(id), {
+    enabled: !!currUser?.jwt && !!id,
+    onError: err => console.log(err),
+    refetchOnWindowFocus: false,
+  });
 
-  const postLikeMutate = useMutation<CreateLikeRes, ApiError>(
-    () =>
-      fetchFn<CreateLikeReq, CreateLikeRes>(ENDPOINT.LIKE_BLOG, 'POST', undefined, currUser?.jwt, [
-        id,
-      ]),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['likes', id]);
-      },
-      onError: err => console.error('postLike error', err),
-    }
-  );
+  const postLikeMutate = useMutation<CreateLikeRes, ApiError>(createLikeApi(id), {
+    onSuccess: () => blogLikesQuery.refetch(),
+  });
 
-  const deleteLikeMutate = useMutation<RemoveLikeRes, ApiError>(
-    () =>
-      fetchFn<RemoveLikeReq, RemoveLikeRes>(
-        ENDPOINT.UNLIKE_BLOG,
-        'DELETE',
-        undefined,
-        currUser?.jwt,
-        [id]
-      ),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['likes', id]);
-      },
-      onError: err => console.error('deleteLike error', err),
-    }
-  );
+  const deleteLikeMutate = useMutation<RemoveLikeRes, ApiError>(deleteLikeApi(id), {
+    onSuccess: () => blogLikesQuery.refetch(),
+  });
 
   const isLiked = () => {
     if (!currUser) return false;

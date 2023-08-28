@@ -1,37 +1,23 @@
-import { AddMemberReq, AddMemberRes, ENDPOINT } from '@nest/shared';
+import { AddMemberRes } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useAuthContext } from '../context/AuthContext';
-import { fetchFn } from '../fetch';
 import { ApiError } from '../fetch/auth';
+import { addMemberApi } from '../utils/api';
 
 export const AddMember = () => {
   const { id } = useParams();
-  const [newMember, setNewMember] = useState('');
-  const { currUser } = useAuthContext();
+  const [newMem, setNewMem] = useState('');
   const queryClient = useQueryClient();
+  const key = ['members', id];
 
-  const addMemberMutation = useMutation<AddMemberRes, ApiError>(
-    () =>
-      fetchFn<AddMemberReq, AddMemberRes>(
-        ENDPOINT.ADD_MEMBER,
-        'POST',
-        { member: newMember, isAdmin: false },
-        currUser?.jwt,
-        [id!]
-      ),
-    {
-      onSuccess: data => {
-        queryClient.invalidateQueries(['members', id]);
-        setNewMember('');
-        console.log('newUser', data);
-        console.log('new member added');
-      },
-      onError: err => console.error(err),
-    }
-  );
+  const addMemberMutation = useMutation<AddMemberRes, ApiError>(addMemberApi(newMem, false, id!), {
+    onSuccess: data => {
+      queryClient.invalidateQueries(key);
+      setNewMem('');
+    },
+  });
 
   const handleAddMember = (e: React.FormEvent | MouseEvent) => {
     e.preventDefault();
@@ -46,8 +32,8 @@ export const AddMember = () => {
         <input
           type="text"
           placeholder="username or id"
-          value={newMember}
-          onChange={e => setNewMember(e.target.value)}
+          value={newMem}
+          onChange={e => setNewMem(e.target.value)}
         />
         <button type="submit" onClick={handleAddMember} disabled={addMemberMutation.isLoading}>
           Add
