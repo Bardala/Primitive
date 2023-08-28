@@ -17,10 +17,14 @@ export const Home = () => {
     <div className="home">
       <main>
         {error && <p className="error">{error?.message}</p>}
-        {!!feeds?.length && <BlogList posts={feeds} />}
-        <button hidden={isEnd} disabled={isEnd} onClick={() => fetchNextPage()}>
-          Load More
-        </button>
+        {!!feeds?.length && (
+          <>
+            <BlogList posts={feeds} />
+            <button hidden={isEnd} disabled={isEnd} onClick={() => fetchNextPage()}>
+              Load More
+            </button>
+          </>
+        )}
       </main>
       <Sidebar />
     </div>

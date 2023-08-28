@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -7,16 +7,17 @@ import { isLoggedIn, logOut } from '../fetch/auth';
 import '../styles/navBar.css';
 
 export const NavBar = () => {
+  const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
   const nav = useNavigate();
   const queryClient = useQueryClient();
 
-  // useEffect(() => {
-  //   if (!isLoggedIn()) {
-  //     window.location.reload();
-  //     queryClient.removeQueries();
-  //   }
-  // }, [queryClient]);
+  useEffect(() => {
+    if (!isLoggedIn() && !signUp) {
+      nav('/login');
+      queryClient.removeQueries();
+    }
+  }, [nav, queryClient, signUp]);
 
   const handleClick = useCallback(() => {
     logOut();
@@ -33,7 +34,9 @@ export const NavBar = () => {
             <h1>Nest</h1>
           </div>
           <nav className="links">
-            <Link to="/signup">Signup</Link>
+            <Link to="/signup" onClick={() => setSignUp(true)}>
+              Signup
+            </Link>
             <Link to="/login">Login</Link>
           </nav>
         </>

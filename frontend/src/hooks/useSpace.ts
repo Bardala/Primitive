@@ -97,7 +97,7 @@ export const useFeeds = () => {
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, fetchFeeds, {
     enabled: !!currUser?.jwt,
-    refetchOnWindowFocus: false,
+    // refetchOnWindowFocus: false,
     getNextPageParam: lastPage => {
       return lastPage.page + 1;
     },
