@@ -33,7 +33,6 @@ export const useChat = (space: Space) => {
       socket.emit('from_client', { message: data.message, spaceId: space.id });
       setNewMsg('');
     },
-    onError: err => console.error(err),
   });
 
   return { chatQuery, chatErr, msgMutate, setNewMsg, newMsg };

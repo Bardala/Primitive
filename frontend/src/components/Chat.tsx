@@ -2,9 +2,11 @@ import { Space } from '@nest/shared';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import { FormEvent } from 'react';
 
+import { useAuthContext } from '../context/AuthContext';
 import { useChat } from '../hooks/useChat';
 
 export const Chat: React.FC<{ space: Space }> = ({ space }) => {
+  const { currUser } = useAuthContext();
   const { msgMutate, chatQuery, chatErr, setNewMsg, newMsg } = useChat(space);
 
   const handleSubmit = (e: FormEvent | MouseEvent) => {
@@ -20,9 +22,11 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
         <ul className="space-chat-msgs">
           {chatQuery.data?.messages.map(msg => (
             <li key={msg.id}>
-              <p>{msg.content}</p>
+              <p style={msg.userId === currUser?.id ? { backgroundColor: '#bbd7ff' } : {}}>
+                {msg.content}
+              </p>
               <p>
-                {msg.username}
+                <strong>{msg.username}</strong>
                 {',  '}
                 {formatDistantToNow(new Date(msg?.timestamp as number), { addSuffix: true })}
               </p>
@@ -37,7 +41,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
             onChange={e => setNewMsg(e.target.value)}
             placeholder="send message"
           />
-          <button type="submit" className="send-msg">
+          <button type="submit" className="send-msg" disabled={msgMutate.isLoading}>
             Send
           </button>
         </form>

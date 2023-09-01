@@ -32,7 +32,7 @@ export const useSpace = (id: string) => {
   });
 
   const membersQuery = useQuery<MembersRes, ApiError>(membersKey, membersApi(id), {
-    enabled: !!currUser && !!spaceQuery.data?.space.id,
+    enabled: !!currUser && !!spaceQuery.data?.space.id && id !== DefaultSpaceId,
     refetchOnWindowFocus: false,
   });
 
@@ -60,6 +60,7 @@ export const useFeeds = () => {
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
     enabled: !!currUser?.jwt,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
     getNextPageParam: lastPage => {
       return lastPage.page + 1;
     },

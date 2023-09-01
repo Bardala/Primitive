@@ -14,18 +14,15 @@ export const useProfileData = (id: string) => {
 
   const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(id), {
     enabled: !!currUser?.jwt && !!id,
-    onError: err => console.error(err),
   });
 
   const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(id), {
     enabled: isMyPage && !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
-    onError: err => console.error(err),
     refetchOnWindowFocus: false,
   });
 
   const userBlogsQuery = useQuery(blogsKey, userBlogsApi(id), {
     enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
-    onError: err => console.error(err),
     refetchOnWindowFocus: false,
   });
 

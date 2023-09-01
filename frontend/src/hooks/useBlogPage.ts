@@ -12,8 +12,6 @@ export const useBlogPage = (id: string) => {
 
   const blogQuery = useQuery<BlogRes, ApiError>(blogKey, blogApi(id), {
     enabled: !!currUser?.jwt && !!id,
-    // refetchOnMount: false, // Disable refetch on mount
-    // refetchInterval: 5000, // Refetch every 5 seconds (5000 milliseconds)
     staleTime: 60000,
   });
 

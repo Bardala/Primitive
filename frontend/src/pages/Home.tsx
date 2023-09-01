@@ -4,7 +4,6 @@ import { BlogList } from '../components/BlogList';
 import { Sidebar } from '../components/SideBar';
 import { useFeeds, useSpace } from '../hooks/useSpace';
 
-// todo: add infinite scroll: done
 export const Home = () => {
   const { spaceQuery } = useSpace(DefaultSpaceId);
   const { feeds, fetchNextPage, isEnd } = useFeeds();
