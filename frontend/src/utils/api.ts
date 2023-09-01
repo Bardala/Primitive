@@ -63,10 +63,16 @@ const currUser = JSON.parse(localStorage.getItem(LOCALS.CURR_USER) || '{}');
 export const spcApi = (spcId: string) => () =>
   fetchFn<SpaceReq, SpaceRes>(ENDPOINT.GET_SPACE, 'GET', undefined, currUser?.jwt, [spcId]);
 
-export const blogsApi = (spcId: string) => () =>
-  fetchFn<SpaceBlogsReq, SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, 'GET', undefined, currUser?.jwt, [
-    spcId,
-  ]);
+export const blogsApi =
+  (spcId: string) =>
+  ({ pageParam = 1 }) =>
+    fetchFn<SpaceBlogsReq, SpaceBlogsRes>(
+      ENDPOINT.GET_SPACE_BLOGS,
+      'GET',
+      undefined,
+      currUser?.jwt,
+      [spcId, pageParam + '']
+    );
 
 export const membersApi = (spcId: string) => () =>
   fetchFn<MembersReq, MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, 'GET', undefined, currUser?.jwt, [
@@ -80,11 +86,10 @@ export const joinSpcApi = (spcId: string) => () =>
 
 export const feedsApi =
   () =>
-  ({ pageParam = 1 }) => {
-    return fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, 'GET', undefined, currUser?.jwt, [
+  ({ pageParam = 1 }) =>
+    fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, 'GET', undefined, currUser?.jwt, [
       pageParam + '',
     ]);
-  };
 
 export const createBlogApi = (title: string, content: string, spaceId: string) => () =>
   fetchFn<CreateBlogReq, CreateBlogRes>(
@@ -156,10 +161,13 @@ export const userSpacesApi = (userId: string) => () =>
     userId,
   ]);
 
-export const userBlogsApi = (userId: string) => () =>
-  fetchFn<UserBlogsReq, UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, 'GET', undefined, currUser?.jwt, [
-    userId,
-  ]);
+export const userBlogsApi =
+  (userId: string) =>
+  ({ pageParam = 1 }) =>
+    fetchFn<UserBlogsReq, UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, 'GET', undefined, currUser?.jwt, [
+      userId,
+      pageParam + '',
+    ]);
 
 export const userListApi = () => () =>
   fetchFn<GetUsersListReq, GetUsersListRes>(

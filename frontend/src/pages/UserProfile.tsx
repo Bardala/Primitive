@@ -8,14 +8,13 @@ import { useAuthContext } from '../context/AuthContext';
 import { useProfileData } from '../hooks/useProfileData';
 import '../styles/user-profile.css';
 
-// todo: add infinite scroll
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
   const { id } = useParams();
 
-  const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage } = useProfileData(id!);
+  const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage, isEnd } = useProfileData(id!);
 
-  const blogs = userBlogsQuery.data?.blogs;
+  const blogs = userBlogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const spaces = userSpacesQuery.data?.spaces;
   const userCard = userCardQuery.data?.userCard;
   const [search, setSearch] = useState<Space[]>(spaces!);
@@ -79,15 +78,23 @@ export const UserProfile = () => {
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}
 
-          {!!blogs ? (
-            <BlogList posts={blogs} />
-          ) : (
-            !userBlogsQuery.isLoading &&
-            !userBlogsQuery.isError && (
-              <div className="not-found">
-                <p>There isn't blogs</p>
-              </div>
-            )
+          {!!blogs && (
+            <>
+              <BlogList posts={blogs} />
+              <button
+                hidden={isEnd}
+                disabled={isEnd}
+                onClick={() => userBlogsQuery.fetchNextPage()}
+              >
+                Load More
+              </button>
+            </>
+          )}
+
+          {blogs.length === 0 && !userBlogsQuery.isLoading && !userBlogsQuery.isError && (
+            <div className="not-found">
+              <p>There isn't blogs</p>
+            </div>
           )}
         </div>
       )}

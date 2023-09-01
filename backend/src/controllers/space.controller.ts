@@ -62,37 +62,26 @@ export class SpaceController implements spaceController {
     this.db = db;
   }
 
-  blogs: HandlerWithParams<{ spaceId: string }, SpaceBlogsReq, SpaceBlogsRes> = async (
-    req,
-    res
-  ) => {
-    const [{ spaceId }, { userId }] = [req.params, res.locals];
+  blogs: HandlerWithParams<{ spaceId: string; page: string }, SpaceBlogsReq, SpaceBlogsRes> =
+    async (req, res) => {
+      const [{ spaceId }, { userId }] = [req.params, res.locals];
 
-    if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+      if (!spaceId || !req.params.page)
+        return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
-    if ((await this.db.getSpace(spaceId))?.status === 'public')
-      return res.send({ blogs: await this.db.getBlogs(spaceId) });
+      const page = parseInt(req.params.page);
+      const pageSize = 3;
+      const offset = (page - 1) * pageSize;
 
-    if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
+      const blogs = await this.db.getBlogs(spaceId, pageSize, offset);
+      console.log('blogs.length', blogs.length, 'page', page, 'offset', offset);
 
-    return res.send({ blogs: await this.db.getBlogs(spaceId) });
-  };
+      if ((await this.db.getSpace(spaceId))?.status === 'public') return res.send({ blogs, page });
 
-  // shorts: HandlerWithParams<{ spaceId: string }, SpaceShortsReq, SpaceShortsRes> = async (
-  //   req,
-  //   res
-  // ) => {
-  //   const [{ spaceId }, { userId }] = [req.params, res.locals];
+      if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
 
-  //   if (!spaceId) return res.status(400).send({ error: Errors.PARAMS_MISSING });
-
-  //   if ((await this.db.getSpace(spaceId))?.status === 'public')
-  //     return res.send({ shorts: await this.db.getShorts(spaceId) });
-
-  //   if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
-
-  //   return res.send({ shorts: await this.db.getShorts(spaceId) });
-  // };
+      return res.send({ blogs, page });
+    };
 
   deleteMember: HandlerWithParams<
     { spaceId: string; memberId: string },
@@ -136,13 +125,10 @@ export class SpaceController implements spaceController {
 
     const page = parseInt(req.params.page);
     const pageSize = 3;
-
     const offset = (page - 1) * pageSize;
 
-    console.log('page', page, 'offset', offset);
-
     const feeds = await this.db.testInfiniteScroll(res.locals.userId, pageSize, offset);
-    console.log(feeds.length);
+    console.log('blogs.length', feeds.length, 'page', page, 'offset', offset);
     return res.send({ feeds, page });
   };
 
@@ -215,11 +201,7 @@ export class SpaceController implements spaceController {
       return res.status(HTTP.FORBIDDEN).send({ error: ERROR.PRIVATE_SPACE });
     }
 
-    return res.status(200).send({
-      space,
-      // blogs: await this.db.getBlogs(spaceId),
-      // shorts: await this.db.getShorts(spaceId),
-    });
+    return res.send({ space });
   };
 
   deleteSpace: HandlerWithParams<{ spaceId: string }, DeleteSpaceReq, DeleteSpaceRes> = async (

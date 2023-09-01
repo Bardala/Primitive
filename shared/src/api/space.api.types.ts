@@ -26,13 +26,12 @@ export interface DeleteSpaceRes {}
 export interface DefaultSpaceReq {}
 export interface DefaultSpaceRes {
   space: Space;
-  // blogs: Blog[];
-  // shorts: Short[];
 }
 
 export interface SpaceBlogsReq {}
 export interface SpaceBlogsRes {
   blogs: Blog[];
+  page: number;
 }
 
 export interface SpaceShortsReq {}

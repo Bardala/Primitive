@@ -57,17 +57,21 @@ export class UserController implements userController {
     return res.status(HTTP.OK).send({ spaces: await this.db.getUserSpaces(userId) });
   };
 
-  getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes> = async (
-    req,
-    res
-  ) => {
-    const userId = req.params.id;
-    if (!userId) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
-    }
+  getUserBlogs: HandlerWithParams<{ id: string; page: string }, UserBlogsReq, UserBlogsRes> =
+    async (req, res) => {
+      const userId = req.params.id;
+      if (!userId || !req.params.page) {
+        return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
+      }
 
-    return res.status(HTTP.OK).send({ blogs: await this.db.getUserBlogs(userId) });
-  };
+      const page = parseInt(req.params.page);
+      const pageSize = 3;
+
+      const offset = (page - 1) * pageSize;
+      const blogs = await this.db.getUserBlogs(userId, pageSize, offset);
+
+      return res.send({ blogs, page });
+    };
 
   getUserCard: HandlerWithParams<{ id: string }, GetUserCardReq, GetUserCardRes> = async (
     req,

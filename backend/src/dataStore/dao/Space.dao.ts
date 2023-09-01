@@ -7,10 +7,7 @@ export interface SpaceDao {
   getSpace(spaceId: string): Promise<Space | undefined>;
   deleteSpace(spaceId: string): Promise<void>;
 
-  // getDefaultSpace(): Promise<Space | undefined>; // use getSpace
-  getBlogs(spaceId: string): Promise<Blog[]>;
-  // getShorts(spaceId: string): Promise<Short[]>;
-  // getPosts(spaceId: string): Promise<(Blog | Short)[]>;
+  getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getSpaceChat(spaceId: string): Promise<ChatMessage[]>;
 
   addMember(member: SpaceMember): Promise<void>;

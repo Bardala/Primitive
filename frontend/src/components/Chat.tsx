@@ -5,6 +5,7 @@ import { FormEvent } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { useChat } from '../hooks/useChat';
 
+// todo: add infinite scroll
 export const Chat: React.FC<{ space: Space }> = ({ space }) => {
   const { currUser } = useAuthContext();
   const { msgMutate, chatQuery, chatErr, setNewMsg, newMsg } = useChat(space);

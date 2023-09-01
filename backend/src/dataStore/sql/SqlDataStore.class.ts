@@ -439,13 +439,14 @@ export class SqlDataStore implements DataStoreDao {
     );
   }
 
-  async getBlogs(spaceId: string): Promise<Blog[]> {
+  async getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.* FROM blogs
     WHERE blogs.spaceId = ?
     ORDER BY blogs.timestamp DESC
+    LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, pageSize, offset]);
     return rows as Blog[];
   }
 
@@ -462,15 +463,16 @@ export class SqlDataStore implements DataStoreDao {
     await this.pool.query('DELETE FROM blogs WHERE id=?', [blogId]);
   }
 
-  async getUserBlogs(userId: string): Promise<Blog[]> {
+  async getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.*
     FROM blogs
     JOIN spaces ON blogs.spaceId = spaces.id
     WHERE blogs.userId = ? AND spaces.status = 'public'
     ORDER BY blogs.timestamp DESC
+    LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, pageSize, offset]);
     return rows as Blog[];
   }
 

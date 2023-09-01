@@ -46,6 +46,7 @@ export interface GetFollowersRes {
 export interface UserBlogsReq {}
 export interface UserBlogsRes {
   blogs: Blog[];
+  page: number;
 }
 
 export interface UserSpacesReq {}

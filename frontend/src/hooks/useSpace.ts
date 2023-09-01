@@ -20,15 +20,20 @@ export const useSpace = (id: string) => {
   const spcKey = ['space', id];
   const blogsKey = ['blogs', id];
   const membersKey = ['members', id];
+  const pageSize = 3;
+  const [isEnd, setIsEnd] = useState(false);
 
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(id), {
     enabled: !!currUser?.jwt && !!id,
     refetchOnWindowFocus: false,
   });
 
-  const blogsQuery = useQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
+  const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
     enabled: !!currUser && !!id && id !== DefaultSpaceId,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    getNextPageParam: lastPage => lastPage.page + 1,
+    onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
   });
 
   const membersQuery = useQuery<MembersRes, ApiError>(membersKey, membersApi(id), {
@@ -48,6 +53,7 @@ export const useSpace = (id: string) => {
     membersQuery,
     joinSpaceMutate,
     isMember,
+    isEnd,
   };
 };
 
@@ -61,14 +67,8 @@ export const useFeeds = () => {
     enabled: !!currUser?.jwt,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    getNextPageParam: lastPage => {
-      return lastPage.page + 1;
-    },
-    onSuccess: data => {
-      if (data.pages[data.pages.length - 1].feeds.length < pageSize) {
-        setIsEnd(true);
-      }
-    },
+    getNextPageParam: lastPage => lastPage.page + 1,
+    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
   });
 
   useScroll(feedsQuery);

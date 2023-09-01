@@ -14,7 +14,7 @@ export interface UserDao {
   deleteFollow(followerId: string, followingId: string): Promise<void>;
   getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;
   getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
-  getUserBlogs(userId: string): Promise<Blog[]>;
+  getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
   isFollow(followingId: string, userId: string): Promise<boolean>;
 }

@@ -11,7 +11,7 @@ export enum ENDPOINT {
   UNFOLLOW_USER = '/api/v0/user/:id/unfollow',
   GET_FOLLOWERS = '/api/v0/user/:id/followers',
   GET_USERS_LIST = '/api/v0/users',
-  GET_USER_BLOGS = '/api/v0/user/:id/blogs',
+  GET_USER_BLOGS = '/api/v0/user/:id/blogs/:page',
   GET_USER_SPACES = '/api/v0/user/:id/spaces',
 
   // *Blog
@@ -49,7 +49,7 @@ export enum ENDPOINT {
   GET_SPACE = '/api/v0/space/:spaceId',
   DELETE_SPACE = '/api/v0/space/:spaceId',
 
-  GET_SPACE_BLOGS = '/api/v0/space/:spaceId/blogs',
+  GET_SPACE_BLOGS = '/api/v0/space/:spaceId/blogs/:page',
   GET_DEFAULT_SPACE = '/api/v0/space',
   JOIN_SPACE = '/api/v0/space/:spaceId/join',
   ADD_MEMBER = '/api/v0/space/:spaceId/member',

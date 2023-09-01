@@ -46,8 +46,9 @@ export const useDeleteBlog = (id: string, blog: Blog) => {
     blog.spaceId === DefaultSpaceId ? nav('/') : nav(`/space/${blog.spaceId}`);
 
   const deleteBlogMutate = useMutation<DeleteBlogRes, ApiError>(deleteBlogApi(id), {
-    onSuccess: data => {
-      blog.spaceId !== DefaultSpaceId && queryClient.invalidateQueries(getSpcKey(blog.spaceId));
+    onSuccess: () => {
+      queryClient.invalidateQueries(['feeds']);
+      queryClient.invalidateQueries(['blog', id]);
       navToSpace();
     },
   });
