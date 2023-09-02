@@ -13,11 +13,6 @@ export const SpaceMembers: React.FC<{ users: SpaceMember[] }> = ({ users }) => {
                 <p className="username">
                   {!!user.isAdmin && <i>admin</i>} {user.username}
                 </p>
-                {/* <div className="counts-container">
-                  <p className="followers-count"> {user.followers.length} followers </p>
-                  <p className="blogs-count">{user.blogs.length} blogs</p>
-                  <p className="comments-count">{user.comments.length} comments</p>
-                </div> */}
               </Link>
             </li>
           ))}

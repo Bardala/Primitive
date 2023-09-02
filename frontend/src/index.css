@@ -115,6 +115,13 @@ input.error {
   overflow-y: auto;
 }
 
+.side-bar .side-bar-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 .side-bar .space-name {
   margin: 8px;
   display: inline-flex;

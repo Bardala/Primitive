@@ -41,6 +41,7 @@ export const CreateBlogPage: React.FC = () => {
             value={title}
             placeholder="blog title"
             onChange={e => setTitle(e.target.value)}
+            style={{ direction: isArabic(title) ? 'rtl' : 'ltr' }}
           />
 
           <textarea
@@ -49,6 +50,7 @@ export const CreateBlogPage: React.FC = () => {
             value={content}
             onChange={e => setContent(e.target.value)}
             minLength={shortLength}
+            style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
           ></textarea>
 
           <i className="remaining-char" hidden={enabled}>

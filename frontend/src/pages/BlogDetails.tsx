@@ -9,6 +9,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { STATE } from '../utils/StatesMsgs';
+import { isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
@@ -36,7 +37,7 @@ export const BlogDetails = () => {
                   <strong>{blog.author}</strong>
                 </Link>
               </div>
-              <div id="blog-content">
+              <div id="blog-content" className={isArabic(blog.content.slice(10)) ? 'arabic' : ''}>
                 <MyMarkdown markdown={blog.content} />
               </div>
 

@@ -24,7 +24,7 @@ export const Space = () => {
       <div className="home">
         <main className="space-page">
           <div className="space-header">
-            <h1>Space: {spaceQuery.data?.space?.name}</h1>
+            <h2>Space: {spaceQuery.data?.space?.name}</h2>
             <span>{spaceQuery.data?.space?.status}</span>
           </div>
           {joinSpaceMutate.isError && <p>{joinSpaceMutate.error.message}</p>}

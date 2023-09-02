@@ -7,7 +7,7 @@ import { ApiError } from '../fetch/auth';
 import { followUserApi, unfollowUserApi, userFollowersApi } from '../utils/api';
 
 export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }> = props => {
-  const { userCard, blogsLength } = props;
+  const { userCard } = props;
   let { currUser } = useAuthContext();
   const key = ['followers', userCard.id];
 
@@ -59,10 +59,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
       )}
       <p>Username: {userCard.username}</p>
       <p>Followers: {followersQuery.data?.followers?.length || 0}</p>
-      {/* <p>Following: {userCard.following.length}</p> */}
-      {/* <p>Spaces: {userCard.spaces.length}</p> */}
-      <p>Blogs: {blogsLength}</p>
-      {/* <p>Comments: {userCard.comments.length}</p> */}
+      {/* <p>Blogs: {blogsLength}</p> *this should have its own api */}
       <p>
         Joined from{' '}
         {formatDistanceToNow(new Date(userCard.timestamp), {

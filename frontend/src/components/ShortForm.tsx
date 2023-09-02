@@ -43,7 +43,7 @@ export const ShortForm = () => {
           value={content}
           onChange={e => setContent(e.target.value)}
           maxLength={ShortLength}
-          className={isArabic(content) ? 'arabic' : ''}
+          style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
         />
         <i className="remaining-char">{remaining} remaining characters</i>
 

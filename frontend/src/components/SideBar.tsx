@@ -1,4 +1,5 @@
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -17,6 +18,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
+  const [list, setList] = useState(false);
   const nav = useNavigate();
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
@@ -26,9 +28,14 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 
   return (
     <div className="side-bar">
-      <h3 hidden={!space} className="space-name">
-        {space?.name}
-      </h3>
+      <div className="side-bar-nav">
+        <h3 hidden={!space} className="space-name">
+          {space?.name}
+        </h3>
+        <button hidden={!space} onClick={() => setList(!list)}>
+          {!list ? '🙈' : '🙉'}
+        </button>
+      </div>
       <button
         hidden={!!space && !isMember}
         onClick={() => dispatch({ type: 'showCreateBlog' })}
@@ -39,7 +46,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showCreateBlog && <ShortForm />}
 
       <button
-        hidden={!!space && !isMember}
+        hidden={(!!space && !isMember) || (space && !list)}
         onClick={() => nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`)}
       >
         Create Blog
@@ -55,7 +62,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showCreateSpace && <CreateSpace />}
 
       <button
-        hidden={!(!!space && isMember)}
+        hidden={!(!!space && isMember) || !list}
         onClick={() => dispatch({ type: 'showMembers' })}
         className={state.showMembers ? 'active' : ''}
       >
@@ -64,7 +71,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showMembers && <SpaceMembers users={members!} />}
 
       <button
-        hidden={!(!!space && isAdmin)}
+        hidden={!(!!space && isAdmin) || !list}
         onClick={() => dispatch({ type: 'showAddMember' })}
         className={state.showAddMember ? 'active' : ''}
       >
@@ -72,7 +79,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       </button>
       {state.showAddMember && <AddMember />}
       <button
-        hidden={!(!!space && isAdmin)}
+        hidden={!(!!space && isAdmin) || !list}
         onClick={() => dispatch({ type: 'showEditSpace' })}
         className={state.showEditSpace ? 'active' : ''}
       >

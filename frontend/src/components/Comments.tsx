@@ -6,6 +6,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ApiError } from '../fetch/auth';
 import { createCommApi } from '../utils/api';
+import { isArabic } from '../utils/assists';
 import { MyMarkdown } from './MyMarkdown';
 
 export const Comments: FC<{
@@ -53,7 +54,10 @@ export const Comments: FC<{
           ) : (
             comments?.map(comment => (
               <div className="comment" key={comment.id}>
-                <MyMarkdown markdown={comment.content} />
+                <div className={isArabic(comment.content) ? 'arabic' : ''}>
+                  <MyMarkdown markdown={comment.content} />
+                </div>
+
                 <Link className="comment-author" to={`/u/${comment.userId}`}>
                   {comment.author}
                 </Link>

@@ -30,8 +30,8 @@ export const useSpace = (id: string) => {
 
   const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
     enabled: !!currUser && !!id && id !== DefaultSpaceId,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnMount: false,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
   });
@@ -46,6 +46,7 @@ export const useSpace = (id: string) => {
   });
 
   const isMember = membersQuery.data?.members?.some(member => member.memberId === currUser?.id);
+  useScroll(blogsQuery);
 
   return {
     spaceQuery,
@@ -65,8 +66,8 @@ export const useFeeds = () => {
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
     enabled: !!currUser?.jwt,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnMount: false,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
   });
