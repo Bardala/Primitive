@@ -316,14 +316,22 @@ export class SqlDataStore implements DataStoreDao {
     const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
     return rows as CommentWithUser[];
   }
-  async blogLikes(blogId: string): Promise<number> {
-    const query = `
-    SELECT COUNT(*) FROM likes WHERE blogId=?
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
 
-    return rows[0]['COUNT(*)'] as number;
+  async blogLikes(blogId: string, userId: string): Promise<{ likes: number; isLiked: boolean }> {
+    const query = `
+    SELECT 
+        (SELECT COUNT(*) FROM likes WHERE blogId=?) AS likesCount,
+        (SELECT COUNT(*) FROM likes WHERE blogId=? AND userId=?) > 0 AS userLikes
+    `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [blogId, blogId, userId]);
+
+    const likes = rows[0]['likesCount'] as number;
+    const isLiked = rows[0]['userLikes'] as boolean;
+
+    return { likes, isLiked };
   }
+
   async blogLikesList(blogId: string): Promise<LikedUser[]> {
     const query = `
     SELECT users.username, users.id

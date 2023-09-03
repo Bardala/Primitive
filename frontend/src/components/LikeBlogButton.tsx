@@ -5,17 +5,20 @@ import '../styles/like-button.css';
 
 export const LikeBlogButton: React.FC<{ post: Blog | Short }> = props => {
   const { post } = props;
-  const { blogLikesQuery, postLikeMutate, deleteLikeMutate, isLiked } = useLikeButton(post.id);
+  const { postLikeMutate, deleteLikeMutate, blogLikes } = useLikeButton(post.id);
 
   return (
     <>
       <div className="like-button-wrapper">
         <button
           className="like-button"
-          onClick={() => (isLiked() ? deleteLikeMutate.mutate() : postLikeMutate.mutate())}
+          onClick={() =>
+            blogLikes.data?.isLiked ? deleteLikeMutate.mutate() : postLikeMutate.mutate()
+          }
+          disabled={blogLikes.isLoading || postLikeMutate.isLoading || deleteLikeMutate.isLoading}
         >
           <span>
-            {blogLikesQuery.data?.users.length} {isLiked() ? '❤️' : '🤍'}
+            {blogLikes.data?.likes} {blogLikes.data?.isLiked ? '❤️' : '🤍'}
           </span>
         </button>
       </div>

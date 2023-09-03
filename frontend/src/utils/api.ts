@@ -5,6 +5,8 @@ import {
   BlogCommentsRes,
   BlogLikesListReq,
   BlogLikesListRes,
+  BlogLikesReq,
+  BlogLikesRes,
   BlogReq,
   BlogRes,
   ChatReq,
@@ -132,7 +134,7 @@ export const createMsgApi = (content: string, spaceId: string) => () =>
     spaceId,
   ]);
 
-export const blogLikesApi = (blogId: string) => () =>
+export const blogLikesListApi = (blogId: string) => () =>
   fetchFn<BlogLikesListReq, BlogLikesListRes>(
     ENDPOINT.GET_BLOG_LIKES_LIST,
     'GET',
@@ -225,6 +227,11 @@ export const unfollowUserApi = (userId: string) => () =>
     currUser?.jwt,
     [userId]
   );
+
+export const blogLikesApi = (blogId: string) => () =>
+  fetchFn<BlogLikesReq, BlogLikesRes>(ENDPOINT.GET_BLOG_LIKES, 'GET', undefined, currUser?.jwt, [
+    blogId,
+  ]);
 
 export const loginApi = (login: string, password: string) =>
   fetchFn<LoginReq, LoginRes>(ENDPOINT.LOGIN, 'POST', { login, password });

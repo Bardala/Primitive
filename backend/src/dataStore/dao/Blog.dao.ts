@@ -8,7 +8,7 @@ export interface BlogDao {
 
   getComments(blogId: string): Promise<CommentWithUser[]>;
   deleteComments(blogId: string): Promise<void>;
-  blogLikes(blogId: string): Promise<number>;
+  blogLikes(blogId: string, userId: string): Promise<{ likes: number; isLiked: boolean }>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;
   //* test
   testInfiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;

@@ -128,7 +128,7 @@ export class SpaceController implements spaceController {
     const offset = (page - 1) * pageSize;
 
     const feeds = await this.db.testInfiniteScroll(res.locals.userId, pageSize, offset);
-    console.log('blogs.length', feeds.length, 'page', page, 'offset', offset);
+    // console.log('blogs.length', feeds.length, 'page', page, 'offset', offset);
     return res.send({ feeds, page });
   };
 

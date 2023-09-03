@@ -26,7 +26,8 @@ export interface BlogCommentsRes {
 
 export interface BlogLikesReq {} // params.blogId
 export interface BlogLikesRes {
-  likesNums: number;
+  likes: number;
+  isLiked: boolean;
 }
 
 export interface BlogLikesListReq {}

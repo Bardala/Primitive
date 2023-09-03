@@ -88,6 +88,7 @@ export class BlogController implements blogController {
     await this.db.removeLike(like);
     return res.sendStatus(200);
   };
+
   getBlogLikes: HandlerWithParams<{ blogId: string }, BlogLikesReq, BlogLikesRes> = async (
     req,
     res
@@ -97,8 +98,11 @@ export class BlogController implements blogController {
     if (!blogId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!(await this.db.getBlog(blogId))) return res.sendStatus(404);
 
-    const likesNums: number = await this.db.blogLikes(blogId);
-    return res.status(200).send({ likesNums });
+    const { likes, isLiked } = await this.db.blogLikes(blogId, res.locals.userId);
+
+    console.log('likes', likes, 'isLiked', isLiked);
+
+    return res.status(200).send({ likes, isLiked });
   };
 
   getBlogLikesList: HandlerWithParams<{ blogId: string }, BlogLikesListReq, BlogLikesListRes> =

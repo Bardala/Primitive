@@ -71,14 +71,6 @@ import { checkEmptyInput } from './middleware/checkReqBody';
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
   app.get(ENDPOINT.TEST_INFINITE_SCROLL, requireAuth, asyncHandler(blog.testInfiniteScrollBlogs));
 
-  //* Short
-  // app.post(ENDPOINT.CREATE_SHORT, requireAuth, asyncHandler(short.createShort));
-  // app.put(ENDPOINT.UPDATE_SHORT, requireAuth, asyncHandler(short.updateShort));
-  // app.get(ENDPOINT.GET_SHORT, requireAuth, asyncHandler(short.getShort));
-  // app.delete(ENDPOINT.DELETE_SHORT, requireAuth, asyncHandler(short.deleteShort));
-
-  // app.get(ENDPOINT.GET_SHORT_COMMENTS, requireAuth, asyncHandler(short.shortComments));
-
   // *Comment
   app.post(ENDPOINT.CREATE_COMMENT, requireAuth, checkEmptyInput, asyncHandler(comm.createComment));
   app.put(ENDPOINT.UPDATE_COMMENT, requireAuth, checkEmptyInput, asyncHandler(comm.updateComment));
@@ -99,11 +91,6 @@ import { checkEmptyInput } from './middleware/checkReqBody';
   app.delete(ENDPOINT.LEAVE_SPACE, requireAuth, asyncHandler(space.leaveSpace));
   app.get(ENDPOINT.GET_SPACE_BLOGS, requireAuth, asyncHandler(space.blogs));
   // app.get(ENDPOINT.GET_SPACE_SHORTS, requireAuth, asyncHandler(space.shorts));
-
-  // *Like
-  // app.post(ENDPOINT.LIKE_POST, requireAuth, asyncHandler(like.likePost));
-  // app.delete(ENDPOINT.UNLIKE_POST, requireAuth, asyncHandler(like.unLikePost));
-  // app.get(ENDPOINT.GET_POST_LIKES, requireAuth, asyncHandler(like.getPostLikes));
 
   //* Message
   app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, checkEmptyInput, asyncHandler(chat.createMessage));
