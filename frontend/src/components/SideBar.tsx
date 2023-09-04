@@ -8,7 +8,6 @@ import { AddMember } from './AddMember';
 import { Chat } from './Chat';
 import { CreateSpace } from './CreateSpace';
 import { EditSpaceForm } from './EditSpace';
-// import '../styles/sidebar.css';
 import { ShortForm } from './ShortForm';
 import { SpaceMembers } from './SpaceMembers';
 
@@ -32,11 +31,12 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
         <h3 hidden={!space} className="space-name">
           {space?.name}
         </h3>
-        <button hidden={!space} onClick={() => setList(!list)}>
+        <button title='Show "list"' hidden={!space} onClick={() => setList(!list)}>
           {!list ? '🙈' : '🙉'}
         </button>
       </div>
       <button
+        title='Create "short"'
         hidden={!!space && !isMember}
         onClick={() => dispatch({ type: 'showCreateBlog' })}
         className={state.showCreateBlog ? 'active' : ''}
@@ -46,6 +46,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showCreateBlog && <ShortForm />}
 
       <button
+        title='Create "blog"'
         hidden={(!!space && !isMember) || (space && !list)}
         onClick={() => nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`)}
       >
@@ -53,6 +54,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       </button>
 
       <button
+        title='Create "space"'
         hidden={!!space}
         onClick={() => dispatch({ type: 'showCreateSpace' })}
         className={state.showCreateSpace ? 'active' : ''}
@@ -62,6 +64,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showCreateSpace && <CreateSpace />}
 
       <button
+        title='Show "members"'
         hidden={!(!!space && isMember) || !list}
         onClick={() => dispatch({ type: 'showMembers' })}
         className={state.showMembers ? 'active' : ''}
@@ -71,6 +74,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       {state.showMembers && <SpaceMembers users={members!} />}
 
       <button
+        title='Add "member"'
         hidden={!(!!space && isAdmin) || !list}
         onClick={() => dispatch({ type: 'showAddMember' })}
         className={state.showAddMember ? 'active' : ''}
@@ -78,7 +82,9 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
         add member
       </button>
       {state.showAddMember && <AddMember />}
+
       <button
+        title='Edit "space"'
         hidden={!(!!space && isAdmin) || !list}
         onClick={() => dispatch({ type: 'showEditSpace' })}
         className={state.showEditSpace ? 'active' : ''}
@@ -89,9 +95,13 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
 
       {/**(if space exists, and if isMember) it will be visible */}
       <button
+        title='Show "chat"'
         hidden={!(!!space && isMember)}
         className="chat-button"
-        onClick={() => dispatch({ type: 'showChat' })}
+        onClick={() => {
+          dispatch({ type: 'showChat' });
+          setList(false);
+        }}
       >
         Chat
       </button>

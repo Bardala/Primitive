@@ -99,15 +99,16 @@ h4 {
     box-shadow: none;
 }
 
-@media screen and (max-width :768px) {
+/* @media screen and (max-width :768px) {
     .create {
         grid-template-columns: 1 fr;
     }
-}
+} */
 
 @media screen and (max-width: 600px) {
     .create {
         max-width: 90%;
+        grid-template-columns: auto;
     }
 
     .create input,

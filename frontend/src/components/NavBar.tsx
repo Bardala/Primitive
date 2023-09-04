@@ -26,7 +26,7 @@ export const NavBar = () => {
   const handleClick = useCallback(() => {
     logOut();
     refetchCurrUser();
-    window.location.reload();
+    // window.location.reload();
     nav('/login');
   }, [nav, refetchCurrUser]);
 
