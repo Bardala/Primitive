@@ -261,7 +261,7 @@ select {
 .msg-form {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: flex-start;
 }
 
 .msg-form input {
@@ -272,6 +272,7 @@ select {
 }
 
 .msg-form button {
+  display: inline-flex;
   background-color: #00f;
   color: #fff;
   border-radius: 10px;
@@ -352,7 +353,7 @@ select {
   }
 
   .space-chat {
-    height: 300px;
+    height: 420px;
     overflow-y: auto;
   }
 }

@@ -1,6 +1,7 @@
 import { Space } from '@nest/shared';
 import formatDistantToNow from 'date-fns/formatDistanceToNow';
 import { FormEvent } from 'react';
+import { BiSend } from 'react-icons/bi';
 
 import { useAuthContext } from '../context/AuthContext';
 import { useChat } from '../hooks/useChat';
@@ -40,10 +41,14 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
             type="text"
             value={newMsg}
             onChange={e => setNewMsg(e.target.value)}
-            placeholder="send message"
+            placeholder="write message"
           />
-          <button type="submit" className="send-msg" disabled={msgMutate.isLoading}>
-            Send
+          <button
+            type="submit"
+            className="send-msg"
+            disabled={msgMutate.isLoading || newMsg.length === 0}
+          >
+            <BiSend />
           </button>
         </form>
       </div>
