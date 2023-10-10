@@ -36,6 +36,8 @@ import {
   GetUsersListRes,
   JoinSpaceReq,
   JoinSpaceRes,
+  LeaveSpaceReq,
+  LeaveSpaceRes,
   LoginReq,
   LoginRes,
   MembersReq,
@@ -238,3 +240,8 @@ export const loginApi = (login: string, password: string) =>
 
 export const signUpApi = (email: string, password: string, username: string) =>
   fetchFn<SignUpReq, LoginRes>(ENDPOINT.SIGNUP, 'POST', { email, password, username });
+
+export const leaveSpcApi = (spcId: string) => () =>
+  fetchFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, 'DELETE', undefined, currUser?.jwt, [
+    spcId,
+  ]);

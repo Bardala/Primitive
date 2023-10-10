@@ -24,4 +24,5 @@ export enum ERROR {
   SHORT_NOT_FOUND = 'Short not found',
   PRIVATE_SHORT = 'Private short, it is posted in a private space',
   EXPIRE_API = 'Expire api',
+  OWNER_CANT_LEAVE = 'You are the owner of this space, you can not leave it',
 }

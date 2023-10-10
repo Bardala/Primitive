@@ -1,7 +1,10 @@
-import { SpaceMember } from '@nest/shared';
+import { Space, SpaceMember } from '@nest/shared';
 import { Link } from 'react-router-dom';
 
-export const SpaceMembers: React.FC<{ users: SpaceMember[] }> = ({ users }) => {
+export const SpaceMembers: React.FC<{ users: SpaceMember[]; space: Space }> = ({
+  users,
+  space,
+}) => {
   return (
     <div className="space-user-list">
       <h3>{users.length} users</h3>
@@ -11,7 +14,8 @@ export const SpaceMembers: React.FC<{ users: SpaceMember[] }> = ({ users }) => {
             <li key={user.memberId}>
               <Link to={`/u/${user.memberId}`}>
                 <p className="username">
-                  {!!user.isAdmin && <i>admin</i>} {user.username}
+                  {user.memberId === space.ownerId ? '👑' : user.isAdmin ? '👮‍♂️' : ''}{' '}
+                  {user.username}
                 </p>
               </Link>
             </li>

@@ -78,7 +78,7 @@ export const UserProfile = () => {
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}
 
-          {!!blogs && (
+          {!!blogs?.length && (
             <>
               <BlogList posts={blogs} />
               <button

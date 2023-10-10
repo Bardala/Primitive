@@ -8,6 +8,7 @@ import { AddMember } from './AddMember';
 import { Chat } from './Chat';
 import { CreateSpace } from './CreateSpace';
 import { EditSpaceForm } from './EditSpace';
+import { LeaveSpc } from './LeaveSpc';
 import { ShortForm } from './ShortForm';
 import { SpaceMembers } from './SpaceMembers';
 
@@ -19,6 +20,8 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
   const { state, dispatch } = useSideBarReducer();
   const [list, setList] = useState(false);
   const nav = useNavigate();
+
+  console.log(state.showLeaveSpc);
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
@@ -71,7 +74,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       >
         Show members
       </button>
-      {state.showMembers && <SpaceMembers users={members!} />}
+      {state.showMembers && <SpaceMembers space={space!} users={members!} />}
 
       <button
         title='Add "member"'
@@ -97,7 +100,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
       <button
         title='Show "chat"'
         hidden={!(!!space && isMember)}
-        className="chat-button"
+        className="chat-button" // todo: edit this
         onClick={() => {
           dispatch({ type: 'showChat' });
           setList(false);
@@ -106,7 +109,16 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
         Chat
       </button>
       {state.showChat && <Chat space={space!} />}
-      {/** //todo: hide all buttons while chat */}
+
+      <button
+        title="leave space"
+        hidden={!(!!space && isMember) || !list}
+        onClick={() => dispatch({ type: 'showLeaveSpc' })}
+        className={state.showLeaveSpc ? 'active' : ''}
+      >
+        Leave Space
+      </button>
+      {state.showLeaveSpc && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
     </div>
   );
 };

@@ -7,21 +7,22 @@ interface State {
   showMembers: boolean;
   showEditSpace: boolean;
   showChat: boolean;
+  showLeaveSpc: boolean;
   hideAll: boolean;
 }
 
-type Action =
+export type SideBarAction =
   | { type: 'showCreateBlog' }
   | { type: 'showCreateSpace' }
   | { type: 'showAddMember' }
   | { type: 'showMembers' }
   | { type: 'showEditSpace' }
-  | { type: 'showChat' };
+  | { type: 'showChat' }
+  | { type: 'showLeaveSpc' };
 
 export const useSideBarReducer = () => {
-  const sidebarReducer = (state: any, action: Action) => {
+  const sidebarReducer = (state: any, action: SideBarAction) => {
     switch (action.type) {
-      // for any case map through the other cases and set them to false and the current case to true
       case 'showCreateSpace':
         return {
           ...state,
@@ -88,14 +89,24 @@ export const useSideBarReducer = () => {
           showChat: !state.showChat,
           hideAll: !state.hideAll,
         };
+      case 'showLeaveSpc':
+        return {
+          ...state,
+          showCreateSpace: false,
+          showCreateBlog: false,
+          showAddMember: false,
+          showMembers: false,
+          showEditSpace: false,
+          showChat: false,
+          hideAll: false,
+          showLeaveSpc: !state.showLeaveSpc,
+        };
       default:
         return state;
     }
   };
 
-  // state type
-
-  const [state, dispatch]: [State, Dispatch<Action>] = useReducer(sidebarReducer, {
+  const [state, dispatch]: [State, Dispatch<SideBarAction>] = useReducer(sidebarReducer, {
     showCreateSpace: false,
     showCreateBlog: false,
     showAddMember: false,
@@ -103,6 +114,7 @@ export const useSideBarReducer = () => {
     showEditSpace: false,
     showChat: false,
     hideAll: false,
+    showLeaveSpc: false,
   } as never);
 
   return { state, dispatch };

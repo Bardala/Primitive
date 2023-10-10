@@ -74,7 +74,6 @@ export class SpaceController implements spaceController {
       const offset = (page - 1) * pageSize;
 
       const blogs = await this.db.getBlogs(spaceId, pageSize, offset);
-      console.log('blogs.length', blogs.length, 'page', page, 'offset', offset);
 
       if ((await this.db.getSpace(spaceId))?.status === 'public') return res.send({ blogs, page });
 
@@ -101,6 +100,7 @@ export class SpaceController implements spaceController {
     await this.db.deleteMember(spaceId, memberId);
     return res.sendStatus(200);
   };
+
   leaveSpace: HandlerWithParams<{ spaceId: string }, LeaveSpaceReq, LeaveSpaceRes> = async (
     req,
     res
@@ -108,6 +108,8 @@ export class SpaceController implements spaceController {
     const [spaceId, userId] = [req.params.spaceId, res.locals.userId];
 
     if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+    if ((await this.db.getSpace(spaceId))?.ownerId === userId)
+      return res.status(403).send({ error: ERROR.OWNER_CANT_LEAVE });
     if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
 
     await this.db.deleteMember(spaceId, userId);
