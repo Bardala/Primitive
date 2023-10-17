@@ -17,7 +17,7 @@ import { initSockets } from './Sockets.class';
 import { checkEmptyInput } from './middleware/checkReqBody';
 
 (async () => {
-  dotenv.config();
+  dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
   await initDb();
 
   const app = express();
@@ -35,8 +35,6 @@ import { checkEmptyInput } from './middleware/checkReqBody';
   const space = new SpaceController(db);
   const comm = new CommentController(db);
   const chat = new ChatController(db);
-  // const short = new ShortController(db);
-  // const like = new LikeController(db);
 
   app.use((req, res, next) => {
     console.log(req.path, req.method, req.body, req.params, res.statusCode);

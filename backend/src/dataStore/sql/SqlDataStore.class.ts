@@ -21,12 +21,24 @@ export class SqlDataStore implements DataStoreDao {
   public defaultSpcId = '1';
 
   async runDB() {
+    const prodProps: mysql.PoolOptions = {
+      host: process.env.MY_SQL_DB_HOST,
+      user: process.env.MY_SQL_DB_USER,
+      database: process.env.MY_SQL_DB_DATABASE,
+      password: process.env.MY_SQL_DB_PASSWORD,
+      socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
+    };
+
+    const devProps: mysql.PoolOptions = {
+      host: process.env.MY_SQL_DB_HOST,
+      user: process.env.MY_SQL_DB_USER,
+      database: process.env.MY_SQL_DB_DATABASE,
+      password: process.env.MY_SQL_DB_PASSWORD,
+    };
+
     this.pool = mysql
       .createPool({
-        host: process.env.MY_SQL_DB_HOST,
-        user: process.env.MY_SQL_DB_USER,
-        database: process.env.MY_SQL_DB_DATABASE,
-        password: process.env.MY_SQL_DB_PASSWORD,
+        ...(process.env.NODE_ENV === 'prod' ? prodProps : devProps),
       })
       .promise();
 
@@ -357,8 +369,8 @@ export class SqlDataStore implements DataStoreDao {
 
   async createUser(user: User): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      'INSERT INTO users SET id=?, username=?, password=?, email=?',
-      [user.id, user.username, user.password, user.email]
+      'INSERT INTO users SET id=?, username=?, password=?, email=?, timestamp=?',
+      [user.id, user.username, user.password, user.email, user.timestamp]
     );
   }
 
@@ -483,8 +495,8 @@ export class SqlDataStore implements DataStoreDao {
 
   async createSpace(space: Space): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
-      'INSERT INTO spaces SET description=?, id=?, name=?, ownerId=?, status=?',
-      [space.description, space.id, space.name, space.ownerId, space.status]
+      'INSERT INTO spaces SET description=?, id=?, name=?, ownerId=?, status=?, timestamp=?',
+      [space.description, space.id, space.name, space.ownerId, space.status, space.timestamp]
     );
   }
 

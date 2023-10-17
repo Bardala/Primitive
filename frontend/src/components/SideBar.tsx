@@ -21,8 +21,6 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
   const [list, setList] = useState(false);
   const nav = useNavigate();
 
-  console.log(state.showLeaveSpc);
-
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
     space?.ownerId === currUser?.id ||

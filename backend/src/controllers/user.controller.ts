@@ -171,6 +171,7 @@ export class UserController implements userController {
       username,
       id: crypto.randomUUID() as string,
       password: hashPassword(password),
+      timestamp: Date.now(),
     };
 
     await this.db.createUser(user);

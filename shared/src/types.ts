@@ -27,7 +27,7 @@ export interface Space {
   status: SpaceStatus;
   description: string;
   ownerId: string;
-  timestamp?: string;
+  timestamp?: number;
 }
 
 export interface SpaceMember {
@@ -42,14 +42,14 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  timestamp?: string;
+  timestamp?: number;
 }
 
 export interface UserCard {
   id: string;
   username: string;
   email: string;
-  timestamp: string;
+  timestamp: number;
   followersNum: number;
   followingNum: number;
   isFollowing: number;
@@ -80,20 +80,6 @@ export type Short = {
   author?: string;
   timestamp?: number;
 };
-// export type ShComment = {
-//   id: string;
-//   content: string;
-//   shortId: string;
-//   userId: string;
-//   author?: string;
-//   timestamp?: number;
-// };
-// export type ShCommentWithUser = ShComment & { username: string };
-// export type ShLike = {
-//   shortId: string;
-//   userId: string;
-// };
-// export type ShLikedUser = Pick<User, 'id' | 'username'>;
 
 export interface JwtObject {
   userId: string;

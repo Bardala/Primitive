@@ -159,6 +159,7 @@ export class SpaceController implements spaceController {
       name,
       status,
       ownerId,
+      timestamp: Date.now(),
     };
 
     await this.db.createSpace(space);
