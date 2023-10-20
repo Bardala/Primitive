@@ -36,8 +36,10 @@
     "nodemon": "^3.0.1"
   },
   "scripts": {
+    "build": "npm i && tsc",
     "start": "cross-env NODE_ENV=dev nodemon src/server.ts",
-    "start:prod": "cross-env NODE_ENV=prod npx ts-node src/server.ts"
+    "start:prod": "cross-env NODE_ENV=prod npx ts-node src/server.ts",
+    "start:pm2": "cross-env NODE_ENV=prod pm2 start src/server.ts --name backend"
   },
   "nodemonConfig": {
     "watch": [

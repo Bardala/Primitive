@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^7.1.0",
     "@nest/shared": "file:../shared",
     "@tanstack/react-query": "^4.29.25",
     "@types/node": "^16.18.38",
@@ -12,6 +13,7 @@
     "markdown-to-jsx": "^7.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
@@ -22,8 +24,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
-    "eject": "craco eject"
+    "build": "craco --max_old_space_size=4096 build"
   },
   "eslintConfig": {
     "extends": [
@@ -44,8 +45,8 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
     "@tanstack/react-query-devtools": "^4.32.0",
     "@types/react-syntax-highlighter": "^15.5.7"
-  }
+  },
+  "proxy": "http://localhost:4001"
 }
