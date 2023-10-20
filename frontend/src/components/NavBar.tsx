@@ -47,7 +47,7 @@ export const NavBar = () => {
       ) : (
         <>
           <div className="title-wrapper">
-            <h1>Nest</h1>
+            <h1>Primitive</h1>
             {currUser && (
               <Link to={`/u/${currUser.id}`} className="username">
                 {currUser.username}
