@@ -1,6 +1,6 @@
+import { ChatMessage } from '@nest/shared';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { ChatMessage } from '@nest/shared';
 
 class Connection {
   io: Server;

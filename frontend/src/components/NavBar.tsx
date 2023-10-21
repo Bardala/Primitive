@@ -8,6 +8,7 @@ import '../styles/navBar.css';
 
 export const NavBar = () => {
   const url = window.location.pathname.split('/')[1];
+  const AppName = 'Primitive';
 
   const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
@@ -35,7 +36,7 @@ export const NavBar = () => {
       {!isLoggedIn() ? (
         <>
           <div className="title-wrapper">
-            <h1>Nest</h1>
+            <h1>{AppName}</h1>
           </div>
           <nav className="links">
             <Link to="/signup" onClick={() => setSignUp(true)}>
@@ -47,7 +48,7 @@ export const NavBar = () => {
       ) : (
         <>
           <div className="title-wrapper">
-            <h1>Primitive</h1>
+            <h1>{AppName}</h1>
             {currUser && (
               <Link to={`/u/${currUser.id}`} className="username">
                 {currUser.username}
