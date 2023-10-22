@@ -38,8 +38,9 @@
   "scripts": {
     "build": "npm i && tsc",
     "start": "cross-env NODE_ENV=dev nodemon src/server.ts",
-    "start:prod": "cross-env NODE_ENV=prod npx ts-node src/server.ts",
-    "start:pm2": "cross-env NODE_ENV=prod pm2 start src/server.ts --name backend"
+    "start:prod": "cross-env NODE_ENV=prod npx ts-node --transpile-only src/server.ts",
+    "pm2": "cross-env NODE_ENV=dev pm2 start src/server.ts --name backend",
+    "pm": "pm2 delete backend; cross-env NODE_ENV=prod pm2 start --name backend \"npx ts-node --transpile-only src/server.ts\""
   },
   "nodemonConfig": {
     "watch": [

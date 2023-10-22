@@ -44,5 +44,5 @@ export function hashPassword(password: string): string {
 }
 
 export function createToken(id: string): string {
-  return jwt.sign({ id }, generateJwtSecret()!, { expiresIn: '3h' });
+  return jwt.sign({ id }, generateJwtSecret()!, { expiresIn: '45d' });
 }
