@@ -22,7 +22,6 @@ export const useChat = (space: Space) => {
     socket.emit('join_room', space.id);
 
     socket.on('from_server', msg => {
-      console.log('from_server', msg);
       queryClient.invalidateQueries(chatKey);
     });
   }, [space.id, queryClient, chatKey]);
