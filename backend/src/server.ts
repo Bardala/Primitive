@@ -1,20 +1,20 @@
+import { ENDPOINT } from '@nest/shared';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import http from 'http';
 
-import { ENDPOINT } from '@nest/shared';
+import { initSockets } from './Sockets.class';
 import { BlogController } from './controllers/blog.controller';
+import { ChatController } from './controllers/chat.controller';
 import { CommentController } from './controllers/comment.controller';
 import { SpaceController } from './controllers/space.controller';
 import { UserController } from './controllers/user.controller';
 import { db, initDb } from './dataStore';
 import { requireAuth } from './middleware/authMiddleware';
-import { errorHandler } from './middleware/errorHandler';
-import { ChatController } from './controllers/chat.controller';
-import { initSockets } from './Sockets.class';
 import { checkEmptyInput } from './middleware/checkReqBody';
+import { errorHandler } from './middleware/errorHandler';
 
 (async () => {
   dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
@@ -88,14 +88,13 @@ import { checkEmptyInput } from './middleware/checkReqBody';
   app.delete(ENDPOINT.DELETE_MEMBER, requireAuth, asyncHandler(space.deleteMember));
   app.delete(ENDPOINT.LEAVE_SPACE, requireAuth, asyncHandler(space.leaveSpace));
   app.get(ENDPOINT.GET_SPACE_BLOGS, requireAuth, asyncHandler(space.blogs));
-  // app.get(ENDPOINT.GET_SPACE_SHORTS, requireAuth, asyncHandler(space.shorts));
 
   //* Message
   app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, checkEmptyInput, asyncHandler(chat.createMessage));
   app.delete(ENDPOINT.DELETE_MESSAGE, requireAuth, asyncHandler(chat.deleteMessage));
 
   // *Feeds
-  app.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(space.feeds));
+  app.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(space.feeds)); // closed
   app.get(ENDPOINT.GET_FEEDS_PAGE, requireAuth, asyncHandler(space.feedsPagination));
   app.use(errorHandler);
 

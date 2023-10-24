@@ -1,20 +1,20 @@
+import {
+  Blog,
+  ChatMessage,
+  Comment,
+  CommentWithUser,
+  Like,
+  LikedUser,
+  Space,
+  SpaceMember,
+  User,
+  UserCard,
+  UsersList,
+} from '@nest/shared';
 import mysql, { RowDataPacket } from 'mysql2';
 import { Pool } from 'mysql2/promise';
 
 import { DataStoreDao } from '..';
-import {
-  Space,
-  User,
-  SpaceMember,
-  Blog,
-  LikedUser,
-  UserCard,
-  UsersList,
-  Like,
-  ChatMessage,
-  Comment,
-  CommentWithUser,
-} from '@nest/shared';
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
@@ -45,17 +45,21 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
-  async testInfiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
+  async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.* FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
     WHERE blogs.spaceId IN (
       SELECT spaceId FROM members WHERE memberId = ?
     )
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
-    `;
+  `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [memberId, pageSize, offset]);
-    return rows as Blog[];
+    const blogs = rows as Blog[];
+    blogs.forEach(blog => {
+      blog.content = blog.content.replace(/[#*`]/g, '');
+    });
+    return blogs;
   }
 
   async getPostLikes(postId: string): Promise<LikedUser[]> {
@@ -103,57 +107,6 @@ export class SqlDataStore implements DataStoreDao {
     const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
     return rows as LikedUser[];
   }
-
-  // async getShorts(spaceId: string): Promise<Short[]> {
-  //   const query = `
-  //   SELECT * FROM shorts WHERE spaceId=?
-  //   ORDER BY timestamp DESC
-  //   `;
-  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
-  //   return rows as Short[];
-  // }
-
-  // async createShort(short: Short): Promise<void> {
-  //   const query = `
-  //   INSERT INTO shorts SET id=?, title=?, content=?, userId=?, spaceId=?, timestamp=?, author=?
-  //   `;
-  //   await this.pool.query<RowDataPacket[]>(query, [
-  //     short.id,
-  //     short.title,
-  //     short.content,
-  //     short.userId,
-  //     short.spaceId,
-  //     short.timestamp,
-  //     short.author,
-  //   ]);
-  // }
-
-  // async updateShort(short: Short): Promise<void> {
-  //   const query = `
-  //   UPDATE shorts
-  //   SET title=?, content=?, spaceId=?
-  //   WHERE id=?
-  //   `;
-  //   await this.pool.query<RowDataPacket[]>(query, [
-  //     short.title,
-  //     short.content,
-  //     short.spaceId,
-  //     short.id,
-  //   ]);
-  // }
-  // async getShort(shortId: string): Promise<Short | undefined> {
-  //   const query = `
-  //   SELECT * FROM shorts WHERE id=?
-  //   `;
-  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
-  //   return rows[0] as Short;
-  // }
-  // async deleteShort(shortId: string): Promise<void> {
-  //   const query = `
-  //   DELETE FROM shorts WHERE id=?
-  //   `;
-  //   await this.pool.query(query, shortId);
-  // }
 
   async deleteMember(spaceId: string, memberId: string): Promise<void> {
     const query = `
@@ -458,13 +411,17 @@ export class SqlDataStore implements DataStoreDao {
 
   async getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.* FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
     WHERE blogs.spaceId = ?
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
-    `;
+  `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, pageSize, offset]);
-    return rows as Blog[];
+    const blogs = rows as Blog[];
+    blogs.forEach(blog => {
+      blog.content = blog.content.replace(/[#*`]/g, '');
+    });
+    return blogs;
   }
 
   async getBlog(blogId: string): Promise<Blog | undefined> {
@@ -482,15 +439,19 @@ export class SqlDataStore implements DataStoreDao {
 
   async getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content
     FROM blogs
     JOIN spaces ON blogs.spaceId = spaces.id
     WHERE blogs.userId = ? AND spaces.status = 'public'
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
-    `;
+  `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, pageSize, offset]);
-    return rows as Blog[];
+    const blogs = rows as Blog[];
+    blogs.forEach(blog => {
+      blog.content = blog.content.replace(/[#*`]/g, '');
+    });
+    return blogs;
   }
 
   async createSpace(space: Space): Promise<void> {

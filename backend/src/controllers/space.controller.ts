@@ -1,34 +1,35 @@
 import {
-  CreateSpaceReq,
-  CreateSpaceRes,
-  UpdateSpaceReq,
-  UpdateSpaceRes,
-  SpaceReq,
-  SpaceRes,
-  DeleteSpaceReq,
-  DefaultSpaceRes,
-  DefaultSpaceReq,
-  JoinSpaceReq,
-  JoinSpaceRes,
   AddMemberReq,
   AddMemberRes,
-  MembersReq,
-  MembersRes,
-  ERROR,
-  Space,
-  DeleteSpaceRes,
-  SpaceMember,
   ChatReq,
   ChatRes,
-  FeedsReq,
-  FeedsRes,
+  CreateSpaceReq,
+  CreateSpaceRes,
+  DefaultSpaceReq,
+  DefaultSpaceRes,
   DeleteMemReq,
   DeleteMemRes,
+  DeleteSpaceReq,
+  DeleteSpaceRes,
+  ERROR,
+  FeedsReq,
+  FeedsRes,
+  JoinSpaceReq,
+  JoinSpaceRes,
   LeaveSpaceReq,
   LeaveSpaceRes,
+  MembersReq,
+  MembersRes,
+  Space,
   SpaceBlogsReq,
   SpaceBlogsRes,
+  SpaceMember,
+  SpaceReq,
+  SpaceRes,
+  UpdateSpaceReq,
+  UpdateSpaceRes,
 } from '@nest/shared';
+
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 import { Handler, HandlerWithParams } from '../types';
@@ -129,7 +130,7 @@ export class SpaceController implements spaceController {
     const pageSize = 3;
     const offset = (page - 1) * pageSize;
 
-    const feeds = await this.db.testInfiniteScroll(res.locals.userId, pageSize, offset);
+    const feeds = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
     // console.log('blogs.length', feeds.length, 'page', page, 'offset', offset);
     return res.send({ feeds, page });
   };

@@ -2,28 +2,28 @@ import {
   Blog,
   BlogCommentsReq,
   BlogCommentsRes,
-  BlogReq,
-  BlogRes,
-  CreateBlogReq,
-  CreateBlogRes,
-  DeleteBlogReq,
-  DeleteBlogRes,
-  ERROR,
-  updateBlogReq,
-  updateBlogRes,
-  CommentWithUser,
-  CreateLikeReq,
   BlogLikesListReq,
   BlogLikesListRes,
   BlogLikesReq,
   BlogLikesRes,
+  BlogReq,
+  BlogRes,
+  CommentWithUser,
+  CreateBlogReq,
+  CreateBlogRes,
+  CreateLikeReq,
   CreateLikeRes,
+  DeleteBlogReq,
+  DeleteBlogRes,
+  ERROR,
   Like,
   LikedUser,
   RemoveLikeReq,
   RemoveLikeRes,
   SpaceBlogsReq,
   SpaceBlogsRes,
+  updateBlogReq,
+  updateBlogRes,
 } from '@nest/shared';
 
 import { DataStoreDao } from '../dataStore';
@@ -236,7 +236,7 @@ export class BlogController implements blogController {
 
     console.log('page', page, 'pageSize', pageSize, 'offset', offset);
 
-    const blogs = await this.db.testInfiniteScroll(res.locals.userId, pageSize, offset);
+    const blogs = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
     return res.status(200).send({ blogs });
   };
 }
