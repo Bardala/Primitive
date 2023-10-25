@@ -9,7 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    environment: .env.prod
     steps:
       - name: checkout repo+branch
         uses: actions/checkout@v3
@@ -19,7 +18,7 @@ jobs:
           node-version: 18
       - name: install and build server
         run: |
-          cd server
+          cd backend
           npm install
       - name: restart server
         env:
@@ -34,5 +33,5 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ORIGIN: ${{ secrets.ORIGIN }}
         run: |
-          cd server
+          cd backend
           npm run start:prod
