@@ -9,10 +9,30 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    environment: .env.prod
     steps:
-        - uses: actions/checkout@v3
-        - name: deploy and restart web server 
-          run: |
-            cd server
-            npm i
-            npm run start:prod
+      - name: checkout repo+branch
+        uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: install and build server
+        run: |
+          cd server
+          npm install
+      - name: restart server
+        env:
+          PORT: ${{ secrets.PORT }}
+          MY_SQL_DB_HOST: ${{ secrets.MY_SQL_DB_HOST }}
+          MY_SQL_DB_USER: ${{ secrets.MY_SQL_DB_USER }}
+          MY_SQL_DB_PASSWORD: ${{ secrets.MY_SQL_DB_PASSWORD }}
+          MY_SQL_DB_PORT: ${{ secrets.MY_SQL_DB_PORT }}
+          MY_SQL_DB_DATABASE: ${{ secrets.MY_SQL_DB_DATABASE }}
+          MY_SQL_DB_CONNECTION_LIMIT: ${{ secrets.MY_SQL_DB_CONNECTION_LIMIT }}
+          SOCKET_PATH: ${{ secrets.SOCKET_PATH }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ORIGIN: ${{ secrets.ORIGIN }}
+        run: |
+          cd server
+          npm run start:prod
