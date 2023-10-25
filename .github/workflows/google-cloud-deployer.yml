@@ -9,7 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    environment: .env.prod
     steps:
       - name: checkout repo+branch
         uses: actions/checkout@v3
