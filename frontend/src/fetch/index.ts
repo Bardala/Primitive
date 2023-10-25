@@ -1,8 +1,16 @@
 import { ENDPOINT, ERROR, HOST, RestMethod } from '@nest/shared';
+import 'react-notifications-component/dist/theme.css';
 
+import { addNotification } from '../utils/assists';
 import { ApiError } from './auth';
 
-function extractParams(endPoint: ENDPOINT, params: string[]): string {
+const errorFn = (status: number, message: string) => {
+  const error = new ApiError(status, message);
+  addNotification({ type: 'danger', message: message });
+  throw error;
+};
+
+const extractParams = (endPoint: ENDPOINT, params: string[]): string => {
   const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
   let res = String(endPoint);
 
@@ -11,7 +19,7 @@ function extractParams(endPoint: ENDPOINT, params: string[]): string {
   for (let i = 0; i < apiParamsCount; i++) res = res.replace(/:\w+/, params[i]);
 
   return HOST + res;
-}
+};
 
 export const fetchFn = async <Request, Response>(
   endPoint: ENDPOINT,
@@ -38,15 +46,14 @@ export const fetchFn = async <Request, Response>(
       if (data.error === ERROR.TOKEN_EXPIRED) {
         localStorage.removeItem('currUser');
         window.location.reload();
-        throw new ApiError(res.status, data.error);
+        errorFn(res.status, data.error);
       } else if (data.error === ERROR.UNAUTHORIZED) {
         window.location.href = '/login';
         throw new ApiError(res.status, data.error);
-      } else throw new ApiError(res.status, data.error);
-
+      } else errorFn(res.status, data.error);
     return data;
   }
 
-  if (!res.ok) throw new ApiError(res.status, res.statusText);
+  if (!res.ok) errorFn(res.status, res.statusText);
   return res as unknown as Response;
 };

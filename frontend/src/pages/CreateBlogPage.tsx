@@ -12,8 +12,8 @@ export const CreateBlogPage: React.FC = () => {
   const [content, setContent] = useState('');
 
   const shortLength = 500;
-  const remaining = shortLength - content.length;
-  const enabled = content.length > shortLength;
+  // const remaining = shortLength - content.length;
+  // const enabled = content.length > shortLength;
 
   const { createBlogMutation } = useCreateBlog(spaceId!, title, content);
 
@@ -53,11 +53,11 @@ export const CreateBlogPage: React.FC = () => {
             style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
           ></textarea>
 
-          <i className="remaining-char" hidden={enabled}>
+          {/* <i className="remaining-char" hidden={enabled}>
             you should enter at least {remaining} characters
-          </i>
+          </i> */}
 
-          <button disabled={createBlogMutation.isLoading || !enabled}>Add Blog</button>
+          <button disabled={createBlogMutation.isLoading}>Add Blog</button>
         </form>
 
         <div className="blog-content">
