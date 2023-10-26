@@ -43,7 +43,7 @@ export const fetchFn = async <Request, Response>(
   if (res.headers.get('Content-Type')?.includes('application/json')) {
     const data = await res.json();
     if (!res.ok)
-      if (data.error === ERROR.TOKEN_EXPIRED) {
+      if (data.error === ERROR.TOKEN_EXPIRED || data.error === ERROR.INVALID_TOKEN) {
         localStorage.removeItem('currUser');
         window.location.reload();
         errorFn(res.status, data.error);
