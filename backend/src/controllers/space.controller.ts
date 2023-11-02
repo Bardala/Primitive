@@ -29,6 +29,7 @@ import {
   UpdateSpaceReq,
   UpdateSpaceRes,
 } from '@nest/shared';
+import { randomUUID } from 'node:crypto';
 
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
@@ -155,7 +156,7 @@ export class SpaceController implements spaceController {
       return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
 
     const space: Space = {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       description,
       name,
       status,

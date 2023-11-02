@@ -1,13 +1,15 @@
 import {
+  CommentWithUser,
   CreateCommentReq,
   CreateCommentRes,
-  UpdateCommentReq,
-  UpdateCommentRes,
   DeleteCommentReq,
   DeleteCommentRes,
   ERROR,
-  CommentWithUser,
+  UpdateCommentReq,
+  UpdateCommentRes,
 } from '@nest/shared';
+import { randomUUID } from 'node:crypto';
+
 import { DataStoreDao } from '../dataStore';
 import { Handler, HandlerWithParams } from '../types';
 
@@ -41,7 +43,7 @@ export class CommentController implements commentController {
       userId,
       content,
       blogId,
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       author: user.username,
       timestamp: Date.now(),
     };

@@ -1,30 +1,30 @@
-import crypto from 'crypto';
-import validator from 'validator';
-
-import { HTTP } from '../httpStatusCodes';
-import { createToken, hashPassword } from '../middleware/authMiddleware';
-import { Handler, HandlerWithParams } from '../types';
 import {
-  SignUpReq,
-  LoginRes,
-  LoginReq,
-  GetUserCardReq,
-  GetUserCardRes,
+  ERROR,
   FollowUserReq,
   FollowUserRes,
-  UnFollowUserReq,
-  UnFollowUserRes,
   GetFollowersReq,
   GetFollowersRes,
+  GetUserCardReq,
+  GetUserCardRes,
+  GetUsersListReq,
+  GetUsersListRes,
+  LoginReq,
+  LoginRes,
+  SignUpReq,
+  UnFollowUserReq,
+  UnFollowUserRes,
   UserBlogsReq,
   UserBlogsRes,
   UserSpacesReq,
   UserSpacesRes,
-  ERROR,
-  GetUsersListReq,
-  GetUsersListRes,
 } from '@nest/shared';
+import { randomUUID } from 'node:crypto';
+import validator from 'validator';
+
 import { DataStoreDao } from '../dataStore';
+import { HTTP } from '../httpStatusCodes';
+import { createToken, hashPassword } from '../middleware/authMiddleware';
+import { Handler, HandlerWithParams } from '../types';
 
 export interface userController {
   signup: Handler<SignUpReq, LoginRes>;
@@ -169,7 +169,7 @@ export class UserController implements userController {
     const user = {
       email,
       username,
-      id: crypto.randomUUID() as string,
+      id: randomUUID() as string,
       password: hashPassword(password),
       timestamp: Date.now(),
     };

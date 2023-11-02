@@ -1,13 +1,15 @@
 import {
+  ChatMessage,
   CreateMsgReq,
   CreateMsgRes,
   DeleteBlogRes,
   DeleteMsgReq,
   ERROR,
-  ChatMessage,
 } from '@nest/shared';
-import { HandlerWithParams } from '../types';
+import { randomUUID } from 'node:crypto';
+
 import { DataStoreDao } from '../dataStore';
+import { HandlerWithParams } from '../types';
 
 interface chatController {
   createMessage: HandlerWithParams<{ spaceId: string }, CreateMsgReq, CreateMsgRes>;
@@ -40,7 +42,7 @@ export class ChatController implements chatController {
       userId,
       content,
       timestamp: Date.now(),
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       username: user?.username!,
     };
     await this.db.createMessage(msg);
