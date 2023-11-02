@@ -25,6 +25,7 @@ import {
   updateBlogReq,
   updateBlogRes,
 } from '@nest/shared';
+import { randomUUID } from 'node:crypto';
 
 import { DataStoreDao } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
@@ -193,7 +194,7 @@ export class BlogController implements blogController {
 
     const blog: Blog = {
       title,
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       content,
       spaceId,
       userId,
