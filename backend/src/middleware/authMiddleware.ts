@@ -1,8 +1,8 @@
-import crypto from 'crypto';
+import { ERROR } from '@nest/shared';
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload, TokenExpiredError, VerifyErrors } from 'jsonwebtoken';
+import { pbkdf2Sync } from 'node:crypto';
 
-import { ERROR } from '@nest/shared';
 import { db } from '../dataStore';
 import { HTTP } from '../httpStatusCodes';
 
@@ -40,7 +40,7 @@ export function generateJwtSecret(): string {
 }
 
 export function hashPassword(password: string): string {
-  return crypto.pbkdf2Sync(password, generateJwtSecret()!, 20, 20, 'sha512').toString('hex');
+  return pbkdf2Sync(password, generateJwtSecret()!, 20, 20, 'sha512').toString('hex');
 }
 
 export function createToken(id: string): string {

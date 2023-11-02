@@ -36,11 +36,6 @@ import { errorHandler } from './middleware/errorHandler';
   const comm = new CommentController(db);
   const chat = new ChatController(db);
 
-  app.use((req, res, next) => {
-    console.log(req.path, req.method, req.body, req.params, res.statusCode);
-    next();
-  });
-
   app.get('/health', (_, res) => res.send('😊'));
 
   // *Auth Routes
