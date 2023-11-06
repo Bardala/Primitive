@@ -27,7 +27,7 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
   return (
-    <div className="side-bar">
+    <aside className="side-bar">
       <div className="side-bar-nav">
         <h3 hidden={!space} className="space-name">
           {space?.name}
@@ -117,6 +117,6 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
         Leave Space
       </button>
       {state.showLeaveSpc && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
-    </div>
+    </aside>
   );
 };

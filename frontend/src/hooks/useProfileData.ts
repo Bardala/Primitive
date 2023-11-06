@@ -29,7 +29,6 @@ export const useProfileData = (id: string) => {
   const userBlogsQuery = useInfiniteQuery<UserBlogsRes, ApiError>(blogsKey, userBlogsApi(id), {
     enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
     getNextPageParam: lastPage => {
       return lastPage.page + 1;
     },

@@ -101,8 +101,6 @@ export class BlogController implements blogController {
 
     const { likes, isLiked } = await this.db.blogLikes(blogId, res.locals.userId);
 
-    console.log('likes', likes, 'isLiked', isLiked);
-
     return res.status(200).send({ likes, isLiked });
   };
 
@@ -234,8 +232,6 @@ export class BlogController implements blogController {
     const pageSize = parseInt(req.params.pageSize);
 
     const offset = (page - 1) * pageSize;
-
-    console.log('page', page, 'pageSize', pageSize, 'offset', offset);
 
     const blogs = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
     return res.status(200).send({ blogs });
