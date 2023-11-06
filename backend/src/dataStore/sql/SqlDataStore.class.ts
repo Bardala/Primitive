@@ -52,8 +52,8 @@ export class SqlDataStore implements DataStoreDao {
       SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1' 
     )
     OR blogs.userId IN(
-      SELECT followingId FROM follows WHERE followerId = ?
-    )
+      SELECT followingId FROM follows WHERE followerId = ? AND blogs.spaceId = '1'
+    ) 
     OR blogs.userId = ?
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ? 

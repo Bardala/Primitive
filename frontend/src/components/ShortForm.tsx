@@ -4,7 +4,7 @@ import 'react-notifications-component/dist/theme.css';
 import { useParams } from 'react-router-dom';
 
 import { useCreateShort } from '../hooks/useBlog';
-import { addNotification, isArabic } from '../utils/assists';
+import { isArabic } from '../utils/assists';
 
 export const ShortForm = () => {
   const [title, setTitle] = useState('');
@@ -22,7 +22,6 @@ export const ShortForm = () => {
     if (createShortMutation.isSuccess) {
       setTitle('');
       setContent('');
-      addNotification({ message: 'Created successfully ✌️', type: 'success' });
     }
   }, [createShortMutation.isSuccess]);
 

@@ -2,12 +2,10 @@ import { ENDPOINT, ERROR, RestMethod } from '@nest/shared';
 import 'react-notifications-component/dist/theme.css';
 
 import { HOST } from '../config';
-import { addNotification } from '../utils/assists';
 import { ApiError } from './auth';
 
 const errorFn = (status: number, message: string) => {
   const error = new ApiError(status, message);
-  addNotification({ type: 'danger', message: message });
   throw error;
 };
 
