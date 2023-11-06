@@ -18,10 +18,11 @@ export const useProfileData = (id: string) => {
 
   const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(id), {
     enabled: !!currUser?.jwt && !!id,
+    refetchOnWindowFocus: false,
   });
 
   const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(id), {
-    enabled: isMyPage && !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
+    enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
     refetchOnWindowFocus: false,
   });
 

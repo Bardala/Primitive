@@ -6,7 +6,7 @@ import { useFeeds, useSpace } from '../hooks/useSpace';
 
 export const Home = () => {
   const { spaceQuery } = useSpace(DefaultSpaceId);
-  const { feeds, fetchNextPage, isEnd } = useFeeds();
+  const { feeds, fetchNextPage, isEnd, isLoading } = useFeeds();
   const error = spaceQuery.error;
 
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error.message}</p>;
@@ -23,6 +23,11 @@ export const Home = () => {
               Load More
             </button>
           </>
+        )}
+        {feeds?.length === 0 && !isLoading && !error && (
+          <div className="not-found">
+            <p>Follow users or join to different spaces to see their blogs here</p>
+          </div>
         )}
       </main>
       <Sidebar />

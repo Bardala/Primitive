@@ -1,4 +1,6 @@
-import { HOST } from '@nest/shared';
-import { io } from 'socket.io-client';
+// import { io } from 'socket.io-client';
 
-export const socket = io(HOST);
+// import { HOST } from '../config';
+
+// export const socket = io(HOST);
+export {};

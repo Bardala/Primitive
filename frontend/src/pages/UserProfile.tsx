@@ -15,7 +15,9 @@ export const UserProfile = () => {
   const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage, isEnd } = useProfileData(id!);
 
   const blogs = userBlogsQuery.data?.pages.flatMap(page => page.blogs) || [];
-  const spaces = userSpacesQuery.data?.spaces;
+  const spaces = isMyPage
+    ? userSpacesQuery.data?.spaces
+    : userSpacesQuery.data?.spaces.filter(space => space.status === 'public');
   const userCard = userCardQuery.data?.userCard;
   const [search, setSearch] = useState<Space[]>(spaces!);
 
@@ -40,37 +42,33 @@ export const UserProfile = () => {
         <div className="user-profile">
           <h1>{userCard.username} Page</h1>
 
-          {isMyPage ? (
-            <div className="user-info">
-              <UserInfoCard userCard={userCard} blogsLength={blogs?.length || 0} />
-              <div className="user-spaces">
-                <h2>Spaces</h2>
-                {userSpacesQuery.isError && <div className="error">Something wrong</div>}
-                {userSpacesQuery.isLoading && <p>Loading...</p>}
-                <input
-                  type="text"
-                  placeholder="search"
-                  onChange={handleSearch}
-                  className="search-curr-spaces"
-                />
-                <div className="user-spaces-list">
-                  {spaces &&
-                    (search || spaces).map(
-                      space =>
-                        space.id !== '1' && (
-                          <div className="space" key={space.id}>
-                            <Link to={`/space/${space.id}`} className="space-link">
-                              <p>{space.name}</p>
-                            </Link>
-                          </div>
-                        )
-                    )}
-                </div>
+          <div className="user-info">
+            <UserInfoCard userCard={userCard} blogsLength={blogs?.length || 0} />
+            <div className="user-spaces">
+              <h2>Spaces</h2>
+              {userSpacesQuery.isError && <div className="error">Something wrong</div>}
+              {userSpacesQuery.isLoading && <p>Loading...</p>}
+              <input
+                type="search"
+                placeholder="search"
+                onChange={handleSearch}
+                className="search-curr-spaces"
+              />
+              <div className="user-spaces-list">
+                {spaces &&
+                  (search || spaces).map(
+                    space =>
+                      space.id !== '1' && (
+                        <div className="space" key={space.id}>
+                          <Link to={`/space/${space.id}`} className="space-link">
+                            <p>{space.name}</p>
+                          </Link>
+                        </div>
+                      )
+                  )}
               </div>
             </div>
-          ) : (
-            <UserInfoCard userCard={userCard} blogsLength={blogs?.length || 0} />
-          )}
+          </div>
 
           {userBlogsQuery.isError && <div className="error">Something wrong</div>}
           {userBlogsQuery.isLoading && <p>Loading...</p>}

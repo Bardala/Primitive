@@ -35,9 +35,9 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
                 onClick={() => unfollowMutation.mutate()}
                 disabled={unfollowMutation.isLoading}
                 className="unfollow"
-                style={{ backgroundColor: 'red' }}
+                style={{ backgroundColor: '#41c541' }}
               >
-                Unfollow
+                Following
               </button>
             ) : (
               <button
@@ -53,7 +53,6 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
       </div>
       {userCard.username === currUser?.username && (
         <>
-          <p>Id: {userCard.id}</p>
           <p>Email: {userCard.email}</p>
         </>
       )}

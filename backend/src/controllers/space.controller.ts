@@ -20,6 +20,7 @@ import {
   LeaveSpaceRes,
   MembersReq,
   MembersRes,
+  PageSize,
   Space,
   SpaceBlogsReq,
   SpaceBlogsRes,
@@ -71,7 +72,7 @@ export class SpaceController implements spaceController {
         return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
       const page = parseInt(req.params.page);
-      const pageSize = 3;
+      const pageSize = PageSize;
       const offset = (page - 1) * pageSize;
 
       const blogs = await this.db.getBlogs(spaceId, pageSize, offset);
@@ -127,7 +128,7 @@ export class SpaceController implements spaceController {
     if (!req.params.page) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const page = parseInt(req.params.page);
-    const pageSize = 3;
+    const pageSize = PageSize;
     const offset = (page - 1) * pageSize;
 
     const feeds = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);

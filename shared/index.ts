@@ -10,3 +10,4 @@ export * from './src/api/feeds.api.types';
 export * from './src/api/short.api.types';
 export * from './src/api/like.api.types';
 export const DefaultSpaceId = '1';
+export const PageSize = 10;
