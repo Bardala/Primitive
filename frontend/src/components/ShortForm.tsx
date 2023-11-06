@@ -1,14 +1,15 @@
 import { DefaultSpaceId } from '@nest/shared';
 import { FormEvent, useEffect, useState } from 'react';
+import 'react-notifications-component/dist/theme.css';
 import { useParams } from 'react-router-dom';
 
 import { useCreateShort } from '../hooks/useBlog';
-import { ShortLength, isArabic } from '../utils/assists';
+import { addNotification, isArabic } from '../utils/assists';
 
 export const ShortForm = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const remaining = ShortLength - content.length;
+  // const remaining = ShortLength - content.length;
   const id = useParams().id || DefaultSpaceId;
   const { createShortMutation } = useCreateShort(id, title, content);
 
@@ -21,6 +22,7 @@ export const ShortForm = () => {
     if (createShortMutation.isSuccess) {
       setTitle('');
       setContent('');
+      addNotification({ message: 'Created successfully ✌️', type: 'success' });
     }
   }, [createShortMutation.isSuccess]);
 
@@ -42,10 +44,10 @@ export const ShortForm = () => {
           id="content"
           value={content}
           onChange={e => setContent(e.target.value)}
-          maxLength={ShortLength}
+          // maxLength={ShortLength}
           style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
         />
-        <i className="remaining-char">{remaining} remaining characters</i>
+        {/* <i className="remaining-char">{remaining} remaining characters</i> */}
 
         <button type="submit" disabled={createShortMutation.isLoading}>
           Create

@@ -1,3 +1,4 @@
+import { ReactNotifications } from 'react-notifications-component';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
@@ -13,6 +14,7 @@ import { SignUp } from './pages/signup';
 function App() {
   return (
     <div className="App">
+      <ReactNotifications />
       <BrowserRouter>
         <NavBar />
         <Routes>

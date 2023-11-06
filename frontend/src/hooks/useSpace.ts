@@ -3,6 +3,7 @@ import {
   FeedsRes,
   JoinSpaceRes,
   MembersRes,
+  PageSize,
   SpaceBlogsRes,
   SpaceRes,
 } from '@nest/shared';
@@ -20,7 +21,7 @@ export const useSpace = (id: string) => {
   const spcKey = ['space', id];
   const blogsKey = ['blogs', id];
   const membersKey = ['members', id];
-  const pageSize = 3;
+  const pageSize = PageSize;
   const [isEnd, setIsEnd] = useState(false);
 
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(id), {
@@ -30,8 +31,8 @@ export const useSpace = (id: string) => {
 
   const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
     enabled: !!currUser && !!id && id !== DefaultSpaceId,
-    // refetchOnWindowFocus: false,
-    // refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
   });
@@ -59,15 +60,15 @@ export const useSpace = (id: string) => {
 };
 
 export const useFeeds = () => {
-  const pageSize = 3;
+  const pageSize = PageSize;
   const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const key = ['feeds'];
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
     enabled: !!currUser?.jwt,
-    // refetchOnWindowFocus: false,
-    // refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
   });

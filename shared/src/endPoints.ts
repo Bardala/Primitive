@@ -1,5 +1,3 @@
-export const HOST = `http://localhost:4001`;
-
 export enum ENDPOINT {
   // *Auth Routes
   SIGNUP = '/api/v0/signup',

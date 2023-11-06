@@ -49,12 +49,22 @@ export class SqlDataStore implements DataStoreDao {
     const query = `
     SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
     WHERE blogs.spaceId IN (
-      SELECT spaceId FROM members WHERE memberId = ?
+      SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1' 
     )
+    OR blogs.userId IN(
+      SELECT followingId FROM follows WHERE followerId = ?
+    )
+    OR blogs.userId = ?
     ORDER BY blogs.timestamp DESC
-    LIMIT ? OFFSET ?
+    LIMIT ? OFFSET ? 
   `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [memberId, pageSize, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      memberId,
+      memberId,
+      memberId,
+      pageSize,
+      offset,
+    ]);
     const blogs = rows as Blog[];
     blogs.forEach(blog => {
       blog.content = blog.content.replace(/[#*`]/g, '');
