@@ -4,7 +4,7 @@ export enum ERROR {
   EMPTY_FIELD = 'Empty Field',
   INVALID_USERNAME = 'Invalid username, must be only letters',
   INVALID_EMAIL = 'Invalid email',
-  WEAK_PASSWORD = 'Weak password',
+  WEAK_PASSWORD = 'Weak password, use 8+ chars with 1+ each of: A-Z, a-z, 0-9, symbols.',
   DUPLICATE_USERNAME = 'Username already exists',
   DUPLICATE_EMAIL = 'Email already exists',
   INVALID_LOGIN = 'Invalid login',
