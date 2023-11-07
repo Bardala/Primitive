@@ -166,7 +166,10 @@ export class UserController implements userController {
     if (!validator.isStrongPassword(password))
       return res
         .status(HTTP.BAD_REQUEST)
-        .send({ error: ERROR.WEAK_PASSWORD + ' Example: ' + this.generateStrongPassword() });
+        .send({
+          error:
+            ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
+        });
 
     const user = {
       email,
