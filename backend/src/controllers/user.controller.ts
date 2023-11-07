@@ -164,7 +164,9 @@ export class UserController implements userController {
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
     if (!validator.isStrongPassword(password))
-      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.WEAK_PASSWORD });
+      return res
+        .status(HTTP.BAD_REQUEST)
+        .send({ error: ERROR.WEAK_PASSWORD + ' Example: ' + this.generateStrongPassword() });
 
     const user = {
       email,
@@ -196,5 +198,21 @@ export class UserController implements userController {
     return res
       .status(200)
       .send({ jwt: createToken(user.id), username: user.username, id: user.id });
+  };
+
+  generateStrongPassword = (): string => {
+    const passwordLength = 8;
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let retVal = '';
+    while (!validator.isStrongPassword(retVal)) {
+      retVal = '';
+      for (let i = 0, n = charset.length; i < passwordLength; ++i)
+        retVal +=
+          charset[
+            Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) * n)
+          ];
+    }
+
+    return retVal;
   };
 }
