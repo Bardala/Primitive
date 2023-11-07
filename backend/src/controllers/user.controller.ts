@@ -18,7 +18,7 @@ import {
   UserSpacesReq,
   UserSpacesRes,
 } from '@nest/shared';
-import { randomUUID } from 'node:crypto';
+import { getRandomValues, randomUUID } from 'node:crypto';
 import validator from 'validator';
 
 import { DataStoreDao } from '../dataStore';
@@ -208,9 +208,7 @@ export class UserController implements userController {
       retVal = '';
       for (let i = 0, n = charset.length; i < passwordLength; ++i)
         retVal +=
-          charset[
-            Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) * n)
-          ];
+          charset[Math.floor((getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) * n)];
     }
 
     return retVal;
