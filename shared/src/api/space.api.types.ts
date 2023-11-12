@@ -62,6 +62,11 @@ export interface ChatRes {
   messages: ChatMessage[];
 }
 
+export interface UnReadMsgsNumReq {}
+export interface UnReadMsgsNumRes {
+  numOfUnReadMsgs: number;
+}
+
 export interface DeleteMemReq {}
 export interface DeleteMemRes {}
 

@@ -18,7 +18,6 @@ export const useChat = (space: Space) => {
   const chatQuery = useQuery<ChatRes, ApiError>(chatKey, chatApi(space.id), {
     enabled: !!currUser?.jwt && !!space.id,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
   });
   const chatErr = chatQuery.error;
 

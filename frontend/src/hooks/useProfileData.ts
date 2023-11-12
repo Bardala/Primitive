@@ -1,4 +1,4 @@
-import { GetUserCardRes, UserBlogsRes, UserSpacesRes } from '@nest/shared';
+import { GetUserCardRes, PageSize, UserBlogsRes, UserSpacesRes } from '@nest/shared';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -13,7 +13,6 @@ export const useProfileData = (id: string) => {
   const cardKey = ['userCard', id];
   const spacesKey = ['userSpaces', id];
   const blogsKey = ['userBlogs', id];
-  const pageSize = 3;
   const [isEnd, setIsEnd] = useState(false);
 
   const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(id), {
@@ -33,7 +32,7 @@ export const useProfileData = (id: string) => {
       return lastPage.page + 1;
     },
     onSuccess: data => {
-      if (data.pages[data.pages.length - 1].blogs.length < pageSize) {
+      if (data.pages[data.pages.length - 1].blogs.length < PageSize) {
         setIsEnd(true);
       }
     },

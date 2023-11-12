@@ -6,13 +6,21 @@ import {
   PageSize,
   SpaceBlogsRes,
   SpaceRes,
+  UnReadMsgsNumRes,
 } from '@nest/shared';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import { blogsApi, feedsApi, joinSpcApi, membersApi, spcApi } from '../utils/api';
+import {
+  blogsApi,
+  feedsApi,
+  getNumOfUnReadMsgsApi,
+  joinSpcApi,
+  membersApi,
+  spcApi,
+} from '../utils/api';
 import { useScroll } from './useScroll';
 
 export const useSpace = (id: string) => {
@@ -21,6 +29,7 @@ export const useSpace = (id: string) => {
   const spcKey = ['space', id];
   const blogsKey = ['blogs', id];
   const membersKey = ['members', id];
+  const msgsNumKey = ['unreadMsgsNum', id];
   const pageSize = PageSize;
   const [isEnd, setIsEnd] = useState(false);
 
@@ -48,10 +57,20 @@ export const useSpace = (id: string) => {
   const isMember = membersQuery.data?.members?.some(member => member.memberId === currUser?.id);
   useScroll(blogsQuery);
 
+  const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
+    msgsNumKey,
+    getNumOfUnReadMsgsApi(id),
+    {
+      enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
+      // refetchOnWindowFocus: false,
+    }
+  );
+
   return {
     spaceQuery,
     blogsQuery,
     membersQuery,
+    numOfUnReadMsgs,
     joinSpaceMutate,
     isMember,
     isEnd,

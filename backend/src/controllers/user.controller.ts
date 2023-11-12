@@ -10,6 +10,7 @@ import {
   GetUsersListRes,
   LoginReq,
   LoginRes,
+  PageSize,
   SignUpReq,
   UnFollowUserReq,
   UnFollowUserRes,
@@ -17,6 +18,8 @@ import {
   UserBlogsRes,
   UserSpacesReq,
   UserSpacesRes,
+  numOfAllUnReadMsgsReq,
+  numOfAllUnReadMsgsRes,
 } from '@nest/shared';
 import { getRandomValues, randomUUID } from 'node:crypto';
 import validator from 'validator';
@@ -36,6 +39,7 @@ export interface userController {
   getFollowers: HandlerWithParams<{ id: string }, GetFollowersReq, GetFollowersRes>;
   getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
   getUserSpaces: HandlerWithParams<{ id: string }, UserSpacesReq, UserSpacesRes>;
+  getAllUnReadMsgs: Handler<numOfAllUnReadMsgsReq, numOfAllUnReadMsgsRes>;
 }
 
 export class UserController implements userController {
@@ -44,6 +48,13 @@ export class UserController implements userController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+
+  getAllUnReadMsgs: Handler<numOfAllUnReadMsgsReq, numOfAllUnReadMsgsRes> = async (_, res) => {
+    return res.send({ error: ERROR.EXPIRE_API });
+    return res.status(HTTP.OK).send({
+      numberOfMsgs: await this.db.numOfAllUnReadMsgs(res.locals.userId),
+    });
+  };
 
   getUserSpaces: HandlerWithParams<{ id: string }, UserSpacesReq, UserSpacesRes> = async (
     req,
@@ -65,7 +76,7 @@ export class UserController implements userController {
       }
 
       const page = parseInt(req.params.page);
-      const pageSize = 3;
+      const pageSize = PageSize;
 
       const offset = (page - 1) * pageSize;
       const blogs = await this.db.getUserBlogs(userId, pageSize, offset);
@@ -164,12 +175,10 @@ export class UserController implements userController {
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
     if (!validator.isStrongPassword(password))
-      return res
-        .status(HTTP.BAD_REQUEST)
-        .send({
-          error:
-            ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
-        });
+      return res.status(HTTP.BAD_REQUEST).send({
+        error:
+          ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
+      });
 
     const user = {
       email,

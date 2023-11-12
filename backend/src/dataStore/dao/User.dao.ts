@@ -1,4 +1,4 @@
-import { Blog, Space, User, UserCard, UsersList } from '@nest/shared';
+import { Blog, Space, UnReadMsgs, User, UserCard, UsersList } from '@nest/shared';
 
 export interface UserDao {
   createUser(user: User): Promise<void>;
@@ -17,4 +17,6 @@ export interface UserDao {
   getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
   isFollow(followingId: string, userId: string): Promise<boolean>;
+
+  numOfAllUnReadMsgs(userId: string): Promise<UnReadMsgs[]>;
 }

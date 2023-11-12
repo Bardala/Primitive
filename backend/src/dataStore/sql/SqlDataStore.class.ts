@@ -3,6 +3,7 @@ import {
   ChatMessage,
   Comment,
   CommentWithUser,
+  LastReadMsg,
   Like,
   LikedUser,
   Space,
@@ -43,6 +44,44 @@ export class SqlDataStore implements DataStoreDao {
       .promise();
 
     return this;
+  }
+
+  async numOfUnReadMsgs(params: { userId: string; spaceId: string }): Promise<number> {
+    const query = `
+    SELECT COUNT(*) AS unread_count FROM chat c 
+    JOIN 
+    last_read lr 
+    ON c.spaceId = lr.spaceId WHERE c.spaceId = ? 
+    AND lr.userId = ?
+    AND c.timestamp > (SELECT timestamp FROM chat WHERE id = lr.lastReadId);
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [params.spaceId, params.userId]);
+    return rows[0]['unread_count'] as number;
+  }
+
+  async numOfAllUnReadMsgs(userId: string): Promise<{ spaceId: string; unRead: number }[]> {
+    const query = `
+    SELECT spaceId, COUNT(*) AS unread_count FROM chat c 
+    JOIN 
+    last_read lr 
+    ON c.spaceId = lr.spaceId WHERE lr.userId = ?
+    AND c.timestamp > (SELECT timestamp FROM chat WHERE id = lr.lastReadId)
+    GROUP BY spaceId;
+    `;
+    return this.pool.query<RowDataPacket[]>(query, [userId]).then(([rows]) => rows as any);
+  }
+
+  async updateLastReadMsg(lastRead: LastReadMsg): Promise<void> {
+    const query = `
+    INSERT INTO last_read (userId, spaceId, lastReadId) VALUES (?, ?, ?)  
+    ON DUPLICATE KEY UPDATE lastReadId = ?;
+    `;
+    await this.pool.query(query, [
+      lastRead.userId,
+      lastRead.spaceId,
+      lastRead.msgId,
+      lastRead.msgId,
+    ]);
   }
 
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {

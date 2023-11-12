@@ -1,4 +1,4 @@
-import { Blog, ChatMessage, Space, SpaceMember } from '@nest/shared';
+import { Blog, ChatMessage, LastReadMsg, Space, SpaceMember } from '@nest/shared';
 
 export interface SpaceDao {
   defaultSpcId: string;
@@ -9,6 +9,8 @@ export interface SpaceDao {
 
   getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getSpaceChat(spaceId: string): Promise<ChatMessage[]>;
+  numOfUnReadMsgs(params: { userId: string; spaceId: string }): Promise<number>;
+  updateLastReadMsg(lastRead: LastReadMsg): Promise<void>;
 
   addMember(member: SpaceMember): Promise<void>;
   spaceMembers(spaceId: string): Promise<SpaceMember[]>;

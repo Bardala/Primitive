@@ -50,6 +50,7 @@ import { errorHandler } from './middleware/errorHandler';
   app.get(ENDPOINT.GET_USERS_LIST, requireAuth, asyncHandler(user.getUsersList));
   app.get(ENDPOINT.GET_USER_BLOGS, requireAuth, asyncHandler(user.getUserBlogs));
   app.get(ENDPOINT.GET_USER_SPACES, requireAuth, asyncHandler(user.getUserSpaces));
+  app.get(ENDPOINT.GET_ALL_UNREAD_MSGS, requireAuth, asyncHandler(user.getAllUnReadMsgs));
 
   // *Blog
   app.post(ENDPOINT.CREATE_BLOG, requireAuth, checkEmptyInput, asyncHandler(blog.createBlog));
@@ -83,6 +84,7 @@ import { errorHandler } from './middleware/errorHandler';
   app.delete(ENDPOINT.DELETE_MEMBER, requireAuth, asyncHandler(space.deleteMember));
   app.delete(ENDPOINT.LEAVE_SPACE, requireAuth, asyncHandler(space.leaveSpace));
   app.get(ENDPOINT.GET_SPACE_BLOGS, requireAuth, asyncHandler(space.blogs));
+  app.get(ENDPOINT.GET_UNREAD_MSGS_NUM, requireAuth, asyncHandler(space.getNumOfUnReadMsgs));
 
   //* Message
   app.post(ENDPOINT.CREATE_MESSAGE, requireAuth, checkEmptyInput, asyncHandler(chat.createMessage));

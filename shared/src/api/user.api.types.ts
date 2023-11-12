@@ -1,4 +1,4 @@
-import { Blog, Space, StatusMessage, User, UserCard } from '../types';
+import { Blog, Space, StatusMessage, UnReadMsgs, User, UserCard } from '../types';
 
 export type SignUpReq = Pick<User, 'email' | 'password' | 'username'>;
 export interface SignUpRes {
@@ -52,4 +52,9 @@ export interface UserBlogsRes {
 export interface UserSpacesReq {}
 export interface UserSpacesRes {
   spaces: Space[];
+}
+
+export interface numOfAllUnReadMsgsReq {}
+export interface numOfAllUnReadMsgsRes {
+  numberOfMsgs: UnReadMsgs[];
 }

@@ -9,22 +9,29 @@ import { Chat } from './Chat';
 import { CreateSpace } from './CreateSpace';
 import { EditSpaceForm } from './EditSpace';
 import { LeaveSpc } from './LeaveSpc';
+import { NotificationNumberMsgs } from './NotificationNumberMsgs';
 import { ShortForm } from './ShortForm';
 import { SpaceMembers } from './SpaceMembers';
 
-export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
-  space,
-  members,
-}) => {
+export const Sidebar: React.FC<{
+  space?: Space;
+  members?: SpaceMember[];
+  numOfUnReadingMsgs?: number;
+}> = ({ space, members, numOfUnReadingMsgs }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
   const [list, setList] = useState(false);
   const nav = useNavigate();
+  // const [unRead, setUnRead] = useState(numOfUnReadingMsgs);
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
     space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
+
+  // useEffect(() => {
+  //   setUnRead(numOfUnReadingMsgs);
+  // }, [numOfUnReadingMsgs]);
 
   return (
     <aside className="side-bar">
@@ -101,10 +108,11 @@ export const Sidebar: React.FC<{ space?: Space; members?: SpaceMember[] }> = ({
         className="chat-button" // todo: edit this
         onClick={() => {
           dispatch({ type: 'showChat' });
+          // setUnRead(0);
           setList(false);
         }}
       >
-        Chat
+        Chat {<NotificationNumberMsgs spaceId={space?.id!} />}
       </button>
       {state.showChat && <Chat space={space!} />}
 

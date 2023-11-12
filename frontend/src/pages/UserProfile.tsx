@@ -3,6 +3,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
+import { NotificationNumberMsgs } from '../components/NotificationNumberMsgs';
 import { UserInfoCard } from '../components/UserInfoCard';
 import { useAuthContext } from '../context/AuthContext';
 import { useProfileData } from '../hooks/useProfileData';
@@ -61,7 +62,7 @@ export const UserProfile = () => {
                       space.id !== '1' && (
                         <div className="space" key={space.id}>
                           <Link to={`/space/${space.id}`} className="space-link">
-                            <p>{space.name}</p>
+                            <p>{space.name}</p> <NotificationNumberMsgs spaceId={space.id} />
                           </Link>
                         </div>
                       )

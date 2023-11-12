@@ -27,6 +27,8 @@ import {
   SpaceMember,
   SpaceReq,
   SpaceRes,
+  UnReadMsgsNumReq,
+  UnReadMsgsNumRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
 } from '@nest/shared';
@@ -48,9 +50,10 @@ export interface spaceController {
   addMember: HandlerWithParams<{ spaceId: string }, AddMemberReq, AddMemberRes>;
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes>;
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes>;
+  getNumOfUnReadMsgs: HandlerWithParams<{ spaceId: string }, UnReadMsgsNumReq, UnReadMsgsNumRes>;
   feeds: Handler<FeedsReq, FeedsRes>;
   blogs: HandlerWithParams<{ spaceId: string }, SpaceBlogsReq, SpaceBlogsRes>;
-  // shorts: HandlerWithParams<{ spaceId: string }, SpaceShortsReq, SpaceShortsRes>;
+
   deleteMember: HandlerWithParams<
     { spaceId: string; memberId: string },
     DeleteMemReq,
@@ -133,7 +136,6 @@ export class SpaceController implements spaceController {
     const offset = (page - 1) * pageSize;
 
     const feeds = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
-    // console.log('blogs.length', feeds.length, 'page', page, 'offset', offset);
     return res.send({ feeds, page });
   };
 
@@ -146,8 +148,25 @@ export class SpaceController implements spaceController {
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
     const messages = await this.db.getSpaceChat(spaceId);
+    await this.db.updateLastReadMsg({
+      userId,
+      spaceId,
+      msgId: messages[0]?.id || '0',
+    });
     return res.send({ messages });
   };
+
+  getNumOfUnReadMsgs: HandlerWithParams<{ spaceId: string }, UnReadMsgsNumReq, UnReadMsgsNumRes> =
+    async (req, res) => {
+      const userId = res.locals.userId;
+      const { spaceId } = req.params;
+
+      if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+      if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
+
+      const numOfUnReadMsgs = await this.db.numOfUnReadMsgs({ userId, spaceId });
+      return res.send({ numOfUnReadMsgs });
+    };
 
   createSpace: Handler<CreateSpaceReq, CreateSpaceRes> = async (req, res) => {
     const { description, name, status } = req.body;

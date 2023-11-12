@@ -37,6 +37,17 @@ export interface SpaceMember {
   username?: string;
 }
 
+export interface LastReadMsg {
+  userId: string;
+  spaceId: string;
+  msgId: string;
+}
+
+export interface UnReadMsgs {
+  spaceId: string;
+  unRead: number;
+}
+
 export interface User {
   id: string;
   username: string;

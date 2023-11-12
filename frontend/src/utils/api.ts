@@ -51,6 +51,8 @@ import {
   SpaceRes,
   UnFollowUserReq,
   UnFollowUserRes,
+  UnReadMsgsNumReq,
+  UnReadMsgsNumRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
   UserBlogsReq,
@@ -245,3 +247,12 @@ export const leaveSpcApi = (spcId: string) => () =>
   fetchFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, 'DELETE', undefined, currUser?.jwt, [
     spcId,
   ]);
+
+export const getNumOfUnReadMsgsApi = (spaceId: string) => () =>
+  fetchFn<UnReadMsgsNumReq, UnReadMsgsNumRes>(
+    ENDPOINT.GET_UNREAD_MSGS_NUM,
+    'GET',
+    undefined,
+    currUser?.jwt,
+    [spaceId]
+  );

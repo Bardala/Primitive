@@ -9,7 +9,15 @@ import { Home } from './Home';
 // todo: add infinite scroll
 export const Space = () => {
   const { id } = useParams();
-  const { spaceQuery, blogsQuery, membersQuery, joinSpaceMutate, isMember, isEnd } = useSpace(id!);
+  const {
+    spaceQuery,
+    blogsQuery,
+    membersQuery,
+    numOfUnReadMsgs,
+    joinSpaceMutate,
+    isMember,
+    isEnd,
+  } = useSpace(id!);
   const blogs = blogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const posts: (Blog | Short)[] = [...blogs].sort(
     (a, b) => (b.timestamp as number) - (a.timestamp as number)
@@ -59,7 +67,11 @@ export const Space = () => {
             </>
           )}
         </main>
-        <Sidebar space={spaceQuery.data?.space} members={membersQuery.data?.members} />
+        <Sidebar
+          space={spaceQuery.data?.space}
+          members={membersQuery.data?.members}
+          numOfUnReadingMsgs={numOfUnReadMsgs.data?.numOfUnReadMsgs}
+        />
       </div>
     </>
   );

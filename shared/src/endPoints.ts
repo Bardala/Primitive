@@ -11,6 +11,7 @@ export enum ENDPOINT {
   GET_USERS_LIST = '/api/v0/users',
   GET_USER_BLOGS = '/api/v0/user/:id/blogs/:page',
   GET_USER_SPACES = '/api/v0/user/:id/spaces',
+  GET_ALL_UNREAD_MSGS = '/api/v0/user/unread-msgs',
 
   // *Blog
   CREATE_BLOG = '/api/v0/blog',
@@ -55,7 +56,7 @@ export enum ENDPOINT {
   Get_SPACE_CHAT = '/api/v0/space/:spaceId/chat',
   DELETE_MEMBER = '/api/v0/space/:spaceId/member/:memberId',
   LEAVE_SPACE = '/api/v0/space/:spaceId/leave',
-  GET_SPACE_SHORTS = '/api/v0/space/:spaceId/shorts',
+  GET_UNREAD_MSGS_NUM = '/api/v0/space/:spaceId/unread-msgs',
 
   //* Message
   CREATE_MESSAGE = '/api/v0/space/:spaceId/message',
@@ -71,5 +72,5 @@ export enum ENDPOINT {
   GET_FEEDS_PAGE = '/api/v0/feeds/:page',
 
   // *Test
-  TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:page/:pageSize',
+  TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:/page:pageSize',
 }
