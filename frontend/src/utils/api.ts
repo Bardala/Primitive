@@ -74,7 +74,6 @@ export const spcApi = (spcId: string) => () =>
 export const blogsApi =
   (spcId: string) =>
   ({ pageParam = 1 }) => {
-    console.log('spcId', spcId);
     return fetchFn<SpaceBlogsReq, SpaceBlogsRes>(
       ENDPOINT.GET_SPACE_BLOGS,
       'GET',
