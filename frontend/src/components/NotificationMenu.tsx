@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaBell } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -12,6 +12,25 @@ export const NotificationMenu = () => {
   const numOfMissedMegs = missedMsgs?.reduce((acc, curr) => acc + curr.unread_count, 0);
   const notificationRef = useRef<HTMLDivElement>(null);
   useClickOutside(notificationRef, () => setShowNotification(false));
+
+  useEffect(() => {
+    if (missedMsgs?.length! > 0) {
+      const lastMsg = missedMsgs![0];
+      if (Notification.permission === 'granted') {
+        new Notification('New message', {
+          body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
+        });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('New message', {
+              body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
+            });
+          }
+        });
+      }
+    }
+  }, [missedMsgs]);
 
   return (
     <div ref={notificationRef}>

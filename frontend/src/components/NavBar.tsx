@@ -33,7 +33,7 @@ export const NavBar = () => {
 
   if (!isLoggedIn())
     return (
-      <>
+      <header className="navbar">
         <div className="title-wrapper">
           <h1>{AppName}</h1>
         </div>
@@ -43,7 +43,7 @@ export const NavBar = () => {
           </Link>
           <Link to="/login">Login</Link>
         </nav>
-      </>
+      </header>
     );
 
   return (
