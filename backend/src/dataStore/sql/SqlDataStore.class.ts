@@ -8,6 +8,7 @@ import {
   LikedUser,
   Space,
   SpaceMember,
+  UnReadMsgs,
   User,
   UserCard,
   UsersList,
@@ -46,6 +47,14 @@ export class SqlDataStore implements DataStoreDao {
     return this;
   }
 
+  async getLastMsgId(spaceId: string): Promise<string> {
+    const query = `
+    SELECT id FROM chat WHERE spaceId=? ORDER BY timestamp DESC LIMIT 1
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
+    return rows[0]['id'] as string;
+  }
+
   async numOfUnReadMsgs(params: { userId: string; spaceId: string }): Promise<number> {
     const query = `
     SELECT COUNT(*) AS unread_count FROM chat c 
@@ -59,15 +68,18 @@ export class SqlDataStore implements DataStoreDao {
     return rows[0]['unread_count'] as number;
   }
 
-  async numOfAllUnReadMsgs(userId: string): Promise<{ spaceId: string; unRead: number }[]> {
+  async numOfAllUnReadMsgs(userId: string): Promise<UnReadMsgs[]> {
     const query = `
-    SELECT spaceId, COUNT(*) AS unread_count FROM chat c 
-    JOIN 
-    last_read lr 
-    ON c.spaceId = lr.spaceId WHERE lr.userId = ?
-    AND c.timestamp > (SELECT timestamp FROM chat WHERE id = lr.lastReadId)
-    GROUP BY spaceId;
+    SELECT c.spaceId AS chat_spaceId, s.name AS spaceName, COUNT(*) AS unread_count FROM chat c 
+    JOIN last_read lr 
+    ON c.spaceId = lr.spaceId 
+    JOIN spaces s
+    ON c.spaceId = s.id
+    WHERE lr.userId = ? 
+    AND c.timestamp > (SELECT timestamp FROM chat WHERE id = lr.lastReadId) 
+    GROUP BY chat_spaceId, spaceName;
     `;
+
     return this.pool.query<RowDataPacket[]>(query, [userId]).then(([rows]) => rows as any);
   }
 

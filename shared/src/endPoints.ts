@@ -11,7 +11,7 @@ export enum ENDPOINT {
   GET_USERS_LIST = '/api/v0/users',
   GET_USER_BLOGS = '/api/v0/user/:id/blogs/:page',
   GET_USER_SPACES = '/api/v0/user/:id/spaces',
-  GET_ALL_UNREAD_MSGS = '/api/v0/user/unread-msgs',
+  GET_ALL_UNREAD_MSGS = '/api/v0/user/msgs/missed',
 
   // *Blog
   CREATE_BLOG = '/api/v0/blog',
@@ -72,5 +72,5 @@ export enum ENDPOINT {
   GET_FEEDS_PAGE = '/api/v0/feeds/:page',
 
   // *Test
-  TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:/page:pageSize',
+  // TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:/page:pageSize',
 }

@@ -3,21 +3,15 @@ import { useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
 import { Sidebar } from '../components/SideBar';
-import { useSpace } from '../hooks/useSpace';
+import { useGetSpcMissedMsgs, useSpace } from '../hooks/useSpace';
 import { Home } from './Home';
 
 // todo: add infinite scroll
 export const Space = () => {
   const { id } = useParams();
-  const {
-    spaceQuery,
-    blogsQuery,
-    membersQuery,
-    numOfUnReadMsgs,
-    joinSpaceMutate,
-    isMember,
-    isEnd,
-  } = useSpace(id!);
+  const { numOfUnReadMsgs } = useGetSpcMissedMsgs(id!);
+  const { spaceQuery, blogsQuery, membersQuery, joinSpaceMutate, isMember, isEnd } = useSpace(id!);
+
   const blogs = blogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const posts: (Blog | Short)[] = [...blogs].sort(
     (a, b) => (b.timestamp as number) - (a.timestamp as number)

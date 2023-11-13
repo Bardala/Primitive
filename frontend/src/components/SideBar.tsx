@@ -9,7 +9,7 @@ import { Chat } from './Chat';
 import { CreateSpace } from './CreateSpace';
 import { EditSpaceForm } from './EditSpace';
 import { LeaveSpc } from './LeaveSpc';
-import { NotificationNumberMsgs } from './NotificationNumberMsgs';
+import { NotificationMsgsNumber } from './NotificationNumberMsgs';
 import { ShortForm } from './ShortForm';
 import { SpaceMembers } from './SpaceMembers';
 
@@ -17,21 +17,16 @@ export const Sidebar: React.FC<{
   space?: Space;
   members?: SpaceMember[];
   numOfUnReadingMsgs?: number;
-}> = ({ space, members, numOfUnReadingMsgs }) => {
+}> = ({ space, members }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
   const [list, setList] = useState(false);
   const nav = useNavigate();
-  // const [unRead, setUnRead] = useState(numOfUnReadingMsgs);
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
     space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
-
-  // useEffect(() => {
-  //   setUnRead(numOfUnReadingMsgs);
-  // }, [numOfUnReadingMsgs]);
 
   return (
     <aside className="side-bar">
@@ -79,7 +74,7 @@ export const Sidebar: React.FC<{
       >
         Show members
       </button>
-      {state.showMembers && <SpaceMembers space={space!} users={members!} />}
+      {state.showMembers && list && <SpaceMembers space={space!} users={members!} />}
 
       <button
         title='Add "member"'
@@ -89,7 +84,7 @@ export const Sidebar: React.FC<{
       >
         add member
       </button>
-      {state.showAddMember && <AddMember />}
+      {state.showAddMember && list && <AddMember />}
 
       <button
         title='Edit "space"'
@@ -99,7 +94,7 @@ export const Sidebar: React.FC<{
       >
         edit space
       </button>
-      {state.showEditSpace && <EditSpaceForm />}
+      {state.showEditSpace && list && <EditSpaceForm />}
 
       {/**(if space exists, and if isMember) it will be visible */}
       <button
@@ -108,11 +103,10 @@ export const Sidebar: React.FC<{
         className="chat-button" // todo: edit this
         onClick={() => {
           dispatch({ type: 'showChat' });
-          // setUnRead(0);
           setList(false);
         }}
       >
-        Chat {<NotificationNumberMsgs spaceId={space?.id!} />}
+        Chat {<NotificationMsgsNumber spaceId={space?.id!} />}
       </button>
       {state.showChat && <Chat space={space!} />}
 
@@ -124,7 +118,7 @@ export const Sidebar: React.FC<{
       >
         Leave Space
       </button>
-      {state.showLeaveSpc && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
+      {state.showLeaveSpc && list && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
     </aside>
   );
 };

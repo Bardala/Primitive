@@ -148,11 +148,12 @@ export class SpaceController implements spaceController {
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
     const messages = await this.db.getSpaceChat(spaceId);
-    await this.db.updateLastReadMsg({
-      userId,
-      spaceId,
-      msgId: messages[0]?.id || '0',
-    });
+    if (messages.length !== 0)
+      await this.db.updateLastReadMsg({
+        userId,
+        spaceId,
+        msgId: messages[0]?.id,
+      });
     return res.send({ messages });
   };
 
@@ -249,10 +250,6 @@ export class SpaceController implements spaceController {
   getDefaultSpace: Handler<DefaultSpaceReq, DefaultSpaceRes> = async (_, res) => {
     const defaultSpace = await this.db.getSpace('1');
     if (!defaultSpace) return res.sendStatus(404);
-
-    // const blogs = await this.db.getBlogs(defaultSpace.id);
-    // const shorts = await this.db.getShorts(defaultSpace.id);
-
     return res.status(200).send({ space: defaultSpace });
   };
 
@@ -270,9 +267,11 @@ export class SpaceController implements spaceController {
     if (space.status === 'private') return res.sendStatus(HTTP.FORBIDDEN);
     if (await this.db.isMember(spaceId, userId)) return res.sendStatus(HTTP.CONFLICT);
 
-    await this.db.addMember({ spaceId, memberId: userId, isAdmin: false });
-
     const member: SpaceMember = { spaceId, memberId: userId, isAdmin: false };
+    await this.db.addMember(member);
+    const lastMsgId = await this.db.getLastMsgId(spaceId);
+    if (lastMsgId) await this.db.updateLastReadMsg({ userId, spaceId, msgId: lastMsgId });
+
     return res.send({ member });
   };
 

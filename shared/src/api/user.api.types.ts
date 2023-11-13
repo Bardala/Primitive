@@ -54,7 +54,7 @@ export interface UserSpacesRes {
   spaces: Space[];
 }
 
-export interface numOfAllUnReadMsgsReq {}
-export interface numOfAllUnReadMsgsRes {
+export interface AllUnReadMsgsReq {}
+export interface AllUnReadMsgsRes {
   numberOfMsgs: UnReadMsgs[];
 }

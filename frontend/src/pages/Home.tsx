@@ -1,12 +1,9 @@
-import { DefaultSpaceId } from '@nest/shared';
-
 import { BlogList } from '../components/BlogList';
 import { Sidebar } from '../components/SideBar';
-import { useFeeds, useSpace } from '../hooks/useSpace';
+import { useFeeds } from '../hooks/useSpace';
 
 export const Home = () => {
-  const { spaceQuery } = useSpace(DefaultSpaceId);
-  const { feeds, fetchNextPage, isEnd, isLoading } = useFeeds();
+  const { feeds, fetchNextPage, isEnd, isLoading, spaceQuery } = useFeeds();
   const error = spaceQuery.error;
 
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error.message}</p>;

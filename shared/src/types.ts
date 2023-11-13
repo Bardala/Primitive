@@ -44,8 +44,9 @@ export interface LastReadMsg {
 }
 
 export interface UnReadMsgs {
-  spaceId: string;
-  unRead: number;
+  chat_spaceId: string;
+  spaceName: string;
+  unread_count: number;
 }
 
 export interface User {

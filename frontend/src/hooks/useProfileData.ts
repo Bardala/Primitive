@@ -1,10 +1,16 @@
-import { GetUserCardRes, PageSize, UserBlogsRes, UserSpacesRes } from '@nest/shared';
+import {
+  AllUnReadMsgsRes,
+  GetUserCardRes,
+  PageSize,
+  UserBlogsRes,
+  UserSpacesRes,
+} from '@nest/shared';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import { userBlogsApi, userCardApi, userSpacesApi } from '../utils/api';
+import { getAllUnReadMsgsApi, userBlogsApi, userCardApi, userSpacesApi } from '../utils/api';
 import { useScroll } from './useScroll';
 
 export const useProfileData = (id: string) => {
@@ -47,4 +53,16 @@ export const useProfileData = (id: string) => {
     isMyPage,
     isEnd,
   };
+};
+
+export const useGetAllMissedMsgs = () => {
+  const { currUser } = useAuthContext();
+  const key = ['missedMsgs'];
+
+  const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
+    enabled: !!currUser?.jwt,
+    refetchInterval: 5000,
+  });
+
+  return { missedMsgs: query.data?.numberOfMsgs };
 };

@@ -1,9 +1,9 @@
 import { BiSolidBellRing } from 'react-icons/bi';
 
-import { useSpace } from '../hooks/useSpace';
+import { useGetSpcMissedMsgs } from '../hooks/useSpace';
 
-export const NotificationNumberMsgs: React.FC<{ spaceId: string }> = ({ spaceId }) => {
-  const { numOfUnReadMsgs } = useSpace(spaceId);
+export const NotificationMsgsNumber: React.FC<{ spaceId: string }> = ({ spaceId }) => {
+  const { numOfUnReadMsgs } = useGetSpcMissedMsgs(spaceId);
   const unRead = numOfUnReadMsgs.data?.numOfUnReadMsgs;
 
   if (unRead! > 0) {

@@ -1,4 +1,6 @@
 import {
+  AllUnReadMsgsReq,
+  AllUnReadMsgsRes,
   ERROR,
   FollowUserReq,
   FollowUserRes,
@@ -18,8 +20,6 @@ import {
   UserBlogsRes,
   UserSpacesReq,
   UserSpacesRes,
-  numOfAllUnReadMsgsReq,
-  numOfAllUnReadMsgsRes,
 } from '@nest/shared';
 import { getRandomValues, randomUUID } from 'node:crypto';
 import validator from 'validator';
@@ -39,7 +39,7 @@ export interface userController {
   getFollowers: HandlerWithParams<{ id: string }, GetFollowersReq, GetFollowersRes>;
   getUserBlogs: HandlerWithParams<{ id: string }, UserBlogsReq, UserBlogsRes>;
   getUserSpaces: HandlerWithParams<{ id: string }, UserSpacesReq, UserSpacesRes>;
-  getAllUnReadMsgs: Handler<numOfAllUnReadMsgsReq, numOfAllUnReadMsgsRes>;
+  getAllUnReadMsgs: Handler<AllUnReadMsgsReq, AllUnReadMsgsRes>;
 }
 
 export class UserController implements userController {
@@ -49,9 +49,8 @@ export class UserController implements userController {
     this.db = db;
   }
 
-  getAllUnReadMsgs: Handler<numOfAllUnReadMsgsReq, numOfAllUnReadMsgsRes> = async (_, res) => {
-    return res.send({ error: ERROR.EXPIRE_API });
-    return res.status(HTTP.OK).send({
+  getAllUnReadMsgs: Handler<AllUnReadMsgsReq, AllUnReadMsgsRes> = async (_, res) => {
+    return res.send({
       numberOfMsgs: await this.db.numOfAllUnReadMsgs(res.locals.userId),
     });
   };

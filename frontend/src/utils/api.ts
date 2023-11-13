@@ -1,6 +1,8 @@
 import {
   AddMemberReq,
   AddMemberRes,
+  AllUnReadMsgsReq,
+  AllUnReadMsgsRes,
   BlogCommentsReq,
   BlogCommentsRes,
   BlogLikesListReq,
@@ -71,14 +73,16 @@ export const spcApi = (spcId: string) => () =>
 
 export const blogsApi =
   (spcId: string) =>
-  ({ pageParam = 1 }) =>
-    fetchFn<SpaceBlogsReq, SpaceBlogsRes>(
+  ({ pageParam = 1 }) => {
+    console.log('spcId', spcId);
+    return fetchFn<SpaceBlogsReq, SpaceBlogsRes>(
       ENDPOINT.GET_SPACE_BLOGS,
       'GET',
       undefined,
       currUser?.jwt,
       [spcId, pageParam + '']
     );
+  };
 
 export const membersApi = (spcId: string) => () =>
   fetchFn<MembersReq, MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, 'GET', undefined, currUser?.jwt, [
@@ -255,4 +259,12 @@ export const getNumOfUnReadMsgsApi = (spaceId: string) => () =>
     undefined,
     currUser?.jwt,
     [spaceId]
+  );
+
+export const getAllUnReadMsgsApi = () => () =>
+  fetchFn<AllUnReadMsgsReq, AllUnReadMsgsRes>(
+    ENDPOINT.GET_ALL_UNREAD_MSGS,
+    'GET',
+    undefined,
+    currUser?.jwt
   );

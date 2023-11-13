@@ -29,7 +29,6 @@ export const useSpace = (id: string) => {
   const spcKey = ['space', id];
   const blogsKey = ['blogs', id];
   const membersKey = ['members', id];
-  const msgsNumKey = ['unreadMsgsNum', id];
   const pageSize = PageSize;
   const [isEnd, setIsEnd] = useState(false);
 
@@ -57,24 +56,39 @@ export const useSpace = (id: string) => {
   const isMember = membersQuery.data?.members?.some(member => member.memberId === currUser?.id);
   useScroll(blogsQuery);
 
-  const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
-    msgsNumKey,
-    getNumOfUnReadMsgsApi(id),
-    {
-      enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
-      // refetchOnWindowFocus: false,
-    }
-  );
+  // const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
+  //   msgsNumKey,
+  //   getNumOfUnReadMsgsApi(id),
+  //   {
+  //     enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
+  //     // refetchOnWindowFocus: false,
+  //   }
+  // );
 
   return {
     spaceQuery,
     blogsQuery,
     membersQuery,
-    numOfUnReadMsgs,
+    // numOfUnReadMsgs,
     joinSpaceMutate,
     isMember,
     isEnd,
   };
+};
+
+export const useGetSpcMissedMsgs = (id: string) => {
+  const currUser = useAuthContext().currUser;
+  const msgsNumKey = ['unreadMsgsNum', id];
+
+  const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
+    msgsNumKey,
+    getNumOfUnReadMsgsApi(id),
+    {
+      enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
+    }
+  );
+
+  return { numOfUnReadMsgs };
 };
 
 export const useFeeds = () => {
@@ -82,6 +96,12 @@ export const useFeeds = () => {
   const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const key = ['feeds'];
+
+  const spcKey = ['space', DefaultSpaceId];
+  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
+    enabled: !!currUser?.jwt && !!DefaultSpaceId,
+    refetchOnWindowFocus: false,
+  });
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
     enabled: !!currUser?.jwt,
@@ -93,6 +113,7 @@ export const useFeeds = () => {
   useScroll(feedsQuery);
 
   return {
+    spaceQuery,
     feeds: feedsQuery.data?.pages.flatMap(page => page.feeds) || [],
     isLoading: feedsQuery.isLoading,
     isError: feedsQuery.isError,
