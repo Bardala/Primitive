@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FaBell } from 'react-icons/fa';
+import { TbMessageCirclePlus } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -39,9 +39,9 @@ export const NotificationMenu = () => {
           cursor: 'pointer',
         }}
       >
-        <FaBell
+        <TbMessageCirclePlus
           className="notification-icon"
-          style={numOfMissedMegs! > 0 ? { color: 'green' } : { color: 'black' }}
+          style={numOfMissedMegs! > 0 ? { color: 'green' } : { color: '#dbd8d8' }}
           onClick={() => setShowNotification(!showNotification)}
         />
         {numOfMissedMegs! > 0 && (
@@ -59,35 +59,39 @@ export const NotificationMenu = () => {
       {showNotification && (
         <div className="notification-menu">
           <div className="notification-menu-header">
-            <h3>Notifications</h3>
+            <h3>Missed Messages</h3>
           </div>
           <div className="notification-menu-body">
-            {missedMsgs?.map((m, index) => (
-              <Link
-                to={`/space/${m.chat_spaceId}`}
-                key={index}
-                onClick={() => setShowNotification(false)}
-              >
-                You have{' '}
-                <span
-                  style={{
-                    color: 'green',
-                    fontWeight: 'bold',
-                  }}
+            {missedMsgs!.length > 0 ? (
+              missedMsgs?.map((m, index) => (
+                <Link
+                  to={`/space/${m.chat_spaceId}`}
+                  key={index}
+                  onClick={() => setShowNotification(false)}
                 >
-                  {m.unread_count}
-                </span>{' '}
-                new messages in space{' '}
-                <span
-                  style={{
-                    color: 'green',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {m.spaceName}
-                </span>
-              </Link>
-            ))}
+                  You have{' '}
+                  <span
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {m.unread_count}
+                  </span>{' '}
+                  new messages in space{' '}
+                  <span
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {m.spaceName}
+                  </span>
+                </Link>
+              ))
+            ) : (
+              <p>No new messages</p>
+            )}
           </div>
         </div>
       )}

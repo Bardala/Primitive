@@ -68,13 +68,19 @@ button {
     display: flex;
     flex-direction: column;
     list-style: none;
-    height: 300px;
+    height: 180px;
     scrollbar-width: none;
     -ms-overflow-style: none;
     overflow-y: overlay;
     padding: 10px;
     flex-wrap: nowrap;
     align-items: center;
+}
+
+/* add this code to make the icons bigger */
+.navbar svg {
+    width: 24px;
+    height: 24px;
 }
 
 @media screen and (max-width: 768px) {
@@ -98,11 +104,38 @@ button {
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 600px) {
+    .navbar {
+        grid-column: 1 / -1;
+        grid-row: 1 / 2;
+    }
+
+    .navbar h1 {
+        font-size: 1.2rem;
+    }
+
+    .navbar .username {
+        font-size: 0.8rem;
+    }
+
+    .navbar a,
+    button {
+        padding: 4px;
+        margin: 4px;
+        font-size: 0.8rem;
+    }
+
+    .navbar svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* @media screen and (max-width: 480px) {
 
     .navbar a,
     button {
         padding: 8px;
         font-size: 0.8rem;
     }
-}
+} */

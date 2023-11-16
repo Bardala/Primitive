@@ -61,7 +61,6 @@ export const useGetAllMissedMsgs = () => {
 
   const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
     enabled: !!currUser?.jwt,
-    refetchInterval: 5000,
   });
 
   return { missedMsgs: query.data?.numberOfMsgs };

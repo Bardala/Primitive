@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
+import { CiLogout } from 'react-icons/ci';
+import { IoIosPeople } from 'react-icons/io';
+import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -67,9 +70,15 @@ export const NavBar = () => {
         </div>
 
         <nav className="links">
-          <Link to="/u">users</Link>
-          <Link to="/">Home</Link>
-          <button onClick={handleClick}>logout</button>
+          <Link to="/u">
+            <IoIosPeople />
+          </Link>
+          <Link to="/">
+            <TiHome />
+          </Link>
+          <button onClick={handleClick}>
+            <CiLogout />
+          </button>
         </nav>
       </>
     </header>

@@ -13,15 +13,15 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #fafafa;
-    height: 300px;
+    /* height: 300px; */
     justify-content: space-between;
 }
 
-.blog-preview:hover {
+/* .blog-preview:hover {
     box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
     transform: scale(1.05);
     transition: all 0.3s ease-in-out;
-}
+} */
 
 .blog-header h2 {
     font-size: 24px;
@@ -59,7 +59,6 @@ time {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* white-space: nowrap; */
     max-width: 100%;
     max-height: 100%;
     line-height: 1.5;
@@ -149,21 +148,6 @@ time {
     font-family: 'Roboto', sans-serif;
 }
 
-/* .author::before {
-    background-image:
-        url("https://cdn-icons-png.flaticon.com/512/149/149071.png");
-}
-
-.comments-count::before {
-    background-image:
-        url("https://cdn-icons-png.flaticon.com/512/25/25663.png");
-}
-
-.likes-count::before {
-    background-image:
-        url("https://cdn-icons-png.flaticon.com/512/1077/1077035.png");
-} */
-
 @media screen and (max-width: 600px) {
     .blog-list {
         grid-template-columns: 1fr;
@@ -175,14 +159,18 @@ time {
     }
 
     .blog-header h2 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
-    .blog-meta {
+    .blog-preview .blog-meta {
         font-size: 12px;
     }
 
-    .blog-excerpt {
+    .blog-meta * {
+        font-size: 4px;
+    }
+
+    .blog-excerpt p {
         font-size: 14px;
     }
 }

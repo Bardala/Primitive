@@ -352,6 +352,14 @@ select {
     height: auto;
   }
 
+  .side-bar button {
+    font-size: 0.8rem;
+  }
+
+  .side-bar * {
+    font-size: 0.8rem;
+  }
+
   .space-chat {
     height: 420px;
     overflow-y: auto;
