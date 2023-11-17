@@ -37,6 +37,12 @@
   padding: 16px;
 }
 
+.blog-content img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
 #read-blog {
   margin-bottom: 100px;
 }

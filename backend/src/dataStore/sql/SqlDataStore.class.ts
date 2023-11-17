@@ -98,7 +98,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
     WHERE blogs.spaceId IN (
       SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1' 
     )
@@ -118,7 +118,7 @@ export class SqlDataStore implements DataStoreDao {
     ]);
     const blogs = rows as Blog[];
     blogs.forEach(blog => {
-      blog.content = blog.content.replace(/[#*`]/g, '');
+      blog.content = blog.content;
     });
     return blogs;
   }
@@ -472,7 +472,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
     WHERE blogs.spaceId = ?
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
@@ -500,7 +500,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content
     FROM blogs
     JOIN spaces ON blogs.spaceId = spaces.id
     WHERE blogs.userId = ? AND spaces.status = 'public'

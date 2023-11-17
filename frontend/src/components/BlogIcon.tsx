@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { isArabic } from '../utils/assists';
 import { LikeBlogButton } from './LikeBlogButton';
+import { MyMarkdown } from './MyMarkdown';
 
 export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
   return (
@@ -33,7 +34,17 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
         </div>
 
         <div className="blog-excerpt">
-          <p className={isArabic(post.content) ? 'arabic' : ''}>{post.content}</p>
+          <div
+            style={{
+              direction: isArabic(post.content) ? 'rtl' : 'ltr',
+              textAlign: isArabic(post.content) ? 'right' : 'left',
+              unicodeBidi: isArabic(post.content) ? 'embed' : 'normal',
+              whiteSpace: 'pre-wrap',
+            }}
+          >
+            <MyMarkdown markdown={post.content} />
+          </div>
+          {/* <p className={isArabic(post.content) ? 'arabic' : ''}>{post.content} </p> */}
         </div>
       </div>
     </div>

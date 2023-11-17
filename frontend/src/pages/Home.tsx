@@ -12,7 +12,6 @@ export const Home = () => {
   return (
     <div className="home">
       <main>
-        {error && <p className="error">{error?.message}</p>}
         {!!feeds?.length && (
           <>
             <BlogList posts={feeds} />
