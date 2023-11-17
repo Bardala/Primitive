@@ -75,19 +75,11 @@
   padding: 2px;
 }
 
-.followers-count::before {
-  background-image:
-    url("https://cdn-icons-png.flaticon.com/512/1077/1077035.png");
-}
-
-.blogs-count::before {
-  background-image:
-    url("https://cdn-icons-png.flaticon.com/512/25/25657.png");
-}
-
-.comments-count::before {
-  background-image:
-    url("https://cdn-icons-png.flaticon.com/512/25/25663.png");
+.user-icon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
 }
 
 @media screen and (max-width: 600px) {
