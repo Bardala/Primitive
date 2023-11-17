@@ -29,7 +29,7 @@ export const UsersList = () => {
               <Link to={`/u/${user.id}`}>
                 <p className="username">{user.username}</p>
               </Link>
-              <FollowButton userId={user.id} />
+              {currUser?.id !== user.id && <FollowButton userId={user.id} />}
             </li>
           ))}
       </ul>
