@@ -13,24 +13,24 @@ export const NotificationMenu = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   useClickOutside(notificationRef, () => setShowNotification(false));
 
-  useEffect(() => {
-    if (missedMsgs?.length! > 0) {
-      const lastMsg = missedMsgs![0];
-      if (Notification.permission === 'granted') {
-        new Notification('New message', {
-          body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
-        });
-      } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            new Notification('New message', {
-              body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
-            });
-          }
-        });
-      }
-    }
-  }, [missedMsgs]);
+  // useEffect(() => {
+  //   if (missedMsgs?.length! > 0) {
+  //     const lastMsg = missedMsgs![0];
+  //     if (Notification.permission === 'granted') {
+  //       new Notification('New message', {
+  //         body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
+  //       });
+  //     } else if (Notification.permission !== 'denied') {
+  //       Notification.requestPermission().then(permission => {
+  //         if (permission === 'granted') {
+  //           new Notification('New message', {
+  //             body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
+  //           });
+  //         }
+  //       });
+  //     }
+  //   }
+  // }, [missedMsgs]);
 
   return (
     <div ref={notificationRef}>

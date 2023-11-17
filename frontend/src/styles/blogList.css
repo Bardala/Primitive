@@ -159,4 +159,8 @@ time {
         margin-left: 4px;
         margin-right: 4px;
     }
+
+    .space-page .blog-list {
+        grid-template-columns: 1fr;
+    }
 }
