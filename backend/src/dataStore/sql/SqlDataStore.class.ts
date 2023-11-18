@@ -117,9 +117,6 @@ export class SqlDataStore implements DataStoreDao {
       offset,
     ]);
     const blogs = rows as Blog[];
-    blogs.forEach(blog => {
-      blog.content = blog.content;
-    });
     return blogs;
   }
 
@@ -479,9 +476,6 @@ export class SqlDataStore implements DataStoreDao {
   `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, pageSize, offset]);
     const blogs = rows as Blog[];
-    blogs.forEach(blog => {
-      blog.content = blog.content.replace(/[#*`]/g, '');
-    });
     return blogs;
   }
 
@@ -509,9 +503,6 @@ export class SqlDataStore implements DataStoreDao {
   `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, pageSize, offset]);
     const blogs = rows as Blog[];
-    blogs.forEach(blog => {
-      blog.content = blog.content.replace(/[#*`]/g, '');
-    });
     return blogs;
   }
 
