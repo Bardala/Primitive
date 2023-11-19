@@ -23,6 +23,8 @@ import {
 } from '../utils/api';
 import { useScroll } from './useScroll';
 
+// todo: Make isMemberApi
+// todo: Don't make unnecessary fetches, Clean up
 export const useSpace = (id: string) => {
   const currUser = useAuthContext().currUser;
   const queryClient = useQueryClient();
@@ -38,14 +40,15 @@ export const useSpace = (id: string) => {
   });
 
   const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
-    enabled: !!currUser && !!id && id !== DefaultSpaceId,
+    enabled: !!currUser && !!id && id !== DefaultSpaceId && spaceQuery.isSuccess,
     refetchOnWindowFocus: false,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
   });
 
   const membersQuery = useQuery<MembersRes, ApiError>(membersKey, membersApi(id), {
-    enabled: !!currUser && !!spaceQuery.data?.space.id && id !== DefaultSpaceId,
+    enabled:
+      !!currUser && !!spaceQuery.data?.space.id && id !== DefaultSpaceId && spaceQuery.isSuccess,
     refetchOnWindowFocus: false,
   });
 

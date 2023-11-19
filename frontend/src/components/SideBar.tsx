@@ -1,5 +1,9 @@
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
 import { useState } from 'react';
+import { FaPencilAlt } from 'react-icons/fa';
+import { IoIosPeople } from 'react-icons/io';
+import { RiGroup2Fill } from 'react-icons/ri';
+import { TfiWrite } from 'react-icons/tfi';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -39,21 +43,21 @@ export const Sidebar: React.FC<{
         </button>
       </div>
       <button
-        title='Create "short"'
+        title='Create "Short"'
         hidden={!!space && !isMember}
         onClick={() => dispatch({ type: 'showCreateBlog' })}
         className={state.showCreateBlog ? 'active' : ''}
       >
-        Create Short
+        Short <FaPencilAlt size={20} color="#33872e" />
       </button>
       {state.showCreateBlog && <ShortForm />}
 
       <button
-        title='Create "blog"'
+        title='Create "Blog"'
         hidden={(!!space && !isMember) || (space && !list)}
         onClick={() => nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`)}
       >
-        Create Blog
+        Blog <TfiWrite size={20} color="#33872e" />
       </button>
 
       <button
@@ -62,7 +66,7 @@ export const Sidebar: React.FC<{
         onClick={() => dispatch({ type: 'showCreateSpace' })}
         className={state.showCreateSpace ? 'active' : ''}
       >
-        Create Space
+        Space <RiGroup2Fill size={20} color="#33872e" />
       </button>
       {state.showCreateSpace && <CreateSpace />}
 
@@ -72,7 +76,7 @@ export const Sidebar: React.FC<{
         onClick={() => dispatch({ type: 'showMembers' })}
         className={state.showMembers ? 'active' : ''}
       >
-        Show members
+        members <IoIosPeople size={20} color="#33872e" />
       </button>
       {state.showMembers && list && <SpaceMembers space={space!} users={members!} />}
 

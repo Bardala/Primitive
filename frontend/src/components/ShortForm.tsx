@@ -5,11 +5,12 @@ import { useParams } from 'react-router-dom';
 
 import { useCreateShort } from '../hooks/useBlog';
 import { isArabic } from '../utils/assists';
+import { MyMarkdown } from './MyMarkdown';
 
 export const ShortForm = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  // const remaining = ShortLength - content.length;
+  const [preview, setPreview] = useState(false);
   const id = useParams().id || DefaultSpaceId;
   const { createShortMutation } = useCreateShort(id, title, content);
 
@@ -29,6 +30,15 @@ export const ShortForm = () => {
     <>
       {createShortMutation.isError && <p className="error">{createShortMutation.error.message}</p>}
       <form className="create-blog-form" onSubmit={handleSubmit}>
+        <div className="button-container">
+          <button type="submit" disabled={createShortMutation.isLoading}>
+            Create
+          </button>
+          <button type="button" onClick={() => setPreview(!preview)}>
+            Preview
+          </button>
+        </div>
+
         <input
           placeholder="Title"
           type="text"
@@ -37,20 +47,19 @@ export const ShortForm = () => {
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        <textarea
-          placeholder="Content"
-          name="content"
-          id="content"
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          // maxLength={ShortLength}
-          style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
-        />
-        {/* <i className="remaining-char">{remaining} remaining characters</i> */}
+        {preview ? (
+          <MyMarkdown markdown={content} />
+        ) : (
+          <textarea
+            placeholder="Content"
+            name="content"
+            id="content"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
+          />
+        )}
 
-        <button type="submit" disabled={createShortMutation.isLoading}>
-          Create
-        </button>
         {createShortMutation.isLoading && <p>Creating...</p>}
         {createShortMutation.isSuccess && <p className="success">Created successfully!</p>}
       </form>

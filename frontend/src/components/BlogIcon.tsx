@@ -1,20 +1,24 @@
-import { Blog } from '@nest/shared';
-import { formatDistanceToNow } from 'date-fns';
+import { Blog, DefaultSpaceId } from '@nest/shared';
+import { LiaCommentSolid } from 'react-icons/lia';
+import { RiGroup2Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
-import { isArabic } from '../utils/assists';
+import { useCommCounts } from '../hooks/useBlog';
+import { formatTimeShort, isArabic } from '../utils/assists';
 import { LikeBlogButton } from './LikeBlogButton';
 import { MyMarkdown } from './MyMarkdown';
 
 export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
+  const { numOfComments } = useCommCounts(post.id!);
+
   return (
     <div className="blog-preview" key={post.id}>
       <div className="blog-content">
-        <Link to={`/b/${post.id}`} className="blog-link">
-          <div className="blog-header">
-            <h2>{post.title}</h2>
-          </div>
-        </Link>
+        <div className="blog-header">
+          <Link to={`/b/${post.id}`} className="blog-link">
+            <h2 className={isArabic(post.title) ? 'arabic' : ''}>{post.title}</h2>
+          </Link>
+        </div>
 
         <div className="blog-meta">
           <Link to={`/u/${post.userId}`} className="author-link">
@@ -23,28 +27,23 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
 
           <LikeBlogButton post={post} />
 
-          {post.spaceId !== '1' && (
-            <Link to={`/space/${post?.spaceId}`} className="space-link">
-              Spaced
+          <span className="comms-count">
+            {numOfComments.data?.numOfComments} <LiaCommentSolid size={20} />
+          </span>
+
+          {post.spaceId !== DefaultSpaceId && (
+            <Link to={`/space/${post?.spaceId}`} className="space-link" title="Spaced">
+              <RiGroup2Fill size={20} />
             </Link>
           )}
+
           <time className="created-at" dateTime={String(post.timestamp)}>
-            {formatDistanceToNow(new Date(post.timestamp as number))}
+            {formatTimeShort(new Date(post.timestamp!))}
           </time>
         </div>
 
         <div className="blog-excerpt">
-          <div
-            style={{
-              direction: isArabic(post.content) ? 'rtl' : 'ltr',
-              textAlign: isArabic(post.content) ? 'right' : 'left',
-              unicodeBidi: isArabic(post.content) ? 'embed' : 'normal',
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            <MyMarkdown markdown={post.content} />
-          </div>
-          {/* <p className={isArabic(post.content) ? 'arabic' : ''}>{post.content} </p> */}
+          <MyMarkdown markdown={post.content} />
         </div>
       </div>
     </div>

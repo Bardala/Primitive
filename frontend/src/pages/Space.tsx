@@ -1,4 +1,4 @@
-import { Blog, DefaultSpaceId, Short } from '@nest/shared';
+import { DefaultSpaceId } from '@nest/shared';
 import { useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
@@ -6,16 +6,12 @@ import { Sidebar } from '../components/SideBar';
 import { useGetSpcMissedMsgs, useSpace } from '../hooks/useSpace';
 import { Home } from './Home';
 
-// todo: add infinite scroll
 export const Space = () => {
   const { id } = useParams();
   const { numOfUnReadMsgs } = useGetSpcMissedMsgs(id!);
   const { spaceQuery, blogsQuery, membersQuery, joinSpaceMutate, isMember, isEnd } = useSpace(id!);
 
   const blogs = blogsQuery.data?.pages.flatMap(page => page.blogs) || [];
-  const posts: (Blog | Short)[] = [...blogs].sort(
-    (a, b) => (b.timestamp as number) - (a.timestamp as number)
-  );
 
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error?.message}</p>;
   if (spaceQuery.isLoading) return <div>Loading...</div>;
@@ -46,9 +42,9 @@ export const Space = () => {
           {/** //todo: move the description to the sidebar */}
           {/* <span className="space-description">{spaceQuery.data?.space?.description}</span> */}
 
-          {posts?.length ? (
+          {blogs?.length ? (
             <>
-              <BlogList posts={posts} />
+              <BlogList posts={blogs} />
               <button hidden={isEnd} disabled={isEnd} onClick={() => blogsQuery.fetchNextPage()}>
                 Load More
               </button>

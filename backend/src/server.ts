@@ -63,6 +63,7 @@ import { errorHandler } from './middleware/errorHandler';
   app.get(ENDPOINT.GET_BLOG_LIKES_LIST, requireAuth, asyncHandler(blog.getBlogLikesList));
   app.post(ENDPOINT.LIKE_BLOG, requireAuth, checkEmptyInput, asyncHandler(blog.likeBlog));
   app.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blog.unLikeBlog));
+  app.get(ENDPOINT.NUM_OF_COMMENTS, requireAuth, asyncHandler(blog.getNumOfComments));
   // app.get(ENDPOINT.TEST_INFINITE_SCROLL, requireAuth, asyncHandler(blog.testInfiniteScrollBlogs));
 
   // *Comment

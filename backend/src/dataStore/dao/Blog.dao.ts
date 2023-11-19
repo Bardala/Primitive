@@ -7,6 +7,7 @@ export interface BlogDao {
   deleteBlog(blogId: string): Promise<void>;
 
   getComments(blogId: string): Promise<CommentWithUser[]>;
+  getNumOfComments(blogId: string): Promise<number>;
   deleteComments(blogId: string): Promise<void>;
   blogLikes(blogId: string, userId: string): Promise<{ likes: number; isLiked: boolean }>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;

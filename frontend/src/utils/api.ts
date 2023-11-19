@@ -44,6 +44,8 @@ import {
   LoginRes,
   MembersReq,
   MembersRes,
+  NumOfCommentsReq,
+  NumOfCommentsRes,
   RemoveLikeReq,
   RemoveLikeRes,
   SignUpReq,
@@ -267,3 +269,13 @@ export const getAllUnReadMsgsApi = () => () =>
     undefined,
     currUser?.jwt
   );
+
+export const numOfCommsApi = (blogId: string) => () => {
+  return fetchFn<NumOfCommentsReq, NumOfCommentsRes>(
+    ENDPOINT.NUM_OF_COMMENTS,
+    'GET',
+    undefined,
+    currUser?.jwt,
+    [blogId]
+  );
+};

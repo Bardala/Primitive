@@ -18,6 +18,8 @@ import {
   ERROR,
   Like,
   LikedUser,
+  NumOfCommentsReq,
+  NumOfCommentsRes,
   RemoveLikeReq,
   RemoveLikeRes,
   SpaceBlogsReq,
@@ -43,6 +45,7 @@ export interface blogController {
   unLikeBlog: HandlerWithParams<{ blogId: string }, RemoveLikeReq, RemoveLikeRes>;
   getBlogLikes: HandlerWithParams<{ blogId: string }, BlogLikesReq, BlogLikesRes>;
   getBlogLikesList: HandlerWithParams<{ blogId: string }, BlogLikesListReq, BlogLikesListRes>;
+  getNumOfComments: HandlerWithParams<{ blogId: string }, NumOfCommentsReq, NumOfCommentsRes>;
 }
 
 export class BlogController implements blogController {
@@ -51,6 +54,16 @@ export class BlogController implements blogController {
   constructor(db: DataStoreDao) {
     this.db = db;
   }
+
+  getNumOfComments: HandlerWithParams<{ blogId: string }, NumOfCommentsReq, NumOfCommentsRes> =
+    async (req, res) => {
+      const blogId = req.params.blogId;
+      if (!blogId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+
+      const numOfComments = await this.db.getNumOfComments(blogId);
+      return res.status(200).send({ numOfComments });
+    };
+
   likeBlog: HandlerWithParams<{ blogId: string }, CreateLikeReq, CreateLikeRes> = async (
     req,
     res

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { TbMessageCirclePlus } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 

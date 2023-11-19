@@ -20,31 +20,35 @@ import { DataStoreDao } from '..';
 
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
-  public defaultSpcId = '1';
+  private prodProps: mysql.PoolOptions = {
+    host: process.env.MY_SQL_DB_HOST,
+    user: process.env.MY_SQL_DB_USER,
+    database: process.env.MY_SQL_DB_DATABASE,
+    password: process.env.MY_SQL_DB_PASSWORD,
+    socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
+  };
+  private devProps: mysql.PoolOptions = {
+    host: process.env.MY_SQL_DB_HOST,
+    user: process.env.MY_SQL_DB_USER,
+    database: process.env.MY_SQL_DB_DATABASE,
+    password: process.env.MY_SQL_DB_PASSWORD,
+  };
 
   async runDB() {
-    const prodProps: mysql.PoolOptions = {
-      host: process.env.MY_SQL_DB_HOST,
-      user: process.env.MY_SQL_DB_USER,
-      database: process.env.MY_SQL_DB_DATABASE,
-      password: process.env.MY_SQL_DB_PASSWORD,
-      socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
-    };
-
-    const devProps: mysql.PoolOptions = {
-      host: process.env.MY_SQL_DB_HOST,
-      user: process.env.MY_SQL_DB_USER,
-      database: process.env.MY_SQL_DB_DATABASE,
-      password: process.env.MY_SQL_DB_PASSWORD,
-    };
-
     this.pool = mysql
       .createPool({
-        ...(process.env.NODE_ENV === 'prod' ? prodProps : devProps),
+        ...(process.env.NODE_ENV === 'prod' ? this.prodProps : this.devProps),
       })
       .promise();
-
     return this;
+  }
+
+  async getNumOfComments(blogId: string): Promise<number> {
+    const query = `
+    SELECT COUNT(*) AS comments FROM comments WHERE blogId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, blogId);
+    return rows[0]['comments'] as Promise<number>;
   }
 
   async getLastMsgId(spaceId: string): Promise<string> {
@@ -411,13 +415,13 @@ export class SqlDataStore implements DataStoreDao {
   async getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined> {
     const [rows] = await this.pool.query<RowDataPacket[]>(
       `
-          SELECT users.id, users.username, users.email, users.timestamp,  
-          (SELECT COUNT(*) FROM follows WHERE follows.followingId = users.id) AS followersNum,
-          (SELECT COUNT(*) FROM follows WHERE follows.followerId = users.id) AS followingNum,
-          (SELECT COUNT(*) FROM follows WHERE follows.followerId = ? AND follows.followingId = users.id) AS isFollowing
-          FROM users
-          WHERE users.id = ?
-          `,
+      SELECT users.id, users.username, users.email, users.timestamp,  
+      (SELECT COUNT(*) FROM follows WHERE follows.followingId = users.id) AS followersNum,
+      (SELECT COUNT(*) FROM follows WHERE follows.followerId = users.id) AS followingNum,
+      (SELECT COUNT(*) FROM follows WHERE follows.followerId = ? AND follows.followingId = users.id) AS isFollowing
+      FROM users
+      WHERE users.id = ?
+      `,
       [userId, cardOwnerId]
     );
 

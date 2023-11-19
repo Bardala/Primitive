@@ -1,4 +1,4 @@
-import formatDistantToNow from 'date-fns/formatDistanceToNow';
+import { LiaCommentSolid } from 'react-icons/lia';
 import { Link, useParams } from 'react-router-dom';
 
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
@@ -9,7 +9,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { STATE } from '../utils/StatesMsgs';
-import { isArabic } from '../utils/assists';
+import { formatTimeShort, isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
@@ -42,15 +42,14 @@ export const BlogDetails = () => {
               </div>
 
               <div className="blog-meta">
-                <p className="created-at">
-                  {formatDistantToNow(new Date(blog?.timestamp as number), {
-                    addSuffix: true,
-                  })}
-                </p>
+                <p className="created-at">{formatTimeShort(new Date(blog.timestamp!))}</p>
 
                 <LikeBlogButton post={blog} />
 
-                <p className="comments-counts"> {comments?.length} comments</p>
+                <p className="comments-counts">
+                  {' '}
+                  {comments?.length} <LiaCommentSolid size={20} />
+                </p>
               </div>
             </article>
 

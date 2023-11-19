@@ -24,6 +24,7 @@ export enum ENDPOINT {
   GET_BLOG_LIKES_LIST = '/api/v0/blog/:blogId/likes/list',
   LIKE_BLOG = '/api/v0/blog/:blogId/like',
   UNLIKE_BLOG = '/api/v0/blog/:blogId/unlike',
+  NUM_OF_COMMENTS = '/api/v0/blog/:blogId/num-of-comments',
 
   //* Short
   CREATE_SHORT = '/api/v0/space/:spaceId/short',

@@ -1,9 +1,10 @@
-import { Blog, CreateBlogRes, DefaultSpaceId, DeleteBlogRes } from '@nest/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Blog, CreateBlogRes, DefaultSpaceId, DeleteBlogRes, NumOfCommentsRes } from '@nest/shared';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import { createBlogApi, createShortApi, deleteBlogApi } from '../utils/api';
+import { createBlogApi, createShortApi, deleteBlogApi, numOfCommsApi } from '../utils/api';
 
 const getSpcKey = (spaceId: string) =>
   spaceId === DefaultSpaceId ? ['feeds'] : ['blogs', spaceId];
@@ -55,4 +56,16 @@ export const useDeleteBlog = (id: string, blog: Blog) => {
   });
 
   return { deleteBlogMutate };
+};
+
+export const useCommCounts = (id: string) => {
+  const currUser = useAuthContext().currUser;
+
+  const numOfComments = useQuery<NumOfCommentsRes, ApiError>(['commsNum', id], numOfCommsApi(id), {
+    enabled: !!currUser?.jwt && !!id,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
+
+  return { numOfComments };
 };

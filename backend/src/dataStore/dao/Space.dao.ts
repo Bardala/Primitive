@@ -1,7 +1,6 @@
 import { Blog, ChatMessage, LastReadMsg, Space, SpaceMember } from '@nest/shared';
 
 export interface SpaceDao {
-  defaultSpcId: string;
   createSpace(space: Space): Promise<void>;
   updateSpace(space: Space): Promise<Space | undefined>;
   getSpace(spaceId: string): Promise<Space | undefined>;

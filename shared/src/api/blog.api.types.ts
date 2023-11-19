@@ -44,3 +44,8 @@ export interface RemoveLikeReq {}
 export interface RemoveLikeRes {
   message: StatusMessage;
 }
+
+export interface NumOfCommentsReq {}
+export interface NumOfCommentsRes {
+  numOfComments: number;
+}
