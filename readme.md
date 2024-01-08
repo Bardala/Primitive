@@ -4,11 +4,9 @@ One possible way to spread knowledge, encourage reading, raise awareness, and fi
 
 _Notice, By the time you are reading this readme, the app link may be invalid or not working because the free trial was expired So you can see the **[Demo Video](https://www.youtube.com/watch?v=JHtCKUv_Xs8&t=369s&ab_channel=IslamBardala)** instead._
 
-| Home Page                                           | Space Page                                    | Old Phone Screen                       | Primitive Chat                                   |
-| --------------------------------------------------- | --------------------------------------------- | -------------------------------------- | ------------------------------------------------ |
-| ![Home Page](./docs/imgs/PrimitiveHomePage.png)     | ![Space Page](./docs/imgs/PrimitiveSpace.png) | ![Phone Screen](./docs/imgs/home.jpeg) | ![Primitive Chat](./docs/imgs/primitiveChat.png) |
-| Space Whole List                                    |
-| ![Space Whole List](./docs/imgs/SpaceWholeList.png) |
+| Home Page                                       | Space Page                                    | Space Whole List                                    | Primitive Chat                                   |
+| ----------------------------------------------- | --------------------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
+| ![Home Page](./docs/imgs/PrimitiveHomePage.png) | ![Space Page](./docs/imgs/PrimitiveSpace.png) | ![Space Whole List](./docs/imgs/SpaceWholeList.png) | ![Primitive Chat](./docs/imgs/primitiveChat.png) |
 
 ## Table of Contents
 
