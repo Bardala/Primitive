@@ -116,12 +116,12 @@ _Notice, By the time you are reading this readme, the app link may be invalid or
 
   - `Home`: redirect to the home page.
   - `Short`: create a new post in a fast way.
-    - `Blog`: create a blog.
-    - `Members`: to see all members on the space.
-    - `Add member`: to add a new member with `username` or with `id`.
-    - `Edit space`: to edit the `name`, `description` and the `state` of the space.
-    - `Chat`: to chat with space members.
-    - `Leave space`: to leave the space.
+  - `Blog`: create a blog.
+  - `Members`: to see all members on the space.
+  - `Add member`: to add a new member with `username` or with `id`.
+  - `Edit space`: to edit the `name`, `description` and the `state` of the space.
+  - `Chat`: to chat with space members.
+  - `Leave space`: to leave the space.
 
 - ### User Profile:
 
