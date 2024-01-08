@@ -6,7 +6,7 @@ _Notice, By the time you are reading this readme, the app link may be invalid or
 
 | Home Page                                       | Space Page                                    | Space Whole List                                    | Primitive Chat                                   |
 | ----------------------------------------------- | --------------------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
-| ![Home Page](./docs/imgs/PrimitiveHomePage.png) | ![Space Page](./docs/imgs/PrimitiveSpace.png) | ![Space Whole List](./docs/imgs/SpaceWholeList.png) | ![Primitive Chat](./docs/imgs/primitiveChat.png) |
+| ![Home Page](./docs/imgs/PrimitiveHomePage.png) | ![Space Page](./docs/imgs/PrimitiveSpace.png) | ![Space Whole List](./docs/imgs/SpaceWholeList.png) | ![Primitive Chat](./docs/imgs/PrimitiveChat.png) |
 
 ## Table of Contents
 
