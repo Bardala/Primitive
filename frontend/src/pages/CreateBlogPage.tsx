@@ -61,9 +61,9 @@ export const CreateBlogPage: React.FC = () => {
         </form>
 
         <div className="blog-content">
-          <article className={isArabic(content) ? 'arabic' : ''}>
-            <MyMarkdown markdown={content} />
-          </article>
+          {/* <article className="blog-excerpt"> */}
+          <MyMarkdown markdown={content} />
+          {/* </article> */}
         </div>
       </div>
     </>

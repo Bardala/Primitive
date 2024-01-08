@@ -7,7 +7,7 @@ import { isArabic } from '../utils/assists';
 
 export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   return (
-    <div className={isArabic(markdown) ? 'arabic' : ''}>
+    <article className={isArabic(markdown) ? 'arabic' : ''}>
       <ReactMarkdown
         children={markdown}
         components={{
@@ -29,6 +29,6 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
           },
         }}
       />
-    </div>
+    </article>
   );
 };
