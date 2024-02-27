@@ -2,7 +2,7 @@
 
 One possible way to spread knowledge, encourage reading, raise awareness, and fight the industry of ignorance is to create a platform where people can share their insights, opinions, and experiences on various topics. This platform would allow users to access a diverse range of perspectives, learn from each other, and engage in constructive dialogue. The platform would also promote literacy, critical thinking, and curiosity among its users, as well as foster a culture of respect and tolerance. By creating such a platform, we can empower people to seek the truth, challenge their assumptions, and broaden their horizons. You can access the application **[here](http://arboreal-inn-402111.oa.r.appspot.com)**.
 
-_Notice, By the time you are reading this readme, the app link may be invalid or not working because the free trial was expired So you can see the **[Demo Video](https://www.youtube.com/watch?v=JHtCKUv_Xs8&t=369s&ab_channel=IslamBardala)** instead._
+_Notice, By the time you are reading this readme, the app link may be invalid or not working because the free trial was expired So you can see the **[Demo Video](https://youtu.be/52A5seYT0IY)** instead._
 
 | Home Page                                       | Space Page                                    | Space Whole List                                    | Primitive Chat                                   |
 | ----------------------------------------------- | --------------------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
