@@ -64,7 +64,8 @@ export class SqlDataStore implements DataStoreDao {
     SELECT id FROM chat WHERE spaceId=? ORDER BY timestamp DESC LIMIT 1
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
-    return rows[0]['id'] as string;
+
+    return rows.length == 0 ? '' : (rows[0]['id'] as string);
   }
 
   async numOfUnReadMsgs(params: { userId: string; spaceId: string }): Promise<number> {
@@ -416,7 +417,7 @@ export class SqlDataStore implements DataStoreDao {
       'INSERT INTO users SET id=?, username=?, password=?, email=?, timestamp=?',
       [user.id, user.username, user.password, user.email, user.timestamp]
     );
-
+    // todo: Use another approach instead of this, because the system implements unnecessary queries for enrolling every new user
     const numberOfUsers = await this.getNumberOfUsers();
     if (numberOfUsers == 1) await this.createMainSpace(user.id);
   }
