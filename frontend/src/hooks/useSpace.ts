@@ -36,12 +36,12 @@ export const useSpace = (id: string) => {
 
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(id), {
     enabled: !!currUser?.jwt && !!id,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
     enabled: !!currUser && !!id && id !== DefaultSpaceId && spaceQuery.isSuccess,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
   });
@@ -49,7 +49,7 @@ export const useSpace = (id: string) => {
   const membersQuery = useQuery<MembersRes, ApiError>(membersKey, membersApi(id), {
     enabled:
       !!currUser && !!spaceQuery.data?.space.id && id !== DefaultSpaceId && spaceQuery.isSuccess,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const joinSpaceMutate = useMutation<JoinSpaceRes, ApiError>(joinSpcApi(id), {
@@ -103,12 +103,12 @@ export const useFeeds = () => {
   const spcKey = ['space', DefaultSpaceId];
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
     enabled: !!currUser?.jwt && !!DefaultSpaceId,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
     enabled: !!currUser?.jwt,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
   });

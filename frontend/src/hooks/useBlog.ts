@@ -64,7 +64,7 @@ export const useCommCounts = (id: string) => {
   const numOfComments = useQuery<NumOfCommentsRes, ApiError>(['commsNum', id], numOfCommsApi(id), {
     enabled: !!currUser?.jwt && !!id,
     refetchOnMount: true,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   return { numOfComments };

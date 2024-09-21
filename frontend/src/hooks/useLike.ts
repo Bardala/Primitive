@@ -11,7 +11,7 @@ export const useLikeButton = (id: string) => {
 
   const blogLikes = useQuery<BlogLikesRes, ApiError>(key, blogLikesApi(id), {
     enabled: !!currUser?.jwt && !!id,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const postLikeMutate = useMutation<CreateLikeRes, ApiError>(createLikeApi(id), {
