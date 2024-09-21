@@ -13,8 +13,10 @@ import {
   UserCard,
   UsersList,
 } from '@nest/shared';
+import { DbMigration } from 'my-migrator';
 import mysql, { RowDataPacket } from 'mysql2';
 import { Pool } from 'mysql2/promise';
+import path from 'node:path';
 
 import { DataStoreDao } from '..';
 
@@ -32,6 +34,7 @@ export class SqlDataStore implements DataStoreDao {
     user: process.env.MY_SQL_DB_USER,
     database: process.env.MY_SQL_DB_DATABASE,
     password: process.env.MY_SQL_DB_PASSWORD,
+    multipleStatements: true,
   };
 
   async runDB() {
@@ -40,6 +43,11 @@ export class SqlDataStore implements DataStoreDao {
         ...(process.env.NODE_ENV === 'prod' ? this.prodProps : this.devProps),
       })
       .promise();
+
+    const migrationPath = path.join(__dirname, '../migration');
+    const migration = new DbMigration(this.pool, migrationPath);
+    await migration.run();
+
     return this;
   }
 

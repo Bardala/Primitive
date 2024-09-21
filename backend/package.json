@@ -1,12 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "src/server.ts",
   "author": "Bardala",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@nest/shared": "file:../shared",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -14,6 +13,7 @@
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.0",
+    "my-migrator": "^1.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.5.1",
     "node-schedule": "^2.1.1",
@@ -35,7 +35,8 @@
     "nodemon": "^3.0.1"
   },
   "scripts": {
-    "build": "npm i && tsc",
+    "link:start": "npm link @nest/shared && cross-env NODE_ENV=dev nodemon src/server.ts",
+    "build": "npm link @nest/shared && npm i && tsc",
     "start": "cross-env NODE_ENV=dev nodemon src/server.ts",
     "start:prod": "pm2 delete backend; cross-env NODE_ENV=prod pm2 start --name backend \"npx ts-node --transpile-only src/server.ts\""
   },
