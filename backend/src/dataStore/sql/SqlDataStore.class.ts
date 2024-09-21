@@ -390,11 +390,35 @@ export class SqlDataStore implements DataStoreDao {
     return rows as Pick<User, 'id' | 'username'>[];
   }
 
+  private async createMainSpace(ownerId: string): Promise<void> {
+    const query = `
+    INSERT INTO spaces (id, name, status, ownerId, description, timestamp) VALUES (?,?,?,?,?,?)
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [
+      '1',
+      'Home Space',
+      'public',
+      ownerId,
+      'This the app home',
+      Date.now(),
+    ]);
+  }
+
+  async getNumberOfUsers(): Promise<number> {
+    const query = 'SELECT COUNT(*) AS nums FROM users';
+    const [rows] = await this.pool.query<RowDataPacket[]>(query);
+
+    return rows[0]['nums'] as Promise<number>;
+  }
+
   async createUser(user: User): Promise<void> {
     await this.pool.query<RowDataPacket[]>(
       'INSERT INTO users SET id=?, username=?, password=?, email=?, timestamp=?',
       [user.id, user.username, user.password, user.email, user.timestamp]
     );
+
+    const numberOfUsers = await this.getNumberOfUsers();
+    if (numberOfUsers == 1) await this.createMainSpace(user.id);
   }
 
   async getUserById(userId: string): Promise<User | undefined> {
