@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS members (
+  memberId VARCHAR(255) NOT NULL,
+  spaceId VARCHAR(255) NOT NULL,
+  isAdmin BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (memberId, spaceId)
+);

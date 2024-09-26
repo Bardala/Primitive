@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS blogs (
+  id VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  content MEDIUMTEXT NOT NULL,
+  userId VARCHAR(255) NOT NULL,
+  spaceId VARCHAR(255) NOT NULL,
+  author VARCHAR(255) NOT NULL,
+  timestamp BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (userId) REFERENCES users(id),
+  FOREIGN KEY (spaceId) REFERENCES spaces(id)
+);

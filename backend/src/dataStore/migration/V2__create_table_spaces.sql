@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS spaces (
+  id VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  status VARCHAR(255) NOT NULL,
+  ownerId VARCHAR(255) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  timestamp BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (ownerId) REFERENCES users(id)
+);

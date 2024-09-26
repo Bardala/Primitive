@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS chat (
+  id VARCHAR(255) NOT NULL,
+  spaceId VARCHAR(255) NOT NULL,
+  userId VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  timestamp BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (userId) REFERENCES users(id),
+  FOREIGN KEY (spaceId) REFERENCES spaces(id)
+);

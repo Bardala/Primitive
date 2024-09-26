@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS comments (
+  id VARCHAR(255) NOT NULL,
+  blogId VARCHAR(255) NOT NULL,
+  userId VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  timestamp BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (blogId) REFERENCES blogs(id),
+  FOREIGN KEY (userId) REFERENCES users(id)
+);

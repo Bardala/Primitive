@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS likes (
+  blogId VARCHAR(255) NOT NULL,
+  userId VARCHAR(255) NOT NULL,
+  PRIMARY KEY (blogId, userId),
+  FOREIGN KEY (blogId) REFERENCES blogs(id),
+  FOREIGN KEY (userId) REFERENCES users(id)
+);
