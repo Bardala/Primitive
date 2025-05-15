@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import http from 'http';
+import path from 'path';
 
 import { initSockets } from './Sockets.class';
 import { BlogController } from './controllers/blog.controller';
@@ -98,5 +99,10 @@ import { errorHandler } from './middleware/errorHandler';
 
   server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
+  });
+
+  // Handle React routing, return all requests to React app
+  app.get('*', (_, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
   });
 })();

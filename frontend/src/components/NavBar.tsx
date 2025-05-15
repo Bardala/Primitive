@@ -6,15 +6,19 @@ import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { isLoggedIn, logOut } from '../fetch/auth';
 import '../styles/navBar.css';
-import { NotificationMenu } from './NotificationMenu';
+import { NotificationIcon } from './NotificationIcon';
+
+const AppIcon = '/PrimitiveIcon.ico';
 
 export const NavBar = () => {
   const url = window.location.pathname.split('/')[1];
   const AppName = 'Primitive';
   const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
+
   const nav = useNavigate();
   const queryClient = useQueryClient();
 
@@ -38,13 +42,14 @@ export const NavBar = () => {
     return (
       <header className="navbar">
         <div className="title-wrapper">
-          <h1>{AppName}</h1>
+          <img src={AppIcon} alt={AppName} className="app-icon" />
         </div>
         <nav className="links">
           <Link to="/signup" onClick={() => setSignUp(true)}>
             Signup
           </Link>
           <Link to="/login">Login</Link>
+          <ToggleThemeButton />
         </nav>
       </header>
     );
@@ -53,23 +58,20 @@ export const NavBar = () => {
     <header className="navbar">
       <>
         <div className="title-wrapper">
-          <h1>{AppName}</h1>
+          <img src={AppIcon} alt={AppName} className="app-icon" />
           {currUser && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <Link to={`/u/${currUser.id}`} className="username">
                 {currUser.username}
               </Link>
-              <NotificationMenu />
             </div>
           )}
         </div>
 
         <nav className="links">
+          <Link to="/notifications" className="notifications-link">
+            <NotificationIcon />
+          </Link>
           <Link to="/u">
             <IoIosPeople />
           </Link>
@@ -79,8 +81,36 @@ export const NavBar = () => {
           <button onClick={handleClick}>
             <CiLogout />
           </button>
+          <ToggleThemeButton />
         </nav>
       </>
     </header>
   );
 };
+
+const ToggleThemeButton = () => {
+  const { isDarkMode, toggleTheme } = useTheme();
+
+  return (
+    <button onClick={toggleTheme} className="theme-toggle">
+      <span className="icon">{isDarkMode ? '☀️' : '🌙'}</span>
+    </button>
+  );
+};
+
+// const NotificationIcon = () => {
+//   const { missedMsgs } = useGetAllMissedMsgs();
+//   const [showNotification, setShowNotification] = useState(false);
+//   const notificationRef = useRef<HTMLDivElement>(null);
+//   const numOfMissedMsgs = missedMsgs?.reduce((acc, curr) => acc + curr.unread_count, 0) as number;
+
+//   useClickOutside(notificationRef, () => setShowNotification(false));
+
+//   return (
+//     <TbMessageCirclePlus
+//       className={`notification-icon ${numOfMissedMsgs > 0 ? 'new-msgs' : ''}`}
+//       style={numOfMissedMsgs! > 0 ? { color: 'green' } : { color: '#dbd8d8' }}
+//       onClick={() => setShowNotification(!showNotification)}
+//     />
+//   );
+// };

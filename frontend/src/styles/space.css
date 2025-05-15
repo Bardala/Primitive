@@ -1,8 +1,8 @@
-
 .space-page h1 {
   font-family: Arial, sans-serif;
   font-size: 36px;
-  color: #333333;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
 }
 
 .space-page nav {
@@ -12,8 +12,10 @@
 .space-page .join-button {
   font-family: Arial, sans-serif;
   font-size: 18px;
-  color: white;
-  background-color: #0078d4;
+  color: var(--color-bg-card);
+  /* White */
+  background-color: var(--color-button-bg);
+  /* #0078d4 */
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
@@ -21,18 +23,21 @@
 }
 
 .space-page button:hover {
-  background-color: #005a9e;
+  background-color: var(--color-button-hover-bg);
+  /* #005a9e */
 }
 
 .space-page .space-description {
   font-family: Arial, sans-serif;
   font-size: 18px;
-  color: #333333;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
   margin-top: 20px;
 }
 
 .space-page .not-found {
   font-family: Arial, sans-serif;
   font-size: 18px;
-  color: #333333;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
 }

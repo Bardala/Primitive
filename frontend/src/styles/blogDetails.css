@@ -2,30 +2,30 @@
 .blog-details {
   padding: 50px;
   margin: 20px 0;
-  border: 1px solid #fafafa;
+  border: 1px solid var(--color-bg-surface);
 }
 
 .blog-details .blog-title {
   /* font-size: 24px; */
-  color: var(--primary);
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
 .blog-details div {
   margin: 20px 0;
-  color: #000;
+  color: var(--color-font);
 }
 
 .blog-details a {
   text-decoration: none;
-  color: var(--primary);
+  color: inherit;
 }
 
 .blog-details .blog-body {
   line-height: 1.5;
   margin: 10px 0;
   padding: 0 16px;
-  background-color: #fafafa;
+  background-color: var(--color-bg-surface);
   color: #240f0f;
 }
 
@@ -60,7 +60,7 @@
 
 .comment {
   padding: 10px;
-  border: 1px var(--primary);
+  border: 1px var(--color-primary);
 }
 
 /* .comment p {
@@ -76,7 +76,7 @@
 }
 
 .comment .comment-body:hover {
-  background: #fafafa;
+  background: var(--color-bg-surface);
 }
 
 .create-comment button:hover {
@@ -95,17 +95,17 @@
 .create-comment textarea {
   display: inline;
   height: 25px;
-  border: 1px solid #fafafa;
+  border: 1px solid var(--color-bg-surface);
   padding: 10px;
   margin: 10px 0;
   border-style: double;
-  border-color: var(--primary);
+  border-color: var(--color-primary);
   border-radius: 12px;
 }
 
 .create-comment button {
-  background: var(--primary);
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-bg-card);
   border: none;
   padding: 8px;
 }
@@ -115,8 +115,8 @@
 }
 
 .delete-button button {
-  background-color: var(--primary);
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-bg-card);
   border: none;
   padding: 8px;
 }

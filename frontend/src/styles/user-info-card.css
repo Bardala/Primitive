@@ -8,21 +8,25 @@
 
 .user-profile h1 {
     font-size: 32px;
-    color: #0a684e;
+    color: var(--color-accent-green);
+    /* #0a684e */
     margin-bottom: 20px;
 }
 
 .user-profile h2 {
     font-size: 24px;
-    color: #0a684e;
+    color: var(--color-accent-green);
+    /* #0a684e */
     margin-bottom: 10px;
 }
 
 .user-profile .user-information {
-    background-color: #f2f2f2;
+    background-color: var(--color-secondary);
+    /* #f2f2f2 */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 4px var(--color-box-shadow);
+    /* rgba(0, 0, 0, 0.1) */
     margin-bottom: 20px;
 }
 
@@ -52,9 +56,11 @@
 
 .user-information {
     width: 300px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
+    /* #ccc */
     border-radius: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 5px var(--color-box-shadow);
+    /* rgba(0, 0, 0, 0.1) */
     margin: 20px auto;
 }
 
@@ -66,8 +72,10 @@
 }
 
 .card-header button {
-    background-color: #00a0d2;
-    color: white;
+    background-color: var(--color-button-bg);
+    /* #00a0d2 */
+    color: var(--color-bg-card);
+    /* White */
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
@@ -75,25 +83,29 @@
 }
 
 .follow {
-    background-color: #00a0d2;
-    color: white;
+    background-color: var(--color-button-bg);
+    /* #00a0d2 */
+    color: var(--color-bg-card);
+    /* White */
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
 }
 
 .follow:hover {
-    background-color: #008fb3;
+    background-color: var(--color-button-hover-bg);
+    /* #008fb3 */
 }
 
 .follow:disabled {
-    background-color: #ccc;
+    background-color: var(--color-disabled-bg);
+    /* #ccc */
 }
-
 
 .user-information a {
     text-decoration: none;
-    background: #fff;
+    background: var(--color-bg-card);
+    /* White */
     padding: 8px 16px;
     border-radius: 8px;
     font-family: "Poppins";
@@ -103,13 +115,17 @@
 }
 
 .user-information a:hover {
-    color: var(--primary);
-    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+    color: var(--color-primary);
+    /* Assuming primary green for hover text */
+    box-shadow: 1px 3px 5px var(--color-box-shadow);
+    /* rgba(0, 0, 0, 0.1) */
 }
 
 .user-information a :hover {
-    color: var(--red);
-    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+    color: var(--color-red);
+    /* Assuming red for hover text on special cases */
+    box-shadow: 1px 3px 5px var(--color-box-shadow);
+    /* rgba(0, 0, 0, 0.1) */
 }
 
 .user-links {
@@ -119,25 +135,33 @@
 
 .user-links a {
     text-decoration: none;
-    background: #fff;
+    background: var(--color-bg-card);
+    /* White */
     padding: 8px 16px;
     border-radius: 8px;
     font-family: "Poppins";
     cursor: pointer;
     font-size: 1rem;
     margin-left: 16px;
-    color: #00a0d2;
-    border: 1px solid #00a0d2;
+    color: var(--color-button-bg);
+    /* #00a0d2 */
+    border: 1px solid var(--color-button-bg);
+    /* #00a0d2 */
 }
 
 .user-links a:hover {
-    color: #fff;
-    background-color: #00a0d2;
-    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+    color: var(--color-bg-card);
+    /* White */
+    background-color: var(--color-button-bg);
+    /* #00a0d2 */
+    box-shadow: 1px 3px 5px var(--color-box-shadow);
+    /* rgba(0, 0, 0, 0.1) */
 }
 
 .user-links a:active {
-    color: #fff;
-    background-color: #008fb3;
+    color: var(--color-bg-card);
+    /* White */
+    background-color: var(--color-button-hover-bg);
+    /* #008fb3 */
     box-shadow: none;
 }

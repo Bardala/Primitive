@@ -6,7 +6,7 @@
 
 .user-list h2 {
   font-size: 24px;
-  color: var(--primary);
+  color: var(--color-primary);
   margin-bottom: 30px;
   text-align: center;
 }
@@ -14,25 +14,21 @@
 .user-list li {
   padding: 15px;
   border-radius: 8px;
-  /* margin: 10px 0; */
   cursor: pointer;
   list-style: none;
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-bottom: 50px;
-  /* increased from 30px */
+  margin: 0 50px 50px;
   display: flex;
   align-items: center;
 }
 
 .user-list li:hover {
-  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
-  /* background: #fafafa; */
+  box-shadow: 2px 4px 8px var(--color-shadow-light);
+  background: var(--color-bg-hover);
 }
 
 .user-list li a {
   text-decoration: none;
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 .user-list li .username {
@@ -46,7 +42,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  color: #666;
+  color: var(--color-muted);
   flex-grow: 1;
 }
 
@@ -54,7 +50,7 @@
   margin: 0;
   padding: 0;
   font-size: 14px;
-  color: #666;
+  color: var(--color-muted);
   display: flex;
   align-items: center;
 }

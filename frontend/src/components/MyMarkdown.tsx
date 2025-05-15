@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+// import { vscDarkPlus, vs, prism } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { dark as board } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { isArabic } from '../utils/assists';
 
@@ -17,7 +18,7 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
               <SyntaxHighlighter
                 {...props}
                 children={String(children).replace(/\n$/, '')}
-                style={vs}
+                style={board}
                 language={match[1]}
                 PreTag="div"
               />

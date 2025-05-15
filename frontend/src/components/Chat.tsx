@@ -5,6 +5,7 @@ import { BiSend } from 'react-icons/bi';
 
 import { useAuthContext } from '../context/AuthContext';
 import { useChat } from '../hooks/useChat';
+import '../styles/chat.css';
 
 // todo: add infinite scroll
 export const Chat: React.FC<{ space: Space }> = ({ space }) => {
@@ -24,7 +25,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
         <ul className="space-chat-msgs">
           {chatQuery.data?.messages.map(msg => (
             <li key={msg.id}>
-              <p style={msg.userId === currUser?.id ? { backgroundColor: '#bbd7ff' } : {}}>
+              <p className={`msgs ${msg.userId === currUser?.id ? 'current-user' : ''}`}>
                 {msg.content}
               </p>
               <p>

@@ -6,6 +6,7 @@ import { BlogDetails } from './pages/BlogDetails';
 import { CreateBlogPage } from './pages/CreateBlogPage';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { NotificationPage } from './pages/NotificationPage';
 import { Space } from './pages/Space';
 import { UserProfile } from './pages/UserProfile';
 import { UsersList } from './pages/UsersList';
@@ -26,6 +27,7 @@ function App() {
           <Route path="*" element={<h1>Not Found</h1>} />
           <Route path="/u/:id" element={<UserProfile />} />
           <Route path="/u" element={<UsersList />} />
+          <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
         </Routes>
       </BrowserRouter>

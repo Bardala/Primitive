@@ -9,21 +9,25 @@
 
 .user-profile h1 {
   font-size: 32px;
-  color: #0a684e;
+  color: var(--color-accent-green);
+  /* Replaced with --color-accent-green */
   margin-bottom: 20px;
 }
 
 .user-profile h2 {
   font-size: 24px;
-  color: #0a684e;
+  color: var(--color-accent-green);
+  /* Replaced with --color-accent-green */
   margin-bottom: 10px;
 }
 
 .user-profile .user-information {
-  background-color: #f2f2f2;
+  background-color: var(--color-secondary);
+  /* Replaced with --color-secondary */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 4px var(--color-box-shadow);
+  /* Replaced with --color-box-shadow */
   margin-bottom: 20px;
 }
 
@@ -52,9 +56,11 @@
 }
 
 .user-information {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-disabled-bg);
+  /* Replaced with --color-disabled-bg */
   border-radius: 10px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 5px var(--color-box-shadow);
+  /* Replaced with --color-box-shadow */
   margin: 20px auto;
 }
 
@@ -62,7 +68,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 10px;
-  gap: 50px
+  gap: 50px;
 }
 
 .card-header {
@@ -73,7 +79,8 @@
 }
 
 .card-header button {
-  background-color: #00a0d2;
+  background-color: var(--color-button-bg);
+  /* Replaced with --color-button-bg */
   color: white;
   border: none;
   border-radius: 5px;
@@ -82,7 +89,8 @@
 }
 
 .follow {
-  background-color: #00a0d2;
+  background-color: var(--color-button-bg);
+  /* Replaced with --color-button-bg */
   color: white;
   border: none;
   border-radius: 5px;
@@ -90,11 +98,13 @@
 }
 
 .follow:hover {
-  background-color: #008fb3;
+  background-color: var(--color-button-hover-bg);
+  /* Replaced with --color-button-hover-bg */
 }
 
 .follow:disabled {
-  background-color: #ccc;
+  background-color: var(--color-disabled-bg);
+  /* Replaced with --color-disabled-bg */
 }
 
 /* User spaces list */
@@ -113,7 +123,8 @@
 .search-curr-spaces {
   padding: 10px;
   width: 59%;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-input-border);
+  /* Replaced with --color-input-border */
   border-radius: 4px;
   box-sizing: border-box;
 }
@@ -121,9 +132,11 @@
 .space {
   width: 200px;
   height: 100px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-input-border);
+  /* Replaced with --color-input-border */
   border-radius: 4px;
-  box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 3px 5px var(--color-box-shadow);
+  /* Replaced with --color-box-shadow */
 }
 
 .space-link {
@@ -131,13 +144,14 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  /* height: 100%; */
   text-decoration: none;
-  color: var(--primary);
+  color: var(--color-accent-green);
+  /* Replaced with --color-accent-green */
 }
 
 .space-link:hover {
-  background-color: #f2f2f2;
+  background-color: var(--color-secondary);
+  /* Replaced with --color-secondary */
 }
 
 @media screen and (max-width: 600px) {

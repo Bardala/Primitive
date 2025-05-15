@@ -1,17 +1,17 @@
-.login  input {
+.login input {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
   width: 100%;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-input-border);
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 .login form button {
-  background: var(--primary);
+  background: var(--color-primary);
   border: 0;
-  color: #fff;
+  color: var(--color-bg-card);
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
@@ -23,7 +23,6 @@ form.login {
   max-width: 400px;
   margin: 40px auto;
   padding: 20px;
-  background: #fff;
+  background: var(--color-bg-card);
   border-radius: 4px;
 }
-

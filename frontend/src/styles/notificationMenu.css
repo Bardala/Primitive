@@ -1,0 +1,82 @@
+.notification-page {
+  padding: 20px;
+  background-color: var(--color-bg-surface);
+  color: var(--color-font);
+}
+
+.notification-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.notification-header h1 {
+  font-size: 24px;
+  color: var(--color-font);
+  margin-bottom: 10px;
+}
+
+.notification-header p {
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+
+.notification-body {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.notification-body li {
+  margin-bottom: 10px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--color-font);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notification-item:hover {
+  background-color: var(--color-bg-hover);
+  box-shadow: 0 2px 6px var(--color-shadow-light);
+}
+
+.notification-count {
+  color: var(--color-success);
+  font-weight: bold;
+}
+
+.notification-space-name {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.notification-highlight {
+  background-color: var(--color-primary);
+  color: var(--color-bg-card);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.notification-highlight:hover {
+  background-color: var(--color-accent-green);
+}
+
+.no-messages {
+  text-align: center;
+  font-size: 16px;
+  color: var(--color-text-muted);
+  margin-top: 20px;
+}
