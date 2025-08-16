@@ -29,7 +29,12 @@ import { errorHandler } from './middleware/errorHandler';
   initSockets(server);
 
   app.use(express.json());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: ['http://localhost:3000', 'https://primitive-production.up.railway.app'],
+      credentials: true,
+    })
+  );
 
   const user = new UserController(db);
   const blog = new BlogController(db);

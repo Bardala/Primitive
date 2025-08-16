@@ -1,1 +1,1 @@
-export const HOST = `http://localhost:4001`;
+export const HOST = `https://primitive-production.up.railway.app/`;

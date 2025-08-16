@@ -33,7 +33,7 @@ class Connection {
 export function initSockets(server: http.Server) {
   const io = new Server(server, {
     cors: {
-      origin: process.env.ORIGIN,
+      origin: ['http://localhost:3000', 'https://primitive-production.up.railway.app'],
       methods: ['GET', 'POST'],
     },
   });
