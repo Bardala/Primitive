@@ -23,17 +23,17 @@ import { DataStoreDao } from '..';
 export class SqlDataStore implements DataStoreDao {
   private pool!: Pool;
   private prodProps: mysql.PoolOptions = {
-    host: process.env.MY_SQL_DB_HOST,
-    user: process.env.MY_SQL_DB_USER,
-    database: process.env.MY_SQL_DB_DATABASE,
-    password: process.env.MY_SQL_DB_PASSWORD,
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    database: process.env.MYSQL_DATABASE,
+    password: process.env.MYSQL_ROOT_PASSWORD,
     socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
   };
   private devProps: mysql.PoolOptions = {
-    host: process.env.MY_SQL_DB_HOST,
-    user: process.env.MY_SQL_DB_USER,
-    database: process.env.MY_SQL_DB_DATABASE,
-    password: process.env.MY_SQL_DB_PASSWORD,
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    database: process.env.MYSQL_DATABASE,
+    password: process.env.MYSQL_ROOT_PASSWORD,
     multipleStatements: true,
   };
 

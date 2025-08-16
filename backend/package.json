@@ -37,10 +37,12 @@
   },
   "scripts": {
     "link:start": "npm link @nest/shared && cross-env NODE_ENV=dev nodemon src/server.ts",
-    "install-deps": "npm i && npm link @nest/shared",
-    "build": "tsc",
-    "start": "cross-env NODE_ENV=dev nodemon src/server.ts",
-    "start:prod": "pm2 delete backend; cross-env NODE_ENV=prod pm2 start --name backend \"npx ts-node --transpile-only src/server.ts\"",
+    "install-deps": "npm i && npm link @nest/shared && tsc",
+    "build": "npm link @nest/shared && tsc",
+    "start:dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
+    "start": "cross-env NODE_ENV=prod npx ts-node --transpile-only src/server.ts",
+    "start:prod": "npm start",
+    "start:gcp-prod": "pm2 delete backend; cross-env NODE_ENV=prod pm2 start --name backend \"npx ts-node --transpile-only src/server.ts\"",
     "start:js": "node dist/server"
   },
   "nodemonConfig": {
