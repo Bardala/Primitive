@@ -51,6 +51,5 @@
   "devDependencies": {
     "@tanstack/react-query-devtools": "^4.32.0",
     "@types/react-syntax-highlighter": "^15.5.7"
-  },
-  "proxy": "https://primitive-production.up.railway.app/"
+  }
 }
