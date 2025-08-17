@@ -4,7 +4,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "link": "npm link",
-    "build": "npm i && tsc && npm link"
+    "build": "npm i && tsc && npm link",
+    "vercel:build": "npm i && tsc"
   },
   "dependencies": {
     "typescript": "^5.6.2",

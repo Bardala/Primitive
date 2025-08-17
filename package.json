@@ -8,9 +8,12 @@
     "build:frontend": "cd frontend && npm i && npm run build",
     "build:all": "npm i && npm-run-all --parallel build:shared build:backend build:frontend",
     "build": "npm-run-all --parallel build:shared build:backend",
+    "vercel:build": "cd ./shared && npm install && npm run vercel:build && cd ../frontend && npm install && npm run vercel:build",
     "start:backend": "cd backend && npm start",
+    "start:backend-dev": "cd backend && npm run start:dev",
     "start:frontend": "cd frontend && npm start",
     "start": "npm-run-all --parallel start:backend start:frontend",
+    "start:dev": "npm-run-all --parallel start:backend-dev start:frontend",
     "lint": "prettier . --write",
     "lint:check": "prettier . --check",
     "test": "echo \"Error: no test specified\" && exit 1"
