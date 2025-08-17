@@ -21,12 +21,15 @@ export const SpaceForm: React.FC<{
         />
 
         <select
-          placeholder="Status"
+          // placeholder="Status"
           name="status"
           id="status"
           value={state.status}
           onChange={e => dispatch({ type: 'SET_STATUS', payload: e.target.value as SpaceStatus })}
         >
+          <option value="" disabled hidden>
+            Status
+          </option>
           <option value="public">Public</option>
           <option value="private">Private</option>
         </select>
