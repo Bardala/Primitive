@@ -33,7 +33,11 @@ class Connection {
 export function initSockets(server: http.Server) {
   const io = new Server(server, {
     cors: {
-      origin: ['http://localhost:3000', 'https://primitive.up.railway.app'],
+      origin: [
+        'http://localhost:3000',
+        'https://primitive.up.railway.app',
+        'https://primitive-space.vercel.app',
+      ],
       methods: ['GET', 'POST'],
     },
   });

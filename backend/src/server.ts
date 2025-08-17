@@ -31,7 +31,11 @@ import { errorHandler } from './middleware/errorHandler';
   app.use(express.json());
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'https://primitive.up.railway.app'],
+      origin: [
+        'http://localhost:3000',
+        'https://primitive.up.railway.app',
+        'https://primitive-space.vercel.app',
+      ],
       credentials: true,
     })
   );
