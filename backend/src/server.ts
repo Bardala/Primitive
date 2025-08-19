@@ -16,6 +16,7 @@ import { db, initDb } from './dataStore';
 import { requireAuth } from './middleware/authMiddleware';
 import { checkEmptyInput } from './middleware/checkReqBody';
 import { errorHandler } from './middleware/errorHandler';
+import { Origin } from './utils';
 
 (async () => {
   dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
@@ -31,11 +32,7 @@ import { errorHandler } from './middleware/errorHandler';
   app.use(express.json());
   app.use(
     cors({
-      origin: [
-        'http://localhost:3000',
-        'https://primitive.up.railway.app',
-        'https://primitive-space.vercel.app',
-      ],
+      origin: Origin,
       credentials: true,
     })
   );

@@ -25,7 +25,7 @@ export const NavBar = () => {
   useEffect(() => {
     if (!isLoggedIn() && !signUp) {
       queryClient.removeQueries();
-      nav('/login');
+      nav('/login', { replace: true });
     }
 
     url === 'login' && isLoggedIn() && nav('/');
@@ -34,8 +34,8 @@ export const NavBar = () => {
   const handleClick = useCallback(() => {
     logOut();
     refetchCurrUser();
-    window.location.reload();
-    nav('/login');
+    // window.location.reload();
+    nav('/login', { replace: true });
   }, [nav, refetchCurrUser]);
 
   if (!isLoggedIn())

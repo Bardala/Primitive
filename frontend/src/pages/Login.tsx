@@ -21,7 +21,7 @@ export const Login = () => {
         const currUser = await loginApi(login, password);
         localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
         refetchCurrUser();
-        nav('/');
+        nav('/', { replace: true });
       } catch (err) {
         console.error(err);
         setError((err as ApiError).message);

@@ -2,6 +2,8 @@ import { ChatMessage } from '@nest/shared';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 
+import { Origin } from './utils';
+
 class Connection {
   io: Server;
   socket: Socket;
@@ -33,11 +35,7 @@ class Connection {
 export function initSockets(server: http.Server) {
   const io = new Server(server, {
     cors: {
-      origin: [
-        'http://localhost:3000',
-        'https://primitive.up.railway.app',
-        'https://primitive-space.vercel.app',
-      ],
+      origin: Origin,
       methods: ['GET', 'POST'],
     },
   });

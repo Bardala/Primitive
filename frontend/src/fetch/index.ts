@@ -44,7 +44,7 @@ export const fetchFn = async <Request, Response>(
     if (!res.ok)
       if (data.error === ERROR.TOKEN_EXPIRED || data.error === ERROR.INVALID_TOKEN) {
         localStorage.removeItem('currUser');
-        window.location.reload();
+        // window.location.reload();
         errorFn(res.status, data.error);
       } else if (data.error === ERROR.UNAUTHORIZED) {
         window.location.href = '/login';
