@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { ReactNotifications } from 'react-notifications-component';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -31,6 +32,8 @@ function App() {
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
         </Routes>
       </BrowserRouter>
+
+      <Analytics />
     </div>
   );
 }
