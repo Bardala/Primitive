@@ -166,7 +166,7 @@
     gap: 20px;
   }
 
-  .user-profile .blog-list {
+  /* .user-profile .blog-list {
     grid-template-columns: 1fr;
-  }
+  } */
 }
