@@ -1,25 +1,70 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Primitive",
+  "name": "Primitive - A Calm Space for Sharing Thoughts",
+  "description": "A peaceful platform for sharing thoughts, ideas, and connecting with others in a mindful environment",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "PrimitiveIcon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "maskable any"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "splash_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
     }
   ],
   "start_url": ".",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#1aac83",
+  "background_color": "#fafafa",
+  "categories": ["social", "productivity", "entertainment"],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "screenshot-mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Thought",
+      "short_name": "Share",
+      "description": "Share a new thought",
+      "url": "/new",
+      "icons": [{ "src": "icon-share.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Spaces",
+      "short_name": "Spaces",
+      "description": "View your spaces",
+      "url": "/spaces",
+      "icons": [{ "src": "icon-spaces.png", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false
 }

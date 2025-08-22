@@ -88,21 +88,25 @@
   cursor: pointer;
 }
 
-.follow {
+.follow,
+.unfollow {
   background-color: var(--color-button-bg);
   /* Replaced with --color-button-bg */
   color: white;
   border: none;
   border-radius: 5px;
   padding: 5px 10px;
+  width: auto;
 }
 
-.follow:hover {
+.follow:hover,
+.unfollow:hover {
   background-color: var(--color-button-hover-bg);
   /* Replaced with --color-button-hover-bg */
 }
 
-.follow:disabled {
+.follow:disabled,
+.unfollow:disabled {
   background-color: var(--color-disabled-bg);
   /* Replaced with --color-disabled-bg */
 }

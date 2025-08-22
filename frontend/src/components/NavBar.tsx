@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { CiLogout } from 'react-icons/ci';
 import { IoIosPeople } from 'react-icons/io';
-import { TiHome } from 'react-icons/ti';
+// import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -81,7 +81,7 @@ export const NavBar = () => {
     <header className="navbar">
       <div className="navbar-container">
         <div className="logo-section">
-          <img src={AppIcon} alt={AppName} className="app-icon" />
+          <img src={AppIcon} alt={AppName} className="app-icon" onClick={() => nav('/')} />
           {currUser && (
             <Link to={`/u/${currUser.id}`} className="user-section">
               <span className="username">{currUser.username}</span>
@@ -101,10 +101,10 @@ export const NavBar = () => {
         </button>
 
         <nav className={`links ${isMenuOpen ? 'active' : ''}`}>
-          <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Home">
+          {/* <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Home">
             <TiHome />
             <span className="nav-text">Home</span>
-          </Link>
+          </Link> */}
           <Link to="/u" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Users">
             <IoIosPeople />
             <span className="nav-text">Users</span>
@@ -135,7 +135,7 @@ const ToggleThemeButton = () => {
   return (
     <button onClick={toggleTheme} className="theme-toggle nav-link" title="Toggle theme">
       <span className="icon">{isDarkMode ? '☀️' : '🌙'}</span>
-      <span className="nav-text">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+      {/* <span className="nav-text">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span> */}
     </button>
   );
 };

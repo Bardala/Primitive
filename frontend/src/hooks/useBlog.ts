@@ -51,7 +51,7 @@ export const useDeleteBlog = (id: string, blog: Blog) => {
       queryClient.invalidateQueries(['feeds']);
       queryClient.invalidateQueries(['blog', id]);
       navToSpace();
-      window.document.location.reload();
+      // window.document.location.reload();
     },
   });
 

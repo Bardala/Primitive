@@ -16,7 +16,7 @@
   color: var(--color-font);
 }
 
-.blog-details a {
+.blog-details .author-name a {
   text-decoration: none;
   color: inherit;
 }

@@ -45,9 +45,7 @@ export const Space = () => {
           {blogs?.length ? (
             <>
               <BlogList posts={blogs} />
-              <button hidden={isEnd} disabled={isEnd} onClick={() => blogsQuery.fetchNextPage()}>
-                Load More
-              </button>
+              {isEnd && <button onClick={() => blogsQuery.fetchNextPage()}>Load More</button>}
             </>
           ) : (
             <>

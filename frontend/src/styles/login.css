@@ -26,3 +26,8 @@ form.login {
   background: var(--color-bg-card);
   border-radius: 4px;
 }
+
+.login-btn,
+.signup-btn {
+  width: -webkit-fill-available;
+}
