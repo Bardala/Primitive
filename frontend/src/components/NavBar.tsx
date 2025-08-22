@@ -18,6 +18,7 @@ export const NavBar = () => {
   const AppName = 'Primitive';
   const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const nav = useNavigate();
   const queryClient = useQueryClient();
@@ -34,56 +35,96 @@ export const NavBar = () => {
   const handleClick = useCallback(() => {
     logOut();
     refetchCurrUser();
-    // window.location.reload();
     nav('/login', { replace: true });
   }, [nav, refetchCurrUser]);
 
   if (!isLoggedIn())
     return (
       <header className="navbar">
-        <div className="title-wrapper">
-          <img src={AppIcon} alt={AppName} className="app-icon" />
+        <div className="navbar-container">
+          <div className="logo-section">
+            <img src={AppIcon} alt={AppName} className="app-icon" />
+            <span className="app-name">{AppName}</span>
+          </div>
+
+          <button
+            className="mobile-menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <nav className={`links ${isMenuOpen ? 'active' : ''}`}>
+            <Link
+              to="/signup"
+              onClick={() => {
+                setSignUp(true);
+                setIsMenuOpen(false);
+              }}
+              className="nav-link signup-btn"
+            >
+              Signup
+            </Link>
+            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="nav-link login-btn">
+              Login
+            </Link>
+            <ToggleThemeButton />
+          </nav>
         </div>
-        <nav className="links">
-          <Link to="/signup" onClick={() => setSignUp(true)}>
-            Signup
-          </Link>
-          <Link to="/login">Login</Link>
-          <ToggleThemeButton />
-        </nav>
       </header>
     );
 
   return (
     <header className="navbar">
-      <>
-        <div className="title-wrapper">
+      <div className="navbar-container">
+        <div className="logo-section">
           <img src={AppIcon} alt={AppName} className="app-icon" />
           {currUser && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Link to={`/u/${currUser.id}`} className="username">
-                {currUser.username}
-              </Link>
-            </div>
+            <Link to={`/u/${currUser.id}`} className="user-section">
+              <span className="username">{currUser.username}</span>
+              <span className="user-status"></span>
+            </Link>
           )}
         </div>
 
-        <nav className="links">
-          <Link to="/notifications" className="notifications-link">
-            <NotificationIcon />
-          </Link>
-          <Link to="/u">
-            <IoIosPeople />
-          </Link>
-          <Link to="/">
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav className={`links ${isMenuOpen ? 'active' : ''}`}>
+          <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Home">
             <TiHome />
+            <span className="nav-text">Home</span>
           </Link>
-          <button onClick={handleClick}>
+          <Link to="/u" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Users">
+            <IoIosPeople />
+            <span className="nav-text">Users</span>
+          </Link>
+          <Link
+            to="/notifications"
+            className="nav-link notifications-link"
+            onClick={() => setIsMenuOpen(false)}
+            title="Notifications"
+          >
+            <NotificationIcon />
+            <span className="nav-text">Notifications</span>
+          </Link>
+          <button onClick={handleClick} className="nav-link logout-btn" title="Logout">
             <CiLogout />
+            <span className="nav-text">Logout</span>
           </button>
           <ToggleThemeButton />
         </nav>
-      </>
+      </div>
     </header>
   );
 };
@@ -92,25 +133,9 @@ const ToggleThemeButton = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
-    <button onClick={toggleTheme} className="theme-toggle">
+    <button onClick={toggleTheme} className="theme-toggle nav-link" title="Toggle theme">
       <span className="icon">{isDarkMode ? '☀️' : '🌙'}</span>
+      <span className="nav-text">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
     </button>
   );
 };
-
-// const NotificationIcon = () => {
-//   const { missedMsgs } = useGetAllMissedMsgs();
-//   const [showNotification, setShowNotification] = useState(false);
-//   const notificationRef = useRef<HTMLDivElement>(null);
-//   const numOfMissedMsgs = missedMsgs?.reduce((acc, curr) => acc + curr.unread_count, 0) as number;
-
-//   useClickOutside(notificationRef, () => setShowNotification(false));
-
-//   return (
-//     <TbMessageCirclePlus
-//       className={`notification-icon ${numOfMissedMsgs > 0 ? 'new-msgs' : ''}`}
-//       style={numOfMissedMsgs! > 0 ? { color: 'green' } : { color: '#dbd8d8' }}
-//       onClick={() => setShowNotification(!showNotification)}
-//     />
-//   );
-// };
