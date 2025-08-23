@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { CiLogout } from 'react-icons/ci';
 import { IoIosPeople } from 'react-icons/io';
-// import { TiHome } from 'react-icons/ti';
+import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -18,7 +18,7 @@ export const NavBar = () => {
   const AppName = 'Primitive';
   const [signUp, setSignUp] = useState(false);
   const { refetchCurrUser, currUser } = useAuthContext();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile] = useState(window.innerWidth <= 768);
 
   const nav = useNavigate();
   const queryClient = useQueryClient();
@@ -47,29 +47,17 @@ export const NavBar = () => {
             <span className="app-name">{AppName}</span>
           </div>
 
-          <button
-            className="mobile-menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
-          <nav className={`links ${isMenuOpen ? 'active' : ''}`}>
+          <nav className="links">
             <Link
               to="/signup"
-              onClick={() => {
-                setSignUp(true);
-                setIsMenuOpen(false);
-              }}
+              onClick={() => setSignUp(true)}
               className="nav-link signup-btn"
+              title="Sign Up"
             >
-              Signup
+              {isMobile ? 'Sign Up' : 'Sign Up'}
             </Link>
-            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="nav-link login-btn">
-              Login
+            <Link to="/login" className="nav-link login-btn" title="Login">
+              {isMobile ? 'Login' : 'Login'}
             </Link>
             <ToggleThemeButton />
           </nav>
@@ -83,44 +71,29 @@ export const NavBar = () => {
         <div className="logo-section">
           <img src={AppIcon} alt={AppName} className="app-icon" onClick={() => nav('/')} />
           {currUser && (
-            <Link to={`/u/${currUser.id}`} className="user-section">
+            <Link to={`/u/${currUser.id}`} className="user-section" title="My Profile">
               <span className="username">{currUser.username}</span>
               <span className="user-status"></span>
             </Link>
           )}
         </div>
 
-        <button
-          className="mobile-menu-toggle"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav className={`links ${isMenuOpen ? 'active' : ''}`}>
-          {/* <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Home">
+        <nav className="links">
+          <Link to="/" className="nav-link" title="Home">
             <TiHome />
-            <span className="nav-text">Home</span>
-          </Link> */}
-          <Link to="/u" className="nav-link" onClick={() => setIsMenuOpen(false)} title="Users">
-            <IoIosPeople />
-            <span className="nav-text">Users</span>
+            {!isMobile && <span className="nav-text">Home</span>}
           </Link>
-          <Link
-            to="/notifications"
-            className="nav-link notifications-link"
-            onClick={() => setIsMenuOpen(false)}
-            title="Notifications"
-          >
+          <Link to="/u" className="nav-link" title="Users">
+            <IoIosPeople />
+            {!isMobile && <span className="nav-text">Users</span>}
+          </Link>
+          <Link to="/notifications" className="nav-link notifications-link" title="Notifications">
             <NotificationIcon />
-            <span className="nav-text">Notifications</span>
+            {!isMobile && <span className="nav-text">Notifications</span>}
           </Link>
           <button onClick={handleClick} className="nav-link logout-btn" title="Logout">
             <CiLogout />
-            <span className="nav-text">Logout</span>
+            {!isMobile && <span className="nav-text">Logout</span>}
           </button>
           <ToggleThemeButton />
         </nav>
@@ -131,11 +104,12 @@ export const NavBar = () => {
 
 const ToggleThemeButton = () => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const [isMobile] = useState(window.innerWidth <= 768);
 
   return (
     <button onClick={toggleTheme} className="theme-toggle nav-link" title="Toggle theme">
       <span className="icon">{isDarkMode ? '☀️' : '🌙'}</span>
-      {/* <span className="nav-text">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span> */}
+      {!isMobile && <span className="nav-text">{isDarkMode ? 'Light' : 'Dark'}</span>}
     </button>
   );
 };

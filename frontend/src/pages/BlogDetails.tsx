@@ -9,7 +9,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { STATE } from '../utils/StatesMsgs';
-import { formatTimeShort } from '../utils/assists';
+import { formatTimeShort, isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
@@ -30,7 +30,9 @@ export const BlogDetails = () => {
         <div>
           <div className="blog-content">
             <article>
-              <h2 className="blog-title">{blog.title}</h2>
+              <h2 className={isArabic(blog.title) ? 'blog-title arabic' : 'blog-title'}>
+                {blog.title}
+              </h2>
               <div className="author-name">
                 Written by{' '}
                 <Link to={`/u/${blog.userId}`}>

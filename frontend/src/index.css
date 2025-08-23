@@ -154,9 +154,10 @@ input.error {
 }
 
 .home {
-  display: grid;
+  margin: 20px auto;
+  /* display: grid;
   grid-template-columns: 3fr 1fr;
-  gap: 100px;
+  gap: 100px; */
 }
 
 /* Not Found Page */
@@ -219,11 +220,11 @@ input.error {
     width: 100%;
   }
 
-  .home {
+  /* .home {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     gap: 0;
-  }
+  } */
 
   .space-header {
     display: none;

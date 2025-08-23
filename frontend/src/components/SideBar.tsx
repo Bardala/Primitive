@@ -1,6 +1,6 @@
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
-import { useEffect, useState } from 'react';
-import { FaBars, FaPencilAlt, FaTimes } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { RiGroup2Fill } from 'react-icons/ri';
 import { TfiWrite } from 'react-icons/tfi';
@@ -26,22 +26,8 @@ export const Sidebar: React.FC<{
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
   const [list, setList] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const nav = useNavigate();
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setIsSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
@@ -53,38 +39,31 @@ export const Sidebar: React.FC<{
   };
 
   const closeSidebar = () => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
+    setIsSidebarOpen(false);
   };
 
   return (
     <>
-      {/* Mobile toggle button */}
-      {isMobile && (
-        <button
-          className="mobile-sidebar-toggle"
-          onClick={toggleSidebar}
-          aria-label="Toggle sidebar"
-        >
-          {isSidebarOpen ? <FaTimes /> : <FaBars />}
-        </button>
-      )}
+      {/* Floating toggle button for all screens */}
+      <button
+        className="floating-sidebar-toggle"
+        onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
+      >
+        {isSidebarOpen ? <FaTimes /> : <FaPlus />}
+      </button>
 
-      {/* Overlay for mobile */}
-      {isMobile && isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
+      {/* Overlay */}
+      {isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
 
-      <aside className={`side-bar ${isMobile ? 'mobile' : ''} ${isSidebarOpen ? 'open' : ''}`}>
+      <aside className={`side-bar ${isSidebarOpen ? 'open' : ''}`}>
         {space && (
           <div className="side-bar-header">
             {isMember && (
               <div className="side-bar-nav">
-                <h3 hidden className="space-name">
-                  {space?.name}
-                </h3>
+                <h3 className="space-name">{space?.name}</h3>
                 <button
                   title='Show "list"'
-                  hidden={!space}
                   onClick={() => setList(!list)}
                   className="toggle-list-btn"
                 >
@@ -107,7 +86,6 @@ export const Sidebar: React.FC<{
             {!(!!space && !isMember) && (
               <button
                 title='Create "Short"'
-                // hidden={!!space && !isMember}
                 onClick={() => {
                   dispatch({ type: 'showCreateBlog' });
                 }}
@@ -123,7 +101,6 @@ export const Sidebar: React.FC<{
             {!((!!space && !isMember) || (space && !list)) && (
               <button
                 title='Create "Blog"'
-                // hidden={(!!space && !isMember) || (space && !list)}
                 onClick={() => {
                   nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`);
                   closeSidebar();
@@ -140,7 +117,6 @@ export const Sidebar: React.FC<{
             {!space && (
               <button
                 title='Create "space"'
-                // hidden={!!space}
                 onClick={() => {
                   dispatch({ type: 'showCreateSpace' });
                 }}
@@ -201,7 +177,6 @@ export const Sidebar: React.FC<{
                 title="leave space"
                 onClick={() => {
                   dispatch({ type: 'showLeaveSpc' });
-                  // closeSidebar();
                 }}
                 className="management-btn leave-btn"
               >
@@ -214,12 +189,10 @@ export const Sidebar: React.FC<{
           {!!space && isMember && (
             <button
               title='Show "chat"'
-              // hidden={}
               className="chat-btn"
               onClick={() => {
                 dispatch({ type: 'showChat' });
                 setList(false);
-                // closeSidebar();
               }}
             >
               <span className="btn-icon">💬</span>
