@@ -3,7 +3,7 @@
     padding: 0;
     background: var(--color-bg-card);
     box-shadow: 0 4px 20px var(--color-shadow-light);
-    position: sticky;
+    /* position: sticky; */
     top: 15px;
     /* Increased top margin */
     z-index: 1000;
