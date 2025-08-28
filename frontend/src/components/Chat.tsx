@@ -60,11 +60,15 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
             value={newMsg}
             onChange={e => setNewMsg(e.target.value)}
             placeholder="Type your message..."
-            rows={1}
             onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === 'Enter' && e.shiftKey) {
+                // Shift+Enter submits the form
                 e.preventDefault();
                 handleSubmit(e);
+              } else if (e.key === 'Enter' && !e.shiftKey) {
+                // Just Enter adds a new line
+                e.preventDefault();
+                setNewMsg(prev => prev + '\n');
               }
             }}
           />
