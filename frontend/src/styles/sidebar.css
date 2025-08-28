@@ -28,9 +28,9 @@
   max-height: 75vh;
 }
 
-.side-bar.open button {
+/* .side-bar.open button {
   width: -webkit-fill-available;
-}
+} */
 
 .side-bar-header {
   padding: 1rem 0;
@@ -56,12 +56,16 @@
   max-width: 200px;
 }
 
+.side-bar-nav button {
+  width: 36px;
+  height: 36px;
+
+}
+
 .toggle-list-btn {
   background: var(--color-secondary);
   border: 1px solid var(--color-input-border);
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;

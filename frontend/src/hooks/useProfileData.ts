@@ -64,5 +64,5 @@ export const useGetAllMissedMsgs = () => {
     refetchInterval: 10000,
   });
 
-  return { missedMsgs: query.data?.numberOfMsgs };
+  return { missedMsgs: query.data?.numberOfMsgs, refetch: query.refetch };
 };

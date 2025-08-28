@@ -37,6 +37,37 @@
   --padding-large: 40px;
   --padding-medium: 20px;
   --padding-small: 10px;
+
+  /* New typography variables */
+  --font-family-base: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+
+  /* New spacing variables */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+
+  /* New border variables */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+
+  /* New component-specific variables */
+  --blog-content-line-height: 1.7;
+  --code-block-background: #282c34;
+  --code-block-border: #3b4048;
+  --inline-code-background: rgba(175, 184, 193, 0.2);
+  --blockquote-border: var(--color-primary);
+  --blockquote-background: rgba(26, 172, 131, 0.05);
+
+  /* Shadow variables */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark mode variables */
@@ -76,6 +107,11 @@
   --color-muted: #bbb;
   /* Lighter muted color for night mode */
   --color-bg-hover: #2a2a2a;
+
+  --code-block-background: #1e2227;
+  --code-block-border: #2c313a;
+  --inline-code-background: rgba(110, 118, 129, 0.4);
+  --blockquote-background: rgba(26, 172, 131, 0.1);
 }
 
 body.dark-mode {
@@ -199,7 +235,7 @@ input.error {
   max-height: 100%;
   line-height: 1.5;
   font-weight: 500;
-  font-size: large;
+  /* font-size: large; */
 }
 
 .space-header {
@@ -226,9 +262,9 @@ input.error {
     gap: 0;
   } */
 
-  .space-header {
+  /* .space-header {
     display: none;
-  }
+  } */
 
   .space-chat {
     height: 420px;

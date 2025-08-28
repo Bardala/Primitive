@@ -15,9 +15,11 @@ export const Home = () => {
         {!!feeds?.length && (
           <>
             <BlogList posts={feeds} />
-            <button hidden={isEnd} disabled={isEnd} onClick={() => fetchNextPage()}>
-              Load More
-            </button>
+            {!isEnd && (
+              <button disabled={isEnd} onClick={() => fetchNextPage()}>
+                Load More
+              </button>
+            )}
           </>
         )}
         {feeds?.length === 0 && !isLoading && !error && (

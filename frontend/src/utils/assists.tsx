@@ -1,9 +1,15 @@
 import { formatDistanceToNowStrict } from 'date-fns';
 import { NOTIFICATION_TYPE, NotificationTitleMessage, Store } from 'react-notifications-component';
 
-export function isArabic(str: string): boolean {
-  const arabicRegex = /[\u0600-\u06FF]/;
-  return arabicRegex.test(str);
+export function isArabic(str: string, threshold: number = 0.3): boolean {
+  const arabicRegex = /[\u0600-\u06FF]/g;
+  const arabicMatches = str.match(arabicRegex);
+  const arabicCount = arabicMatches ? arabicMatches.length : 0;
+
+  const totalLetters = str.replace(/\s/g, '').length; // exclude spaces
+  const ratio = totalLetters > 0 ? arabicCount / totalLetters : 0;
+
+  return ratio >= threshold;
 }
 
 export function formatTimeShort(date: number | Date): string {
