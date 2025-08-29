@@ -231,7 +231,7 @@ input.error {
 }
 
 .blog-content {
-  max-width: 100%;
+  /* max-width: 100%; */
   max-height: 100%;
   line-height: 1.5;
   font-weight: 500;
@@ -265,6 +265,14 @@ input.error {
   /* .space-header {
     display: none;
   } */
+
+  .blog-title {
+    font-size: large;
+  }
+
+  .blog-content {
+    font-size: large;
+  }
 
   .space-chat {
     height: 420px;
