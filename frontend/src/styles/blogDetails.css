@@ -12,6 +12,7 @@
 .blog-details div {
   margin: 20px 0;
   color: var(--color-font);
+  overflow: auto;
 }
 
 .blog-details .author-name a {

@@ -4,7 +4,7 @@ import 'react-notifications-component/dist/theme.css';
 import { useParams } from 'react-router-dom';
 
 import { useCreateShort } from '../hooks/useBlog';
-import { isArabic } from '../utils/assists';
+import { isArabic, preprocessMarkdown } from '../utils/assists';
 import { MyMarkdown } from './MyMarkdown';
 
 export const ShortForm = () => {
@@ -46,6 +46,7 @@ export const ShortForm = () => {
           name="title"
           value={title}
           onChange={e => setTitle(e.target.value)}
+          style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
         />
         {preview ? (
           <MyMarkdown markdown={content} />
@@ -55,7 +56,7 @@ export const ShortForm = () => {
             name="content"
             id="content"
             value={content}
-            onChange={e => setContent(e.target.value)}
+            onChange={e => setContent(preprocessMarkdown(e.target.value))}
             style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
           />
         )}
