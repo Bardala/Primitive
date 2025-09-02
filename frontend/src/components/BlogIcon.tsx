@@ -1,4 +1,5 @@
 import { Blog, DefaultSpaceId } from '@nest/shared';
+import { FaUser } from 'react-icons/fa';
 import { LiaCommentSolid } from 'react-icons/lia';
 import { RiGroup2Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { useCommCounts } from '../hooks/useBlog';
 import { formatTimeShort, isArabic } from '../utils/assists';
 import { LikeBlogButton } from './LikeBlogButton';
 import { MyMarkdown } from './MyMarkdown';
+import { UserLink } from './UserLink';
 
 export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
   const { numOfComments } = useCommCounts(post.id!);
@@ -21,9 +23,7 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
         </div>
 
         <div className="blog-meta">
-          <Link to={`/u/${post.userId}`} className="author-link">
-            <strong>{post.author}</strong>
-          </Link>
+          <UserLink userId={post.userId!} username={post.author!} />
 
           <LikeBlogButton post={post} />
 

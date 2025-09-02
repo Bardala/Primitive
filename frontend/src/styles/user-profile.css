@@ -26,17 +26,19 @@
   gap: 1.5rem;
 }
 
-.user-info-section {
+.user-info-section,
+.user-spaces-section,
+.user-blogs-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
-.user-spaces-section,
-.user-blogs-section {
-  border-radius: var(--border-radius-md);
-  padding: 1rem;
-  box-shadow: var(--shadow-sm);
+.user-blogs-section .blog-list {
+  margin: 0;
 }
 
 .section-header {
@@ -174,12 +176,21 @@
   border-color: var(--color-primary);
 }
 
-.space-link {
+/* .blog-preview:hover  */
+
+.space-link,
+.blog-link {
   display: block;
   padding: 0.75rem;
   text-decoration: none;
   color: inherit;
   height: 100%;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .space-content {
@@ -306,24 +317,11 @@
   }
 }
 
-/* Enhanced mobile interactions */
-button,
-.space-link,
-.blog-link {
-  -webkit-tap-highlight-color: transparent;
-  min-height: 44px;
-  min-width: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Improved typography for mobile */
 body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   font-size: 16px;
-  /* Prevents zoom on iOS */
 }
 
 /* Tablet and larger screens */
@@ -341,7 +339,8 @@ body {
     padding: 1.25rem;
   }
 
-  .section-header {
+  .section-header,
+  .user-info-card .card-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -350,24 +349,15 @@ body {
   .spaces-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
-
-  .user-info-card .card-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
 }
 
 /* Desktop screens */
 @media screen and (min-width: 968px) {
-  .profile-content {
-    grid-template-columns: 1fr 2fr;
+  /* .profile-content {
     display: grid;
-  }
-
-  .user-info-section {
+    grid-template-columns: 1fr 2fr;
     gap: 1.5rem;
-  }
+  } */
 
   .spaces-grid {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

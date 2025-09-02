@@ -2,7 +2,7 @@ import { Space } from '@nest/shared';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { FormEvent, useRef } from 'react';
 import { BiSend } from 'react-icons/bi';
-import { isArabic, preprocessMarkdown } from 'src/utils/assists';
+import { isArabic } from 'src/utils/assists';
 
 import { useAuthContext } from '../context/AuthContext';
 import { useChat } from '../hooks/useChat';
@@ -60,7 +60,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
           <textarea
             className={isArabic(newMsg) ? 'arabic' : ''}
             value={newMsg}
-            onChange={e => setNewMsg(preprocessMarkdown(e.target.value))}
+            onChange={e => setNewMsg(e.target.value)}
             placeholder="Type your message..."
             onKeyDown={e => {
               if (e.key === 'Enter' && e.shiftKey) {

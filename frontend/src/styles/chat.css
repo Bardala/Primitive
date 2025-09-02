@@ -106,6 +106,7 @@
   border-radius: 1.125rem;
   margin-bottom: 0.25rem;
   word-wrap: break-word;
+  white-space: pre-wrap;
   max-width: 100%;
 }
 

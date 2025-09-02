@@ -1,5 +1,6 @@
 import { LiaCommentSolid } from 'react-icons/lia';
 import { Link, useParams } from 'react-router-dom';
+import { UserLink } from 'src/components/UserLink';
 
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
@@ -34,10 +35,7 @@ export const BlogDetails = () => {
                 {blog.title}
               </h2>
               <div className="author-name">
-                Written by{' '}
-                <Link to={`/u/${blog.userId}`}>
-                  <strong>{blog.author}</strong>
-                </Link>
+                Written by <UserLink userId={blog.userId!} username={blog.author || 'Unknown'} />
               </div>
               <div className="blog-content">
                 <MyMarkdown markdown={blog.content} />

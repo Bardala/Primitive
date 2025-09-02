@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useCreateBlog } from '../hooks/useBlog';
 import '../styles/create-blog-page.css';
-import { isArabic, preprocessMarkdown } from '../utils/assists';
+import { isArabic } from '../utils/assists';
 
 export const CreateBlogPage: React.FC = () => {
   const { spaceId, spaceName } = useParams();
@@ -144,7 +144,7 @@ export const CreateBlogPage: React.FC = () => {
                 placeholder="Write your blog content in Markdown..."
                 className="content-textarea"
                 value={content}
-                onChange={e => setContent(preprocessMarkdown(e.target.value))}
+                onChange={e => setContent(e.target.value)}
                 style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
               ></textarea>
 

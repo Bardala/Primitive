@@ -6,7 +6,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ApiError } from '../fetch/auth';
 import { createCommApi } from '../utils/api';
-import { isArabic, preprocessMarkdown } from '../utils/assists';
+import { isArabic } from '../utils/assists';
 import { MyMarkdown } from './MyMarkdown';
 
 export const Comments: FC<{
@@ -40,7 +40,7 @@ export const Comments: FC<{
             className={isArabic(content) ? 'arabic' : ''}
             placeholder="write your comment"
             value={content}
-            onChange={e => setContent(preprocessMarkdown(e.target.value))}
+            onChange={e => setContent(e.target.value)}
           ></textarea>
           <button className="add-comment" disabled={isPending}>
             Add comment

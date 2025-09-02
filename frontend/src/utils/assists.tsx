@@ -23,10 +23,6 @@ export function formatTimeShort(date: number | Date): string {
   return time;
 }
 
-export const preprocessMarkdown = (input: string): string => {
-  return input.replace(/\n/g, '  \n');
-};
-
 export const ShortLength = 500;
 
 export function addNotification({
