@@ -25,6 +25,8 @@ import {
   CreateSpaceRes,
   DeleteBlogReq,
   DeleteBlogRes,
+  DeleteCommentReq,
+  DeleteCommentRes,
   ENDPOINT,
   FeedsReq,
   FeedsRes,
@@ -57,12 +59,16 @@ import {
   UnFollowUserRes,
   UnReadMsgsNumReq,
   UnReadMsgsNumRes,
+  UpdateCommentReq,
+  UpdateCommentRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
   UserBlogsReq,
   UserBlogsRes,
   UserSpacesReq,
   UserSpacesRes,
+  updateBlogReq,
+  updateBlogRes,
 } from '@nest/shared';
 
 import { fetchFn } from '../fetch';
@@ -125,6 +131,10 @@ export const createShortApi = (title: string, content: string, spaceId: string) 
 
 export const blogApi = (blogId: string) => () =>
   fetchFn<BlogReq, BlogRes>(ENDPOINT.GET_BLOG, 'GET', undefined, currUser?.jwt, [blogId]);
+
+// api.ts
+export const updateBlogApi = (blogId: string, data: updateBlogReq) => () =>
+  fetchFn<updateBlogReq, updateBlogRes>(ENDPOINT.UPDATE_BLOG, 'PUT', data, currUser?.jwt, [blogId]);
 
 export const blogCommentsApi = (blogId: string) => () =>
   fetchFn<BlogCommentsReq, BlogCommentsRes>(
@@ -204,6 +214,21 @@ export const createCommApi = (content: string, blogId: string) => () =>
     { content },
     currUser?.jwt,
     [blogId]
+  );
+
+// utils/api.ts
+export const updateCommentApi = (commentId: string, data: UpdateCommentReq) => () =>
+  fetchFn<UpdateCommentReq, UpdateCommentRes>(ENDPOINT.UPDATE_COMMENT, 'PUT', data, currUser?.jwt, [
+    commentId,
+  ]);
+
+export const deleteCommentApi = (commentId: string) => () =>
+  fetchFn<DeleteCommentReq, DeleteCommentRes>(
+    ENDPOINT.DELETE_COMMENT,
+    'DELETE',
+    undefined,
+    currUser?.jwt,
+    [commentId]
   );
 
 export const createSpcApi = (input: CreateSpaceReq) => () =>

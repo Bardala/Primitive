@@ -103,7 +103,9 @@ export const UserProfile = () => {
             <div className="user-blogs-section">
               <div className="section-header">
                 <h2>Blogs</h2>
-                <span className="blogs-count">{blogs.length} posts</span>
+                <span className="blogs-count">
+                  {blogs.length < 10 ? blogs.length : '10+'} posts
+                </span>
               </div>
 
               {userBlogsQuery.isError && <div className="error-message">Failed to load blogs</div>}

@@ -78,6 +78,11 @@
   flex-direction: row;
 }
 
+.follow-button {
+  width: auto;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 600px) {
   .user-list li {
     flex-direction: column;

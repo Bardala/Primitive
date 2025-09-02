@@ -1,10 +1,24 @@
-import { Blog, CreateBlogRes, DefaultSpaceId, DeleteBlogRes, NumOfCommentsRes } from '@nest/shared';
+import {
+  Blog,
+  CreateBlogRes,
+  DefaultSpaceId,
+  DeleteBlogRes,
+  NumOfCommentsRes,
+  updateBlogReq,
+  updateBlogRes,
+} from '@nest/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import { createBlogApi, createShortApi, deleteBlogApi, numOfCommsApi } from '../utils/api';
+import {
+  createBlogApi,
+  createShortApi,
+  deleteBlogApi,
+  numOfCommsApi,
+  updateBlogApi,
+} from '../utils/api';
 
 const getSpcKey = (spaceId: string) =>
   spaceId === DefaultSpaceId ? ['feeds'] : ['blogs', spaceId];
@@ -38,6 +52,22 @@ export const useCreateShort = (spaceId: string, title: string, content: string) 
   );
 
   return { createShortMutation };
+};
+
+export const useUpdateBlog = (blogId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<updateBlogRes, ApiError, updateBlogReq>(
+    updateData => updateBlogApi(blogId, updateData)(),
+    {
+      onSuccess: () => {
+        // Invalidate and refetch the blog data
+        queryClient.invalidateQueries(['blog', blogId]);
+        // Also invalidate any lists that might contain this blog
+        queryClient.invalidateQueries(['blogs']);
+      },
+    }
+  );
 };
 
 export const useDeleteBlog = (id: string, blog: Blog) => {

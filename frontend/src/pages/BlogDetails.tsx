@@ -1,5 +1,5 @@
 import { LiaCommentSolid } from 'react-icons/lia';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { UserLink } from 'src/components/UserLink';
 
 import { BlogDetailsAction } from '../components/BlogDetailsAction';

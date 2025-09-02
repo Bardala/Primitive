@@ -72,7 +72,7 @@ export const NavBar = () => {
           <img src={AppIcon} alt={AppName} className="app-icon" onClick={() => nav('/')} />
           {currUser && (
             <Link to={`/u/${currUser.id}`} className="user-section" title="My Profile">
-              <span className="username">{currUser.username}</span>
+              <span className="username">{currUser.username.substring(0, 5)}</span>
               <span className="user-status"></span>
             </Link>
           )}

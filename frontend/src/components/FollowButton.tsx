@@ -10,7 +10,7 @@ export const FollowButton: React.FC<{ userId: string }> = props => {
         <button
           onClick={() => unfollowMutation.mutate()}
           disabled={unfollowMutation.isLoading}
-          className="unfollow"
+          className="follow-button unfollow"
           style={{ backgroundColor: '#41c541' }}
         >
           Following
@@ -18,7 +18,7 @@ export const FollowButton: React.FC<{ userId: string }> = props => {
       ) : (
         <button
           onClick={() => followMutation.mutate()}
-          className="follow"
+          className="follow-button follow"
           disabled={followMutation.isLoading}
         >
           Follow
