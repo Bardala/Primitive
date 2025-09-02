@@ -72,7 +72,7 @@
 /* Markdown Content Styling */
 .markdown-content {
   font-family: var(--font-family-base);
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
 }
 
 .markdown-content h1,
