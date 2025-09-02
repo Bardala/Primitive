@@ -37,7 +37,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
               >
                 <div className="message-content">
                   <div className="message-bubble">
-                    <p>{msg.content}</p>
+                    <p className={isArabic(msg.content) ? 'arabic' : ''}>{msg.content}</p>
                   </div>
                   <div className="message-meta">
                     <span className="message-sender">{msg.username}</span>

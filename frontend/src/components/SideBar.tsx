@@ -22,7 +22,7 @@ export const Sidebar: React.FC<{
   space?: Space;
   members?: SpaceMember[];
   numOfUnReadingMsgs?: number;
-}> = ({ space, members }) => {
+}> = ({ space, members, numOfUnReadingMsgs = 0 }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
   const [list, setList] = useState(false);
@@ -71,6 +71,11 @@ export const Sidebar: React.FC<{
         aria-label="Toggle sidebar"
       >
         {isSidebarOpen ? <FaTimes /> : <FaPlus />}
+        {numOfUnReadingMsgs > 0 && (
+          <span className="notification-badge floating-badge">
+            {numOfUnReadingMsgs > 99 ? '99+' : numOfUnReadingMsgs}
+          </span>
+        )}
       </button>
 
       {/* Overlay */}
