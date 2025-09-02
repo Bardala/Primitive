@@ -1,5 +1,5 @@
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { RiGroup2Fill } from 'react-icons/ri';
@@ -28,6 +28,7 @@ export const Sidebar: React.FC<{
   const [list, setList] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const nav = useNavigate();
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
@@ -42,6 +43,25 @@ export const Sidebar: React.FC<{
     setIsSidebarOpen(false);
   };
 
+  // Handle click outside to close sidebar
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('.floating-sidebar-toggle')
+      ) {
+        closeSidebar();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
   return (
     <>
       {/* Floating toggle button for all screens */}
@@ -54,9 +74,15 @@ export const Sidebar: React.FC<{
       </button>
 
       {/* Overlay */}
-      {isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
+      {isSidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={closeSidebar}
+          style={{ opacity: 1, visibility: 'visible' }}
+        ></div>
+      )}
 
-      <aside className={`side-bar ${isSidebarOpen ? 'open' : ''}`}>
+      <aside ref={sidebarRef} className={`side-bar ${isSidebarOpen ? 'open' : ''}`}>
         {space && (
           <div className="side-bar-header">
             {isMember && (
@@ -111,6 +137,21 @@ export const Sidebar: React.FC<{
                   <TfiWrite size={18} />
                 </span>
                 <span className="btn-text">Blog</span>
+              </button>
+            )}
+
+            {!!space && isMember && (
+              <button
+                title='Show "chat"'
+                className="chat-btn"
+                onClick={() => {
+                  dispatch({ type: 'showChat' });
+                  setList(false);
+                }}
+              >
+                <span className="btn-icon">💬</span>
+                <span className="btn-text">Chat</span>
+                <NotificationMsgsNumber spaceId={space?.id!} />
               </button>
             )}
 
@@ -184,21 +225,6 @@ export const Sidebar: React.FC<{
                 <span className="btn-text">Leave Space</span>
               </button>
             </div>
-          )}
-
-          {!!space && isMember && (
-            <button
-              title='Show "chat"'
-              className="chat-btn"
-              onClick={() => {
-                dispatch({ type: 'showChat' });
-                setList(false);
-              }}
-            >
-              <span className="btn-icon">💬</span>
-              <span className="btn-text">Chat</span>
-              <NotificationMsgsNumber spaceId={space?.id!} />
-            </button>
           )}
         </div>
 

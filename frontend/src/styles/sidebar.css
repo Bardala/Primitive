@@ -23,9 +23,9 @@
 .side-bar.open {
   opacity: 1;
   visibility: visible;
-  /* transform: translate(-50%, -50%) scale(1); */
-  width: 90vw;
-  max-height: 75vh;
+  transform: translate(-50%, -50%) scale(1);
+  /* width: 90vw;
+  max-height: 75vh; */
 }
 
 /* .side-bar.open button {
@@ -103,7 +103,7 @@
 
 .action-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.8rem;
 }
 

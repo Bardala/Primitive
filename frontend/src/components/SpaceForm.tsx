@@ -1,5 +1,6 @@
 import { CreateSpaceReq, Space, SpaceStatus, UpdateSpaceReq } from '@nest/shared';
 import { FormEventHandler } from 'react';
+import { isArabic } from 'src/utils/assists';
 
 export const SpaceForm: React.FC<{
   handleSubmit: FormEventHandler<HTMLFormElement>;
@@ -17,6 +18,7 @@ export const SpaceForm: React.FC<{
           name="name"
           value={state.name}
           placeholder="space name"
+          className={isArabic(state.name) ? 'arabic' : ''}
           onChange={e => dispatch({ type: 'SET_NAME', payload: e.target.value })}
         />
 
@@ -35,6 +37,7 @@ export const SpaceForm: React.FC<{
         </select>
 
         <textarea
+          className={isArabic(state.description) ? 'arabic' : ''}
           placeholder="description"
           name="description"
           id="description"
