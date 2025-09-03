@@ -46,7 +46,7 @@ export const ShortForm = () => {
           name="title"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
+          style={{ direction: isArabic(title) ? 'rtl' : 'ltr' }}
         />
         {preview ? (
           <MyMarkdown markdown={content} />

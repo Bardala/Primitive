@@ -1,6 +1,6 @@
 import { GetUsersListRes } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { UserLink } from 'src/components/UserLink';
 
 import { FollowButton } from '../components/FollowButton';
 import { useAuthContext } from '../context/AuthContext';
@@ -26,9 +26,7 @@ export const UsersList = () => {
         {users &&
           users.map(user => (
             <li key={user.id} className="user-icon">
-              <Link to={`/u/${user.id}`}>
-                <p className="username">{user.username}</p>
-              </Link>
+              <UserLink userId={user.id} username={user.username} />
               {currUser?.id !== user.id && <FollowButton userId={user.id} />}
             </li>
           ))}

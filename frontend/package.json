@@ -23,11 +23,10 @@
     "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
-    "remark-gfm": "^4.0.1",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
     "socket.io-client": "^4.7.2",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -56,6 +55,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^4.32.0",
-    "@types/react-syntax-highlighter": "^15.5.7"
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "typescript": "^5.9.2"
   }
 }

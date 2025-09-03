@@ -1,8 +1,7 @@
 import { Blog, DefaultSpaceId } from '@nest/shared';
-import { FaUser } from 'react-icons/fa';
 import { LiaCommentSolid } from 'react-icons/lia';
 import { RiGroup2Fill } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useCommCounts } from '../hooks/useBlog';
 import { formatTimeShort, isArabic } from '../utils/assists';
@@ -12,6 +11,7 @@ import { UserLink } from './UserLink';
 
 export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
   const { numOfComments } = useCommCounts(post.id!);
+  const nav = useNavigate();
 
   return (
     <div className="blog-preview" key={post.id}>
@@ -27,7 +27,11 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
 
           <LikeBlogButton post={post} />
 
-          <span className="comms-count">
+          <span
+            className="comms-count"
+            onClick={() => nav(`/b/${post.id}#comments`)}
+            title="Comments"
+          >
             {numOfComments.data?.numOfComments} <LiaCommentSolid size={20} />
           </span>
 

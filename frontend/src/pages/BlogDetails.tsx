@@ -1,5 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { LiaCommentSolid } from 'react-icons/lia';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UserLink } from 'src/components/UserLink';
 
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
@@ -14,12 +15,23 @@ import { formatTimeShort, isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
   const { id } = useParams();
+  const commentsRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
   const { currUser } = useAuthContext();
 
   const { blogQuery, commentsQuery } = useBlogPage(id!);
 
   const blog = blogQuery.data?.blog;
   const comments = commentsQuery.data?.comments;
+
+  const goToComments = () => {
+    commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (location.hash === '#comments' && commentsRef.current && !commentsQuery.isLoading)
+      commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [commentsQuery.isLoading, location]);
 
   if (blogQuery.isError) return <p className="error">{blogQuery.error.message}</p>;
 
@@ -46,7 +58,7 @@ export const BlogDetails = () => {
 
                 <LikeBlogButton post={blog} />
 
-                <p className="comments-counts">
+                <p className="comms-count" onClick={goToComments} title="Comments">
                   {' '}
                   {comments?.length} <LiaCommentSolid size={20} />
                 </p>
@@ -58,6 +70,7 @@ export const BlogDetails = () => {
 
           {commentsQuery.isError && <p className="error">{STATE.ERROR}</p>}
           {commentsQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
+          <div ref={commentsRef} />
           {currUser && id && <Comments blogId={id} comments={comments!} />}
         </div>
       )}

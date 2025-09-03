@@ -4,6 +4,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { useFollowers } from '../hooks/useFollowers';
 import '../styles/followersModal.css';
 import { FollowButton } from './FollowButton';
+import { UserLink } from './UserLink';
 
 interface FollowersModalProps {
   userId: string;
@@ -41,7 +42,7 @@ export const FollowersModal: React.FC<FollowersModalProps> = ({ userId, isOpen, 
             <div className="followers-list">
               {followers.map(follower => (
                 <div key={follower.id} className="follower-item">
-                  <span className="follower-username">{follower.username}</span>
+                  <UserLink userId={follower.id} username={follower.username} />
                   {currUser && currUser.id !== follower.id && <FollowButton userId={follower.id} />}
                 </div>
               ))}

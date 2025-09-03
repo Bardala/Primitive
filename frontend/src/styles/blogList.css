@@ -102,7 +102,7 @@ time,
   gap: 15px;
   font-size: 14px;
   color: var(--color-text-muted);
-  /* padding-top: 12px; */
+  padding-top: 12px;
   border-top: 1px solid var(--color-border);
   justify-content: space-around;
 }
@@ -203,11 +203,11 @@ time,
     min-width: 280px;
   }
 
-  .blog-header {
+  /* .blog-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-  }
+  } */
 
   .blog-header h2 {
     font-size: 20px;
@@ -231,9 +231,9 @@ time,
     padding: 12px;
   }
 
-  .blog-header h2 {
+  /* .blog-header h2 {
     font-size: 18px;
-  }
+  } */
 
   .blog-excerpt p {
     font-size: 14px;
