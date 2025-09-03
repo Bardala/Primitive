@@ -1,23 +1,24 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { CiLogout } from 'react-icons/ci';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IoIosPeople } from 'react-icons/io';
 import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { isLoggedIn, logOut } from '../fetch/auth';
+import { isLoggedIn } from '../fetch/auth';
 import '../styles/navBar.css';
 import { NotificationIcon } from './NotificationIcon';
 
 const AppIcon = '/PrimitiveIcon.ico';
 
 export const NavBar = () => {
+  const { t } = useTranslation();
   const url = window.location.pathname.split('/')[1];
   const AppName = 'Primitive';
   const [signUp, setSignUp] = useState(false);
-  const { refetchCurrUser, currUser } = useAuthContext();
+  const { currUser } = useAuthContext();
   const [isMobile] = useState(window.innerWidth <= 768);
 
   const nav = useNavigate();
@@ -31,12 +32,6 @@ export const NavBar = () => {
 
     url === 'login' && isLoggedIn() && nav('/');
   }, [nav, queryClient, signUp, url]);
-
-  const handleClick = useCallback(() => {
-    logOut();
-    refetchCurrUser();
-    nav('/login', { replace: true });
-  }, [nav, refetchCurrUser]);
 
   if (!isLoggedIn())
     return (
@@ -52,12 +47,12 @@ export const NavBar = () => {
               to="/signup"
               onClick={() => setSignUp(true)}
               className="nav-link signup-btn"
-              title="Sign Up"
+              title={t('navbar.signup')}
             >
-              {isMobile ? 'Sign Up' : 'Sign Up'}
+              {isMobile ? t('navbar.signup') : t('navbar.signup')}
             </Link>
-            <Link to="/login" className="nav-link login-btn" title="Login">
-              {isMobile ? 'Login' : 'Login'}
+            <Link to="/login" className="nav-link login-btn" title={t('navbar.login')}>
+              {isMobile ? t('navbar.login') : t('navbar.login')}
             </Link>
             <ToggleThemeButton />
           </nav>
@@ -71,7 +66,7 @@ export const NavBar = () => {
         <div className="logo-section">
           <img src={AppIcon} alt={AppName} className="app-icon" onClick={() => nav('/')} />
           {currUser && (
-            <Link to={`/u/${currUser.id}`} className="user-section" title="My Profile">
+            <Link to={`/u/${currUser.id}`} className="user-section" title={t('navbar.myProfile')}>
               <span className="username">{currUser.username.substring(0, 5)}</span>
               <span className="user-status"></span>
             </Link>
@@ -79,22 +74,27 @@ export const NavBar = () => {
         </div>
 
         <nav className="links">
-          <Link to="/" className="nav-link" title="Home">
+          <Link to="/" className="nav-link" title={t('navbar.home')}>
             <TiHome />
-            {!isMobile && <span className="nav-text">Home</span>}
+            {!isMobile && <span className="nav-text">{t('navbar.home')}</span>}
           </Link>
-          <Link to="/u" className="nav-link" title="Users">
+          <Link to="/u" className="nav-link" title={t('navbar.users')}>
             <IoIosPeople />
-            {!isMobile && <span className="nav-text">Users</span>}
+            {!isMobile && <span className="nav-text">{t('navbar.users')}</span>}
           </Link>
-          <Link to="/notifications" className="nav-link notifications-link" title="Notifications">
+          <Link
+            to="/notifications"
+            className="nav-link notifications-link"
+            title={t('navbar.notifications')}
+          >
             <NotificationIcon />
-            {!isMobile && <span className="nav-text">Notifications</span>}
+            {!isMobile && <span className="nav-text">{t('navbar.notifications')}</span>}
           </Link>
-          <button onClick={handleClick} className="nav-link logout-btn" title="Logout">
-            <CiLogout />
-            {!isMobile && <span className="nav-text">Logout</span>}
-          </button>
+          <Link to="/settings" className="nav-link" title={t('navbar.settings')}>
+            <span className="icon">⚙️</span>
+            {!isMobile && <span className="nav-text">{t('navbar.settings')}</span>}
+          </Link>
+
           <ToggleThemeButton />
         </nav>
       </div>
@@ -105,11 +105,14 @@ export const NavBar = () => {
 const ToggleThemeButton = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isMobile] = useState(window.innerWidth <= 768);
+  const { t } = useTranslation();
 
   return (
-    <button onClick={toggleTheme} className="theme-toggle nav-link" title="Toggle theme">
+    <button onClick={toggleTheme} className="theme-toggle nav-link" title={t('navbar.toggleTheme')}>
       <span className="icon">{isDarkMode ? '☀️' : '🌙'}</span>
-      {!isMobile && <span className="nav-text">{isDarkMode ? 'Light' : 'Dark'}</span>}
+      {!isMobile && (
+        <span className="nav-text">{isDarkMode ? t('navbar.light') : t('navbar.dark')}</span>
+      )}
     </button>
   );
 };

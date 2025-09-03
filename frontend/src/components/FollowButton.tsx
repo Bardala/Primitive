@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
+
 import { useFollow } from '../hooks/useFollow';
 
-export const FollowButton: React.FC<{ userId: string }> = props => {
-  const { userId } = props;
+export const FollowButton: React.FC<{ userId: string }> = ({ userId }) => {
   const { followMutation, unfollowMutation, isFollowing } = useFollow(userId);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -13,7 +15,7 @@ export const FollowButton: React.FC<{ userId: string }> = props => {
           className="follow-button unfollow"
           style={{ backgroundColor: '#41c541' }}
         >
-          Following
+          {t('followButton.following')}
         </button>
       ) : (
         <button
@@ -21,7 +23,7 @@ export const FollowButton: React.FC<{ userId: string }> = props => {
           className="follow-button follow"
           disabled={followMutation.isLoading}
         >
-          Follow
+          {t('followButton.follow')}
         </button>
       )}
     </>

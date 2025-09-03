@@ -1,4 +1,5 @@
 // components/DeleteConfirmationModal.tsx
+import { useTranslation } from 'react-i18next';
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
 
 interface DeleteConfirmationModalProps {
@@ -18,6 +19,8 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
   itemTitle,
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
@@ -26,7 +29,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         <div className="modal-header">
           <h3>
             <FiAlertTriangle className="modal-icon warning" />
-            Confirm Deletion
+            {t('deleteModal.title')}
           </h3>
           <button className="modal-close" onClick={onClose}>
             <FiX />
@@ -35,20 +38,17 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
 
         <div className="modal-body">
           <div className="confirmation-content">
-            <p className="warning-text">Are you sure you want to delete this {itemName}?</p>
+            <p className="warning-text">{t('deleteModal.confirmText', { itemName })}</p>
             <p className="item-title">{itemTitle}</p>
-            <p className="warning-note">
-              This action cannot be undone. All data associated with this {itemName} will be
-              permanently removed.
-            </p>
+            <p className="warning-note">{t('deleteModal.warningNote', { itemName })}</p>
           </div>
 
           <div className="confirmation-actions">
             <button onClick={onClose} className="btn-secondary" disabled={isLoading}>
-              Cancel
+              {t('deleteModal.cancel')}
             </button>
             <button onClick={onConfirm} className="btn-danger" disabled={isLoading}>
-              {isLoading ? 'Deleting...' : 'Delete Permanently'}
+              {isLoading ? t('deleteModal.deleting') : t('deleteModal.deletePermanently')}
             </button>
           </div>
         </div>

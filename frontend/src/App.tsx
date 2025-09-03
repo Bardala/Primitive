@@ -11,6 +11,7 @@ import { NotificationPage } from './pages/NotificationPage';
 import { Space } from './pages/Space';
 import { UserProfile } from './pages/UserProfile';
 import { UsersList } from './pages/UsersList';
+import { Settings } from './pages/settings';
 import { SignUp } from './pages/signup';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/u" element={<UsersList />} />
           <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/new/b/:spaceName/:spaceId" element={<CreateBlogPage />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </BrowserRouter>
 

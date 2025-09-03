@@ -1,4 +1,5 @@
 import { FormEvent, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiBold, FiCode, FiImage, FiItalic, FiLink, FiList, FiType } from 'react-icons/fi';
 import { MdFormatQuote } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { isArabic } from '../utils/assists';
 
 export const CreateBlogPage: React.FC = () => {
   const { spaceId, spaceName } = useParams();
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
@@ -29,7 +31,6 @@ export const CreateBlogPage: React.FC = () => {
   // Markdown formatting helpers
   const wrapSelection = (prefix: string, suffix: string = '') => {
     if (!textareaRef.current) return;
-
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
@@ -38,8 +39,6 @@ export const CreateBlogPage: React.FC = () => {
       content.substring(0, start) + prefix + selectedText + suffix + content.substring(end);
 
     setContent(newText);
-
-    // Set cursor position after the inserted text
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + prefix.length, end + prefix.length);
@@ -48,15 +47,12 @@ export const CreateBlogPage: React.FC = () => {
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
-
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const newText = content.substring(0, start) + text + content.substring(end);
 
     setContent(newText);
-
-    // Set cursor position after the inserted text
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + text.length, start + text.length);
@@ -64,31 +60,33 @@ export const CreateBlogPage: React.FC = () => {
   };
 
   const formattingOptions = [
-    { icon: <FiBold />, action: () => wrapSelection('**', '**'), title: 'Bold' },
-    { icon: <FiItalic />, action: () => wrapSelection('*', '*'), title: 'Italic' },
+    { icon: <FiBold />, action: () => wrapSelection('**', '**'), title: t('createBlog.bold') },
+    { icon: <FiItalic />, action: () => wrapSelection('*', '*'), title: t('createBlog.italic') },
     {
       icon: <FiLink />,
       action: () => insertAtCursor('[link text](https://)'),
-      title: 'Insert Link',
+      title: t('createBlog.insertLink'),
     },
-    { icon: <FiCode />, action: () => wrapSelection('`', '`'), title: 'Inline Code' },
+    { icon: <FiCode />, action: () => wrapSelection('`', '`'), title: t('createBlog.inlineCode') },
     {
       icon: <FiImage />,
       action: () => insertAtCursor('![alt text](image-url)'),
-      title: 'Insert Image',
+      title: t('createBlog.insertImage'),
     },
-    { icon: <FiList />, action: () => insertAtCursor('- List item'), title: 'Insert List' },
-    { icon: <MdFormatQuote />, action: () => insertAtCursor('> '), title: 'Insert Quote' },
-    { icon: <FiType />, action: () => wrapSelection('```\n', '\n```'), title: 'Code Block' },
+    { icon: <FiList />, action: () => insertAtCursor('- List item'), title: t('createBlog.list') },
+    { icon: <MdFormatQuote />, action: () => insertAtCursor('> '), title: t('createBlog.quote') },
+    {
+      icon: <FiType />,
+      action: () => wrapSelection('```\n', '\n```'),
+      title: t('createBlog.codeBlock'),
+    },
   ];
 
   return (
     <div className="create-blog-container">
       <h2>
-        Add a New Blog to <i>{spaceName}</i> Space
+        {t('createBlog.addNew')} <i>{spaceName}</i> {t('createBlog.space')}
       </h2>
-
-      {createBlogMutation.isError && <p className="error">{createBlogMutation.error.message}</p>}
 
       {createBlogMutation.isError && (
         <div className="error-message">{createBlogMutation.error.message}</div>
@@ -97,13 +95,12 @@ export const CreateBlogPage: React.FC = () => {
       <div className="create-blog-form">
         <div className="title-section">
           <input
-            className="title-input"
+            className={`title-input ${isArabic(title) ? 'arabic' : 'english'}`}
             type="text"
             required
             value={title}
-            placeholder="Blog Title"
+            placeholder={t('createBlog.titlePlaceholder')}
             onChange={e => setTitle(e.target.value)}
-            style={{ direction: isArabic(title) ? 'rtl' : 'ltr' }}
           />
         </div>
 
@@ -113,13 +110,13 @@ export const CreateBlogPage: React.FC = () => {
               className={activeTab === 'write' ? 'active' : ''}
               onClick={() => setActiveTab('write')}
             >
-              Write
+              {t('createBlog.write')}
             </button>
             <button
               className={activeTab === 'preview' ? 'active' : ''}
               onClick={() => setActiveTab('preview')}
             >
-              Preview
+              {t('createBlog.preview')}
             </button>
           </div>
 
@@ -141,43 +138,42 @@ export const CreateBlogPage: React.FC = () => {
 
               <textarea
                 ref={textareaRef}
-                placeholder="Write your blog content in Markdown..."
-                className="content-textarea"
+                placeholder={t('createBlog.contentPlaceholder')}
+                className={`content-textarea ${isArabic(content) ? 'arabic' : 'english'}`}
                 value={content}
                 onChange={e => setContent(e.target.value)}
-                style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
               ></textarea>
 
               <div className="markdown-cheatsheet">
-                <h4>Markdown Quick Reference</h4>
+                <h4>{t('createBlog.markdownReference')}</h4>
                 <ul>
                   <li>
-                    <strong>**Bold**</strong> - <code>**text**</code>
+                    <strong>**{t('createBlog.bold')}**</strong> - <code>**text**</code>
                   </li>
                   <li>
-                    <em>*Italic*</em> - <code>*text*</code>
+                    <em>*{t('createBlog.italic')}*</em> - <code>*text*</code>
                   </li>
                   <li>
-                    <code>`Code`</code> - <code>`code`</code>
+                    <code>`{t('createBlog.inlineCode')}`</code> - <code>`code`</code>
                   </li>
                   <li>
-                    # Heading 1 - <code># Heading</code>
+                    # {t('createBlog.heading1')} - <code># Heading</code>
                   </li>
                   <li>
-                    ## Heading 2 - <code>## Heading</code>
+                    ## {t('createBlog.heading2')} - <code>## Heading</code>
                   </li>
                   <li>
-                    [Link](url) - <code>[text](url)</code>
+                    [{t('createBlog.link')}]({t('createBlog.url')}) - <code>[text](url)</code>
                   </li>
                   <li>
-                    ![Image](url) - <code>![alt](url)</code>
+                    ![{t('createBlog.image')}]({t('createBlog.url')}) - <code>![alt](url)</code>
                   </li>
                 </ul>
               </div>
             </div>
           ) : (
             <div className="markdown-preview">
-              <MyMarkdown markdown={content || '*Nothing to preview yet*'} />
+              <MyMarkdown markdown={content || `*${t('createBlog.nothingToPreview')}*`} />
             </div>
           )}
         </div>
@@ -188,7 +184,7 @@ export const CreateBlogPage: React.FC = () => {
             onClick={handleSubmit}
             disabled={createBlogMutation.isLoading || !title.trim() || !content.trim()}
           >
-            {createBlogMutation.isLoading ? 'Publishing...' : 'Publish Blog'}
+            {createBlogMutation.isLoading ? t('createBlog.publishing') : t('createBlog.publish')}
           </button>
         </div>
       </div>

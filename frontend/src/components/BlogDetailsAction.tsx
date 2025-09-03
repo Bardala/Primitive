@@ -1,5 +1,6 @@
 import { Blog, LoginRes } from '@nest/shared';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 
@@ -11,9 +12,9 @@ export const BlogDetailsAction: React.FC<{
   blog: Blog;
   owner: string;
   currUser: LoginRes;
-}> = props => {
-  const { blog, owner, currUser } = props;
+}> = ({ blog, owner, currUser }) => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const { deleteBlogMutate } = useDeleteBlog(id!, blog);
   const currUserOwnBlog = currUser?.id === owner;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -29,7 +30,11 @@ export const BlogDetailsAction: React.FC<{
   return (
     <>
       <div className="blog-actions">
-        <button onClick={() => setIsEditModalOpen(true)} className="btn-icon" title="Edit blog">
+        <button
+          onClick={() => setIsEditModalOpen(true)}
+          className="btn-icon"
+          title={t('blogActions.editBlog')}
+        >
           <FiEdit />
         </button>
 
@@ -38,7 +43,7 @@ export const BlogDetailsAction: React.FC<{
             onClick={() => setIsDeleteModalOpen(true)}
             disabled={deleteBlogMutate.isLoading}
             className="btn-icon danger"
-            title="Delete blog"
+            title={t('blogActions.deleteBlog')}
           >
             <FiTrash2 />
           </button>
@@ -56,7 +61,7 @@ export const BlogDetailsAction: React.FC<{
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
-        itemName="blog"
+        itemName={t('blogActions.itemName')}
         itemTitle={blog.title}
         isLoading={deleteBlogMutate.isLoading}
       />

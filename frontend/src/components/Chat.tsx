@@ -1,6 +1,7 @@
 import { Space } from '@nest/shared';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { FormEvent, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BiSend } from 'react-icons/bi';
 import { isArabic } from 'src/utils/assists';
 
@@ -11,6 +12,8 @@ import '../styles/chat.css';
 export const Chat: React.FC<{ space: Space }> = ({ space }) => {
   const { currUser } = useAuthContext();
   const { msgMutate, chatQuery, chatErr, setNewMsg, newMsg } = useChat(space);
+  const { t } = useTranslation();
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLUListElement>(null);
 
@@ -21,13 +24,14 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
   };
 
   if (chatErr) return <p className="error">{chatErr.message}</p>;
+
   return (
     <div className="chat-container">
       <div className="chat-messages-container">
         <ul className="chat-messages" ref={chatContainerRef}>
           {chatQuery.data?.messages.length === 0 ? (
             <div className="empty-chat">
-              <p>No messages yet. Start the conversation!</p>
+              <p>{t('chat.noMessages')}</p>
             </div>
           ) : (
             chatQuery.data?.messages.map(msg => (
@@ -37,7 +41,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
               >
                 <div className="message-content">
                   <div className="message-bubble">
-                    <p className={isArabic(msg.content) ? 'arabic' : ''}>{msg.content}</p>
+                    <p className={isArabic(msg.content) ? 'arabic' : 'english'}>{msg.content}</p>
                   </div>
                   <div className="message-meta">
                     <span className="message-sender">{msg.username}</span>
@@ -58,17 +62,15 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
       <form onSubmit={handleSubmit} className="message-form">
         <div className="message-input-container">
           <textarea
-            className={isArabic(newMsg) ? 'arabic' : ''}
+            className={isArabic(newMsg) ? 'arabic' : 'english'}
             value={newMsg}
             onChange={e => setNewMsg(e.target.value)}
-            placeholder="Type your message..."
+            placeholder={t('chat.placeholder')}
             onKeyDown={e => {
               if (e.key === 'Enter' && e.shiftKey) {
-                // Shift+Enter submits the form
                 e.preventDefault();
                 handleSubmit(e);
               } else if (e.key === 'Enter' && !e.shiftKey) {
-                // Just Enter adds a new line
                 e.preventDefault();
                 setNewMsg(prev => prev + '\n');
               }

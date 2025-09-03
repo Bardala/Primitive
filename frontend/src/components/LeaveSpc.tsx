@@ -1,6 +1,7 @@
 import { LeaveSpaceRes } from '@nest/shared';
 import { useMutation } from '@tanstack/react-query';
 import { FC, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiError } from '../fetch/auth';
@@ -12,9 +13,10 @@ export const LeaveSpc: FC<{ spaceId: string; dispatch: React.Dispatch<SideBarAct
   dispatch,
 }) => {
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   const leaveSpc = useMutation<LeaveSpaceRes, ApiError>(leaveSpcApi(spaceId!), {
-    onSuccess: data => {
+    onSuccess: () => {
       nav('/');
     },
   });
@@ -28,12 +30,11 @@ export const LeaveSpc: FC<{ spaceId: string; dispatch: React.Dispatch<SideBarAct
     <>
       {leaveSpc.isError && <p className="error">{leaveSpc.error?.message}</p>}
       <button onClick={handleLeaveSpc} style={{ color: 'red' }}>
-        Submit
+        {t('leaveSpace.submit')}
       </button>
       <button onClick={() => dispatch({ type: 'showLeaveSpc' })} style={{ color: 'green' }}>
-        Cancel
-      </button>{' '}
-      {/* //!solve console errors if still exist*/}
+        {t('leaveSpace.cancel')}
+      </button>
     </>
   );
 };

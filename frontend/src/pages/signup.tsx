@@ -1,25 +1,33 @@
 import { FormEvent, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import '../styles/login.css';
+import '../styles/signup.css';
 import { signUpApi } from '../utils/api';
 import { LOCALS } from '../utils/localStorage';
 
 export const SignUp = () => {
+  const { t } = useTranslation();
   const nav = useNavigate();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [error, setError] = useState() as any;
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const { refetchCurrUser } = useAuthContext();
 
-  const singUpUser = useCallback(
+  const signUpUser = useCallback(
     async (e: FormEvent | MouseEvent) => {
       e.preventDefault();
+
+      if (password !== confirmPassword) {
+        setError(t('signup.passwordMismatch'));
+        return;
+      }
 
       try {
         const currUser = await signUpApi(email, password, username);
@@ -27,40 +35,67 @@ export const SignUp = () => {
         refetchCurrUser();
         nav('/');
       } catch (err) {
-        setError((err as ApiError).message);
+        setError((err as ApiError).message || t('signup.error'));
       }
     },
-    [email, nav, password, refetchCurrUser, username]
+    [email, password, confirmPassword, username, refetchCurrUser, nav, t]
   );
 
   return (
-    <>
-      <form onSubmit={e => singUpUser(e)} className="login">
-        <h3>Sign Up</h3>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+    <div className="signup-container">
+      <form onSubmit={signUpUser} className="signup-card">
+        <h3 className="signup-title">{t('signup.title')}</h3>
 
-        <label htmlFor="username">Username</label>
+        <label htmlFor="email" className="signup-label">
+          {t('signup.email')}
+        </label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="signup-input"
+        />
+
+        <label htmlFor="username" className="signup-label">
+          {t('signup.username')}
+        </label>
         <input
           id="username"
           type="text"
           value={username}
           onChange={e => setUsername(e.target.value)}
+          className="signup-input"
         />
 
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password" className="signup-label">
+          {t('signup.password')}
+        </label>
         <input
           id="password"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          className="signup-input"
+        />
+
+        <label htmlFor="confirmPassword" className="signup-label">
+          {t('signup.confirmPassword')}
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+          className="signup-input"
         />
 
         <button type="submit" className="signup-btn">
-          Sign Up
+          {t('signup.button')}
         </button>
+
         {error && <p className="error">{error}</p>}
       </form>
-    </>
+    </div>
   );
 };

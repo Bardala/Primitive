@@ -1,5 +1,6 @@
 import { DefaultSpaceId } from '@nest/shared';
 import { FormEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import 'react-notifications-component/dist/theme.css';
 import { useParams } from 'react-router-dom';
 
@@ -13,6 +14,8 @@ export const ShortForm = () => {
   const [preview, setPreview] = useState(false);
   const id = useParams().id || DefaultSpaceId;
   const { createShortMutation } = useCreateShort(id, title, content);
+
+  const { t } = useTranslation();
 
   const handleSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
@@ -29,40 +32,44 @@ export const ShortForm = () => {
   return (
     <>
       {createShortMutation.isError && <p className="error">{createShortMutation.error.message}</p>}
+
       <form className="create-blog-form" onSubmit={handleSubmit}>
         <div className="button-container">
           <button type="submit" disabled={createShortMutation.isLoading}>
-            Create
+            {t('shortForm.create')}
           </button>
           <button type="button" onClick={() => setPreview(!preview)}>
-            Preview
+            {t('shortForm.preview')}
           </button>
         </div>
 
         <input
-          placeholder="Title"
+          placeholder={t('shortForm.titlePlaceholder')}
           type="text"
           id="title"
           name="title"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          style={{ direction: isArabic(title) ? 'rtl' : 'ltr' }}
+          className={isArabic(title) ? 'arabic' : 'english'}
         />
+
         {preview ? (
           <MyMarkdown markdown={content} />
         ) : (
           <textarea
-            placeholder="Content"
+            placeholder={t('shortForm.contentPlaceholder')}
             name="content"
             id="content"
             value={content}
             onChange={e => setContent(e.target.value)}
-            style={{ direction: isArabic(content) ? 'rtl' : 'ltr' }}
+            className={isArabic(content) ? 'arabic' : 'english'}
           />
         )}
 
-        {createShortMutation.isLoading && <p>Creating...</p>}
-        {createShortMutation.isSuccess && <p className="success">Created successfully!</p>}
+        {createShortMutation.isLoading && <p>{t('shortForm.creating')}</p>}
+        {createShortMutation.isSuccess && (
+          <p className="success">{t('shortForm.createdSuccess')}</p>
+        )}
       </form>
     </>
   );

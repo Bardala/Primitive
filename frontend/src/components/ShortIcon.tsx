@@ -31,7 +31,7 @@ export const ShortIcon: React.FC<{ post: Short }> = ({ post }) => {
         </div>
 
         <div className="blog-excerpt">
-          <p className={isArabic(post.content) ? 'arabic' : ''}>
+          <p className={isArabic(post.content) ? 'arabic' : 'english'}>
             {/* <MyMarkdown markdown={post.content.slice(0, 500)} /> */}
             {post.content}
           </p>

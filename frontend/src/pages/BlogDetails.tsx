@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
 import { useLocation, useParams } from 'react-router-dom';
 import { UserLink } from 'src/components/UserLink';
@@ -10,7 +11,6 @@ import { MyMarkdown } from '../components/MyMarkdown';
 import { useAuthContext } from '../context/AuthContext';
 import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
-import { STATE } from '../utils/StatesMsgs';
 import { formatTimeShort, isArabic } from '../utils/assists';
 
 export const BlogDetails = () => {
@@ -18,6 +18,7 @@ export const BlogDetails = () => {
   const commentsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { currUser } = useAuthContext();
+  const { t } = useTranslation();
 
   const { blogQuery, commentsQuery } = useBlogPage(id!);
 
@@ -29,25 +30,31 @@ export const BlogDetails = () => {
   };
 
   useEffect(() => {
-    if (location.hash === '#comments' && commentsRef.current && !commentsQuery.isLoading)
+    if (location.hash === '#comments' && commentsRef.current && !commentsQuery.isLoading) {
       commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [commentsQuery.isLoading, location]);
 
   if (blogQuery.isError) return <p className="error">{blogQuery.error.message}</p>;
 
   return (
     <div className="blog-details">
-      {blogQuery.isError && <p className="error">{STATE.ERROR}</p>}
-      {blogQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
+      {blogQuery.isError && <p className="error">{t('state.error')}</p>}
+      {blogQuery.isLoading && <p className="loading">{t('state.loading')}</p>}
+
       {blog && (
         <div>
           <div className="blog-content">
             <article>
-              <h2 className={isArabic(blog.title) ? 'blog-title arabic' : 'blog-title'}>
+              <h2 className={isArabic(blog.title) ? 'blog-title arabic' : 'blog-title english'}>
                 {blog.title}
               </h2>
               <div className="author-name">
-                Written by <UserLink userId={blog.userId!} username={blog.author || 'Unknown'} />
+                {t('blogDetails.writtenBy')}{' '}
+                <UserLink
+                  userId={blog.userId!}
+                  username={blog.author || t('blogDetails.unknown')}
+                />
               </div>
               <div className="blog-content">
                 <MyMarkdown markdown={blog.content} />
@@ -58,8 +65,7 @@ export const BlogDetails = () => {
 
                 <LikeBlogButton post={blog} />
 
-                <p className="comms-count" onClick={goToComments} title="Comments">
-                  {' '}
+                <p className="comms-count" onClick={goToComments} title={t('blogDetails.comments')}>
                   {comments?.length} <LiaCommentSolid size={20} />
                 </p>
               </div>
@@ -68,8 +74,8 @@ export const BlogDetails = () => {
             {currUser && <BlogDetailsAction blog={blog} owner={blog.userId} currUser={currUser} />}
           </div>
 
-          {commentsQuery.isError && <p className="error">{STATE.ERROR}</p>}
-          {commentsQuery.isLoading && <p className="loading">{STATE.LOADING}</p>}
+          {commentsQuery.isError && <p className="error">{t('state.error')}</p>}
+          {commentsQuery.isLoading && <p className="loading">{t('state.loading')}</p>}
           <div ref={commentsRef} />
           {currUser && id && <Comments blogId={id} comments={comments!} />}
         </div>

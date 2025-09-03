@@ -9,6 +9,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { FC, FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiCheck, FiEdit, FiTrash2, FiX } from 'react-icons/fi';
 import { Link, useParams } from 'react-router-dom';
 
@@ -25,6 +26,7 @@ export const Comments: FC<{
 }> = ({ blogId, comments }) => {
   const { id } = useParams();
   const { currUser } = useAuthContext();
+  const { t } = useTranslation();
   const key = ['comments', blogId];
   const [content, setContent] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export const Comments: FC<{
   const queryClient = useQueryClient();
 
   const createCommMutation = useMutation<CreateCommentRes, ApiError>(createCommApi(content, id!), {
-    onSuccess: data => {
+    onSuccess: () => {
       queryClient.invalidateQueries(key);
       setContent('');
     },
@@ -58,7 +60,7 @@ export const Comments: FC<{
     }
   );
 
-  const handleSubmit = (e: MouseEvent | FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     createCommMutation.mutate();
   };
@@ -83,7 +85,7 @@ export const Comments: FC<{
   };
 
   const handleDelete = (commentId: string) => {
-    if (window.confirm('Are you sure you want to delete this comment?')) {
+    if (window.confirm(t('comments.confirmDelete'))) {
       deleteCommentMutation.mutate({ id: commentId });
     }
   };
@@ -91,99 +93,97 @@ export const Comments: FC<{
   const isPending = createCommMutation.isLoading;
 
   return (
-    <>
-      <div className="blog-comments">
-        <form onSubmit={handleSubmit} className="create-comment">
-          <textarea
-            className={isArabic(content) ? 'arabic' : ''}
-            placeholder="write your comment"
-            value={content}
-            onChange={e => setContent(e.target.value)}
-          ></textarea>
-          <button className="add-comment" disabled={isPending}>
-            Add comment
-          </button>
-        </form>
-        {createCommMutation.isError && <p className="error">{createCommMutation.error.message}</p>}
+    <div className="blog-comments">
+      <form onSubmit={handleSubmit} className="create-comment">
+        <textarea
+          className={isArabic(content) ? 'arabic' : 'english'}
+          placeholder={t('comments.placeholder')}
+          value={content}
+          onChange={e => setContent(e.target.value)}
+        ></textarea>
+        <button className="add-comment" disabled={isPending}>
+          {t('comments.add')}
+        </button>
+      </form>
+      {createCommMutation.isError && <p className="error">{createCommMutation.error.message}</p>}
 
-        <div className="comments">
-          <p>Comments</p>
-          {isPending ? (
-            <p>Loading comments...</p>
-          ) : (
-            comments?.map(comment => (
-              <div className="comment" key={comment.id}>
-                {editingCommentId === comment.id ? (
-                  <div className="comment-edit">
-                    <textarea
-                      value={editContent}
-                      onChange={e => setEditContent(e.target.value)}
-                      className={isArabic(editContent) ? 'arabic' : ''}
-                      rows={3}
-                    />
-                    <div className="comment-edit-actions">
-                      <button
-                        onClick={() => handleEditSubmit(comment.id)}
-                        disabled={updateCommentMutation.isLoading || !editContent.trim()}
-                        className="btn-comment-icon success"
-                        title="Save changes"
-                      >
-                        <FiCheck />
-                      </button>
-                      <button
-                        onClick={handleEditCancel}
-                        disabled={updateCommentMutation.isLoading}
-                        className="btn-comment-icon"
-                        title="Cancel edit"
-                      >
-                        <FiX />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={isArabic(comment.content) ? 'arabic' : ''}>
-                    <MyMarkdown markdown={comment.content} />
-                  </div>
-                )}
-
-                <div className="comment-meta">
-                  <Link className="comment-author" to={`/u/${comment.userId}`}>
-                    {comment.author}
-                  </Link>
-                  <p className="created-at">
-                    {formatDistanceToNow(new Date(comment.timestamp as number))} ago
-                  </p>
-                </div>
-
-                {currUser && currUser.id === comment.userId && editingCommentId !== comment.id && (
-                  <div className="comment-actions">
+      <div className="comments">
+        <p>{t('comments.title')}</p>
+        {isPending ? (
+          <p>{t('comments.loading')}</p>
+        ) : (
+          comments?.map(comment => (
+            <div className="comment" key={comment.id}>
+              {editingCommentId === comment.id ? (
+                <div className="comment-edit">
+                  <textarea
+                    value={editContent}
+                    onChange={e => setEditContent(e.target.value)}
+                    className={isArabic(editContent) ? 'arabic' : 'english'}
+                    rows={3}
+                  />
+                  <div className="comment-edit-actions">
                     <button
-                      onClick={() => handleEditStart(comment)}
+                      onClick={() => handleEditSubmit(comment.id)}
+                      disabled={updateCommentMutation.isLoading || !editContent.trim()}
+                      className="btn-comment-icon success"
+                      title={t('comments.save')}
+                    >
+                      <FiCheck />
+                    </button>
+                    <button
+                      onClick={handleEditCancel}
+                      disabled={updateCommentMutation.isLoading}
                       className="btn-comment-icon"
-                      title="Edit comment"
+                      title={t('comments.cancel')}
                     >
-                      <FiEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(comment.id)}
-                      disabled={deleteCommentMutation.isLoading}
-                      className="btn-comment-icon danger"
-                      title="Delete comment"
-                    >
-                      <FiTrash2 />
+                      <FiX />
                     </button>
                   </div>
-                )}
+                </div>
+              ) : (
+                <div className={isArabic(comment.content) ? 'arabic' : 'english'}>
+                  <MyMarkdown markdown={comment.content} />
+                </div>
+              )}
 
-                {updateCommentMutation.isError &&
-                  updateCommentMutation.variables?.id === comment.id && (
-                    <p className="error">{updateCommentMutation.error.message}</p>
-                  )}
+              <div className="comment-meta">
+                <Link className="comment-author" to={`/u/${comment.userId}`}>
+                  {comment.author}
+                </Link>
+                <p className="created-at">
+                  {formatDistanceToNow(new Date(comment.timestamp as number))} {t('comments.ago')}
+                </p>
               </div>
-            ))
-          )}
-        </div>
+
+              {currUser && currUser.id === comment.userId && editingCommentId !== comment.id && (
+                <div className="comment-actions">
+                  <button
+                    onClick={() => handleEditStart(comment)}
+                    className="btn-comment-icon"
+                    title={t('comments.edit')}
+                  >
+                    <FiEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(comment.id)}
+                    disabled={deleteCommentMutation.isLoading}
+                    className="btn-comment-icon danger"
+                    title={t('comments.delete')}
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+              )}
+
+              {updateCommentMutation.isError &&
+                updateCommentMutation.variables?.id === comment.id && (
+                  <p className="error">{updateCommentMutation.error.message}</p>
+                )}
+            </div>
+          ))
+        )}
       </div>
-    </>
+    </div>
   );
 };

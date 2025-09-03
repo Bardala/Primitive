@@ -104,7 +104,7 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   };
 
   return (
-    <div className={`markdown-content ${isArabic(markdown) ? 'arabic' : ''}`}>
+    <div className={`markdown-content ${isArabic(markdown) ? 'arabic' : 'english'}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}

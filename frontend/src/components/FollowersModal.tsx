@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FiUsers, FiX } from 'react-icons/fi';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -15,6 +16,7 @@ interface FollowersModalProps {
 export const FollowersModal: React.FC<FollowersModalProps> = ({ userId, isOpen, onClose }) => {
   const { currUser } = useAuthContext();
   const { followers, followersQuery } = useFollowers(userId);
+  const { t } = useTranslation();
 
   if (!isOpen || currUser?.id !== userId) return null;
 
@@ -24,7 +26,7 @@ export const FollowersModal: React.FC<FollowersModalProps> = ({ userId, isOpen, 
         <div className="modal-header">
           <h3>
             <FiUsers className="modal-icon" />
-            Followers
+            {t('followersModal.title')}
           </h3>
           <button className="modal-close" onClick={onClose}>
             <FiX />
@@ -33,11 +35,11 @@ export const FollowersModal: React.FC<FollowersModalProps> = ({ userId, isOpen, 
 
         <div className="modal-body">
           {followersQuery.isLoading ? (
-            <div className="loading">Loading followers...</div>
+            <div className="loading">{t('followersModal.loading')}</div>
           ) : followersQuery.isError ? (
-            <div className="error">Error loading followers</div>
+            <div className="error">{t('followersModal.error')}</div>
           ) : followers.length === 0 ? (
-            <div className="empty-state">No followers yet</div>
+            <div className="empty-state">{t('followersModal.empty')}</div>
           ) : (
             <div className="followers-list">
               {followers.map(follower => (

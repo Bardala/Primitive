@@ -1,5 +1,6 @@
 import { GetUsersListRes } from '@nest/shared';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserLink } from 'src/components/UserLink';
 
 import { FollowButton } from '../components/FollowButton';
@@ -10,6 +11,7 @@ import { userListApi } from '../utils/api';
 
 export const UsersList = () => {
   const { currUser } = useAuthContext();
+  const { t } = useTranslation();
   const key = ['usersList'];
 
   const usersListQuery = useQuery<GetUsersListRes, ApiError>(key, userListApi(), {
@@ -21,7 +23,12 @@ export const UsersList = () => {
 
   return (
     <div className="user-list">
-      <h2>List of users</h2>
+      <h2>{t('usersList.title')}</h2>
+
+      {usersListQuery.isError && <div className="error-message">{t('usersList.error')}</div>}
+
+      {usersListQuery.isLoading && <div className="loading-state">{t('usersList.loading')}</div>}
+
       <ul>
         {users &&
           users.map(user => (

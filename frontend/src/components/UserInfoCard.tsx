@@ -1,6 +1,7 @@
 import { UserCard } from '@nest/shared';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiCalendar, FiFileText, FiMail, FiUsers } from 'react-icons/fi';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -15,6 +16,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
   const { currUser } = useAuthContext();
   const { followersQuery } = useFollow(userCard.id);
   const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const followersCount = followersQuery.data?.followers?.length || 0;
 
@@ -22,7 +24,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
     <>
       <div className="user-info-card">
         <div className="card-header">
-          <h2>User Information</h2>
+          <h2>{t('userInfoCard.title')}</h2>
           {currUser && currUser.id !== userCard.id && <FollowButton userId={userCard.id} />}
         </div>
 
@@ -30,7 +32,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
           <div className="info-item">
             <FiMail className="info-icon" />
             <div className="info-content">
-              <span className="info-label">Email</span>
+              <span className="info-label">{t('userInfoCard.email')}</span>
               <span className="info-value">{userCard.email}</span>
             </div>
           </div>
@@ -38,7 +40,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
           <div className="info-item clickable" onClick={() => setIsFollowersModalOpen(true)}>
             <FiUsers className="info-icon" />
             <div className="info-content">
-              <span className="info-label">Followers</span>
+              <span className="info-label">{t('userInfoCard.followers')}</span>
               <span className="info-value">{followersCount}</span>
             </div>
           </div>
@@ -46,7 +48,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
           <div className="info-item">
             <FiFileText className="info-icon" />
             <div className="info-content">
-              <span className="info-label">Blogs</span>
+              <span className="info-label">{t('userInfoCard.blogs')}</span>
               <span className="info-value">{blogsLength < 10 ? blogsLength : '10+'}</span>
             </div>
           </div>
@@ -54,7 +56,7 @@ export const UserInfoCard: React.FC<{ userCard: UserCard; blogsLength: number }>
           <div className="info-item">
             <FiCalendar className="info-icon" />
             <div className="info-content">
-              <span className="info-label">Member since</span>
+              <span className="info-label">{t('userInfoCard.memberSince')}</span>
               <span className="info-value">
                 {formatDistanceToNow(new Date(userCard.timestamp), { addSuffix: true })}
               </span>

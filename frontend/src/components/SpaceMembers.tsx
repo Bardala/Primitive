@@ -1,13 +1,16 @@
 import { Space, SpaceMember } from '@nest/shared';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export const SpaceMembers: React.FC<{ users: SpaceMember[]; space: Space }> = ({
   users,
   space,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="space-user-list">
-      <h3>{users.length} users</h3>
+      <h3>{t('spaceMembers.usersCount', { count: users.length })}</h3>
       <ul>
         {users &&
           users.map(user => (

@@ -1,5 +1,6 @@
 import { Space } from '@nest/shared';
 import { FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiFileText, FiSearch } from 'react-icons/fi';
 import { Link, useParams } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ import '../styles/user-profile.css';
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
   const { id } = useParams();
+  const { t } = useTranslation();
 
   const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage, isEnd } = useProfileData(id!);
 
@@ -37,16 +39,16 @@ export const UserProfile = () => {
 
   return (
     <div className="user-profile-container">
-      {userCardQuery.isError && (
-        <div className="error-message">Something went wrong. Please try again later.</div>
-      )}
+      {userCardQuery.isError && <div className="error-message">{t('userProfile.error')}</div>}
 
-      {userCardQuery.isLoading && <div className="loading-state">Loading user profile...</div>}
+      {userCardQuery.isLoading && (
+        <div className="loading-state">{t('userProfile.loadingProfile')}</div>
+      )}
 
       {userCard && currUser && (
         <div className="user-profile">
           <header className="profile-header">
-            <h1>{userCard.username}'s Profile</h1>
+            <h1>{t('userProfile.profileTitle', { username: userCard.username })}</h1>
           </header>
 
           <div className="profile-content">
@@ -55,12 +57,12 @@ export const UserProfile = () => {
 
               <div className="user-spaces-section">
                 <div className="section-header">
-                  <h2>Spaces</h2>
+                  <h2>{t('userProfile.spaces')}</h2>
                   <div className="search-container">
                     <FiSearch className="search-icon" />
                     <input
                       type="search"
-                      placeholder="Search spaces..."
+                      placeholder={t('userProfile.searchSpaces')}
                       onChange={handleSearch}
                       className="search-input"
                     />
@@ -68,11 +70,11 @@ export const UserProfile = () => {
                 </div>
 
                 {userSpacesQuery.isError && (
-                  <div className="error-message">Failed to load spaces</div>
+                  <div className="error-message">{t('userProfile.errorSpaces')}</div>
                 )}
 
                 {userSpacesQuery.isLoading && (
-                  <div className="loading-state">Loading spaces...</div>
+                  <div className="loading-state">{t('userProfile.loadingSpaces')}</div>
                 )}
 
                 <div className="spaces-grid">
@@ -93,7 +95,7 @@ export const UserProfile = () => {
 
                   {(search || spaces)?.length === 0 && !userSpacesQuery.isLoading && (
                     <div className="empty-state">
-                      <p>No spaces found</p>
+                      <p>{t('userProfile.noSpaces')}</p>
                     </div>
                   )}
                 </div>
@@ -102,15 +104,19 @@ export const UserProfile = () => {
 
             <div className="user-blogs-section">
               <div className="section-header">
-                <h2>Blogs</h2>
+                <h2>{t('userProfile.blogs')}</h2>
                 <span className="blogs-count">
-                  {blogs.length < 10 ? blogs.length : '10+'} posts
+                  {blogs.length < 10 ? blogs.length : '10+'} {t('userProfile.posts')}
                 </span>
               </div>
 
-              {userBlogsQuery.isError && <div className="error-message">Failed to load blogs</div>}
+              {userBlogsQuery.isError && (
+                <div className="error-message">{t('userProfile.errorBlogs')}</div>
+              )}
 
-              {userBlogsQuery.isLoading && <div className="loading-state">Loading blogs...</div>}
+              {userBlogsQuery.isLoading && (
+                <div className="loading-state">{t('userProfile.loadingBlogs')}</div>
+              )}
 
               {blogs.length > 0 ? (
                 <>
@@ -121,7 +127,9 @@ export const UserProfile = () => {
                       onClick={() => userBlogsQuery.fetchNextPage()}
                       disabled={userBlogsQuery.isFetchingNextPage}
                     >
-                      {userBlogsQuery.isFetchingNextPage ? 'Loading...' : 'Load More'}
+                      {userBlogsQuery.isFetchingNextPage
+                        ? t('userProfile.loading')
+                        : t('userProfile.loadMore')}
                     </button>
                   )}
                 </>
@@ -129,12 +137,10 @@ export const UserProfile = () => {
                 !userBlogsQuery.isLoading && (
                   <div className="empty-state">
                     <FiFileText className="empty-icon" />
-                    <p>No blogs yet</p>
-                    {isMyPage && (
-                      <Link to="/create-blog" className="create-link">
-                        Create your first blog
-                      </Link>
-                    )}
+                    <p>{t('userProfile.noBlogs')}</p>
+                    <Link to="/create-blog" className="create-link">
+                      {t('userProfile.createBlog')}
+                    </Link>
                   </div>
                 )
               )}

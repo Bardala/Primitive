@@ -1,6 +1,7 @@
 // components/EditBlogModal.tsx
 import { Blog } from '@nest/shared';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiCode, FiEdit, FiEye, FiX } from 'react-icons/fi';
 import { useUpdateBlog } from 'src/hooks/useBlog';
 import { isArabic } from 'src/utils/assists';
@@ -18,6 +19,7 @@ export const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, isOpen, onCl
   const [content, setContent] = useState(blog.content);
   const [isPreview, setIsPreview] = useState(false);
   const updateBlogMutation = useUpdateBlog(blog.id);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +45,14 @@ export const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, isOpen, onCl
         <div className="modal-header">
           <h3>
             <FiEdit className="modal-icon" />
-            Edit Blog
+            {t('editBlogModal.title')}
           </h3>
           <div className="modal-header-actions">
             <button
               type="button"
               onClick={handlePreviewToggle}
               className="btn-icon"
-              title={isPreview ? 'Switch to edit mode' : 'Preview blog'}
+              title={isPreview ? t('editBlogModal.switchToEdit') : t('editBlogModal.preview')}
             >
               {isPreview ? <FiCode /> : <FiEye />}
             </button>
@@ -64,38 +66,38 @@ export const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, isOpen, onCl
           {!isPreview ? (
             <>
               <div className="form-group">
-                <label htmlFor="title">Title</label>
+                <label htmlFor="title">{t('editBlogModal.fields.title')}</label>
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  placeholder="Enter blog title"
+                  placeholder={t('editBlogModal.placeholders.title')}
                   required
-                  className={isArabic(title) ? 'arabic' : ''}
+                  className={isArabic(title) ? 'arabic' : 'english'}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="content">Content</label>
+                <label htmlFor="content">{t('editBlogModal.fields.content')}</label>
                 <textarea
                   id="content"
                   value={content}
                   onChange={e => setContent(e.target.value)}
-                  placeholder="Write your blog content..."
+                  placeholder={t('editBlogModal.placeholders.content')}
                   rows={10}
                   required
-                  className={isArabic(content) ? 'arabic' : ''}
+                  className={isArabic(content) ? 'arabic' : 'english'}
                 />
               </div>
             </>
           ) : (
             <div className="preview-container">
-              <div className="preview-header">Preview</div>
+              <div className="preview-header">{t('editBlogModal.previewHeader')}</div>
               <article className="preview-content">
-                <h2 className="preview-title">{title || 'Untitled'}</h2>
+                <h2 className="preview-title">{title || t('editBlogModal.untitled')}</h2>
                 <div className="preview-markdown">
-                  <MyMarkdown markdown={content || '*No content yet*'} />
+                  <MyMarkdown markdown={content || t('editBlogModal.noContent')} />
                 </div>
               </article>
             </div>
@@ -108,20 +110,22 @@ export const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, isOpen, onCl
               className="btn-secondary"
               disabled={updateBlogMutation.isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               className="btn-primary"
               disabled={updateBlogMutation.isLoading || !title.trim() || !content.trim()}
             >
-              {updateBlogMutation.isLoading ? 'Updating...' : 'Update Blog'}
+              {updateBlogMutation.isLoading
+                ? t('editBlogModal.updating')
+                : t('editBlogModal.update')}
             </button>
           </div>
 
           {updateBlogMutation.isError && (
             <div className="error-message">
-              {updateBlogMutation.error.message || 'Failed to update blog'}
+              {updateBlogMutation.error.message || t('editBlogModal.error')}
             </div>
           )}
         </form>

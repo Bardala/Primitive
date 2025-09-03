@@ -1,0 +1,234 @@
+{
+  "navbar": {
+    "signup": "Sign Up",
+    "login": "Login",
+    "home": "Home",
+    "users": "Users",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "toggleTheme": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "myProfile": "My Profile"
+  },
+
+  "login": {
+    "title": "Login",
+    "loginBy": "Login by <strong>Email</strong> or <strong>Username</strong>",
+    "password": "Password",
+    "button": "Login",
+    "error": "Invalid login credentials"
+  },
+
+  "signup": {
+    "title": "Sign Up",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "button": "Sign Up",
+    "error": "Sign up failed",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "blog": {
+    "comments": "Comments",
+    "space": "Space",
+    "createdAt": "Created at"
+  },
+  "userProfile": {
+    "error": "Something went wrong. Please try again later.",
+    "loadingProfile": "Loading user profile...",
+    "profileTitle": "{{username}}'s Profile",
+    "spaces": "Spaces",
+    "searchSpaces": "Search spaces...",
+    "errorSpaces": "Failed to load spaces",
+    "loadingSpaces": "Loading spaces...",
+    "noSpaces": "No spaces found",
+    "blogs": "Blogs",
+    "posts": "posts",
+    "errorBlogs": "Failed to load blogs",
+    "loadingBlogs": "Loading blogs...",
+    "loadMore": "Load More",
+    "loading": "Loading...",
+    "noBlogs": "No blogs yet",
+    "createBlog": "Create your first blog"
+  },
+  "userInfoCard": {
+    "title": "User Information",
+    "email": "Email",
+    "followers": "Followers",
+    "blogs": "Blogs",
+    "memberSince": "Member since"
+  },
+  "usersList": {
+    "title": "List of users",
+    "error": "Failed to load users",
+    "loading": "Loading users..."
+  },
+  "followButton": {
+    "follow": "Follow",
+    "following": "Following"
+  },
+  "state": {
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  },
+  "blogDetails": {
+    "writtenBy": "Written by",
+    "unknown": "Unknown",
+    "comments": "Comments"
+  },
+  "blogActions": {
+    "editBlog": "Edit blog",
+    "deleteBlog": "Delete blog",
+    "itemName": "blog"
+  },
+  "comments": {
+    "placeholder": "Write your comment",
+    "add": "Add comment",
+    "title": "Comments",
+    "loading": "Loading comments...",
+    "save": "Save changes",
+    "cancel": "Cancel edit",
+    "edit": "Edit comment",
+    "delete": "Delete comment",
+    "confirmDelete": "Are you sure you want to delete this comment?",
+    "ago": "ago"
+  },
+  "chat": {
+    "noMessages": "No messages yet. Start the conversation!",
+    "placeholder": "Type your message..."
+  },
+  "space": {
+    "loading": "Loading...",
+    "title": "Space",
+    "join": "Join",
+    "loadMore": "Load More",
+    "noBlogs": "There aren't any blogs yet."
+  },
+  "spaceForm": {
+    "namePlaceholder": "Space name",
+    "status": "Status",
+    "public": "Public",
+    "private": "Private",
+    "descriptionPlaceholder": "Description",
+    "create": "Create"
+  },
+  "createBlog": {
+    "addNew": "Add a New Blog to",
+    "space": "Space",
+    "titlePlaceholder": "Blog Title",
+    "contentPlaceholder": "Write your blog content in Markdown...",
+    "write": "Write",
+    "preview": "Preview",
+    "bold": "Bold",
+    "italic": "Italic",
+    "insertLink": "Insert Link",
+    "inlineCode": "Inline Code",
+    "insertImage": "Insert Image",
+    "list": "Insert List",
+    "quote": "Insert Quote",
+    "codeBlock": "Code Block",
+    "markdownReference": "Markdown Quick Reference",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "link": "Link",
+    "image": "Image",
+    "url": "url",
+    "nothingToPreview": "Nothing to preview yet",
+    "publish": "Publish Blog",
+    "publishing": "Publishing..."
+  },
+  "shortForm": {
+    "create": "Create",
+    "preview": "Preview",
+    "titlePlaceholder": "Title",
+    "contentPlaceholder": "Content",
+    "creating": "Creating...",
+    "createdSuccess": "Created successfully!"
+  },
+  "followersModal": {
+    "title": "Followers",
+    "loading": "Loading followers...",
+    "error": "Error loading followers",
+    "empty": "No followers yet"
+  },
+  "editBlogModal": {
+    "title": "Edit Blog",
+    "switchToEdit": "Switch to edit mode",
+    "preview": "Preview blog",
+    "fields": {
+      "title": "Title",
+      "content": "Content"
+    },
+    "placeholders": {
+      "title": "Enter blog title",
+      "content": "Write your blog content..."
+    },
+    "previewHeader": "Preview",
+    "untitled": "Untitled",
+    "noContent": "*No content yet*",
+    "updating": "Updating...",
+    "update": "Update Blog",
+    "error": "Failed to update blog"
+  },
+  "common": {
+    "cancel": "Cancel"
+  },
+  "deleteModal": {
+    "title": "Confirm Deletion",
+    "confirmText": "Are you sure you want to delete this {{itemName}}?",
+    "warningNote": "This action cannot be undone. All data associated with this {{itemName}} will be permanently removed.",
+    "cancel": "Cancel",
+    "deleting": "Deleting...",
+    "deletePermanently": "Delete Permanently"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "youHaveNewMessages": "You have {{count}} new message{{count > 1 ? 's' : ''}}",
+    "spaceMessage": "You have {{count}} new message{{count > 1 ? 's' : ''}} in {{spaceName}}.",
+    "noNewMessages": "No new messages"
+  },
+  "sidebar": {
+    "toggle": "Toggle sidebar",
+    "toggleList": "Toggle member list",
+    "membersCount": "{{count}} members",
+    "createShort": "Create short post",
+    "short": "Short",
+    "createBlog": "Create blog",
+    "blog": "Blog",
+    "showChat": "Show chat",
+    "chat": "Chat",
+    "createSpace": "Create space",
+    "space": "Space",
+    "management": "Space Management",
+    "showMembers": "Show members",
+    "members": "Members",
+    "addMember": "Add Member",
+    "editSpace": "Edit Space",
+    "leaveSpace": "Leave Space"
+  },
+  "leaveSpace": {
+    "submit": "Leave Space",
+    "cancel": "Cancel"
+  },
+  "editSpace": {
+    "success": "Space updated successfully"
+  },
+  "spaceMembers": {
+    "usersCount": "{{count}} user",
+    "usersCount_plural": "{{count}} users"
+  },
+  "addMember": {
+    "label": "Add member",
+    "placeholder": "username or id",
+    "button": "Add",
+    "success": "New user is added",
+    "error": "Failed to add member"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "logout": "Logout"
+  }
+}

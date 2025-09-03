@@ -1,0 +1,232 @@
+{
+  "navbar": {
+    "signup": "إنشاء حساب",
+    "login": "تسجيل الدخول",
+    "home": "الرئيسية",
+    "users": "المستخدمون",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "toggleTheme": "تبديل الوضع",
+    "light": "فاتح",
+    "dark": "داكن",
+    "myProfile": "ملفي الشخصي"
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "loginBy": "سجّل بواسطة <strong>البريد الإلكتروني</strong> أو <strong>اسم المستخدم</strong>",
+    "password": "كلمة المرور",
+    "button": "تسجيل الدخول",
+    "error": "بيانات تسجيل الدخول غير صحيحة"
+  },
+  "signup": {
+    "title": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "button": "إنشاء حساب",
+    "error": "فشل إنشاء الحساب",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين"
+  },
+  "blog": {
+    "comments": "التعليقات",
+    "space": "المجموعة",
+    "createdAt": "تاريخ النشر"
+  },
+  "userProfile": {
+    "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.",
+    "loadingProfile": "جاري تحميل الملف الشخصي...",
+    "profileTitle": "ملف {{username}} الشخصي",
+    "spaces": "المساحات",
+    "searchSpaces": "ابحث في المساحات...",
+    "errorSpaces": "فشل في تحميل المساحات",
+    "loadingSpaces": "جاري تحميل المساحات...",
+    "noSpaces": "لا توجد مساحات",
+    "blogs": "المدونات",
+    "posts": "منشور",
+    "errorBlogs": "فشل في تحميل المدونات",
+    "loadingBlogs": "جاري تحميل المدونات...",
+    "loadMore": "تحميل المزيد",
+    "loading": "جاري التحميل...",
+    "noBlogs": "لا توجد مدونات بعد",
+    "createBlog": "أنشئ أول مدونة لك"
+  },
+  "userInfoCard": {
+    "title": "معلومات المستخدم",
+    "email": "البريد الإلكتروني",
+    "followers": "المتابعون",
+    "blogs": "المدونات",
+    "memberSince": "عضو منذ"
+  },
+  "usersList": {
+    "title": "قائمة المستخدمين",
+    "error": "فشل تحميل المستخدمين",
+    "loading": "جاري تحميل المستخدمين..."
+  },
+  "followButton": {
+    "follow": "متابعة",
+    "following": "متابع"
+  },
+  "state": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما"
+  },
+  "blogDetails": {
+    "writtenBy": "كتب بواسطة",
+    "unknown": "غير معروف",
+    "comments": "التعليقات"
+  },
+  "blogActions": {
+    "editBlog": "تعديل المقال",
+    "deleteBlog": "حذف المقال",
+    "itemName": "مقال"
+  },
+  "comments": {
+    "placeholder": "اكتب تعليقك",
+    "add": "إضافة تعليق",
+    "title": "التعليقات",
+    "loading": "جارٍ تحميل التعليقات...",
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء التعديل",
+    "edit": "تعديل التعليق",
+    "delete": "حذف التعليق",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
+    "ago": "منذ"
+  },
+  "chat": {
+    "noMessages": "لا توجد رسائل بعد. ابدأ المحادثة!",
+    "placeholder": "اكتب رسالتك..."
+  },
+  "space": {
+    "loading": "جارٍ التحميل...",
+    "title": "المساحة",
+    "join": "انضم",
+    "loadMore": "تحميل المزيد",
+    "noBlogs": "لا توجد مدونات بعد."
+  },
+  "spaceForm": {
+    "namePlaceholder": "اسم المساحة",
+    "status": "الحالة",
+    "public": "عام",
+    "private": "خاص",
+    "descriptionPlaceholder": "الوصف",
+    "create": "إنشاء"
+  },
+  "createBlog": {
+    "addNew": "إضافة مدونة جديدة إلى",
+    "space": "المساحة",
+    "titlePlaceholder": "عنوان المدونة",
+    "contentPlaceholder": "اكتب محتوى المدونة باستخدام ماركداون...",
+    "write": "كتابة",
+    "preview": "معاينة",
+    "bold": "عريض",
+    "italic": "مائل",
+    "insertLink": "إدراج رابط",
+    "inlineCode": "كود قصير",
+    "insertImage": "إدراج صورة",
+    "list": "إدراج قائمة",
+    "quote": "إدراج اقتباس",
+    "codeBlock": "كتلة كود",
+    "markdownReference": "مرجع سريع للماركداون",
+    "heading1": "العنوان 1",
+    "heading2": "العنوان 2",
+    "link": "رابط",
+    "image": "صورة",
+    "url": "رابط",
+    "nothingToPreview": "لا يوجد محتوى للمعاينة بعد",
+    "publish": "نشر المدونة",
+    "publishing": "جارٍ النشر..."
+  },
+  "shortForm": {
+    "create": "إنشاء",
+    "preview": "معاينة",
+    "titlePlaceholder": "العنوان",
+    "contentPlaceholder": "المحتوى",
+    "creating": "جارٍ الإنشاء...",
+    "createdSuccess": "تم الإنشاء بنجاح!"
+  },
+  "followersModal": {
+    "title": "المتابعون",
+    "loading": "جاري تحميل المتابعين...",
+    "error": "حدث خطأ أثناء تحميل المتابعين",
+    "empty": "لا يوجد متابعون بعد"
+  },
+  "editBlogModal": {
+    "title": "تعديل المدونة",
+    "switchToEdit": "الرجوع لوضع التحرير",
+    "preview": "عرض المدونة",
+    "fields": {
+      "title": "العنوان",
+      "content": "المحتوى"
+    },
+    "placeholders": {
+      "title": "أدخل عنوان المدونة",
+      "content": "اكتب محتوى المدونة..."
+    },
+    "previewHeader": "المعاينة",
+    "untitled": "بدون عنوان",
+    "noContent": "*لا يوجد محتوى بعد*",
+    "updating": "جاري التحديث...",
+    "update": "تحديث المدونة",
+    "error": "فشل في تحديث المدونة"
+  },
+  "common": {
+    "cancel": "إلغاء"
+  },
+  "deleteModal": {
+    "title": "تأكيد الحذف",
+    "confirmText": "هل أنت متأكد أنك تريد حذف {{itemName}}؟",
+    "warningNote": "هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات المرتبطة بـ {{itemName}} بشكل دائم.",
+    "cancel": "إلغاء",
+    "deleting": "جارٍ الحذف...",
+    "deletePermanently": "حذف نهائيًا"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "youHaveNewMessages": "لديك {{count}} رسالة جديدة",
+    "spaceMessage": "لديك {{count}} رسالة جديدة في {{spaceName}}",
+    "noNewMessages": "لا توجد رسائل جديدة"
+  },
+  "sidebar": {
+    "toggle": "تبديل القائمة",
+    "toggleList": "إظهار/إخفاء الأعضاء",
+    "membersCount": "{{count}} عضو",
+    "createShort": "إنشاء منشور قصير",
+    "short": "قصير",
+    "createBlog": "إنشاء مدونة",
+    "blog": "مدونة",
+    "showChat": "إظهار المحادثة",
+    "chat": "محادثة",
+    "createSpace": "إنشاء مساحة",
+    "space": "مساحة",
+    "management": "إدارة المساحة",
+    "showMembers": "إظهار الأعضاء",
+    "members": "الأعضاء",
+    "addMember": "إضافة عضو",
+    "editSpace": "تعديل المساحة",
+    "leaveSpace": "مغادرة المساحة"
+  },
+  "leaveSpace": {
+    "submit": "مغادرة المساحة",
+    "cancel": "إلغاء"
+  },
+  "editSpace": {
+    "success": "تم تحديث المساحة بنجاح"
+  },
+  "spaceMembers": {
+    "usersCount": "{{count}} مستخدم",
+    "usersCount_plural": "{{count}} مستخدمين"
+  },
+  "addMember": {
+    "label": "إضافة عضو",
+    "placeholder": "اسم المستخدم أو المعرف",
+    "button": "إضافة",
+    "success": "تمت إضافة مستخدم جديد",
+    "error": "فشل في إضافة العضو"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "logout": "تسجيل الخروج"
+  }
+}

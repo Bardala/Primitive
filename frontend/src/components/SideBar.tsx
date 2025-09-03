@@ -1,5 +1,6 @@
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { RiGroup2Fill } from 'react-icons/ri';
@@ -25,6 +26,7 @@ export const Sidebar: React.FC<{
 }> = ({ space, members, numOfUnReadingMsgs = 0 }) => {
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBarReducer();
+  const { t } = useTranslation();
   const [list, setList] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const nav = useNavigate();
@@ -35,13 +37,8 @@ export const Sidebar: React.FC<{
     space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   // Handle click outside to close sidebar
   useEffect(() => {
@@ -64,11 +61,11 @@ export const Sidebar: React.FC<{
 
   return (
     <>
-      {/* Floating toggle button for all screens */}
+      {/* Floating toggle button */}
       <button
         className="floating-sidebar-toggle"
         onClick={toggleSidebar}
-        aria-label="Toggle sidebar"
+        aria-label={t('sidebar.toggle')}
       >
         {isSidebarOpen ? <FaTimes /> : <FaPlus />}
         {numOfUnReadingMsgs > 0 && (
@@ -94,7 +91,7 @@ export const Sidebar: React.FC<{
               <div className="side-bar-nav">
                 <h3 className="space-name">{space?.name}</h3>
                 <button
-                  title='Show "list"'
+                  title={t('sidebar.toggleList')}
                   onClick={() => setList(!list)}
                   className="toggle-list-btn"
                 >
@@ -106,7 +103,7 @@ export const Sidebar: React.FC<{
             <div className="space-info">
               <div className="space-members-count">
                 <IoIosPeople size={16} />
-                <span>{members?.length || 0} members</span>
+                <span>{t('sidebar.membersCount', { count: members?.length || 0 })}</span>
               </div>
             </div>
           </div>
@@ -116,22 +113,20 @@ export const Sidebar: React.FC<{
           <div className="action-buttons">
             {!(!!space && !isMember) && (
               <button
-                title='Create "Short"'
-                onClick={() => {
-                  dispatch({ type: 'showCreateBlog' });
-                }}
+                title={t('sidebar.createShort')}
+                onClick={() => dispatch({ type: 'showCreateBlog' })}
                 className={`action-btn ${state.showCreateBlog ? 'active' : ''}`}
               >
                 <span className="btn-icon">
                   <FaPencilAlt size={18} />
                 </span>
-                <span className="btn-text">Short</span>
+                <span className="btn-text">{t('sidebar.short')}</span>
               </button>
             )}
 
             {!((!!space && !isMember) || (space && !list)) && (
               <button
-                title='Create "Blog"'
+                title={t('sidebar.createBlog')}
                 onClick={() => {
                   nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`);
                   closeSidebar();
@@ -141,13 +136,13 @@ export const Sidebar: React.FC<{
                 <span className="btn-icon">
                   <TfiWrite size={18} />
                 </span>
-                <span className="btn-text">Blog</span>
+                <span className="btn-text">{t('sidebar.blog')}</span>
               </button>
             )}
 
             {!!space && isMember && (
               <button
-                title='Show "chat"'
+                title={t('sidebar.showChat')}
                 className="chat-btn"
                 onClick={() => {
                   dispatch({ type: 'showChat' });
@@ -155,79 +150,69 @@ export const Sidebar: React.FC<{
                 }}
               >
                 <span className="btn-icon">💬</span>
-                <span className="btn-text">Chat</span>
+                <span className="btn-text">{t('sidebar.chat')}</span>
                 <NotificationMsgsNumber spaceId={space?.id!} />
               </button>
             )}
 
             {!space && (
               <button
-                title='Create "space"'
-                onClick={() => {
-                  dispatch({ type: 'showCreateSpace' });
-                }}
+                title={t('sidebar.createSpace')}
+                onClick={() => dispatch({ type: 'showCreateSpace' })}
                 className={`action-btn ${state.showCreateSpace ? 'active' : ''}`}
               >
                 <span className="btn-icon">
                   <RiGroup2Fill size={18} />
                 </span>
-                <span className="btn-text">Space</span>
+                <span className="btn-text">{t('sidebar.space')}</span>
               </button>
             )}
           </div>
 
           {list && space && isMember && (
             <div className="space-management">
-              <h4 className="management-title">Space Management</h4>
+              <h4 className="management-title">{t('sidebar.management')}</h4>
 
               <button
-                title='Show "members"'
-                onClick={() => {
-                  dispatch({ type: 'showMembers' });
-                }}
+                title={t('sidebar.showMembers')}
+                onClick={() => dispatch({ type: 'showMembers' })}
                 className={`management-btn ${state.showMembers ? 'active' : ''}`}
               >
                 <span className="btn-icon">
                   <IoIosPeople size={18} />
                 </span>
-                <span className="btn-text">Members</span>
+                <span className="btn-text">{t('sidebar.members')}</span>
               </button>
 
               {isAdmin && (
                 <>
                   <button
-                    title='Add "member"'
-                    onClick={() => {
-                      dispatch({ type: 'showAddMember' });
-                    }}
+                    title={t('sidebar.addMember')}
+                    onClick={() => dispatch({ type: 'showAddMember' })}
                     className={`management-btn ${state.showAddMember ? 'active' : ''}`}
                   >
                     <span className="btn-icon">+</span>
-                    <span className="btn-text">Add Member</span>
+                    <span className="btn-text">{t('sidebar.addMember')}</span>
                   </button>
 
                   <button
-                    title='Edit "space"'
-                    onClick={() => {
-                      dispatch({ type: 'showEditSpace' });
-                    }}
+                    title={t('sidebar.editSpace')}
+                    onClick={() => dispatch({ type: 'showEditSpace' })}
                     className={`management-btn ${state.showEditSpace ? 'active' : ''}`}
                   >
                     <span className="btn-icon">✏️</span>
-                    <span className="btn-text">Edit Space</span>
+                    <span className="btn-text">{t('sidebar.editSpace')}</span>
                   </button>
                 </>
               )}
 
               <button
-                title="leave space"
-                onClick={() => {
-                  dispatch({ type: 'showLeaveSpc' });
-                }}
+                title={t('sidebar.leaveSpace')}
+                onClick={() => dispatch({ type: 'showLeaveSpc' })}
                 className="management-btn leave-btn"
               >
                 <span className="btn-icon">🚪</span>
-                <span className="btn-text">Leave Space</span>
+                <span className="btn-text">{t('sidebar.leaveSpace')}</span>
               </button>
             </div>
           )}
