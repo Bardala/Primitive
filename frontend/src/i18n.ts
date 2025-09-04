@@ -9,7 +9,7 @@ i18n
   .use(initReactI18next) // connect with react
   .init({
     fallbackLng: 'en', // default language
-    debug: true,
+    // debug: true, // !print in the console in prod, make it in dev mode if you want to enable it.
     interpolation: {
       escapeValue: false, // react already escapes
     },

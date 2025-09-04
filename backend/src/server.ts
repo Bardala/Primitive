@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import http from 'http';
+import morgan from 'morgan';
 import path from 'path';
+import { createLogger, format, transports } from 'winston';
 
 import { initSockets } from './Sockets.class';
 import { BlogController } from './controllers/blog.controller';
@@ -37,11 +39,24 @@ import { Origin } from './utils';
     })
   );
 
+  const logger = createLogger({
+    level: 'info',
+    format: format.combine(
+      format.colorize(),
+      format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      format.printf(({ timestamp, level, message }) => `[${timestamp}] ${level}: ${message}`)
+    ),
+    transports: [new transports.Console()],
+  });
+
   const user = new UserController(db);
   const blog = new BlogController(db);
   const space = new SpaceController(db);
   const comm = new CommentController(db);
   const chat = new ChatController(db);
+
+  // Morgan → pipe logs into Winston
+  app.use(morgan('dev', { stream: { write: message => logger.info(message.trim()) } }));
 
   app.get('/health', (_, res) => res.send('😊'));
 

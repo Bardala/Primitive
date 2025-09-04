@@ -186,7 +186,7 @@
   "notifications": {
     "title": "Notifications",
     "youHaveNewMessages": "You have {{count}} new message{{count > 1 ? 's' : ''}}",
-    "spaceMessage": "You have {{count}} new message{{count > 1 ? 's' : ''}} in {{spaceName}}.",
+    "spaceMessage": "You have {{count}} new messages in {{spaceName}}.",
     "noNewMessages": "No new messages"
   },
   "sidebar": {

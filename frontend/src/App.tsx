@@ -15,18 +15,6 @@ import { Settings } from './pages/settings';
 import { SignUp } from './pages/signup';
 
 function App() {
-  // In your main App.tsx or index.tsx
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then(registration => {
-        console.log('SW registered: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  }
-
   return (
     <div className="App">
       <ReactNotifications />
