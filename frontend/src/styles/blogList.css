@@ -1,5 +1,5 @@
 .blog-list {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 12px auto;
   display: flex;
   gap: 20px;
@@ -245,9 +245,9 @@ time,
     justify-content: space-between;
   }
 
-  .created-at {
+  /* .created-at {
     margin-left: 0;
     flex-basis: 100%;
     text-align: left;
-  }
+  } */
 }

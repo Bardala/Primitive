@@ -6,12 +6,13 @@
 .comment {
   padding: 10px;
   border: 1px var(--color-primary);
-  background: var(--color-bg-card);
-  /* padding: var(--spacing-lg); */
   border-radius: var(--border-radius-md);
   margin-bottom: var(--spacing-md);
   box-shadow: var(--shadow-sm);
   border-left: 3px solid var(--color-primary);
+  position: relative;
+  padding: var(--spacing-md);
+  background: var(--color-bg-card);
 }
 
 .comment-body {
@@ -47,7 +48,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: var(--spacing-lg);
+  /* padding: var(--spacing-lg); */
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
   margin-bottom: var(--spacing-xl);
@@ -102,23 +103,14 @@
   color: var(--red);
 }
 
-/* Add these to your CSS */
-.comment {
-  position: relative;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  background: var(--color-bg-card);
-}
-
 .comment-meta {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  margin-top: var(--spacing-sm);
+  /* margin-top: var(--spacing-sm); */
   font-size: 0.9rem;
   color: var(--color-text-muted);
+  justify-content: space-between;
 }
 
 .comment-author {
@@ -209,19 +201,45 @@
   cursor: not-allowed;
 }
 
+.read-more-btn,
+.read-less-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 0;
+  margin-top: 0.5em;
+  text-decoration: underline;
+}
+
+.read-more-btn:hover,
+.read-less-btn:hover {
+  color: #0056b3;
+}
+
+/* Ensure the buttons are properly aligned */
+.comment .arabic .read-more-btn,
+.comment .arabic .read-less-btn,
+.comment .english .read-more-btn,
+.comment .english .read-less-btn {
+  display: inline-block;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .comment-actions {
     opacity: 1;
     /* Always show actions on mobile */
-    position: static;
-    margin-top: var(--spacing-sm);
-    justify-content: flex-end;
   }
 
   .comment-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    /* margin-top: var(--spacing-sm); */
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    justify-content: space-between;
   }
 }

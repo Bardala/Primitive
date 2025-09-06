@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FaCog } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
@@ -91,7 +92,7 @@ export const NavBar = () => {
             {!isMobile && <span className="nav-text">{t('navbar.notifications')}</span>}
           </Link>
           <Link to="/settings" className="nav-link" title={t('navbar.settings')}>
-            <span className="icon">⚙️</span>
+            <FaCog />
             {!isMobile && <span className="nav-text">{t('navbar.settings')}</span>}
           </Link>
 

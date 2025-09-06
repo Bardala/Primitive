@@ -93,7 +93,9 @@
     "edit": "Edit comment",
     "delete": "Delete comment",
     "confirmDelete": "Are you sure you want to delete this comment?",
-    "ago": "ago"
+    "ago": "ago",
+    "readMore": "Read more",
+    "readLess": "Read less"
   },
   "chat": {
     "noMessages": "No messages yet. Start the conversation!",
@@ -185,7 +187,7 @@
   },
   "notifications": {
     "title": "Notifications",
-    "youHaveNewMessages": "You have {{count}} new message{{count > 1 ? 's' : ''}}",
+    "youHaveNewMessages": "You have {{count}} new messages",
     "spaceMessage": "You have {{count}} new messages in {{spaceName}}.",
     "noNewMessages": "No new messages"
   },

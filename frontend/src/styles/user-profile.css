@@ -178,12 +178,11 @@
 
 /* .blog-preview:hover  */
 
-.space-link,
-.blog-link {
+.space-card .space-link,
+.space-card .blog-link {
   display: block;
   padding: 0.75rem;
   text-decoration: none;
-  /* color: inherit; */
   height: 100%;
   -webkit-tap-highlight-color: transparent;
   min-height: 44px;
@@ -367,7 +366,7 @@ body {
 /* Large desktop screens */
 @media screen and (min-width: 1200px) {
   .user-profile-container {
-    max-width: 1200px;
+    max-width: var(--max-content-width);
     padding: 2rem 1rem;
   }
 }

@@ -174,11 +174,15 @@ export class UserController implements userController {
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_USERNAME });
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
-    if (!validator.isStrongPassword(password))
-      return res.status(HTTP.BAD_REQUEST).send({
-        error:
-          ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
-      });
+
+    if (password.length < 12 || password.length > 100) {
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PASSWORD_LENGTH });
+    }
+    // if (!validator.isStrongPassword(password))
+    //   return res.status(HTTP.BAD_REQUEST).send({
+    //     error:
+    //       ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
+    //   });
 
     const user = {
       email,

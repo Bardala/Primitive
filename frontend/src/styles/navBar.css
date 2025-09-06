@@ -10,9 +10,8 @@
     transition: all 0.3s ease;
     border: 1px solid var(--color-border);
     border-radius: 20px;
-    /* Added border radius */
-    margin: 0 15px;
-    /* Added side margins */
+    margin: 12px auto 0 auto;
+    max-width: var(--max-nav-width);
 }
 
 .navbar-container {
@@ -190,11 +189,8 @@
 @media screen and (max-width: 768px) {
     .navbar {
         top: 10px;
-        /* Adjusted for mobile */
-        margin: 0 10px;
-        /* Adjusted for mobile */
+        margin: 12px 8px 0 8px;
         border-radius: 16px;
-        /* Slightly smaller radius on mobile */
     }
 
     .navbar-container {
@@ -243,11 +239,8 @@
 @media screen and (max-width: 480px) {
     .navbar {
         top: 8px;
-        /* Further adjusted for small mobile */
-        margin: 0 8px;
-        /* Further adjusted for small mobile */
+        margin: 12px 8px 0 8px;
         border-radius: 14px;
-        /* Even smaller radius on very small screens */
     }
 
     .navbar-container {

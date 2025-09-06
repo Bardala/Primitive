@@ -32,6 +32,13 @@
   color: var(--color-text-muted);
 }
 
+.settings-container button {
+  width: -webkit-fill-available;
+  padding: var(--padding-small);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
 .logout-btn {
   display: flex;
   align-items: center;
@@ -45,6 +52,7 @@
   font-weight: 500;
   transition: background 0.3s ease;
   box-shadow: var(--shadow-sm);
+  width: auto;
 }
 
 .logout-btn:hover {

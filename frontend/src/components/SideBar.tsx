@@ -19,7 +19,7 @@ import { NotificationMsgsNumber } from './NotificationNumberMsgs';
 import { ShortForm } from './ShortForm';
 import { SpaceMembers } from './SpaceMembers';
 
-export const Sidebar: React.FC<{
+export const ActionBar: React.FC<{
   space?: Space;
   members?: SpaceMember[];
   numOfUnReadingMsgs?: number;
@@ -84,11 +84,11 @@ export const Sidebar: React.FC<{
         ></div>
       )}
 
-      <aside ref={sidebarRef} className={`side-bar ${isSidebarOpen ? 'open' : ''}`}>
+      <aside ref={sidebarRef} className={`action-bar ${isSidebarOpen ? 'open' : ''}`}>
         {space && (
-          <div className="side-bar-header">
+          <div className="action-bar-header">
             {isMember && (
-              <div className="side-bar-nav">
+              <div className="action-bar-nav">
                 <h3 className="space-name">{space?.name}</h3>
                 <button
                   title={t('sidebar.toggleList')}
@@ -109,7 +109,7 @@ export const Sidebar: React.FC<{
           </div>
         )}
 
-        <div className="side-bar-content">
+        <div className="action-bar-content">
           <div className="action-buttons">
             {!(!!space && !isMember) && (
               <button

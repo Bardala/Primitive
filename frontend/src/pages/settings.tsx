@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CiLogout } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
@@ -11,14 +12,15 @@ import '../styles/settings.css';
 export const Settings = () => {
   const { refetchCurrUser } = useAuthContext();
   const nav = useNavigate();
-  const [isMobile] = useState(window.innerWidth <= 768);
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const handleClick = useCallback(() => {
+    queryClient.clear();
     logOut();
     refetchCurrUser();
     nav('/login', { replace: true });
-  }, [nav, refetchCurrUser]);
+  }, [nav, queryClient, refetchCurrUser]);
 
   return (
     <div className="settings-container">
@@ -33,7 +35,7 @@ export const Settings = () => {
         <div className="settings-item">
           <button onClick={handleClick} className="logout-btn" title={t('settings.logout')}>
             <CiLogout size={22} />
-            {!isMobile && <span className="logout-text">{t('settings.logout')}</span>}
+            <span className="logout-text">{t('settings.logout')}</span>
           </button>
         </div>
       </div>

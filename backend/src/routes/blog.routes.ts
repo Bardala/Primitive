@@ -1,24 +1,44 @@
-import { BlogController } from "../controllers/blog.controller";
-import { db } from "../dataStore";
-import express from "express";
-import asyncHandler from "express-async-handler";
+import { ENDPOINT } from '@nest/shared';
+import { Router } from 'express';
+import asyncHandler from 'express-async-handler';
 
-const router = express.Router();
-const blog = new BlogController(db);
+import { BlogController } from '../controllers/blog.controller';
+import { requireAuth } from '../middleware/authMiddleware';
+import { checkEmptyInput } from '../middleware/checkReqBody';
 
-// *Blog Routes
-router.post("/api/v0/blog", asyncHandler(blog.createBlog));
-router.put("/api/v0/blog/:blogId", asyncHandler(blog.updateBlog));
-router.get("/api/v0/blog/:blogId", asyncHandler(blog.getBlog));
-router.delete("/api/v0/blog/:blogId", asyncHandler(blog.deleteBlog));
+export const createBlogRoutes = (blogController: BlogController) => {
+  const router = Router();
 
-router.get("/api/v0/blogComments/:blogId", asyncHandler(blog.getBlogComments)); // done
-router.get("/api/v0/blogLikes/:blogId", asyncHandler(blog.getBlogLikes)); // done
-router.get(
-  "/api/v0/blogLikesList/:blogId",
-  asyncHandler(blog.getBlogLikesList),
-); //done
-router.post("/api/v0/likeBlog/:blogId", asyncHandler(blog.likeBlog)); // done
-router.delete("/api/v0/unLikeBlog/:blogId", asyncHandler(blog.unLikeBlog)); //done
+  router.post(
+    ENDPOINT.CREATE_BLOG,
+    requireAuth,
+    checkEmptyInput,
+    asyncHandler(blogController.createBlog)
+  );
+  router.put(
+    ENDPOINT.UPDATE_BLOG,
+    requireAuth,
+    checkEmptyInput,
+    asyncHandler(blogController.updateBlog)
+  );
+  router.get(ENDPOINT.GET_BLOG, requireAuth, asyncHandler(blogController.getBlog));
+  router.delete(ENDPOINT.DELETE_BLOG, requireAuth, asyncHandler(blogController.deleteBlog));
 
-export { router };
+  router.get(ENDPOINT.GET_BLOG_COMMENTS, requireAuth, asyncHandler(blogController.getBlogComments));
+  router.get(ENDPOINT.GET_BLOG_LIKES, requireAuth, asyncHandler(blogController.getBlogLikes));
+  router.get(
+    ENDPOINT.GET_BLOG_LIKES_LIST,
+    requireAuth,
+    asyncHandler(blogController.getBlogLikesList)
+  );
+  router.post(
+    ENDPOINT.LIKE_BLOG,
+    requireAuth,
+    checkEmptyInput,
+    asyncHandler(blogController.likeBlog)
+  );
+  router.delete(ENDPOINT.UNLIKE_BLOG, requireAuth, asyncHandler(blogController.unLikeBlog));
+  router.get(ENDPOINT.NUM_OF_COMMENTS, requireAuth, asyncHandler(blogController.getNumOfComments));
+
+  return router;
+};

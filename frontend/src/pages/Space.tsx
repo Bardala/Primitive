@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { BlogList } from '../components/BlogList';
-import { Sidebar } from '../components/SideBar';
+import { ActionBar } from '../components/SideBar';
 import { useGetSpcMissedMsgs, useSpace } from '../hooks/useSpace';
 import { Home } from './Home';
 
@@ -58,7 +58,7 @@ export const Space = () => {
         )}
       </main>
 
-      <Sidebar
+      <ActionBar
         space={spaceQuery.data?.space}
         members={membersQuery.data?.members}
         numOfUnReadingMsgs={numOfUnReadMsgs.data?.numOfUnReadMsgs}

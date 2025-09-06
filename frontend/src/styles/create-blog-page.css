@@ -178,6 +178,7 @@
   font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: -webkit-fill-available;
 }
 
 .submit-button:hover:not(:disabled) {

@@ -27,7 +27,11 @@ export class SqlDataStore implements DataStoreDao {
     user: process.env.MYSQLUSER,
     database: process.env.MYSQL_DATABASE,
     password: process.env.MYSQL_ROOT_PASSWORD,
-    socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
+    // socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
+    multipleStatements: true,
+    connectionLimit: 10,
+    waitForConnections: true,
+    queueLimit: 0,
   };
   private devProps: mysql.PoolOptions = {
     host: process.env.MYSQLHOST,
@@ -109,6 +113,7 @@ export class SqlDataStore implements DataStoreDao {
     ]);
   }
 
+  // todo: add good algorithm
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
@@ -248,13 +253,53 @@ export class SqlDataStore implements DataStoreDao {
 
   async getUserSpaces(userId: string): Promise<Space[]> {
     const query = `
-      SELECT s.*
-      FROM spaces s
-      JOIN members m ON s.id = m.spaceId
-      JOIN users u ON m.memberId = u.id
-      WHERE u.id=?;
-      `;
-    return this.pool.query<RowDataPacket[]>(query, userId).then(([rows]) => rows as Space[]);
+    SELECT 
+        s.*,
+        COALESCE(blog_count, 0) AS user_blog_count,
+        COALESCE(like_count, 0) AS user_like_count,
+        COALESCE(comment_count, 0) AS user_comment_count,
+        COALESCE(chat_count, 0) AS user_chat_count,
+        (COALESCE(blog_count, 0) * 3 + 
+        COALESCE(like_count, 0) * 1 + 
+        COALESCE(comment_count, 0) * 2 + 
+        COALESCE(chat_count, 0) * 2) AS interaction_score
+    FROM spaces s
+    JOIN members m ON s.id = m.spaceId
+    JOIN users u ON m.memberId = u.id
+    LEFT JOIN (
+        SELECT spaceId, COUNT(*) AS blog_count
+        FROM blogs 
+        WHERE userId = ?
+        GROUP BY spaceId
+    ) bc ON s.id = bc.spaceId
+    LEFT JOIN (
+        SELECT b.spaceId, COUNT(*) AS like_count
+        FROM likes l
+        JOIN blogs b ON l.blogId = b.id
+        WHERE l.userId = ?
+        GROUP BY b.spaceId
+    ) lc ON s.id = lc.spaceId
+    LEFT JOIN (
+        SELECT b.spaceId, COUNT(*) AS comment_count
+        FROM comments c
+        JOIN blogs b ON c.blogId = b.id
+        WHERE c.userId = ?
+        GROUP BY b.spaceId
+    ) cc ON s.id = cc.spaceId
+    LEFT JOIN (
+        SELECT spaceId, COUNT(*) AS chat_count
+        FROM chat 
+        WHERE userId = ?
+        GROUP BY spaceId
+    ) chc ON s.id = chc.spaceId
+    WHERE u.id = ?
+    ORDER BY interaction_score DESC, user_blog_count DESC, user_chat_count DESC;
+    `;
+
+    // Pass an array with the userId repeated for each placeholder
+    return this.pool
+      .query<RowDataPacket[]>(query, [userId, userId, userId, userId, userId])
+      .then(([rows]) => rows as Space[]);
   }
 
   async deleteBlogLikes(blogId: string): Promise<void> {

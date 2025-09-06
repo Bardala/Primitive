@@ -119,20 +119,11 @@ export const UserProfile = () => {
               )}
 
               {blogs.length > 0 ? (
-                <>
-                  <BlogList posts={blogs} />
-                  {!isEnd && (
-                    <button
-                      className="load-more-button"
-                      onClick={() => userBlogsQuery.fetchNextPage()}
-                      disabled={userBlogsQuery.isFetchingNextPage}
-                    >
-                      {userBlogsQuery.isFetchingNextPage
-                        ? t('userProfile.loading')
-                        : t('userProfile.loadMore')}
-                    </button>
-                  )}
-                </>
+                <BlogList
+                  posts={blogs}
+                  isEnd={isEnd}
+                  fetchNextPage={userBlogsQuery.fetchNextPage}
+                />
               ) : (
                 !userBlogsQuery.isLoading && (
                   <div className="empty-state">

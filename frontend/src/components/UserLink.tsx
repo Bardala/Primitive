@@ -16,7 +16,7 @@ export const UserLink: React.FC<{ userId: string; username: string }> = ({ userI
       }}
       title={username}
     >
-      <FaUser /> <strong>{username}</strong>
+      <FaUser /> <strong>{username.substring(0, 8)}</strong>
       {/* <span className="user-status"></span> */}
     </Link>
   );
