@@ -175,9 +175,11 @@ export class UserController implements userController {
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
 
-    if (password.length < 12 || password.length > 100) {
-      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PASSWORD_LENGTH });
-    }
+    if (password.length < 12 || password.length > 100)
+      return res
+        .status(HTTP.BAD_REQUEST)
+        .send({ error: 'Password length must equal or greater than 12' });
+
     // if (!validator.isStrongPassword(password))
     //   return res.status(HTTP.BAD_REQUEST).send({
     //     error:
