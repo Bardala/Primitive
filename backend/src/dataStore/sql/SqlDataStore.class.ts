@@ -29,9 +29,7 @@ export class SqlDataStore implements DataStoreDao {
     password: process.env.MYSQL_ROOT_PASSWORD,
     // socketPath: process.env.MY_SQL_DB_SOCKET_PATH,
     multipleStatements: true,
-    connectionLimit: 10,
-    waitForConnections: true,
-    queueLimit: 0,
+    connectionLimit: 50,
   };
   private devProps: mysql.PoolOptions = {
     host: process.env.MYSQLHOST,
@@ -186,9 +184,9 @@ export class SqlDataStore implements DataStoreDao {
 
   async deleteMember(spaceId: string, memberId: string): Promise<void> {
     const query = `
-    DELETE FROM members WHERE spaceId=? AND memberId=?
+    DELETE FROM members WHERE memberId=? AND spaceId=?
     `;
-    await this.pool.query(query, [spaceId, memberId]);
+    await this.pool.query(query, [memberId, spaceId]);
   }
 
   async getFeeds(userId: string): Promise<Blog[]> {
@@ -207,9 +205,9 @@ export class SqlDataStore implements DataStoreDao {
   async isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean> {
     const query = `
       SELECT isAdmin FROM members
-      WHERE spaceId=? AND memberId=?
+      WHERE memberId=? AND spaceId=?
       `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [memberId, spaceId]);
     return rows[0] ? rows[0].isAdmin : false;
   }
 
@@ -361,13 +359,14 @@ export class SqlDataStore implements DataStoreDao {
     return rows as SpaceMember[];
   }
 
-  async isMember(spaceId: string, memberId: string): Promise<boolean> {
+  async isMember(spaceId: string, memberId: string): Promise<User | undefined> {
     const query = `
-    SELECT memberId FROM members 
-    WHERE spaceId=? AND memberId=?
+    SELECT u.* FROM members m
+    JOIN users u ON m.memberId = u.id
+    WHERE m.spaceId = ? AND m.memberId = ?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
-    return !!rows[0];
+    return rows[0] as User;
   }
 
   async updateBlog(blog: Blog): Promise<void> {

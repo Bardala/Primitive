@@ -32,18 +32,17 @@ export class ChatController implements chatController {
 
     if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
     if (!content) return res.status(400).send({ error: ERROR.EMPTY_FIELD });
-    if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
-    //? I think that I shouldn't ensure does space exist here,
-    //? because it will be checked in the database as a foreign key
-    const user = await this.db.getUserById(userId);
+    const user = await this.db.isMember(spaceId, userId);
+    if (!user) return res.status(403);
+
     const msg: ChatMessage = {
       spaceId,
       userId,
       content,
       timestamp: Date.now(),
       id: randomUUID(),
-      username: user?.username!,
+      username: user?.username,
     };
     await this.db.createMessage(msg);
     return res.send({ message: msg });

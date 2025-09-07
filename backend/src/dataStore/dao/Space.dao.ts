@@ -1,4 +1,4 @@
-import { Blog, ChatMessage, LastReadMsg, Space, SpaceMember } from '@nest/shared';
+import { Blog, ChatMessage, LastReadMsg, Space, SpaceMember, User } from '@nest/shared';
 
 export interface SpaceDao {
   createSpace(space: Space): Promise<void>;
@@ -13,7 +13,7 @@ export interface SpaceDao {
 
   addMember(member: SpaceMember): Promise<void>;
   spaceMembers(spaceId: string): Promise<SpaceMember[]>;
-  isMember(spaceId: string, memberId: string): Promise<boolean>;
+  isMember(spaceId: string, memberId: string): Promise<User | undefined>;
   isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean>;
   deleteMember(spaceId: string, memberId: string): Promise<void>;
 }

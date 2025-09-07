@@ -144,7 +144,6 @@ export class SpaceController implements spaceController {
     const { spaceId } = req.params;
 
     if (!spaceId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
-    if (!(await this.db.getSpace(spaceId))) return res.status(404);
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
     const messages = await this.db.getSpaceChat(spaceId);
