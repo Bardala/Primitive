@@ -24,14 +24,23 @@ export const useChat = (space: Space) => {
   useEffect(() => {
     socket.emit('join_room', space.id);
 
+    // When we receive a new message from the server, update the query data
     socket.on('from_server', msg => {
-      queryClient.invalidateQueries(chatKey);
+      queryClient.setQueryData<ChatRes>(chatKey, oldData => {
+        if (!oldData) return oldData;
+        if (oldData.messages.some(m => m.id === msg.id)) return oldData;
+        return { messages: [msg, ...oldData.messages] };
+      });
     });
   }, [space.id, queryClient, chatKey]);
 
   const msgMutate = useMutation<CreateMsgRes, ApiError>(createMsgApi(newMsg, space.id), {
     onSuccess: data => {
-      queryClient.invalidateQueries(chatKey);
+      queryClient.setQueryData<ChatRes>(chatKey, oldData => {
+        if (!oldData) return { messages: [data.message] };
+        // Prepend the new message
+        return { messages: [data.message, ...oldData.messages] };
+      });
       socket.emit('from_client', { message: data.message, spaceId: space.id });
       setNewMsg('');
     },

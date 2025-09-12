@@ -37,6 +37,7 @@ export class SqlDataStore implements DataStoreDao {
     database: process.env.MYSQL_DATABASE,
     password: process.env.MYSQL_ROOT_PASSWORD,
     multipleStatements: true,
+    connectionLimit: 20,
   };
 
   async runDB() {
@@ -211,13 +212,14 @@ export class SqlDataStore implements DataStoreDao {
     return rows[0] ? rows[0].isAdmin : false;
   }
 
-  async getSpaceChat(spaceId: string): Promise<ChatMessage[]> {
+  async getSpaceChat(spaceId: string, limit = 100): Promise<ChatMessage[]> {
     const query = `
     SELECT * FROM chat WHERE spaceId=?
     ORDER BY timestamp DESC
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
-    return rows as ChatMessage[];
+    LIMIT ?
+  `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, limit]);
+    return rows as ChatMessage[]; // return oldest -> newest
   }
 
   async createMessage(message: ChatMessage): Promise<void> {

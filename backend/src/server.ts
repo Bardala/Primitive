@@ -43,8 +43,6 @@ import { Origin, logger } from './utils';
   const chat = new ChatController(db);
 
   app.use(flagSlowReq);
-
-  // Morgan → pipe logs into Winston
   app.use(morgan('dev', { stream: { write: message => logger.info(message.trim()) } }));
 
   app.get('/health', (_, res) => res.send('😊'));

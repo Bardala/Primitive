@@ -7,7 +7,7 @@ export interface SpaceDao {
   deleteSpace(spaceId: string): Promise<void>;
 
   getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]>;
-  getSpaceChat(spaceId: string): Promise<ChatMessage[]>;
+  getSpaceChat(spaceId: string, limit: number): Promise<ChatMessage[]>;
   numOfUnReadMsgs(params: { userId: string; spaceId: string }): Promise<number>;
   updateLastReadMsg(lastRead: LastReadMsg): Promise<void>;
 

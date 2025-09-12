@@ -38,7 +38,6 @@ export function initSockets(server: http.Server) {
       origin: Origin,
       methods: ['GET', 'POST'],
     },
-    transports: ['websocket'],
   });
 
   io.on('connection', socket => {
