@@ -9,5 +9,6 @@ export * from './endPoints';
 export * from './api/feeds.api.types';
 export * from './api/short.api.types';
 export * from './api/like.api.types';
+export * from './sockets';
 export const DefaultSpaceId = '1';
 export const PageSize = 10;

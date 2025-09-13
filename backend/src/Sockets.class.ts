@@ -1,38 +1,55 @@
-import { ChatMessage } from '@nest/shared';
+import { ChatMessage, LastReadMsg, SOCKET_EVENT } from '@nest/shared';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 
-import { Origin } from './utils';
+import { DataStoreDao } from './dataStore';
+import { Origin, logger } from './utils';
 
 class Connection {
+  private db: DataStoreDao;
   io: Server;
   socket: Socket;
   spaceId: string | string[] | undefined;
 
-  constructor(io: Server, socket: Socket) {
+  constructor(io: Server, socket: Socket, db: DataStoreDao) {
     this.io = io;
     this.socket = socket;
+    this.db = db;
 
-    socket.on('join_room', this.handleJoinRoom.bind(this));
-    socket.on('from_client', this.handleMsgs.bind(this));
-    socket.on('disconnect', this.handleDisconnect.bind(this));
+    socket.on(SOCKET_EVENT.JOIN_ROOM, this.handleJoinRoom.bind(this));
+    socket.on(SOCKET_EVENT.FROM_CLIENT, this.handleMsgs.bind(this));
+    socket.on(SOCKET_EVENT.READ_MESSAGE, this.setLastReadMsg.bind(this));
+    socket.on(SOCKET_EVENT.LEAVE_ROOM, this.handleLeaveRoom.bind(this));
+    socket.on(SOCKET_EVENT.DISCONNECT, this.handleDisconnect.bind(this));
   }
 
-  private handleJoinRoom(spaceId: string) {
-    this.socket.join(spaceId);
-    console.log(`User ${this.socket.id} joined room ${spaceId}`);
+  private handleJoinRoom(data: { spaceId: string; userId: string }) {
+    this.spaceId = data.spaceId;
+    this.socket.data.userId = data.userId;
+    this.socket.join(data.spaceId);
+    logger.info(`User ${data.userId} joined room ${data.spaceId}`);
   }
 
-  private handleMsgs(data: { message: ChatMessage; spaceId: string }) {
-    this.socket.broadcast.to(data.spaceId).emit('from_server', data.message);
+  private handleMsgs(data: { message: ChatMessage }) {
+    this.socket.broadcast.to(data.message.spaceId).emit(SOCKET_EVENT.FROM_SERVER, data.message);
   }
 
   private handleDisconnect() {
-    console.log('user disconnected');
+    logger.info('user disconnected');
+  }
+
+  private async setLastReadMsg(data: LastReadMsg) {
+    await this.db.updateLastReadMsg(data);
+  }
+
+  private async handleLeaveRoom(data: LastReadMsg) {
+    this.socket.leave(data.spaceId);
+    // await this.db.updateLastReadMsg(data);
+    logger.info(`user ${data.userId} left room ${data.spaceId}, last read msg ${data.msgId}`);
   }
 }
 
-export function initSockets(server: http.Server) {
+export function initSockets(server: http.Server, db: DataStoreDao) {
   const io = new Server(server, {
     cors: {
       origin: Origin,
@@ -40,8 +57,8 @@ export function initSockets(server: http.Server) {
     },
   });
 
-  io.on('connection', socket => {
-    console.log('User Connected', socket.id);
-    new Connection(io, socket);
+  io.on(SOCKET_EVENT.CONNECTION, (socket: any) => {
+    logger.info('User Connected with socket id: ', socket.id);
+    new Connection(io, socket, db);
   });
 }

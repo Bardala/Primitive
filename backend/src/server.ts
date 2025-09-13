@@ -26,7 +26,7 @@ import { Origin, logger } from './utils';
   const server = http.createServer(app);
   app.use(express.static('public'));
 
-  initSockets(server);
+  initSockets(server, db);
 
   app.use(express.json());
   app.use(
@@ -51,7 +51,7 @@ import { Origin, logger } from './utils';
   app.use(errorHandler);
 
   server.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+    logger.info(`Server is listening on port ${port}`);
   });
 
   // Handle React routing, return all requests to React app

@@ -1,14 +1,12 @@
-import { ChatRes, CreateMsgRes, Space } from '@nest/shared';
+import { ChatRes, CreateMsgRes, SOCKET_EVENT, Space } from '@nest/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { io } from 'socket.io-client';
+import { socket } from 'src/socket';
 
-import { HOST } from '../config';
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
 import { chatApi, createMsgApi } from '../utils/api';
 
-const socket = io(HOST);
 export const useChat = (space: Space) => {
   const [newMsg, setNewMsg] = useState('');
   const { currUser } = useAuthContext();
@@ -17,31 +15,31 @@ export const useChat = (space: Space) => {
 
   const chatQuery = useQuery<ChatRes, ApiError>(chatKey, chatApi(space.id), {
     enabled: !!currUser?.jwt && !!space.id,
-    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
   const chatErr = chatQuery.error;
 
   useEffect(() => {
-    socket.emit('join_room', space.id);
+    socket.emit(SOCKET_EVENT.JOIN_ROOM, { spaceId: space.id, userId: currUser?.id });
 
     // When we receive a new message from the server, update the query data
-    socket.on('from_server', msg => {
+    socket.on(SOCKET_EVENT.FROM_SERVER, msg => {
       queryClient.setQueryData<ChatRes>(chatKey, oldData => {
         if (!oldData) return oldData;
         if (oldData.messages.some(m => m.id === msg.id)) return oldData;
         return { messages: [msg, ...oldData.messages] };
       });
     });
-  }, [space.id, queryClient, chatKey]);
+  }, [space.id, queryClient, chatKey, currUser?.id]);
 
   const msgMutate = useMutation<CreateMsgRes, ApiError>(createMsgApi(newMsg, space.id), {
     onSuccess: data => {
       queryClient.setQueryData<ChatRes>(chatKey, oldData => {
         if (!oldData) return { messages: [data.message] };
-        // Prepend the new message
+
         return { messages: [data.message, ...oldData.messages] };
       });
-      socket.emit('from_client', { message: data.message, spaceId: space.id });
+      socket.emit(SOCKET_EVENT.FROM_CLIENT, { message: data.message });
       setNewMsg('');
     },
   });

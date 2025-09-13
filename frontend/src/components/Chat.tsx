@@ -1,8 +1,9 @@
-import { Space } from '@nest/shared';
+import { LastReadMsg, SOCKET_EVENT, Space } from '@nest/shared';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { FormEvent, useRef } from 'react';
+import { FormEvent, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BiSend } from 'react-icons/bi';
+import { socket } from 'src/socket';
 import { isArabic } from 'src/utils/assists';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -15,7 +16,6 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
   const { t } = useTranslation();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLUListElement>(null);
 
   const handleSubmit = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
@@ -23,12 +23,39 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
     msgMutate.mutate();
   };
 
+  // Emit READ_MESSAGE whenever messages update
+  useEffect(() => {
+    const lastMsgId = chatQuery.data?.messages[0]?.id;
+    if (lastMsgId && currUser?.id) {
+      socket.emit(SOCKET_EVENT.READ_MESSAGE, {
+        spaceId: space.id,
+        userId: currUser.id,
+        msgId: lastMsgId,
+      } as LastReadMsg);
+    }
+  }, [chatQuery.data?.messages, currUser?.id, space.id]);
+
+  // Emit LEAVE_ROOM on unmount
+  useEffect(() => {
+    return () => {
+      const lastMsgId = chatQuery.data?.messages[0]?.id;
+      if (lastMsgId && currUser?.id) {
+        socket.emit(SOCKET_EVENT.LEAVE_ROOM, {
+          spaceId: space.id,
+          userId: currUser.id,
+          msgId: lastMsgId,
+        } as LastReadMsg);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [space.id, currUser?.id]);
+
   if (chatErr) return <p className="error">{chatErr.message}</p>;
 
   return (
     <div className="chat-container">
       <div className="chat-messages-container">
-        <ul className="chat-messages" ref={chatContainerRef}>
+        <ul className="chat-messages">
           {chatQuery.data?.messages.length === 0 ? (
             <div className="empty-chat">
               <p>{t('chat.noMessages')}</p>
@@ -46,7 +73,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
                   <div className="message-meta">
                     <span className="message-sender">{msg.username}</span>
                     <span className="message-time">
-                      {formatDistanceToNow(new Date(msg.timestamp as number), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
                     </span>
                   </div>
                 </div>

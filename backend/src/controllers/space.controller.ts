@@ -147,12 +147,6 @@ export class SpaceController implements spaceController {
     if (!(await this.db.isMember(spaceId, userId))) return res.status(403);
 
     const messages = await this.db.getSpaceChat(spaceId, 50);
-    if (messages.length !== 0)
-      await this.db.updateLastReadMsg({
-        userId,
-        spaceId,
-        msgId: messages[0]?.id,
-      });
     return res.send({ messages });
   };
 

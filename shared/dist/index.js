@@ -26,5 +26,6 @@ __exportStar(require("./endPoints"), exports);
 __exportStar(require("./api/feeds.api.types"), exports);
 __exportStar(require("./api/short.api.types"), exports);
 __exportStar(require("./api/like.api.types"), exports);
+__exportStar(require("./sockets"), exports);
 exports.DefaultSpaceId = '1';
 exports.PageSize = 10;
