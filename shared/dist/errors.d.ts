@@ -9,6 +9,7 @@ export declare enum ERROR {
     DUPLICATE_EMAIL = "Email already exists",
     INVALID_LOGIN = "Invalid login",
     INVALID_PASSWORD = "Invalid password",
+    INCORRECT_PASSWORD = "Incorrect password",
     INVALID_TOKEN = "Invalid token",
     UNAUTHORIZED = "Unauthorized",
     TOKEN_EXPIRED = "Token expired",

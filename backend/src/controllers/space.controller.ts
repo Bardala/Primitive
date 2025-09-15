@@ -139,6 +139,16 @@ export class SpaceController implements spaceController {
     return res.send({ feeds, page });
   };
 
+  smarterFeeds: HandlerWithParams<{ page: string }, FeedsReq, FeedsRes> = async (req, res) => {
+    if (!req.params.page) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
+
+    const page = parseInt(req.params.page);
+    const pageSize = PageSize;
+    const offset = (page - 1) * pageSize;
+    const feeds = await this.db.getSmartFeeds(res.locals.userId, pageSize, offset);
+    return res.send({ feeds, page });
+  };
+
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes> = async (req, res) => {
     const userId = res.locals.userId;
     const { spaceId } = req.params;

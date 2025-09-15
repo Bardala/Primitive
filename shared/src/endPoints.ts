@@ -10,8 +10,10 @@ export enum ENDPOINT {
   GET_FOLLOWERS = '/api/v0/user/:id/followers',
   GET_USERS_LIST = '/api/v0/users',
   GET_USER_BLOGS = '/api/v0/user/:id/blogs/:page',
+  GET_ALL_USER_BLOGS = '/api/v0/user/blogs/:page/all',
   GET_USER_SPACES = '/api/v0/user/:id/spaces',
   GET_ALL_UNREAD_MSGS = '/api/v0/user/msgs/missed',
+  UPDATE_USER_PASSWORD = '/api/v0/user/password',
 
   // *Blog
   CREATE_BLOG = '/api/v0/blog',
@@ -71,6 +73,7 @@ export enum ENDPOINT {
   // *Feeds
   GET_FEEDS = '/api/v0/feeds',
   GET_FEEDS_PAGE = '/api/v0/feeds/:page',
+  Get_SMART_FEEDS = '/api/v0/feeds/smart/:page',
 
   // *Test
   // TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:/page:pageSize',

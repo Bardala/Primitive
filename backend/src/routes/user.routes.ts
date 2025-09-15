@@ -20,6 +20,15 @@ export const createUserRoutes = (userController: UserController) => {
     requireAuth,
     asyncHandler(userController.getAllUnReadMsgs)
   );
-
+  router.post(
+    ENDPOINT.UPDATE_USER_PASSWORD,
+    requireAuth,
+    asyncHandler(userController.updateUserPassword)
+  );
+  router.get(
+    ENDPOINT.GET_ALL_USER_BLOGS,
+    requireAuth,
+    asyncHandler(userController.getAllUserBlogs)
+  );
   return router;
 };

@@ -3,6 +3,7 @@ import {
   ChatMessage,
   Comment,
   CommentWithUser,
+  DefaultSpaceId,
   LastReadMsg,
   Like,
   LikedUser,
@@ -112,7 +113,46 @@ export class SqlDataStore implements DataStoreDao {
     ]);
   }
 
-  // todo: add good algorithm
+  async getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
+    const query = `
+    SELECT 
+      blogs.*,
+      SUBSTRING(blogs.content, 1, 1000) AS content,
+      COALESCE(l.like_count, 0) AS likeCount,
+      COALESCE(c.comment_count, 0) AS commentCount,
+      (
+        (UNIX_TIMESTAMP() - blogs.timestamp)/3600 * -0.1
+        + COALESCE(l.like_count, 0) * 0.5
+        + COALESCE(c.comment_count, 0) * 0.7
+      ) AS score
+    FROM blogs
+    LEFT JOIN (
+      SELECT blogId, COUNT(*) AS like_count FROM likes GROUP BY blogId
+    ) l ON l.blogId = blogs.id
+    LEFT JOIN (
+      SELECT blogId, COUNT(*) AS comment_count FROM comments GROUP BY blogId
+    ) c ON c.blogId = blogs.id
+    WHERE blogs.spaceId IN (
+      SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1'
+    )
+    OR blogs.userId IN (
+      SELECT followingId FROM follows WHERE followerId = ? AND blogs.spaceId = '1'
+    )
+    OR blogs.userId = ?
+    ORDER BY score DESC
+    LIMIT ? OFFSET ?;
+  `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      memberId,
+      memberId,
+      memberId,
+      pageSize,
+      offset,
+    ]);
+    const blogs = rows as Blog[];
+    return blogs;
+  }
+
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
@@ -125,7 +165,7 @@ export class SqlDataStore implements DataStoreDao {
     OR blogs.userId = ?
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ? 
-  `;
+    `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [
       memberId,
       memberId,
@@ -321,6 +361,13 @@ export class SqlDataStore implements DataStoreDao {
   }
   deleteUser(_userId: string): Promise<void> {
     throw new Error('Method not implemented.');
+  }
+
+  async updateUserPassword(userId: string, newHashedPassword: string): Promise<void> {
+    const query = `
+    UPDATE users SET password=? WHERE id=?
+    `;
+    await this.pool.query<RowDataPacket[]>(query, [newHashedPassword, userId]);
   }
 
   async createComment(comment: Comment): Promise<void> {
@@ -573,6 +620,28 @@ export class SqlDataStore implements DataStoreDao {
     await this.deleteBlogLikes(blogId);
     await this.deleteComments(blogId);
     await this.pool.query('DELETE FROM blogs WHERE id=?', [blogId]);
+  }
+
+  async getUserDefaultSpaceBlogs(
+    userId: string,
+    pageSize: number,
+    offset: number
+  ): Promise<Blog[]> {
+    const q = `
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
+    WHERE blogs.spaceId = ? AND userId = ? 
+    ORDER BY blogs.timestamp DESC
+    LIMIT ? OFFSET ?
+    `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(q, [
+      DefaultSpaceId,
+      userId,
+      pageSize,
+      offset,
+    ]);
+    const blogs = rows as Blog[];
+    return blogs;
   }
 
   async getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]> {

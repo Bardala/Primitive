@@ -18,7 +18,7 @@ export const FollowersModal: React.FC<FollowersModalProps> = ({ userId, isOpen, 
   const { followers, followersQuery } = useFollowers(userId);
   const { t } = useTranslation();
 
-  if (!isOpen || currUser?.id !== userId) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>

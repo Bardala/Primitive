@@ -229,8 +229,19 @@
     "error": "Failed to add member"
   },
   "settings": {
+    "password": {
+      "toggle": "Toggle password update form",
+      "show": "Update Password",
+      "hide": "Hide Password Update"
+    },
     "title": "Settings",
     "language": "Language",
     "logout": "Logout"
+  },
+  "feed": {
+    "toggleToDate": "Switch to date-based feeds",
+    "toggleToSmart": "Switch to smart algorithm feeds",
+    "smart": "Smart",
+    "date": "Date"
   }
 }

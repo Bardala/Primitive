@@ -55,3 +55,9 @@ export interface AllUnReadMsgsReq {
 export interface AllUnReadMsgsRes {
     numberOfMsgs: UnReadMsgs[];
 }
+export interface UpdatePasswordReq {
+    oldPassword: string;
+    newPassword: string;
+}
+export interface UpdatePasswordRes {
+}

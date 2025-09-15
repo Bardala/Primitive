@@ -229,6 +229,27 @@
   "settings": {
     "title": "الإعدادات",
     "language": "اللغة",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "password": {
+      "title": "تحديث كلمة المرور",
+      "oldPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور الجديدة",
+      "updateButton": "تحديث كلمة المرور",
+      "updating": "جارٍ التحديث...",
+      "updateSuccess": "تم تحديث كلمة المرور بنجاح!",
+      "updateFailed": "فشل في تحديث كلمة المرور",
+      "allFieldsRequired": "جميع الحقول مطلوبة",
+      "invalidOldPassword": "كلمة المرور الحالية غير صحيحة",
+      "userNotFound": "المستخدم غير موجود",
+      "lengthHint": "يجب أن تتراوح كلمة المرور بين 8 إلى 20 حرفًا",
+      "passwordsDontMatch": "كلمات المرور غير متطابقة",
+      "oldPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+      "toggle": "تبديل نموذج تحديث كلمة المرور",
+      "show": "تحديث كلمة المرور",
+      "hide": "إخفاء تحديث كلمة المرور"
+    }
   }
 }

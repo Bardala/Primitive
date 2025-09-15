@@ -11,6 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import { isLoggedIn } from '../fetch/auth';
 import '../styles/navBar.css';
 import { NotificationIcon } from './NotificationIcon';
+import { UserLink } from './UserLink';
 
 const AppIcon = '/PrimitiveIcon.ico';
 
@@ -66,12 +67,18 @@ export const NavBar = () => {
       <div className="navbar-container">
         <div className="logo-section">
           <img src={AppIcon} alt={AppName} className="app-icon" onClick={() => nav('/')} />
-          {currUser && (
+          {/* {currUser && (
             <Link to={`/u/${currUser.id}`} className="user-section" title={t('navbar.myProfile')}>
               <span className="username">{currUser.username.substring(0, 5)}</span>
               <span className="user-status"></span>
             </Link>
-          )}
+          )} */}
+          <UserLink
+            username={currUser?.username!}
+            userId={currUser?.id!}
+            complete={false}
+            className={'user-section'}
+          />
         </div>
 
         <nav className="links">

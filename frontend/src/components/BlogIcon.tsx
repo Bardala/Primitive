@@ -25,7 +25,7 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
         </div>
 
         <div className="blog-meta">
-          <UserLink userId={post.userId!} username={post.author!} />
+          <UserLink userId={post.userId!} username={post.author!} complete={false} />
 
           <LikeBlogButton post={post} />
 

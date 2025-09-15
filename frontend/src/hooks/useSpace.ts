@@ -19,6 +19,7 @@ import {
   getNumOfUnReadMsgsApi,
   joinSpcApi,
   membersApi,
+  smarterFeedsApi,
   spcApi,
 } from '../utils/api';
 import { useScroll } from './useScroll';
@@ -99,6 +100,7 @@ export const useFeeds = () => {
   const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const key = ['feeds'];
+  const smarterKey = ['smartFeeds'];
 
   const spcKey = ['space', DefaultSpaceId];
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
@@ -113,11 +115,18 @@ export const useFeeds = () => {
     onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
   });
 
+  const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(smarterKey, smarterFeedsApi(), {
+    enabled: !!currUser?.jwt,
+    getNextPageParam: lastPage => lastPage.page + 1,
+    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
+  });
+
   useScroll(feedsQuery);
 
   return {
     spaceQuery,
     feeds: feedsQuery.data?.pages.flatMap(page => page.feeds) || [],
+    smartFeeds: smartFeedsQuery.data?.pages.flatMap(page => page.feeds) || [],
     isLoading: feedsQuery.isLoading,
     isError: feedsQuery.isError,
     fetchNextPage: feedsQuery.fetchNextPage,

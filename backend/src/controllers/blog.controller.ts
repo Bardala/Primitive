@@ -246,7 +246,7 @@ export class BlogController implements blogController {
 
     const offset = (page - 1) * pageSize;
 
-    const blogs = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
+    const blogs = await this.db.getSmartFeeds(res.locals.userId, pageSize, offset);
     return res.status(200).send({ blogs });
   };
 }

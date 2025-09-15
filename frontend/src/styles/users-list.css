@@ -16,7 +16,6 @@
   border-radius: 8px;
   cursor: pointer;
   list-style: none;
-  margin: 0 50px 50px;
   display: flex;
   align-items: center;
 }
@@ -84,10 +83,6 @@
 }
 
 @media screen and (max-width: 600px) {
-  .user-list li {
-    flex-direction: column;
-  }
-
   .user-list li .username {
     margin-right: 0;
     margin-bottom: 10px;

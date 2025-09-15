@@ -1,9 +1,11 @@
+// Settings.tsx
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CiLogout } from 'react-icons/ci';
+import { CiLock, CiLogout } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from 'src/components/LanguageSwitcher';
+import { PasswordUpdate } from 'src/components/PasswordUpdate';
 import { useAuthContext } from 'src/context/AuthContext';
 import { logOut } from 'src/fetch/auth';
 
@@ -14,6 +16,7 @@ export const Settings = () => {
   const nav = useNavigate();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
 
   const handleClick = useCallback(() => {
     queryClient.clear();
@@ -21,6 +24,10 @@ export const Settings = () => {
     refetchCurrUser();
     nav('/login', { replace: true });
   }, [nav, queryClient, refetchCurrUser]);
+
+  const togglePasswordUpdate = () => {
+    setShowPasswordUpdate(!showPasswordUpdate);
+  };
 
   return (
     <div className="settings-container">
@@ -30,6 +37,21 @@ export const Settings = () => {
         <div className="settings-item">
           <span className="settings-label">🌐 {t('settings.language')}</span>
           <LanguageSwitcher />
+        </div>
+
+        <div className="password-section">
+          <button
+            onClick={togglePasswordUpdate}
+            className="toggle-password-btn"
+            title={t('settings.password.toggle')}
+          >
+            <CiLock size={22} />
+            <span className="toggle-text">
+              {showPasswordUpdate ? t('settings.password.hide') : t('settings.password.show')}
+            </span>
+          </button>
+
+          {showPasswordUpdate && <PasswordUpdate />}
         </div>
 
         <div className="settings-item">

@@ -13,6 +13,7 @@ var ERROR;
     ERROR["DUPLICATE_EMAIL"] = "Email already exists";
     ERROR["INVALID_LOGIN"] = "Invalid login";
     ERROR["INVALID_PASSWORD"] = "Invalid password";
+    ERROR["INCORRECT_PASSWORD"] = "Incorrect password";
     ERROR["INVALID_TOKEN"] = "Invalid token";
     ERROR["UNAUTHORIZED"] = "Unauthorized";
     ERROR["TOKEN_EXPIRED"] = "Token expired";

@@ -22,7 +22,7 @@ import {
   UserSpacesReq,
   UserSpacesRes,
 } from '@nest/shared';
-import { getRandomValues, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import validator from 'validator';
 
 import { DataStoreDao } from '../dataStore';
@@ -68,6 +68,20 @@ export class UserController implements userController {
     return res.status(HTTP.OK).send({ spaces: await this.db.getUserSpaces(userId) });
   };
 
+  getAllUserBlogs: HandlerWithParams<{ id: string; page: string }, UserBlogsReq, UserBlogsRes> =
+    async (req, res) => {
+      const userId = req.params.id;
+      if (!userId || !req.params.page) {
+        return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.PARAMS_MISSING });
+      }
+
+      const page = parseInt(req.params.page);
+      const pageSize = PageSize;
+      const offset = (page - 1) * pageSize;
+      const blogs = await this.db.getUserBlogs(userId, pageSize, offset);
+      return res.send({ blogs, page });
+    };
+
   getUserBlogs: HandlerWithParams<{ id: string; page: string }, UserBlogsReq, UserBlogsRes> =
     async (req, res) => {
       const userId = req.params.id;
@@ -79,7 +93,7 @@ export class UserController implements userController {
       const pageSize = PageSize;
 
       const offset = (page - 1) * pageSize;
-      const blogs = await this.db.getUserBlogs(userId, pageSize, offset);
+      const blogs = await this.db.getUserDefaultSpaceBlogs(userId, pageSize, offset);
 
       return res.send({ blogs, page });
     };
@@ -175,16 +189,10 @@ export class UserController implements userController {
     if (!validator.isEmail(email))
       return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INVALID_EMAIL });
 
-    if (password.length < 12 || password.length > 100)
+    if (password.length < 8 || password.length > 20)
       return res
         .status(HTTP.BAD_REQUEST)
-        .send({ error: 'Password length must equal or greater than 12' });
-
-    // if (!validator.isStrongPassword(password))
-    //   return res.status(HTTP.BAD_REQUEST).send({
-    //     error:
-    //       ERROR.WEAK_PASSWORD + '. Suggested strong password: ' + this.generateStrongPassword(),
-    //   });
+        .send({ error: 'Password length must equal or greater than 8' });
 
     const user = {
       email,
@@ -218,17 +226,28 @@ export class UserController implements userController {
       .send({ jwt: createToken(user.id), username: user.username, id: user.id });
   };
 
-  generateStrongPassword = (): string => {
-    const passwordLength = 8;
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-    let retVal = '';
-    while (!validator.isStrongPassword(retVal)) {
-      retVal = '';
-      for (let i = 0, n = charset.length; i < passwordLength; ++i)
-        retVal +=
-          charset[Math.floor((getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) * n)];
-    }
+  updateUserPassword: Handler<{ oldPassword: string; newPassword: string }, {}> = async (
+    req,
+    res
+  ) => {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword)
+      return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.ALL_FIELDS_REQUIRED });
+    if (newPassword.length < 8 || newPassword.length > 20)
+      return res
+        .status(HTTP.BAD_REQUEST)
+        .send({ error: 'Password length must equal or greater than 8' });
 
-    return retVal;
+    const user = await this.db.getUserById(res.locals.userId);
+    if (!user) return res.status(HTTP.NOT_FOUND).send({ error: ERROR.USER_NOT_FOUND });
+    const match = user.password === hashPassword(oldPassword);
+    if (!match) return res.status(HTTP.BAD_REQUEST).send({ error: ERROR.INCORRECT_PASSWORD });
+    if (oldPassword === newPassword)
+      return res
+        .status(HTTP.BAD_REQUEST)
+        .send({ error: 'New password must be different from the old one' });
+
+    await this.db.updateUserPassword(user.id, hashPassword(newPassword));
+    return res.sendStatus(HTTP.OK);
   };
 }

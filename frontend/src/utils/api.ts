@@ -61,6 +61,8 @@ import {
   UnReadMsgsNumRes,
   UpdateCommentReq,
   UpdateCommentRes,
+  UpdatePasswordReq,
+  UpdatePasswordRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
   UserBlogsReq,
@@ -105,6 +107,13 @@ export const feedsApi =
   () =>
   ({ pageParam = 1 }) =>
     fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, 'GET', undefined, currUser?.jwt, [
+      pageParam + '',
+    ]);
+
+export const smarterFeedsApi =
+  () =>
+  ({ pageParam = 1 }) =>
+    fetchFn<FeedsReq, FeedsRes>(ENDPOINT.Get_SMART_FEEDS, 'GET', undefined, currUser?.jwt, [
       pageParam + '',
     ]);
 
@@ -304,3 +313,11 @@ export const numOfCommsApi = (blogId: string) => () => {
     [blogId]
   );
 };
+
+export const updatePasswordApi = (data: UpdatePasswordReq) => () =>
+  fetchFn<UpdatePasswordReq, UpdatePasswordRes>(
+    ENDPOINT.UPDATE_USER_PASSWORD,
+    'POST',
+    data,
+    currUser?.jwt
+  );

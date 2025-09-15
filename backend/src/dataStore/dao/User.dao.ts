@@ -3,6 +3,7 @@ import { Blog, Space, UnReadMsgs, User, UserCard, UsersList } from '@nest/shared
 export interface UserDao {
   createUser(user: User): Promise<void>;
   updateUser(user: User): Promise<void>;
+  updateUserPassword(userId: string, newHashedPassword: string): Promise<void>;
   deleteUser(userId: string): Promise<void>;
   getUserById(userId: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -15,6 +16,7 @@ export interface UserDao {
   getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;
   getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
   getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
+  getUserDefaultSpaceBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
   isFollow(followingId: string, userId: string): Promise<boolean>;
 
