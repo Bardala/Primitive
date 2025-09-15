@@ -100,22 +100,13 @@ export const useFeeds = () => {
   const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const key = ['feeds'];
-  const smarterKey = ['smartFeeds'];
 
   const spcKey = ['space', DefaultSpaceId];
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
     enabled: !!currUser?.jwt && !!DefaultSpaceId,
-    // refetchOnWindowFocus: true,
   });
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
-    enabled: !!currUser?.jwt,
-    // refetchOnWindowFocus: true,
-    getNextPageParam: lastPage => lastPage.page + 1,
-    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
-  });
-
-  const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(smarterKey, smarterFeedsApi(), {
     enabled: !!currUser?.jwt,
     getNextPageParam: lastPage => lastPage.page + 1,
     onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
@@ -126,10 +117,38 @@ export const useFeeds = () => {
   return {
     spaceQuery,
     feeds: feedsQuery.data?.pages.flatMap(page => page.feeds) || [],
-    smartFeeds: smartFeedsQuery.data?.pages.flatMap(page => page.feeds) || [],
     isLoading: feedsQuery.isLoading,
     isError: feedsQuery.isError,
     fetchNextPage: feedsQuery.fetchNextPage,
+    isEnd,
+  };
+};
+
+export const useSmartFeeds = () => {
+  const pageSize = PageSize;
+  const { currUser } = useAuthContext();
+  const [isEnd, setIsEnd] = useState(false);
+  const smarterKey = ['smartFeeds'];
+
+  const spcKey = ['space', DefaultSpaceId];
+  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
+    enabled: !!currUser?.jwt && !!DefaultSpaceId,
+  });
+
+  const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(smarterKey, smarterFeedsApi(), {
+    enabled: !!currUser?.jwt,
+    getNextPageParam: lastPage => lastPage.page + 1,
+    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
+  });
+
+  useScroll(smartFeedsQuery);
+
+  return {
+    spaceQuery,
+    smartFeeds: smartFeedsQuery.data?.pages.flatMap(page => page.feeds) || [],
+    isLoading: smartFeedsQuery.isLoading,
+    isError: smartFeedsQuery.isError,
+    fetchNextPage: smartFeedsQuery.fetchNextPage,
     isEnd,
   };
 };

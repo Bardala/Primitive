@@ -1,9 +1,11 @@
+// pages/Home.tsx
+import { useSmartFeeds } from 'src/hooks/useSpace';
+
 import { BlogList } from '../components/BlogList';
 import { ActionBar } from '../components/SideBar';
-import { useFeeds } from '../hooks/useSpace';
 
 export const Home = () => {
-  const { smartFeeds, fetchNextPage, isEnd, isLoading, spaceQuery } = useFeeds();
+  const { smartFeeds, fetchNextPage, isEnd, isLoading, spaceQuery } = useSmartFeeds();
 
   if (spaceQuery.isError) return <p className="error">{spaceQuery.error.message}</p>;
   if (spaceQuery.isLoading) return <div>Loading...</div>;

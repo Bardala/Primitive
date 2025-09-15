@@ -230,6 +230,22 @@
   },
   "settings": {
     "password": {
+      "title": "Update Password",
+      "oldPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "updateButton": "Update Password",
+      "updating": "Updating...",
+      "updateSuccess": "Password updated successfully!",
+      "updateFailed": "Failed to update password",
+      "allFieldsRequired": "All fields are required",
+      "invalidOldPassword": "Current password is incorrect",
+      "userNotFound": "User not found",
+      "lengthHint": "Password must be between 8-20 characters",
+      "passwordsDontMatch": "Passwords don't match",
+      "oldPasswordPlaceholder": "Enter your current password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
       "toggle": "Toggle password update form",
       "show": "Update Password",
       "hide": "Hide Password Update"
@@ -237,11 +253,5 @@
     "title": "Settings",
     "language": "Language",
     "logout": "Logout"
-  },
-  "feed": {
-    "toggleToDate": "Switch to date-based feeds",
-    "toggleToSmart": "Switch to smart algorithm feeds",
-    "smart": "Smart",
-    "date": "Date"
   }
 }

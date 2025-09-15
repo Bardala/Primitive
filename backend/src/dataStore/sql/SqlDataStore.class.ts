@@ -115,33 +115,52 @@ export class SqlDataStore implements DataStoreDao {
 
   async getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT 
-      blogs.*,
-      SUBSTRING(blogs.content, 1, 1000) AS content,
-      COALESCE(l.like_count, 0) AS likeCount,
-      COALESCE(c.comment_count, 0) AS commentCount,
-      (
-        (UNIX_TIMESTAMP() - blogs.timestamp)/3600 * -0.1
-        + COALESCE(l.like_count, 0) * 0.5
-        + COALESCE(c.comment_count, 0) * 0.7
-      ) AS score
-    FROM blogs
-    LEFT JOIN (
-      SELECT blogId, COUNT(*) AS like_count FROM likes GROUP BY blogId
-    ) l ON l.blogId = blogs.id
-    LEFT JOIN (
-      SELECT blogId, COUNT(*) AS comment_count FROM comments GROUP BY blogId
-    ) c ON c.blogId = blogs.id
-    WHERE blogs.spaceId IN (
-      SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1'
+    WITH blog_scores AS (
+      SELECT 
+        b.id,
+        b.title,
+        SUBSTRING(b.content, 1, 1000) AS content,  -- Only select content once
+        b.userId,
+        b.spaceId,
+        b.author,
+        b.timestamp,
+        -- Calculate score components
+        EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) as time_score,
+        LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) as like_score,
+        LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) as comment_score,
+        LOG(1 + COUNT(DISTINCT CASE 
+          WHEN rc.timestamp > UNIX_TIMESTAMP() * 1000 - (24 * 60 * 60 * 1000) 
+          THEN rc.id END
+        )) / LOG(20) as recent_comment_score,
+        -- Final weighted score
+        (EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) * 0.4) +
+        (LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) * 0.25) +
+        (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.2) +
+        (LOG(1 + COUNT(DISTINCT CASE 
+          WHEN rc.timestamp > UNIX_TIMESTAMP() * 1000 - (24 * 60 * 60 * 1000) 
+          THEN rc.id END
+        )) / LOG(20) * 0.15) as score
+        
+      FROM blogs b
+      LEFT JOIN likes l ON b.id = l.blogId
+      LEFT JOIN comments c ON b.id = c.blogId
+      LEFT JOIN comments rc ON b.id = rc.blogId
+      
+      WHERE b.spaceId IN (
+        SELECT spaceId FROM members WHERE memberId = ? AND spaceId != '1'
+      )
+      OR b.userId IN (
+        SELECT followingId FROM follows WHERE followerId = ? AND b.spaceId = '1'
+      )
+      OR b.userId = ?
+      
+      GROUP BY b.id, b.title, b.content, b.userId, b.spaceId, b.author, b.timestamp
     )
-    OR blogs.userId IN (
-      SELECT followingId FROM follows WHERE followerId = ? AND blogs.spaceId = '1'
-    )
-    OR blogs.userId = ?
-    ORDER BY score DESC
-    LIMIT ? OFFSET ?;
+    SELECT * FROM blog_scores
+    ORDER BY score DESC, timestamp DESC
+    LIMIT ? OFFSET ?
   `;
+
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [
       memberId,
       memberId,
@@ -149,8 +168,8 @@ export class SqlDataStore implements DataStoreDao {
       pageSize,
       offset,
     ]);
-    const blogs = rows as Blog[];
-    return blogs;
+
+    return rows as Blog[];
   }
 
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
