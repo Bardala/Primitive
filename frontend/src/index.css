@@ -64,10 +64,10 @@
   --max-content-width: 800px;
   --max-nav-width: 900px;
 
-  /* New component-specific variables */
-  --blog-content-line-height: 1.7;
-  --code-block-background: #282c34;
-  --code-block-border: #3b4048;
+  --code-block-background: rgb(250, 250, 250);
+  --code-block-border: #d0d7de;
+  --inline-code-background: rgba(175, 184, 193, 0.25);
+
   --inline-code-background: rgba(175, 184, 193, 0.2);
   --blockquote-border: var(--color-primary);
   --blockquote-background: rgba(26, 172, 131, 0.05);

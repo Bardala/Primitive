@@ -119,7 +119,7 @@ export class SqlDataStore implements DataStoreDao {
       SELECT 
         b.id,
         b.title,
-        SUBSTRING(b.content, 1, 1000) AS content,  -- Only select content once
+        SUBSTRING(b.content, 1, 500) AS content,  -- Only select content once
         b.userId,
         b.spaceId,
         b.author,
@@ -174,7 +174,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
     WHERE blogs.spaceId IN (
       SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1' 
     )
