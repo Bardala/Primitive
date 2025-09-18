@@ -13,6 +13,19 @@ import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { formatTimeShort, isArabic } from '../utils/assists';
 
+// Function to calculate reading time
+const calculateReadingTime = (text: string): number => {
+  // Average reading speed in words per minute
+  const wordsPerMinute = 200;
+
+  // Remove markdown syntax and count words
+  const plainText = text.replace(/[#*[\]()~`>\\\-_]/g, ' ');
+  const wordCount = plainText.trim().split(/\s+/).length;
+
+  // Calculate reading time in minutes, at least 1 minute
+  return Math.max(1, Math.round(wordCount / wordsPerMinute));
+};
+
 export const BlogDetails = () => {
   const { id } = useParams();
   const commentsRef = useRef<HTMLDivElement>(null);
@@ -24,6 +37,9 @@ export const BlogDetails = () => {
 
   const blog = blogQuery.data?.blog;
   const comments = commentsQuery.data?.comments;
+
+  // Calculate reading time
+  const readingTime = blog ? calculateReadingTime(blog.content) : 0;
 
   const goToComments = () => {
     commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -56,6 +72,11 @@ export const BlogDetails = () => {
                   username={blog.author || t('blogDetails.unknown')}
                 />
               </div>
+
+              <div className="reading-time">
+                {t('blogDetails.readingTime', { minutes: readingTime })}
+              </div>
+
               <div className="blog-content">
                 <MyMarkdown markdown={blog.content} />
               </div>

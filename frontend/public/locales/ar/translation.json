@@ -74,7 +74,8 @@
   "blogDetails": {
     "writtenBy": "كتب بواسطة",
     "unknown": "غير معروف",
-    "comments": "التعليقات"
+    "comments": "التعليقات",
+    "readingTime": "{{minutes}} دقيقة قراءة"
   },
   "blogActions": {
     "editBlog": "تعديل المقال",

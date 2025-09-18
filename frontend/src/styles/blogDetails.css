@@ -53,6 +53,13 @@
   text-decoration: underline;
 }
 
+.reading-time {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
 .blog-content {
   line-height: var(--blog-content-line-height);
   max-height: 100%;

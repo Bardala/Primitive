@@ -76,7 +76,8 @@
   "blogDetails": {
     "writtenBy": "Written by",
     "unknown": "Unknown",
-    "comments": "Comments"
+    "comments": "Comments",
+    "readingTime": "{{minutes}} min read"
   },
   "blogActions": {
     "editBlog": "Edit blog",
