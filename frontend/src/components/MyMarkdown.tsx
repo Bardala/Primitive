@@ -1,5 +1,5 @@
 import mermaid from 'mermaid';
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -11,27 +11,19 @@ import { useTheme } from 'src/context/ThemeContext';
 
 import { isArabic } from '../utils/assists';
 
-// Initialize Mermaid
-// mermaid.initialize({
-//   startOnLoad: false,
-//   theme: 'dark',
-//   securityLevel: 'loose',
-//   fontFamily: 'var(--font-family-mono)',
-//   logLevel: 0,
-//   suppressErrorRendering: true,
-// });
-
 interface MermaidDiagramProps {
   chart: string;
   isDark: boolean;
 }
 
-// Mermaid component
+// Mermaid component with resize and collapse functionality
 const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
-    if (containerRef.current && chart) {
+    if (containerRef.current && chart && !isCollapsed) {
       const container = containerRef.current;
 
       // Clear previous content
@@ -40,7 +32,7 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
       // Re-initialize Mermaid with current theme
       mermaid.initialize({
         startOnLoad: false,
-        theme: isDark ? 'dark' : 'default', // 👈 change theme dynamically
+        theme: isDark ? 'dark' : 'default',
         securityLevel: 'loose',
         fontFamily: 'var(--font-family-mono)',
         logLevel: 0,
@@ -53,6 +45,15 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
         .render(id, chart)
         .then(({ svg }) => {
           container.innerHTML = svg;
+
+          // Apply current scale after rendering
+          if (scale !== 1) {
+            const svgElement = container.querySelector('svg');
+            if (svgElement) {
+              svgElement.style.transform = `scale(${scale})`;
+              svgElement.style.transformOrigin = 'top left';
+            }
+          }
         })
         .catch(error => {
           console.error('Mermaid rendering error:', error);
@@ -61,21 +62,139 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
         </div>`;
         });
     }
-  }, [chart, isDark]);
+  }, [chart, isDark, isCollapsed, scale]);
+
+  const increaseSize = () => {
+    setScale((prev: number) => Math.min(prev + 0.1, 2)); // Max scale 2x
+  };
+
+  const decreaseSize = () => {
+    setScale((prev: number) => Math.max(prev - 0.1, 0.5)); // Min scale 0.5x
+  };
+
+  const resetSize = () => {
+    setScale(1);
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   return (
     <div
-      ref={containerRef}
       style={{
         background: 'var(--code-block-background)',
         border: '1px solid var(--code-block-border)',
         borderRadius: 'var(--border-radius-md)',
         padding: 'var(--spacing-md)',
         margin: 'var(--spacing-lg) 0',
-        overflowX: 'auto',
-        textAlign: 'center',
+        overflow: 'hidden',
+        position: 'relative',
       }}
-    />
+    >
+      {/* Control buttons */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          display: 'flex',
+          gap: '4px',
+          zIndex: 10,
+          background: 'var(--code-block-background)',
+          borderRadius: 'var(--border-radius-sm)',
+          padding: '4px',
+          border: '1px solid var(--code-block-border)',
+        }}
+      >
+        <button
+          onClick={toggleCollapse}
+          title={isCollapsed ? 'Expand diagram' : 'Collapse diagram'}
+          style={{
+            background: 'var(--color-bg-surface)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 'var(--border-radius-sm)',
+            cursor: 'pointer',
+            padding: '4px 8px',
+            fontSize: '12px',
+          }}
+        >
+          {isCollapsed ? '↔' : '✕'}
+        </button>
+
+        {!isCollapsed && (
+          <>
+            <button
+              onClick={decreaseSize}
+              title="Decrease size"
+              style={{
+                background: 'var(--color-bg-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                fontSize: '12px',
+              }}
+            >
+              -
+            </button>
+            <button
+              onClick={resetSize}
+              title="Reset size"
+              style={{
+                background: 'var(--color-bg-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                fontSize: '12px',
+              }}
+            >
+              ↺
+            </button>
+            <button
+              onClick={increaseSize}
+              title="Increase size"
+              style={{
+                background: 'var(--color-bg-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                fontSize: '12px',
+              }}
+            >
+              +
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Diagram container */}
+      <div
+        ref={containerRef}
+        style={{
+          textAlign: 'center',
+          overflowX: 'auto',
+          display: isCollapsed ? 'none' : 'block',
+          minHeight: '100px',
+        }}
+      />
+
+      {isCollapsed && (
+        <div
+          style={{
+            padding: '20px',
+            textAlign: 'center',
+            color: 'var(--color-text-secondary)',
+            cursor: 'pointer',
+          }}
+          onClick={toggleCollapse}
+        >
+          Mermaid diagram (click to expand)
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -144,10 +263,6 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
         </code>
       );
     },
-
-    // h1: ({ ...props }) => <h1 style={{ scrollMarginTop: '80px' }} {...props} />,
-    // h2: ({ ...props }) => <h2 style={{ scrollMarginTop: '80px' }} {...props} />,
-    // h3: ({ ...props }) => <h3 style={{ scrollMarginTop: '80px' }} {...props} />,
 
     table: ({ ...props }) => (
       <div style={{ overflowX: 'auto', margin: 'var(--spacing-lg) 0' }}>
