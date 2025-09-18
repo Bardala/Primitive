@@ -77,7 +77,10 @@
     "writtenBy": "Written by",
     "unknown": "Unknown",
     "comments": "Comments",
-    "readingTime": "{{minutes}} min read"
+    "readingTime": "{{minutes}} min read",
+    "tableOfContents": "Table of Contents",
+    "showToc": "Show Table of Contents",
+    "hideToc": "Hide Table of Contents"
   },
   "blogActions": {
     "editBlog": "Edit blog",

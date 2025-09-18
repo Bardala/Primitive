@@ -75,7 +75,10 @@
     "writtenBy": "كتب بواسطة",
     "unknown": "غير معروف",
     "comments": "التعليقات",
-    "readingTime": "{{minutes}} دقيقة قراءة"
+    "readingTime": "{{minutes}} دقيقة قراءة",
+    "tableOfContents": "جدول المحتويات",
+    "showToc": "إظهار جدول المحتويات",
+    "hideToc": "إخفاء جدول المحتويات"
   },
   "blogActions": {
     "editBlog": "تعديل المقال",

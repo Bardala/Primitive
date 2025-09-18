@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
 import { useLocation, useParams } from 'react-router-dom';
@@ -13,9 +13,7 @@ import { useBlogPage } from '../hooks/useBlogPage';
 import '../styles/blogDetails.css';
 import { formatTimeShort, isArabic } from '../utils/assists';
 
-// Function to calculate reading time
 const calculateReadingTime = (text: string): number => {
-  // Average reading speed in words per minute
   const wordsPerMinute = 200;
 
   // Remove markdown syntax and count words
@@ -24,6 +22,25 @@ const calculateReadingTime = (text: string): number => {
 
   // Calculate reading time in minutes, at least 1 minute
   return Math.max(1, Math.round(wordCount / wordsPerMinute));
+};
+
+const extractHeadings = (markdown: string): Array<{ id: string; text: string; level: number }> => {
+  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const headings: Array<{ id: string; text: string; level: number }> = [];
+  let match;
+
+  while ((match = headingRegex.exec(markdown)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    // Create ID by converting to lowercase, replacing spaces with hyphens, and removing special chars
+    const id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0600-\u06FF\s]/g, '')
+      .replace(/\s+/g, '-');
+    headings.push({ id, text, level });
+  }
+
+  return headings;
 };
 
 export const BlogDetails = () => {
@@ -38,11 +55,29 @@ export const BlogDetails = () => {
   const blog = blogQuery.data?.blog;
   const comments = commentsQuery.data?.comments;
 
-  // Calculate reading time
   const readingTime = blog ? calculateReadingTime(blog.content) : 0;
+
+  const headings = blog ? extractHeadings(blog.content) : [];
+  const hasHeadings = headings.length > 0;
+
+  const [showToc, setShowToc] = useState(false);
 
   const goToComments = () => {
     commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      // Add temporary highlight
+      element.classList.add('heading-highlight');
+      setTimeout(() => element.classList.remove('heading-highlight'), 2000);
+    }
+  };
+
+  const toggleToc = () => {
+    setShowToc(!showToc);
   };
 
   useEffect(() => {
@@ -76,6 +111,44 @@ export const BlogDetails = () => {
               <div className="reading-time">
                 {t('blogDetails.readingTime', { minutes: readingTime })}
               </div>
+
+              {/* Table of Contents Toggle Button */}
+              {hasHeadings && (
+                <div className="toc-toggle-container">
+                  <button onClick={toggleToc} className="toc-toggle-btn">
+                    {showToc ? t('blogDetails.hideToc') : t('blogDetails.showToc')}
+                  </button>
+                </div>
+              )}
+
+              {/* Table of Contents */}
+              {hasHeadings && showToc && (
+                <div className="table-of-contents">
+                  <div className="toc-header">
+                    <h3>{t('blogDetails.tableOfContents')}</h3>
+                    <button
+                      onClick={toggleToc}
+                      className="toc-close-btn"
+                      title={t('blogDetails.hideToc')}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <ul>
+                    {headings.map((heading, index) => (
+                      <li
+                        key={index}
+                        className={`toc-level-${heading.level}`}
+                        style={{ marginLeft: `${(heading.level - 1) * 16}px` }}
+                      >
+                        <button onClick={() => scrollToHeading(heading.id)} className="toc-link">
+                          {heading.text}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <div className="blog-content">
                 <MyMarkdown markdown={blog.content} />
