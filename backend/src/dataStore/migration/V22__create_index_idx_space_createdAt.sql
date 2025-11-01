@@ -1,0 +1,1 @@
+CREATE INDEX idx_space_createdAt ON blogs (spaceId, timestamp);

@@ -1,49 +1,41 @@
 import { Blog, CommentWithUser, LikedUser, StatusMessage } from '../types';
+
 export type CreateBlogReq = Pick<Blog, 'title' | 'content' | 'spaceId'>;
 export interface CreateBlogRes {
-    blog: Blog;
+  blog: Blog;
 }
-export interface BlogReq {
-}
+export interface BlogReq {}
 export interface BlogRes {
-    blog: Blog;
+  blog: Blog;
 }
 export type updateBlogReq = Pick<Blog, 'content' | 'title'>;
-export interface updateBlogRes {
-}
-export interface DeleteBlogReq {
-}
+export interface updateBlogRes {}
+export interface DeleteBlogReq {}
 export interface DeleteBlogRes {
-    message: StatusMessage;
+  message: StatusMessage;
 }
-export interface BlogCommentsReq {
-}
+export interface BlogCommentsReq {}
 export interface BlogCommentsRes {
-    comments: CommentWithUser[];
+  comments: CommentWithUser[];
 }
-export interface BlogLikesReq {
-}
+export interface BlogLikesReq {}
 export interface BlogLikesRes {
-    likes: number;
-    isLiked: boolean;
+  likes: number;
+  isLiked: boolean;
 }
-export interface BlogLikesListReq {
-}
+export interface BlogLikesListReq {}
 export interface BlogLikesListRes {
-    users: LikedUser[];
+  users: LikedUser[];
 }
-export interface CreateLikeReq {
-}
+export interface CreateLikeReq {}
 export interface CreateLikeRes {
-    message: StatusMessage;
+  message: StatusMessage;
 }
-export interface RemoveLikeReq {
-}
+export interface RemoveLikeReq {}
 export interface RemoveLikeRes {
-    message: StatusMessage;
+  message: StatusMessage;
 }
-export interface NumOfCommentsReq {
-}
+export interface NumOfCommentsReq {}
 export interface NumOfCommentsRes {
-    numOfComments: number;
+  numOfComments: number;
 }

@@ -1,14 +1,7 @@
 export * from './types';
-export * from './api/blog.api.types';
-export * from './api/comment.api.types';
-export * from './api/space.api.types';
-export * from './api/user.api.types';
-export * from './api/chat.api.types';
 export * from './errors';
 export * from './endPoints';
-export * from './api/feeds.api.types';
-export * from './api/short.api.types';
-export * from './api/like.api.types';
 export * from './sockets';
+export * from './api';
 export const DefaultSpaceId = '1';
 export const PageSize = 10;

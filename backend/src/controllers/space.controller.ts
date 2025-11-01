@@ -103,7 +103,7 @@ export class SpaceController implements spaceController {
     if (!(await this.db.isSpaceAdmin(spaceId, userId))) return res.sendStatus(403);
     if (!(await this.db.isMember(spaceId, memberId))) return res.sendStatus(404);
 
-    await this.db.deleteMember(spaceId, memberId);
+    await this.db.removeMember(spaceId, memberId);
     return res.sendStatus(200);
   };
 
@@ -118,7 +118,7 @@ export class SpaceController implements spaceController {
       return res.status(403).send({ error: ERROR.OWNER_CANT_LEAVE });
     if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
 
-    await this.db.deleteMember(spaceId, userId);
+    await this.db.removeMember(spaceId, userId);
     return res.sendStatus(200);
   };
 
@@ -273,7 +273,7 @@ export class SpaceController implements spaceController {
     const member: SpaceMember = { spaceId, memberId: userId, isAdmin: false };
     await this.db.addMember(member);
     const lastMsgId = await this.db.getLastMsgId(spaceId);
-    if (lastMsgId) await this.db.updateLastReadMsg({ userId, spaceId, msgId: lastMsgId });
+    if (lastMsgId) await this.db.updateLastRead({ userId, spaceId, msgId: lastMsgId });
 
     return res.send({ member });
   };
@@ -323,7 +323,7 @@ export class SpaceController implements spaceController {
 
     if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
 
-    const members: SpaceMember[] = await this.db.spaceMembers(spaceId);
+    const members: SpaceMember[] = await this.db.getSpaceMembers(spaceId);
     return res.send({ members });
   };
 }

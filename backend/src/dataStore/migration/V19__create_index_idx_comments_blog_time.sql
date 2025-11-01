@@ -1,0 +1,1 @@
+CREATE INDEX idx_comments_blog_time ON comments (blogId, timestamp);

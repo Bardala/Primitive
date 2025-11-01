@@ -1,17 +1,32 @@
 import {
+  AllowedRole,
   Blog,
+  BlogSeries,
+  BlogSeriesLink,
+  BlogTag,
   ChatMessage,
   Comment,
   CommentWithUser,
+  ConversationType,
   DefaultSpaceId,
   LastReadMsg,
   Like,
   LikedUser,
+  Notification,
+  PrivateConversation,
+  PrivateMessage,
   Space,
   SpaceMember,
+  SpacePermission,
+  SpacePermissionType,
+  SpaceTag,
+  Tag,
   UnReadMsgs,
   User,
+  UserActivity,
   UserCard,
+  UserConversationState,
+  UserTag,
   UsersList,
 } from '@nest/shared';
 import { DbMigration } from 'my-migrator';
@@ -22,6 +37,9 @@ import path from 'node:path';
 import { DataStoreDao } from '..';
 
 export class SqlDataStore implements DataStoreDao {
+  lastReadAt?: string | undefined;
+  lastSoundPlayedAt?: string | undefined;
+  private readonly blogIconLength = 500;
   private pool!: Pool;
   private prodProps: mysql.PoolOptions = {
     host: process.env.MYSQLHOST,
@@ -53,6 +71,295 @@ export class SqlDataStore implements DataStoreDao {
     await migration.run();
 
     return this;
+  }
+
+  async addUserTag(userTag: UserTag): Promise<void> {
+    const { userId, tagId } = userTag;
+    const query = `INSERT INTO user_tags (userId, tagId) VALUES (?, ?)`;
+    await this.pool.query(query, [userId, tagId]);
+  }
+
+  async removeUserTag(userTag: UserTag): Promise<void> {
+    const { userId, tagId } = userTag;
+    const query = `DELETE FROM user_tags WHERE userId=? AND tagId=?`;
+    await this.pool.query(query, [userId, tagId]);
+  }
+
+  async getUserTags(userId: string): Promise<Tag[]> {
+    const query = `
+    SELECT t.* FROM tags t
+    JOIN user_tags ut ON t.id = ut.tagId
+    WHERE ut.userId=?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, userId);
+    return rows as Tag[];
+  }
+
+  async getUsersByTag(tagId: string, limit: number = 50, offset: number = 0): Promise<string[]> {
+    const query = `
+    SELECT userId from user_tags
+    WHERE tagId = ?
+    LIMIT ? OFFSET ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [tagId, limit, offset]);
+    return rows.map(row => row.userId as string);
+  }
+
+  async searchUsers(query: string): Promise<Pick<User, 'id' | 'username'>[]> {
+    const searchQuery = `
+    SELECT id, username FROM users 
+    WHERE username LIKE ? OR email LIKE ?
+    ORDER BY 
+      CASE 
+        WHEN username LIKE ? THEN 1 
+        WHEN email LIKE ? THEN 2 
+        ELSE 3 
+      END,
+      username
+    LIMIT 50
+    `;
+
+    const searchTerm = `%${query}%`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(searchQuery, [
+      searchTerm,
+      searchTerm,
+      `${query}%`,
+      `${query}%`, // Prioritize exact starts
+    ]);
+
+    return rows as Pick<User, 'id' | 'username'>[];
+  }
+
+  async searchSpaces(query: string): Promise<Space[]> {
+    const searchQuery = `
+    SELECT s.*, u.username as ownerName 
+    FROM spaces s
+    JOIN users u ON s.ownerId = u.id
+    WHERE s.name LIKE ? OR s.description LIKE ?
+    ORDER BY 
+      CASE 
+        WHEN s.name LIKE ? THEN 1 
+        WHEN s.description LIKE ? THEN 2 
+        ELSE 3 
+      END,
+      s.name
+    LIMIT 50
+    `;
+
+    const searchTerm = `%${query}%`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(searchQuery, [
+      searchTerm,
+      searchTerm,
+      `${query}%`,
+      `${query}%`, // Prioritize exact starts
+    ]);
+
+    return rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      status: row.status,
+      description: row.description,
+      ownerId: row.ownerId,
+      timestamp: row.timestamp,
+    })) as Space[];
+  }
+
+  async getSpacesByOwner(ownerId: string): Promise<Space[]> {
+    const query = `
+    SELECT * FROM spaces 
+    WHERE ownerId = ? 
+    ORDER BY timestamp DESC
+  `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [ownerId]);
+    return rows as Space[];
+  }
+
+  async getSpaceStats(spaceId: string): Promise<{ memberCount: number; blogCount: number }> {
+    const memberCountQuery = `SELECT COUNT(*) as memberCount FROM members WHERE spaceId = ?`;
+    const blogCountQuery = `SELECT COUNT(*) as blogCount FROM blogs WHERE spaceId = ?`;
+
+    const [[memberRows], [blogRows]] = await Promise.all([
+      this.pool.query<RowDataPacket[]>(memberCountQuery, [spaceId]),
+      this.pool.query<RowDataPacket[]>(blogCountQuery, [spaceId]),
+    ]);
+
+    return {
+      memberCount: (memberRows[0]?.memberCount as number) || 0,
+      blogCount: (blogRows[0]?.blogCount as number) || 0,
+    };
+  }
+
+  async listConversationHistory(
+    conversationId: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<PrivateMessage[]> {
+    const query = `
+    SELECT pm.*, u.username as senderUsername 
+    FROM private_messages pm
+    JOIN users u ON pm.senderId = u.id
+    WHERE pm.conversationId = ? 
+    ORDER BY pm.createdAt DESC 
+    LIMIT ? OFFSET ?
+  `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [conversationId, limit, offset]);
+
+    return rows.map(row => ({
+      id: row.id,
+      conversationId: row.conversationId,
+      senderId: row.senderId,
+      content: row.content,
+      createdAt: row.createdAt,
+    })) as PrivateMessage[];
+  }
+
+  async editDirectMessage(messageId: string, content: string): Promise<void> {
+    const query = `UPDATE private_messages SET content = ? WHERE id = ?`;
+    await this.pool.query(query, [content, messageId]);
+  }
+
+  async clearConversationHistory(conversationId: string): Promise<void> {
+    const query = `DELETE FROM private_messages WHERE conversationId = ?`;
+    await this.pool.query(query, [conversationId]);
+  }
+
+  async getLatestDirectMessageId(conversationId: string): Promise<string | undefined> {
+    const query = `
+    SELECT id FROM private_messages 
+    WHERE conversationId = ? 
+    ORDER BY createdAt DESC 
+    LIMIT 1
+  `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [conversationId]);
+    return rows[0]?.id as string | undefined;
+  }
+
+  // Enhanced search with fuzzy matching and relevance scoring
+  async searchUsersEnhanced(query: string): Promise<Pick<User, 'id' | 'username'>[]> {
+    const searchQuery = `
+    SELECT 
+      id, 
+      username,
+      -- Relevance scoring
+      CASE 
+        WHEN username = ? THEN 100
+        WHEN username LIKE ? THEN 80
+        WHEN username LIKE ? THEN 60
+        WHEN email = ? THEN 50
+        WHEN email LIKE ? THEN 30
+        ELSE 10
+      END as relevance
+    FROM users 
+    WHERE username LIKE ? OR email LIKE ?
+    ORDER BY relevance DESC, username
+    LIMIT 50
+  `;
+
+    const searchTerm = `%${query}%`;
+    const startsWith = `${query}%`;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(searchQuery, [
+      query,
+      startsWith,
+      searchTerm,
+      query,
+      searchTerm,
+      searchTerm,
+      searchTerm,
+    ]);
+
+    return rows.map(row => ({
+      id: row.id,
+      username: row.username,
+    }));
+  }
+
+  // Enhanced space search with member count
+  async searchSpacesEnhanced(
+    query: string
+  ): Promise<(Space & { memberCount: number; ownerName: string })[]> {
+    const searchQuery = `
+    SELECT 
+      s.*, 
+      u.username as ownerName,
+      COUNT(m.memberId) as memberCount,
+      CASE 
+        WHEN s.name = ? THEN 100
+        WHEN s.name LIKE ? THEN 80
+        WHEN s.description LIKE ? THEN 60
+        ELSE 10
+      END as relevance
+    FROM spaces s
+    JOIN users u ON s.ownerId = u.id
+    LEFT JOIN members m ON s.id = m.spaceId
+    WHERE s.name LIKE ? OR s.description LIKE ?
+    GROUP BY s.id, s.name, s.status, s.description, s.ownerId, s.timestamp, u.username
+    ORDER BY relevance DESC, memberCount DESC
+    LIMIT 50
+  `;
+
+    const searchTerm = `%${query}%`;
+    const startsWith = `${query}%`;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(searchQuery, [
+      query,
+      startsWith,
+      searchTerm,
+      searchTerm,
+      searchTerm,
+    ]);
+
+    return rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      status: row.status,
+      description: row.description,
+      ownerId: row.ownerId,
+      timestamp: row.timestamp,
+      memberCount: row.memberCount,
+      ownerName: row.ownerName,
+    })) as (Space & { memberCount: number; ownerName: string })[];
+  }
+
+  // Enhanced space stats with more metrics
+  async getSpaceStatsEnhanced(spaceId: string): Promise<{
+    memberCount: number;
+    blogCount: number;
+    activeMembers: number;
+    recentBlogs: number;
+  }> {
+    const queries = {
+      memberCount: `SELECT COUNT(*) as count FROM members WHERE spaceId = ?`,
+      blogCount: `SELECT COUNT(*) as count FROM blogs WHERE spaceId = ?`,
+      activeMembers: `
+      SELECT COUNT(DISTINCT m.memberId) as count 
+      FROM members m
+      LEFT JOIN user_activity ua ON m.memberId = ua.userId
+      WHERE m.spaceId = ? AND ua.lastActive > DATE_SUB(NOW(), INTERVAL 7 DAY)
+    `,
+      recentBlogs: `
+      SELECT COUNT(*) as count 
+      FROM blogs 
+      WHERE spaceId = ? AND timestamp > UNIX_TIMESTAMP() * 1000 - (7 * 24 * 60 * 60 * 1000)
+    `,
+    };
+
+    const [[memberRows], [blogRows], [activeRows], [recentRows]] = await Promise.all([
+      this.pool.query<RowDataPacket[]>(queries.memberCount, [spaceId]),
+      this.pool.query<RowDataPacket[]>(queries.blogCount, [spaceId]),
+      this.pool.query<RowDataPacket[]>(queries.activeMembers, [spaceId]),
+      this.pool.query<RowDataPacket[]>(queries.recentBlogs, [spaceId]),
+    ]);
+
+    return {
+      memberCount: (memberRows[0]?.count as number) || 0,
+      blogCount: (blogRows[0]?.count as number) || 0,
+      activeMembers: (activeRows[0]?.count as number) || 0,
+      recentBlogs: (recentRows[0]?.count as number) || 0,
+    };
   }
 
   async getNumOfComments(blogId: string): Promise<number> {
@@ -100,18 +407,18 @@ export class SqlDataStore implements DataStoreDao {
     return this.pool.query<RowDataPacket[]>(query, [userId]).then(([rows]) => rows as any);
   }
 
-  async updateLastReadMsg(lastRead: LastReadMsg): Promise<void> {
-    const query = `
-    INSERT INTO last_read (userId, spaceId, lastReadId) VALUES (?, ?, ?)  
-    ON DUPLICATE KEY UPDATE lastReadId = ?;
-    `;
-    await this.pool.query(query, [
-      lastRead.userId,
-      lastRead.spaceId,
-      lastRead.msgId,
-      lastRead.msgId,
-    ]);
-  }
+  // async updateLastRead(lastRead: LastReadMsg): Promise<void> {
+  //   const query = `
+  //   INSERT INTO last_read (userId, spaceId, lastReadId) VALUES (?, ?, ?)
+  //   ON DUPLICATE KEY UPDATE lastReadId = ?;
+  //   `;
+  //   await this.pool.query(query, [
+  //     lastRead.userId,
+  //     lastRead.spaceId,
+  //     lastRead.msgId,
+  //     lastRead.msgId,
+  //   ]);
+  // }
 
   async getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
@@ -119,7 +426,7 @@ export class SqlDataStore implements DataStoreDao {
       SELECT 
         b.id,
         b.title,
-        SUBSTRING(b.content, 1, 500) AS content,  -- Only select content once
+        SUBSTRING(b.content, 1, ${this.blogIconLength}) AS content,  -- Only select content once
         b.userId,
         b.spaceId,
         b.author,
@@ -174,7 +481,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 500) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content FROM blogs
     WHERE blogs.spaceId IN (
       SELECT spaceId FROM members WHERE memberId = ? AND NOT spaceId = '1' 
     )
@@ -242,13 +549,6 @@ export class SqlDataStore implements DataStoreDao {
     return rows as LikedUser[];
   }
 
-  async deleteMember(spaceId: string, memberId: string): Promise<void> {
-    const query = `
-    DELETE FROM members WHERE memberId=? AND spaceId=?
-    `;
-    await this.pool.query(query, [memberId, spaceId]);
-  }
-
   async getFeeds(userId: string): Promise<Blog[]> {
     //? this returns all blogs from all spaces that the user is a member of
     const query = `
@@ -260,15 +560,6 @@ export class SqlDataStore implements DataStoreDao {
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, userId);
     return rows as Blog[];
-  }
-
-  async isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean> {
-    const query = `
-      SELECT isAdmin FROM members
-      WHERE memberId=? AND spaceId=?
-      `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [memberId, spaceId]);
-    return rows[0] ? rows[0].isAdmin : false;
   }
 
   async getSpaceChat(spaceId: string, limit = 100): Promise<ChatMessage[]> {
@@ -417,25 +708,25 @@ export class SqlDataStore implements DataStoreDao {
     await this.pool.query(query, commentId);
   }
 
-  async spaceMembers(spaceId: string): Promise<SpaceMember[]> {
-    const query = `
-    SELECT members.*, users.username 
-    FROM members JOIN users ON members.memberId = users.id
-    WHERE spaceId=?
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
-    return rows as SpaceMember[];
-  }
+  // async getSpaceMembers(spaceId: string): Promise<SpaceMember[]> {
+  //   const query = `
+  //   SELECT members.*, users.username
+  //   FROM members JOIN users ON members.memberId = users.id
+  //   WHERE spaceId=?
+  //   `;
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, spaceId);
+  //   return rows as SpaceMember[];
+  // }
 
-  async isMember(spaceId: string, memberId: string): Promise<User | undefined> {
-    const query = `
-    SELECT u.* FROM members m
-    JOIN users u ON m.memberId = u.id
-    WHERE m.spaceId = ? AND m.memberId = ?
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
-    return rows[0] as User;
-  }
+  // async isMember(spaceId: string, memberId: string): Promise<User | undefined> {
+  //   const query = `
+  //   SELECT u.* FROM members m
+  //   JOIN users u ON m.memberId = u.id
+  //   WHERE m.spaceId = ? AND m.memberId = ?
+  //   `;
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+  //   return rows[0] as User;
+  // }
 
   async updateBlog(blog: Blog): Promise<void> {
     const query = `
@@ -489,19 +780,19 @@ export class SqlDataStore implements DataStoreDao {
     return rows as LikedUser[];
   }
 
-  async getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]> {
-    const query = `
-    SELECT users.username, users.id
-    FROM users
-    INNER JOIN follows ON users.id = follows.followerId
-    WHERE follows.followingId = ?
-    ORDER BY users.username ASC
-    `;
+  // async getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]> {
+  //   const query = `
+  //   SELECT users.username, users.id
+  //   FROM users
+  //   INNER JOIN follows ON users.id = follows.followerId
+  //   WHERE follows.followingId = ?
+  //   ORDER BY users.username ASC
+  //   `;
 
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
+  //   const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
 
-    return rows as Pick<User, 'id' | 'username'>[];
-  }
+  //   return rows as Pick<User, 'id' | 'username'>[];
+  // }
 
   private async createMainSpace(ownerId: string): Promise<void> {
     const query = `
@@ -595,19 +886,19 @@ export class SqlDataStore implements DataStoreDao {
     return rows[0] ? true : false;
   }
 
-  async createFollow(followerId: string, followingId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>('INSERT INTO follows SET followerId=?, followingId=?', [
-      followerId,
-      followingId,
-    ]);
-  }
+  // async createFollow(followerId: string, followingId: string): Promise<void> {
+  //   await this.pool.query<RowDataPacket[]>('INSERT INTO follows SET followerId=?, followingId=?', [
+  //     followerId,
+  //     followingId,
+  //   ]);
+  // }
 
-  async deleteFollow(followerId: string, followingId: string): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      'DELETE FROM follows WHERE followerId=? AND followingId=?',
-      [followerId, followingId]
-    );
-  }
+  // async deleteFollow(followerId: string, followingId: string): Promise<void> {
+  //   await this.pool.query<RowDataPacket[]>(
+  //     'DELETE FROM follows WHERE followerId=? AND followingId=?',
+  //     [followerId, followingId]
+  //   );
+  // }
 
   async createBlog(blog: Blog): Promise<void> {
     await this.pool.query(
@@ -618,7 +909,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async getBlogs(spaceId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content FROM blogs
     WHERE blogs.spaceId = ?
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
@@ -647,7 +938,7 @@ export class SqlDataStore implements DataStoreDao {
     offset: number
   ): Promise<Blog[]> {
     const q = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content FROM blogs
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content FROM blogs
     WHERE blogs.spaceId = ? AND userId = ? 
     ORDER BY blogs.timestamp DESC
     LIMIT ? OFFSET ?
@@ -665,7 +956,7 @@ export class SqlDataStore implements DataStoreDao {
 
   async getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
-    SELECT blogs.*, SUBSTRING(blogs.content, 1, 1000) AS content
+    SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content
     FROM blogs
     JOIN spaces ON blogs.spaceId = spaces.id
     WHERE blogs.userId = ? AND spaces.status = 'public'
@@ -701,13 +992,6 @@ export class SqlDataStore implements DataStoreDao {
       [space.name, space.status, space.description, space.id]
     );
     return rows[0] as Space;
-  }
-
-  async addMember(member: SpaceMember): Promise<void> {
-    await this.pool.query<RowDataPacket[]>(
-      'INSERT INTO members SET memberId=?, spaceId=?, isAdmin=?',
-      [member.memberId, member.spaceId, member.isAdmin]
-    );
   }
 
   async deleteSpace(spaceId: string): Promise<void> {
@@ -746,5 +1030,727 @@ export class SqlDataStore implements DataStoreDao {
         `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [like.blogId, like.userId]);
     return rows[0] ? true : false;
+  }
+
+  // ===== BlogSeriesDao Implementation =====
+  async createSeries(series: BlogSeries): Promise<void> {
+    const query = `
+      INSERT INTO blog_series (id, name, description, createdBy, createdAt)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    await this.pool.query(query, [
+      series.id,
+      series.name,
+      series.description || null,
+      series.createdBy,
+      series.createdAt || new Date().toISOString(),
+    ]);
+  }
+
+  async updateSeries(series: BlogSeries): Promise<void> {
+    const query = `
+      UPDATE blog_series SET name = ?, description = ? WHERE id = ?
+    `;
+    await this.pool.query(query, [series.name, series.description || null, series.id]);
+  }
+
+  async getSeries(seriesId: string): Promise<BlogSeries | undefined> {
+    const query = `SELECT * FROM blog_series WHERE id = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [seriesId]);
+    return rows[0] as BlogSeries | undefined;
+  }
+
+  async getUserSeries(userId: string): Promise<BlogSeries[]> {
+    const query = `SELECT * FROM blog_series WHERE createdBy = ? ORDER BY createdAt DESC`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows as BlogSeries[];
+  }
+
+  async deleteSeries(seriesId: string): Promise<void> {
+    const query = `DELETE FROM blog_series WHERE id = ?`;
+    await this.pool.query(query, [seriesId]);
+  }
+
+  async addBlogToSeries(link: BlogSeriesLink): Promise<void> {
+    const query = `
+      INSERT INTO blog_series_links (seriesId, blogId, position)
+      VALUES (?, ?, ?)
+      ON DUPLICATE KEY UPDATE position = ?
+    `;
+    await this.pool.query(query, [link.seriesId, link.blogId, link.position, link.position]);
+  }
+
+  async removeBlogFromSeries(seriesId: string, blogId: string): Promise<void> {
+    const query = `DELETE FROM blog_series_links WHERE seriesId = ? AND blogId = ?`;
+    await this.pool.query(query, [seriesId, blogId]);
+  }
+
+  async updateBlogPosition(seriesId: string, blogId: string, position: number): Promise<void> {
+    const query = `UPDATE blog_series_links SET position = ? WHERE seriesId = ? AND blogId = ?`;
+    await this.pool.query(query, [position, seriesId, blogId]);
+  }
+
+  async getSeriesBlogs(seriesId: string): Promise<BlogSeriesLink[]> {
+    const query = `
+      SELECT * FROM blog_series_links 
+      WHERE seriesId = ? 
+      ORDER BY position ASC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [seriesId]);
+    return rows as BlogSeriesLink[];
+  }
+
+  async getBlogSeries(blogId: string): Promise<BlogSeries[]> {
+    const query = `
+      SELECT bs.* FROM blog_series bs
+      JOIN blog_series_links bsl ON bs.id = bsl.seriesId
+      WHERE bsl.blogId = ?
+      ORDER BY bs.createdAt DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [blogId]);
+    return rows as BlogSeries[];
+  }
+
+  async getSeriesWithBlogs(
+    seriesId: string
+  ): Promise<{ series: BlogSeries; blogs: BlogSeriesLink[] } | undefined> {
+    const series = await this.getSeries(seriesId);
+    if (!series) return undefined;
+
+    const blogs = await this.getSeriesBlogs(seriesId);
+    return { series, blogs };
+  }
+
+  // ===== NotificationDao Implementation =====
+  async createNotification(notification: Notification): Promise<void> {
+    const query = `
+      INSERT INTO notifications (id, userId, type, refId, payload, isRead, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    await this.pool.query(query, [
+      notification.id,
+      notification.userId,
+      notification.type,
+      notification.refId || null,
+      notification.payload ? JSON.stringify(notification.payload) : null,
+      notification.isRead,
+      notification.createdAt,
+    ]);
+  }
+
+  async getUserNotifications(
+    userId: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<Notification[]> {
+    const query = `
+      SELECT * FROM notifications 
+      WHERE userId = ? 
+      ORDER BY createdAt DESC 
+      LIMIT ? OFFSET ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, limit, offset]);
+    return rows.map(row => ({
+      ...row,
+      payload: row.payload ? JSON.parse(row.payload) : undefined,
+    })) as Notification[];
+  }
+
+  async getUnreadNotifications(userId: string): Promise<Notification[]> {
+    const query = `
+      SELECT * FROM notifications 
+      WHERE userId = ? AND isRead = FALSE 
+      ORDER BY createdAt DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows.map(row => ({
+      ...row,
+      payload: row.payload ? JSON.parse(row.payload) : undefined,
+    })) as Notification[];
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    const query = `UPDATE notifications SET isRead = TRUE WHERE id = ?`;
+    await this.pool.query(query, [notificationId]);
+  }
+
+  async markAllAsRead(userId: string): Promise<void> {
+    const query = `UPDATE notifications SET isRead = TRUE WHERE userId = ?`;
+    await this.pool.query(query, [userId]);
+  }
+
+  async deleteNotification(notificationId: string): Promise<void> {
+    const query = `DELETE FROM notifications WHERE id = ?`;
+    await this.pool.query(query, [notificationId]);
+  }
+
+  async deleteUserNotifications(userId: string): Promise<void> {
+    const query = `DELETE FROM notifications WHERE userId = ?`;
+    await this.pool.query(query, [userId]);
+  }
+
+  async getNotificationCount(userId: string): Promise<{ total: number; unread: number }> {
+    const query = `
+      SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN isRead = FALSE THEN 1 ELSE 0 END) as unread
+      FROM notifications 
+      WHERE userId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return {
+      total: rows[0].total as number,
+      unread: rows[0].unread as number,
+    };
+  }
+
+  // ===== PrivateConversationDao Implementation =====
+  async createConversation(conversation: PrivateConversation): Promise<void> {
+    const query = `
+      INSERT INTO private_conversations (id, user1Id, user2Id, createdAt)
+      VALUES (?, ?, ?, ?)
+    `;
+    await this.pool.query(query, [
+      conversation.id,
+      conversation.user1Id,
+      conversation.user2Id,
+      conversation.createdAt || new Date().toISOString(),
+    ]);
+  }
+
+  async getConversation(conversationId: string): Promise<PrivateConversation | undefined> {
+    const query = `SELECT * FROM private_conversations WHERE id = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [conversationId]);
+    return rows[0] as PrivateConversation | undefined;
+  }
+
+  async getConversationByUsers(
+    user1Id: string,
+    user2Id: string
+  ): Promise<PrivateConversation | undefined> {
+    const query = `
+      SELECT * FROM private_conversations 
+      WHERE (user1Id = ? AND user2Id = ?) OR (user1Id = ? AND user2Id = ?)
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      user1Id,
+      user2Id,
+      user2Id,
+      user1Id,
+    ]);
+    return rows[0] as PrivateConversation | undefined;
+  }
+
+  async getUserConversations(userId: string): Promise<PrivateConversation[]> {
+    const query = `
+      SELECT * FROM private_conversations 
+      WHERE user1Id = ? OR user2Id = ?
+      ORDER BY createdAt DESC
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, userId]);
+    return rows as PrivateConversation[];
+  }
+
+  async deleteConversation(conversationId: string): Promise<void> {
+    const query = `DELETE FROM private_conversations WHERE id = ?`;
+    await this.pool.query(query, [conversationId]);
+  }
+
+  // ===== PrivateMessageDao Implementation =====
+  async sendDirectMessage(message: PrivateMessage): Promise<void> {
+    const query = `
+      INSERT INTO private_messages (id, conversationId, senderId, content, createdAt)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    await this.pool.query(query, [
+      message.id,
+      message.conversationId,
+      message.senderId,
+      message.content,
+      message.createdAt || new Date().toISOString(),
+    ]);
+  }
+
+  async fetchDirectMessage(messageId: string): Promise<PrivateMessage | undefined> {
+    const query = `SELECT * FROM private_messages WHERE id = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [messageId]);
+    return rows[0] as PrivateMessage | undefined;
+  }
+
+  async getConversationMessages(
+    conversationId: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<PrivateMessage[]> {
+    const query = `
+      SELECT * FROM private_messages 
+      WHERE conversationId = ? 
+      ORDER BY createdAt ASC 
+      LIMIT ? OFFSET ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [conversationId, limit, offset]);
+    return rows as PrivateMessage[];
+  }
+
+  async updateMessage(messageId: string, content: string): Promise<void> {
+    const query = `UPDATE private_messages SET content = ? WHERE id = ?`;
+    await this.pool.query(query, [content, messageId]);
+  }
+
+  async removeDirectMessage(messageId: string): Promise<void> {
+    const query = `DELETE FROM private_messages WHERE id = ?`;
+    await this.pool.query(query, [messageId]);
+  }
+
+  async deleteConversationMessages(conversationId: string): Promise<void> {
+    const query = `DELETE FROM private_messages WHERE conversationId = ?`;
+    await this.pool.query(query, [conversationId]);
+  }
+
+  async getLastMessageId(conversationId: string): Promise<string | undefined> {
+    const query = `
+      SELECT id FROM private_messages 
+      WHERE conversationId = ? 
+      ORDER BY createdAt DESC 
+      LIMIT 1
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [conversationId]);
+    return rows[0]?.id as string | undefined;
+  }
+
+  // ===== FollowDao Implementation =====
+  async createFollow(followerId: string, followingId: string): Promise<void> {
+    const query = `INSERT INTO follows (followerId, followingId) VALUES (?, ?)`;
+    await this.pool.query(query, [followerId, followingId]);
+  }
+
+  async deleteFollow(followerId: string, followingId: string): Promise<void> {
+    const query = `DELETE FROM follows WHERE followerId = ? AND followingId = ?`;
+    await this.pool.query(query, [followerId, followingId]);
+  }
+
+  async getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]> {
+    const query = `
+    SELECT users.username, users.id
+    FROM users
+    INNER JOIN follows ON users.id = follows.followerId
+    WHERE follows.followingId = ?
+    ORDER BY users.username ASC
+    `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [followingId]);
+
+    return rows as Pick<User, 'id' | 'username'>[];
+  }
+
+  async getFollowing(followerId: string): Promise<Pick<User, 'id' | 'username'>[]> {
+    const query = `
+      SELECT u.id, u.username FROM follows f
+      JOIN users u ON f.followingId = u.id
+      WHERE f.followerId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [followerId]);
+    return rows as Pick<User, 'id' | 'username'>[];
+  }
+
+  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    const query = `SELECT 1 FROM follows WHERE followerId = ? AND followingId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [followerId, followingId]);
+    return rows.length > 0;
+  }
+
+  async getFollowerCount(userId: string): Promise<number> {
+    const query = `SELECT COUNT(*) as count FROM follows WHERE followingId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows[0].count as number;
+  }
+
+  async getFollowingCount(userId: string): Promise<number> {
+    const query = `SELECT COUNT(*) as count FROM follows WHERE followerId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows[0].count as number;
+  }
+
+  // ===== TagDao Implementation =====
+  async createTag(tag: Tag): Promise<void> {
+    const query = `INSERT INTO tags (id, name) VALUES (?, ?)`;
+    await this.pool.query(query, [tag.id, tag.name]);
+  }
+
+  async getTag(tagId: string): Promise<Tag | undefined> {
+    const query = `SELECT * FROM tags WHERE id = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [tagId]);
+    return rows[0] as Tag | undefined;
+  }
+
+  async getTagByName(name: string): Promise<Tag | undefined> {
+    const query = `SELECT * FROM tags WHERE name = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [name]);
+    return rows[0] as Tag | undefined;
+  }
+
+  async getAllTags(): Promise<Tag[]> {
+    const query = `SELECT * FROM tags ORDER BY name`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query);
+    return rows as Tag[];
+  }
+
+  async deleteTag(tagId: string): Promise<void> {
+    const query = `DELETE FROM tags WHERE id = ?`;
+    await this.pool.query(query, [tagId]);
+  }
+
+  async addBlogTag(blogTag: BlogTag): Promise<void> {
+    const query = `INSERT INTO blog_tags (blogId, tagId) VALUES (?, ?)`;
+    await this.pool.query(query, [blogTag.blogId, blogTag.tagId]);
+  }
+
+  async removeBlogTag(blogTag: BlogTag): Promise<void> {
+    const query = `DELETE FROM blog_tags WHERE blogId = ? AND tagId = ?`;
+    await this.pool.query(query, [blogTag.blogId, blogTag.tagId]);
+  }
+
+  async getBlogTags(blogId: string): Promise<Tag[]> {
+    const query = `
+      SELECT t.* FROM tags t
+      JOIN blog_tags bt ON t.id = bt.tagId
+      WHERE bt.blogId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [blogId]);
+    return rows as Tag[];
+  }
+
+  async getBlogsByTag(tagId: string, limit: number = 50, offset: number = 0): Promise<string[]> {
+    const query = `
+      SELECT blogId FROM blog_tags 
+      WHERE tagId = ? 
+      LIMIT ? OFFSET ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [tagId, limit, offset]);
+    return rows.map(row => row.blogId as string);
+  }
+
+  async addSpaceTag(spaceTag: SpaceTag): Promise<void> {
+    const query = `INSERT INTO space_tags (spaceId, tagId) VALUES (?, ?)`;
+    await this.pool.query(query, [spaceTag.spaceId, spaceTag.tagId]);
+  }
+
+  async removeSpaceTag(spaceTag: SpaceTag): Promise<void> {
+    const query = `DELETE FROM space_tags WHERE spaceId = ? AND tagId = ?`;
+    await this.pool.query(query, [spaceTag.spaceId, spaceTag.tagId]);
+  }
+
+  async getSpaceTags(spaceId: string): Promise<Tag[]> {
+    const query = `
+      SELECT t.* FROM tags t
+      JOIN space_tags st ON t.id = st.tagId
+      WHERE st.spaceId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId]);
+    return rows as Tag[];
+  }
+
+  async getSpacesByTag(tagId: string): Promise<string[]> {
+    const query = `SELECT spaceId FROM space_tags WHERE tagId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [tagId]);
+    return rows.map(row => row.spaceId as string);
+  }
+
+  // ===== LastReadDao Implementation =====
+  async updateLastRead(lastRead: LastReadMsg): Promise<void> {
+    const query = `
+    INSERT INTO last_read (userId, spaceId, lastReadId) VALUES (?, ?, ?)  
+    ON DUPLICATE KEY UPDATE lastReadId = ?;
+    `;
+    await this.pool.query(query, [
+      lastRead.userId,
+      lastRead.spaceId,
+      lastRead.msgId,
+      lastRead.msgId,
+    ]);
+  }
+
+  async getLastRead(userId: string, spaceId: string): Promise<LastReadMsg | undefined> {
+    const query = `SELECT * FROM last_read WHERE userId = ? AND spaceId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId, spaceId]);
+    return rows[0] as LastReadMsg | undefined;
+  }
+
+  async deleteUserLastRead(userId: string): Promise<void> {
+    const query = `DELETE FROM last_read WHERE userId = ?`;
+    await this.pool.query(query, [userId]);
+  }
+
+  async deleteSpaceLastRead(spaceId: string): Promise<void> {
+    const query = `DELETE FROM last_read WHERE spaceId = ?`;
+    await this.pool.query(query, [spaceId]);
+  }
+
+  // ===== MemberDao Implementation =====
+  async addMember(member: SpaceMember): Promise<void> {
+    const query = `INSERT INTO members (memberId, spaceId, isAdmin) VALUES (?, ?, ?)`;
+    await this.pool.query(query, [member.memberId, member.spaceId, member.isAdmin]);
+  }
+
+  async removeMember(spaceId: string, memberId: string): Promise<void> {
+    const query = `DELETE FROM members WHERE spaceId = ? AND memberId = ?`;
+    await this.pool.query(query, [spaceId, memberId]);
+  }
+
+  async updateMemberAdminStatus(
+    spaceId: string,
+    memberId: string,
+    isAdmin: boolean
+  ): Promise<void> {
+    const query = `UPDATE members SET isAdmin = ? WHERE spaceId = ? AND memberId = ?`;
+    await this.pool.query(query, [isAdmin, spaceId, memberId]);
+  }
+
+  async getSpaceMembers(spaceId: string): Promise<SpaceMember[]> {
+    const query = `
+      SELECT m.*, u.username 
+      FROM members m 
+      JOIN users u ON m.memberId = u.id 
+      WHERE m.spaceId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId]);
+    return rows as SpaceMember[];
+  }
+
+  async isMember(spaceId: string, memberId: string): Promise<User | undefined> {
+    const query = `
+      SELECT u.* FROM users u
+      JOIN members m ON u.id = m.memberId
+      WHERE m.spaceId = ? AND m.memberId = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+    return rows[0] as User | undefined;
+  }
+
+  async isSpaceAdmin(spaceId: string, memberId: string): Promise<boolean> {
+    const query = `SELECT isAdmin FROM members WHERE spaceId = ? AND memberId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, memberId]);
+    return rows.length > 0 ? (rows[0].isAdmin as boolean) : false;
+  }
+
+  async getMemberSpacesWithInfo(
+    userId: string
+  ): Promise<Array<{ spaceId: string; isAdmin: boolean }>> {
+    const query = `SELECT spaceId, isAdmin FROM members WHERE memberId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows as Array<{ spaceId: string; isAdmin: boolean }>;
+  }
+
+  // ===== SpacePermissionDao Implementation =====
+  async setPermission(permission: SpacePermission): Promise<void> {
+    const query = `
+      INSERT INTO space_permissions (id, spaceId, permission, allowedRole)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE allowedRole = ?
+    `;
+    await this.pool.query(query, [
+      permission.id,
+      permission.spaceId,
+      permission.permission,
+      permission.allowedRole,
+      permission.allowedRole,
+    ]);
+  }
+
+  async getSpacePermissions(spaceId: string): Promise<SpacePermission[]> {
+    const query = `SELECT * FROM space_permissions WHERE spaceId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId]);
+    return rows as SpacePermission[];
+  }
+
+  async getPermission(
+    spaceId: string,
+    permission: SpacePermissionType
+  ): Promise<SpacePermission | undefined> {
+    const query = `SELECT * FROM space_permissions WHERE spaceId = ? AND permission = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [spaceId, permission]);
+    return rows[0] as SpacePermission | undefined;
+  }
+
+  async updatePermission(
+    spaceId: string,
+    permission: SpacePermissionType,
+    allowedRole: AllowedRole
+  ): Promise<void> {
+    const query = `UPDATE space_permissions SET allowedRole = ? WHERE spaceId = ? AND permission = ?`;
+    await this.pool.query(query, [allowedRole, spaceId, permission]);
+  }
+
+  async deleteSpacePermissions(spaceId: string): Promise<void> {
+    const query = `DELETE FROM space_permissions WHERE spaceId = ?`;
+    await this.pool.query(query, [spaceId]);
+  }
+
+  async getUserPermissionLevel(
+    spaceId: string,
+    userId: string
+  ): Promise<'owner' | 'admin' | 'member' | null> {
+    // Check if user is owner
+    const spaceQuery = `SELECT ownerId FROM spaces WHERE id = ?`;
+    const [spaceRows] = await this.pool.query<RowDataPacket[]>(spaceQuery, [spaceId]);
+
+    if (spaceRows.length > 0 && spaceRows[0].ownerId === userId) {
+      return 'owner';
+    }
+
+    // Check if user is admin
+    const adminQuery = `SELECT isAdmin FROM members WHERE spaceId = ? AND memberId = ? AND isAdmin = TRUE`;
+    const [adminRows] = await this.pool.query<RowDataPacket[]>(adminQuery, [spaceId, userId]);
+    if (adminRows.length > 0) {
+      return 'admin';
+    }
+
+    // Check if user is member
+    const memberQuery = `SELECT 1 FROM members WHERE spaceId = ? AND memberId = ?`;
+    const [memberRows] = await this.pool.query<RowDataPacket[]>(memberQuery, [spaceId, userId]);
+    if (memberRows.length > 0) {
+      return 'member';
+    }
+
+    return null;
+  }
+
+  async canUserPerformAction(
+    spaceId: string,
+    userId: string,
+    permission: SpacePermissionType
+  ): Promise<boolean> {
+    const userRole = await this.getUserPermissionLevel(spaceId, userId);
+    if (!userRole) return false;
+
+    const perm = await this.getPermission(spaceId, permission);
+    if (!perm) return false;
+
+    // Role hierarchy: owner > admin > member > everyone
+    const roleHierarchy = ['everyone', 'member', 'admin', 'owner'];
+    const userRoleIndex = roleHierarchy.indexOf(userRole);
+    const requiredRoleIndex = roleHierarchy.indexOf(perm.allowedRole);
+
+    return userRoleIndex >= requiredRoleIndex;
+  }
+
+  // ===== UserActivityDao Implementation =====
+  async updateUserActivity(userId: string): Promise<void> {
+    const query = `
+      INSERT INTO user_activity (userId, lastActive) VALUES (?, ?)
+      ON DUPLICATE KEY UPDATE lastActive = ?
+    `;
+    await this.pool.query(query, [userId, new Date(), new Date()]);
+  }
+
+  async getUserActivity(userId: string): Promise<UserActivity | undefined> {
+    const query = `SELECT * FROM user_activity WHERE userId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows[0] as UserActivity | undefined;
+  }
+
+  async getUsersActivity(userIds: string[]): Promise<UserActivity[]> {
+    if (userIds.length === 0) return [];
+    const placeholders = userIds.map(() => '?').join(',');
+    const query = `SELECT * FROM user_activity WHERE userId IN (${placeholders})`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, userIds);
+    return rows as UserActivity[];
+  }
+
+  async deleteUserActivity(userId: string): Promise<void> {
+    const query = `DELETE FROM user_activity WHERE userId = ?`;
+    await this.pool.query(query, [userId]);
+  }
+
+  async getOnlineUsers(): Promise<UserActivity[]> {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const query = `SELECT * FROM user_activity WHERE lastActive > ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [fiveMinutesAgo]);
+    return rows as UserActivity[];
+  }
+
+  // ===== UserConversationState Implementation =====
+  async markConversationAsRead(params: {
+    userId: string;
+    conversationId: string;
+    conversationType: ConversationType;
+    lastReadAt: string;
+  }): Promise<void> {
+    const query = `
+      INSERT INTO user_conversation_state (userId, conversationId, conversationType, lastReadAt)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE lastReadAt = ?
+    `;
+    await this.pool.query(query, [
+      params.userId,
+      params.conversationId,
+      params.conversationType,
+      params.lastReadAt,
+      params.lastReadAt,
+    ]);
+  }
+
+  async updateLastSoundPlayed(params: {
+    userId: string;
+    conversationId: string;
+    conversationType: ConversationType;
+    lastSoundPlayedAt: string;
+  }): Promise<void> {
+    const query = `
+      INSERT INTO user_conversation_state (userId, conversationId, conversationType, lastSoundPlayedAt)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE lastSoundPlayedAt = ?
+    `;
+    await this.pool.query(query, [
+      params.userId,
+      params.conversationId,
+      params.conversationType,
+      params.lastSoundPlayedAt,
+      params.lastSoundPlayedAt,
+    ]);
+  }
+
+  async getUserConversationState(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType
+  ): Promise<UserConversationState | undefined> {
+    const query = `
+      SELECT * FROM user_conversation_state 
+      WHERE userId = ? AND conversationId = ? AND conversationType = ?
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [
+      userId,
+      conversationId,
+      conversationType,
+    ]);
+    return rows[0] as UserConversationState | undefined;
+  }
+
+  async getUserAllConversationStates(userId: string): Promise<UserConversationState[]> {
+    const query = `SELECT * FROM user_conversation_state WHERE userId = ?`;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows as UserConversationState[];
+  }
+
+  async deleteUserConversationState(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType
+  ): Promise<void> {
+    const query = `
+      DELETE FROM user_conversation_state 
+      WHERE userId = ? AND conversationId = ? AND conversationType = ?
+    `;
+    await this.pool.query(query, [userId, conversationId, conversationType]);
+  }
+
+  async getUnreadConversations(userId: string): Promise<UserConversationState[]> {
+    const query = `
+      SELECT ucs.* FROM user_conversation_state ucs
+      WHERE ucs.userId = ? AND ucs.lastReadAt IS NOT NULL
+    `;
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [userId]);
+    return rows as UserConversationState[];
   }
 }

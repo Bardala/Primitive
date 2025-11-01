@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS private_conversations (
+  id CHAR(36) NOT NULL,
+  user1Id CHAR(36) NOT NULL,
+  user2Id CHAR(36) NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  CONSTRAINT unique_user_pair UNIQUE (user1Id, user2Id),
+  FOREIGN KEY (user1Id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (user2Id) REFERENCES users(id) ON DELETE CASCADE
+)

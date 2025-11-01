@@ -80,6 +80,78 @@ export type Short = {
     author?: string;
     timestamp?: number;
 };
+export interface PrivateConversation {
+    id: string;
+    user1Id: string;
+    user2Id: string;
+    createdAt?: string;
+}
+export interface PrivateMessage {
+    id: string;
+    conversationId: string;
+    senderId: string;
+    content: string;
+    createdAt?: string;
+}
+export interface UserActivity {
+    userId: string;
+    lastActive: string;
+}
+export interface Tag {
+    id: string;
+    name: string;
+}
+export interface BlogTag {
+    blogId: string;
+    tagId: string;
+}
+export interface SpaceTag {
+    spaceId: string;
+    tagId: string;
+}
+export interface UserTag {
+    userId: string;
+    tagId: string;
+}
+export interface BlogSeries {
+    id: string;
+    name: string;
+    description?: string;
+    createdBy: string;
+    createdAt?: string;
+}
+export interface BlogSeriesLink {
+    seriesId: string;
+    blogId: string;
+    position: number;
+}
+export type NotificationType = 'message' | 'mention' | 'comment' | 'system';
+export interface Notification {
+    id: string;
+    userId: string;
+    type: NotificationType;
+    refId?: string;
+    payload?: Record<string, any>;
+    isRead: boolean;
+    createdAt: string;
+}
+export type ConversationType = 'space' | 'private';
+export interface UserConversationState {
+    id: string;
+    userId: string;
+    conversationId: string;
+    conversationType: ConversationType;
+    lastReadAt?: string;
+    lastSoundPlayedAt?: string;
+}
+export type SpacePermissionType = 'post_blog' | 'send_chat';
+export type AllowedRole = 'owner' | 'admin' | 'member' | 'everyone';
+export interface SpacePermission {
+    id: string;
+    spaceId: string;
+    permission: SpacePermissionType;
+    allowedRole: AllowedRole;
+}
 export interface JwtObject {
     userId: string;
 }

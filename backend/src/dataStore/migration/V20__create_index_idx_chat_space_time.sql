@@ -1,0 +1,1 @@
+CREATE INDEX idx_chat_space_time ON chat (spaceId, timestamp);

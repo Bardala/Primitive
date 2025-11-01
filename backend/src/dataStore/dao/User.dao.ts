@@ -10,15 +10,20 @@ export interface UserDao {
   getUserByEmail(email: string): Promise<User | undefined>;
 
   getUsers(): Promise<User[]>;
+  searchUsers(query: string): Promise<Pick<User, 'id' | 'username'>[]>;
   getUsersList(): Promise<UsersList[]>;
-  createFollow(followerId: string, followingId: string): Promise<void>;
-  deleteFollow(followerId: string, followingId: string): Promise<void>;
-  getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;
+
+  // moved to followDao
+  // createFollow(followerId: string, followingId: string): Promise<void>;
+  // deleteFollow(followerId: string, followingId: string): Promise<void>;
+  // getFollowers(followingId: string): Promise<Pick<User, 'id' | 'username'>[]>;
+  // isFollow(followingId: string, userId: string): Promise<boolean>;
+
+  // User content
   getUserCard(userId: string, cardOwnerId: string): Promise<UserCard | undefined>;
   getUserBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getUserDefaultSpaceBlogs(userId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getUserSpaces(userId: string): Promise<Space[]>;
-  isFollow(followingId: string, userId: string): Promise<boolean>;
 
   numOfAllUnReadMsgs(userId: string): Promise<UnReadMsgs[]>;
 }

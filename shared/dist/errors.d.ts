@@ -20,10 +20,13 @@ export declare enum ERROR {
     SPACE_NOT_FOUND = "Space not found",
     BLOG_NOT_FOUND = "Blog not found",
     COMMENT_NOT_FOUND = "Comment not found",
+    TAG_NOT_FOUND = "Tag not found",
     PRIVATE_SPACE = "Private space, you need to be a member to access it",
     PRIVATE_BLOG = "Private blog, it is posted in a private space",
     SHORT_NOT_FOUND = "Short not found",
     PRIVATE_SHORT = "Private short, it is posted in a private space",
     EXPIRE_API = "Expire api",
-    OWNER_CANT_LEAVE = "You are the owner of this space, you can not leave it"
+    OWNER_CANT_LEAVE = "You are the owner of this space, you can not leave it",
+    PERMISSION_DENIED = "Permission denied",
+    TAG_ALREADY_EXISTS = "Tag already exists"
 }

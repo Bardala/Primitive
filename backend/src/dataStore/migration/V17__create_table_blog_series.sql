@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS blog_series (
+  id CHAR(36) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  createdBy CHAR(36) NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE CASCADE
+)

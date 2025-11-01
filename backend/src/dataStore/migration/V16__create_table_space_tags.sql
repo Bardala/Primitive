@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS space_tags (
+  spaceId CHAR(36) NOT NULL,
+  tagId CHAR(36) NOT NULL,
+  PRIMARY KEY (spaceId, tagId),
+  FOREIGN KEY (spaceId) REFERENCES spaces(id) ON DELETE CASCADE,
+  FOREIGN KEY (tagId) REFERENCES tags(id) ON DELETE CASCADE
+)

@@ -1,0 +1,1 @@
+CREATE INDEX idx_private_msg_convo_time ON private_messages (conversationId, createdAt);

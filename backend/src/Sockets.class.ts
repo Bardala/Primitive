@@ -39,7 +39,7 @@ class Connection {
   }
 
   private async setLastReadMsg(data: LastReadMsg) {
-    await this.db.updateLastReadMsg(data);
+    await this.db.updateLastRead(data);
   }
 
   private async handleLeaveRoom(data: LastReadMsg) {
