@@ -3,7 +3,7 @@ import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { SpaceController } from '../controllers/space.controller';
-import { requireAuth } from '../middleware/authMiddleware';
+import { optionalAuth, requireAuth } from '../middleware/authMiddleware';
 import { checkEmptyInput } from '../middleware/checkReqBody';
 
 export const createSpaceRoutes = (spaceController: SpaceController) => {
@@ -21,14 +21,10 @@ export const createSpaceRoutes = (spaceController: SpaceController) => {
     checkEmptyInput,
     asyncHandler(spaceController.updateSpace)
   );
-  router.get(ENDPOINT.GET_SPACE, requireAuth, asyncHandler(spaceController.getSpace));
+  router.get(ENDPOINT.GET_SPACE, optionalAuth, asyncHandler(spaceController.getSpace));
   router.delete(ENDPOINT.DELETE_SPACE, requireAuth, asyncHandler(spaceController.deleteSpace));
 
-  router.get(
-    ENDPOINT.GET_DEFAULT_SPACE,
-    requireAuth,
-    asyncHandler(spaceController.getDefaultSpace)
-  );
+  router.get(ENDPOINT.GET_DEFAULT_SPACE, asyncHandler(spaceController.getDefaultSpace));
   router.post(
     ENDPOINT.JOIN_SPACE,
     requireAuth,
@@ -49,7 +45,7 @@ export const createSpaceRoutes = (spaceController: SpaceController) => {
   router.get(ENDPOINT.Get_SPACE_CHAT, requireAuth, asyncHandler(spaceController.getChat));
   router.delete(ENDPOINT.DELETE_MEMBER, requireAuth, asyncHandler(spaceController.deleteMember));
   router.delete(ENDPOINT.LEAVE_SPACE, requireAuth, asyncHandler(spaceController.leaveSpace));
-  router.get(ENDPOINT.GET_SPACE_BLOGS, requireAuth, asyncHandler(spaceController.blogs));
+  router.get(ENDPOINT.GET_SPACE_BLOGS, optionalAuth, asyncHandler(spaceController.blogs));
   router.get(
     ENDPOINT.GET_UNREAD_MSGS_NUM,
     requireAuth,
@@ -58,8 +54,8 @@ export const createSpaceRoutes = (spaceController: SpaceController) => {
 
   // Feeds
   router.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(spaceController.feeds));
-  router.get(ENDPOINT.GET_FEEDS_PAGE, requireAuth, asyncHandler(spaceController.feedsPagination));
-  router.get(ENDPOINT.Get_SMART_FEEDS, requireAuth, asyncHandler(spaceController.smarterFeeds));
+  router.get(ENDPOINT.GET_FEEDS_PAGE, optionalAuth, asyncHandler(spaceController.feedsPagination));
+  router.get(ENDPOINT.Get_SMART_FEEDS, optionalAuth, asyncHandler(spaceController.smarterFeeds));
 
   return router;
 };

@@ -24,10 +24,8 @@ import {
 } from '../utils/api';
 import { useScroll } from './useScroll';
 
-// todo: Make isMemberApi
-// todo: Don't make unnecessary fetches, Clean up
 export const useSpace = (id: string) => {
-  const currUser = useAuthContext().currUser;
+  const { currUser } = useAuthContext();
   const queryClient = useQueryClient();
   const spcKey = ['space', id];
   const blogsKey = ['blogs', id];
@@ -36,21 +34,22 @@ export const useSpace = (id: string) => {
   const [isEnd, setIsEnd] = useState(false);
 
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(id), {
-    enabled: !!currUser?.jwt && !!id,
-    // refetchOnWindowFocus: true,
+    enabled: !!id,
   });
 
-  const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(blogsKey, blogsApi(id), {
-    enabled: !!currUser && !!id && id !== DefaultSpaceId && spaceQuery.isSuccess,
-    // refetchOnWindowFocus: true,
-    getNextPageParam: lastPage => lastPage.page + 1,
-    onSuccess: data => data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
-  });
+  const blogsQuery = useInfiniteQuery<SpaceBlogsRes, ApiError>(
+    blogsKey,
+    ({ pageParam = 1 }) => blogsApi(id, pageParam),
+    {
+      enabled: !!id && id !== DefaultSpaceId && spaceQuery.isSuccess,
+      getNextPageParam: lastPage => lastPage.page + 1,
+      onSuccess: data =>
+        data.pages[data.pages.length - 1].blogs.length < pageSize && setIsEnd(true),
+    }
+  );
 
   const membersQuery = useQuery<MembersRes, ApiError>(membersKey, membersApi(id), {
-    enabled:
-      !!currUser && !!spaceQuery.data?.space.id && id !== DefaultSpaceId && spaceQuery.isSuccess,
-    // refetchOnWindowFocus: true,
+    enabled: !!spaceQuery.data?.space.id && id !== DefaultSpaceId && spaceQuery.isSuccess,
   });
 
   const joinSpaceMutate = useMutation<JoinSpaceRes, ApiError>(joinSpcApi(id), {
@@ -60,20 +59,10 @@ export const useSpace = (id: string) => {
   const isMember = membersQuery.data?.members?.some(member => member.memberId === currUser?.id);
   useScroll(blogsQuery);
 
-  // const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
-  //   msgsNumKey,
-  //   getNumOfUnReadMsgsApi(id),
-  //   {
-  //     enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
-  //     // refetchOnWindowFocus: false,
-  //   }
-  // );
-
   return {
     spaceQuery,
     blogsQuery,
     membersQuery,
-    // numOfUnReadMsgs,
     joinSpaceMutate,
     isMember,
     isEnd,
@@ -81,14 +70,13 @@ export const useSpace = (id: string) => {
 };
 
 export const useGetSpcMissedMsgs = (id: string) => {
-  const currUser = useAuthContext().currUser;
   const msgsNumKey = ['unreadMsgsNum', id];
 
   const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
     msgsNumKey,
-    getNumOfUnReadMsgsApi(id),
+    () => getNumOfUnReadMsgsApi(id),
     {
-      enabled: !!currUser?.jwt && !!id && id !== DefaultSpaceId,
+      enabled: !!id && id !== DefaultSpaceId,
     }
   );
 
@@ -97,20 +85,23 @@ export const useGetSpcMissedMsgs = (id: string) => {
 
 export const useFeeds = () => {
   const pageSize = PageSize;
-  const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const key = ['feeds'];
 
   const spcKey = ['space', DefaultSpaceId];
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
-    enabled: !!currUser?.jwt && !!DefaultSpaceId,
+    enabled: !!DefaultSpaceId,
   });
 
-  const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(key, feedsApi(), {
-    enabled: !!currUser?.jwt,
-    getNextPageParam: lastPage => lastPage.page + 1,
-    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
-  });
+  const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(
+    key,
+    ({ pageParam = 1 }) => feedsApi(pageParam),
+    {
+      getNextPageParam: lastPage => lastPage.page + 1,
+      onSuccess: data =>
+        data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
+    }
+  );
 
   useScroll(feedsQuery);
 
@@ -126,20 +117,23 @@ export const useFeeds = () => {
 
 export const useSmartFeeds = () => {
   const pageSize = PageSize;
-  const { currUser } = useAuthContext();
   const [isEnd, setIsEnd] = useState(false);
   const smarterKey = ['smartFeeds'];
 
   const spcKey = ['space', DefaultSpaceId];
   const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
-    enabled: !!currUser?.jwt && !!DefaultSpaceId,
+    enabled: !!DefaultSpaceId,
   });
 
-  const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(smarterKey, smarterFeedsApi(), {
-    enabled: !!currUser?.jwt,
-    getNextPageParam: lastPage => lastPage.page + 1,
-    onSuccess: data => data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
-  });
+  const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(
+    smarterKey,
+    ({ pageParam = 1 }) => smarterFeedsApi(pageParam),
+    {
+      getNextPageParam: lastPage => lastPage.page + 1,
+      onSuccess: data =>
+        data.pages[data.pages.length - 1].feeds.length < pageSize && setIsEnd(true),
+    }
+  );
 
   useScroll(smartFeedsQuery);
 

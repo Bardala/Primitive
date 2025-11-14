@@ -47,7 +47,7 @@ export const Comments: FC<{
   });
 
   const updateCommentMutation = useMutation<UpdateCommentRes, ApiError, UpdateCommentReq>(
-    data => updateCommentApi(data.id, data)(),
+    data => updateCommentApi(data.id, data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(key);
@@ -58,7 +58,7 @@ export const Comments: FC<{
   );
 
   const deleteCommentMutation = useMutation<DeleteCommentRes, ApiError, DeleteCommentReq>(
-    data => deleteCommentApi(data.id)(),
+    data => deleteCommentApi(data.id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(key);

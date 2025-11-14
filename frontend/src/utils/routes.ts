@@ -1,0 +1,16 @@
+export const ROUTES = {
+  HOME: '/',
+  SIGNUP: '/signup',
+  LOGIN: '/login',
+  SPACE: '/space/:id',
+  BLOG_DETAILS: '/b/:id',
+  USER_PROFILE: '/u/:id',
+  USERS_LIST: '/u',
+  NOTIFICATIONS: '/notifications',
+  CREATE_BLOG: '/new/b/:spaceName/:spaceId',
+  SETTINGS: '/settings',
+  GET_SPACE: (id: string) => `/space/${id}`,
+  GET_BLOG_DETAILS: (id: string) => `/b/${id}`,
+  GET_USER_PROFILE: (id: string) => `/u/${id}`,
+  GET_CREATE_BLOG: (spaceName: string, spaceId: string) => `/new/b/${spaceName}/${spaceId}`,
+} as const;

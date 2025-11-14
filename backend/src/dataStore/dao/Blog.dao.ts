@@ -14,4 +14,5 @@ export interface BlogDao {
 
   infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;
   getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;
+  getPublicFeeds(pageSize: number, offset: number): Promise<Blog[]>;
 }

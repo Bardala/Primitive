@@ -1,16 +1,18 @@
 import { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
 import '../styles/login.css';
 import { loginApi } from '../utils/api';
 import { LOCALS } from '../utils/localStorage';
+import { ROUTES } from '../utils/routes';
 
 export const Login = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
+  const location = useLocation();
   const { refetchCurrUser } = useAuthContext();
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -23,13 +25,16 @@ export const Login = () => {
         const currUser = await loginApi(login, password);
         localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
         refetchCurrUser();
-        nav('/', { replace: true });
+
+        // Redirect to the page they tried to visit or home
+        const from = location.state?.from?.pathname || ROUTES.HOME;
+        nav(from, { replace: true });
       } catch (err) {
         console.error(err);
         setError((err as ApiError).message);
       }
     },
-    [login, nav, password, refetchCurrUser]
+    [login, nav, password, refetchCurrUser, location.state]
   );
 
   return (

@@ -1,16 +1,14 @@
 import { BlogLikesRes, CreateLikeRes, RemoveLikeRes } from '@nest/shared';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
 import { blogLikesApi, createLikeApi, deleteLikeApi } from '../utils/api';
 
 export const useLikeButton = (id: string) => {
-  const { currUser } = useAuthContext();
   const key = ['likes', id];
 
   const blogLikes = useQuery<BlogLikesRes, ApiError>(key, blogLikesApi(id), {
-    enabled: !!currUser?.jwt && !!id,
+    enabled: !!id,
     refetchOnWindowFocus: true,
   });
 

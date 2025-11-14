@@ -1,4 +1,3 @@
-// pages/Home.tsx
 import { useSmartFeeds } from 'src/hooks/useSpace';
 
 import { BlogList } from '../components/BlogList';

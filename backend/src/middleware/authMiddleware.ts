@@ -30,6 +30,21 @@ export const requireAuth: RequestHandler<any, any> = async (req, res, next) => {
   return next();
 };
 
+export const optionalAuth: RequestHandler = async (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return next();
+
+  try {
+    const payload = jwt.verify(token, generateJwtSecret()) as JwtPayload;
+    const user = await db.getUserById(payload.id);
+    if (user) res.locals.userId = user.id;
+  } catch (err) {
+    // Invalid/expired token → ignore instead of 401
+  }
+
+  return next();
+};
+
 export function generateJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (!secret) {

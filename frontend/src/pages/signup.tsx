@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from 'src/utils/routes';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
@@ -33,7 +34,7 @@ export const SignUp = () => {
         const currUser = await signUpApi(email, password, username);
         localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
         refetchCurrUser();
-        nav('/');
+        nav(ROUTES.HOME);
       } catch (err) {
         setError((err as ApiError).message || t('signup.error'));
       }

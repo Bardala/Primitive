@@ -479,6 +479,36 @@ export class SqlDataStore implements DataStoreDao {
     return rows as Blog[];
   }
 
+  async getPublicFeeds(pageSize: number, offset: number): Promise<Blog[]> {
+    const query = `
+    WITH blog_scores AS (
+      SELECT 
+        b.id,
+        b.title,
+        SUBSTRING(b.content, 1, ${this.blogIconLength}) AS content,
+        b.userId,
+        b.spaceId,
+        b.author,
+        b.timestamp,
+        -- same scoring logic but without user-dependent filters
+        EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) * 0.6 +
+        (LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) * 0.25) +
+        (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.15) as score
+      FROM blogs b
+      LEFT JOIN likes l ON b.id = l.blogId
+      LEFT JOIN comments c ON b.id = c.blogId
+      WHERE b.spaceId = '1' -- public space
+      GROUP BY b.id, b.title, b.content, b.userId, b.spaceId, b.author, b.timestamp
+    )
+    SELECT * FROM blog_scores
+    ORDER BY score DESC, timestamp DESC
+    LIMIT ? OFFSET ?
+  `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [pageSize, offset]);
+    return rows as Blog[];
+  }
+
   async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content FROM blogs

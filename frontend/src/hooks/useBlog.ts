@@ -9,8 +9,8 @@ import {
 } from '@nest/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from 'src/utils/routes';
 
-import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
 import {
   createBlogApi,
@@ -26,7 +26,8 @@ const getSpcKey = (spaceId: string) =>
 export const useCreateBlog = (spaceId: string, title: string, content: string) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
-  const navToSpace = () => (spaceId === DefaultSpaceId ? nav('/') : nav(`/space/${spaceId}`));
+  const navToSpace = () =>
+    spaceId === DefaultSpaceId ? nav(ROUTES.HOME) : nav(ROUTES.GET_SPACE(spaceId));
 
   const createBlogMutation = useMutation<CreateBlogRes, ApiError>(
     createBlogApi(title, content, spaceId),
@@ -58,12 +59,10 @@ export const useUpdateBlog = (blogId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation<updateBlogRes, ApiError, updateBlogReq>(
-    updateData => updateBlogApi(blogId, updateData)(),
+    updateData => updateBlogApi(blogId, updateData),
     {
       onSuccess: () => {
-        // Invalidate and refetch the blog data
         queryClient.invalidateQueries(['blog', blogId]);
-        // Also invalidate any lists that might contain this blog
         queryClient.invalidateQueries(['blogs']);
       },
     }
@@ -74,14 +73,13 @@ export const useDeleteBlog = (id: string, blog: Blog) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const navToSpace = () =>
-    blog.spaceId === DefaultSpaceId ? nav('/') : nav(`/space/${blog.spaceId}`);
+    blog.spaceId === DefaultSpaceId ? nav(ROUTES.HOME) : nav(ROUTES.GET_SPACE(blog.spaceId));
 
-  const deleteBlogMutate = useMutation<DeleteBlogRes, ApiError>(deleteBlogApi(id), {
+  const deleteBlogMutate = useMutation<DeleteBlogRes, ApiError>(() => deleteBlogApi(id), {
     onSuccess: () => {
       queryClient.invalidateQueries(['feeds']);
       queryClient.invalidateQueries(['blog', id]);
       navToSpace();
-      // window.document.location.reload();
     },
   });
 
@@ -89,13 +87,15 @@ export const useDeleteBlog = (id: string, blog: Blog) => {
 };
 
 export const useCommCounts = (id: string) => {
-  const currUser = useAuthContext().currUser;
-
-  const numOfComments = useQuery<NumOfCommentsRes, ApiError>(['commsNum', id], numOfCommsApi(id), {
-    enabled: !!currUser?.jwt && !!id,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-  });
+  const numOfComments = useQuery<NumOfCommentsRes, ApiError>(
+    ['commsNum', id],
+    () => numOfCommsApi(id),
+    {
+      enabled: !!id,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+    }
+  );
 
   return { numOfComments };
 };

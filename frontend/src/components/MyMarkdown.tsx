@@ -8,7 +8,7 @@ import { useTheme } from 'src/context/ThemeContext';
 
 import { isArabic } from '../utils/assists';
 import { CodeBlock } from './CodeBlock';
-import { MermaidDiagram } from './MermaidDiagram';
+import MermaidDiagram from './MermaidDiagram';
 
 export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   const { isDarkMode } = useTheme();

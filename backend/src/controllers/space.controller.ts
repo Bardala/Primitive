@@ -145,7 +145,11 @@ export class SpaceController implements spaceController {
     const page = parseInt(req.params.page);
     const pageSize = PageSize;
     const offset = (page - 1) * pageSize;
-    const feeds = await this.db.getSmartFeeds(res.locals.userId, pageSize, offset);
+    const userId = res.locals.userId;
+
+    const feeds = userId
+      ? await this.db.getSmartFeeds(res.locals.userId, pageSize, offset)
+      : await this.db.getPublicFeeds(pageSize, offset);
     return res.send({ feeds, page });
   };
 

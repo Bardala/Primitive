@@ -31,18 +31,20 @@ export const useProfileData = (id: string) => {
     refetchOnWindowFocus: false,
   });
 
-  const userBlogsQuery = useInfiniteQuery<UserBlogsRes, ApiError>(blogsKey, userBlogsApi(id), {
-    enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
-    refetchOnWindowFocus: false,
-    getNextPageParam: lastPage => {
-      return lastPage.page + 1;
-    },
-    onSuccess: data => {
-      if (data.pages[data.pages.length - 1].blogs.length < PageSize) {
-        setIsEnd(true);
-      }
-    },
-  });
+  const userBlogsQuery = useInfiniteQuery<UserBlogsRes, ApiError>(
+    blogsKey,
+    ({ pageParam = 1 }) => userBlogsApi(id, pageParam),
+    {
+      enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
+      refetchOnWindowFocus: false,
+      getNextPageParam: lastPage => lastPage.page + 1,
+      onSuccess: data => {
+        if (data.pages[data.pages.length - 1].blogs.length < PageSize) {
+          setIsEnd(true);
+        }
+      },
+    }
+  );
 
   useScroll(userBlogsQuery);
 
@@ -61,7 +63,6 @@ export const useGetAllMissedMsgs = () => {
 
   const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
     enabled: !!currUser?.jwt,
-    // refetchInterval: 10000,
   });
 
   return { missedMsgs: query.data?.numberOfMsgs, refetch: query.refetch };

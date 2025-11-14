@@ -10,12 +10,13 @@ export const useFollow = (userId: string) => {
   const key = ['followers', userId];
 
   const followersQuery = useQuery<GetFollowersRes, ApiError>(key, userFollowersApi(userId), {
-    enabled: !!currUser?.jwt && !!userId,
+    enabled: !!userId,
   });
 
   const followMutation = useMutation<FollowUserRes, ApiError>(followUserApi(userId), {
     onSuccess: () => followersQuery.refetch(),
   });
+
   const unfollowMutation = useMutation<UnFollowUserRes, ApiError>(unfollowUserApi(userId), {
     onSuccess: () => followersQuery.refetch(),
   });

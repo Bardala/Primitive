@@ -74,7 +74,4 @@ export enum ENDPOINT {
   GET_FEEDS = '/api/v0/feeds',
   GET_FEEDS_PAGE = '/api/v0/feeds/:page',
   Get_SMART_FEEDS = '/api/v0/feeds/smart/:page',
-
-  // *Test
-  // TEST_INFINITE_SCROLL = '/api/v0/test/infinite-scroll/:/page:pageSize',
 }

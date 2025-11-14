@@ -1,4 +1,3 @@
-// components/PasswordUpdate.tsx
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ApiError } from 'src/fetch/auth';

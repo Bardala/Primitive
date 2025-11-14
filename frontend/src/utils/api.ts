@@ -1,17 +1,11 @@
 import {
   AddMemberReq,
   AddMemberRes,
-  AllUnReadMsgsReq,
   AllUnReadMsgsRes,
-  BlogCommentsReq,
   BlogCommentsRes,
-  BlogLikesListReq,
   BlogLikesListRes,
-  BlogLikesReq,
   BlogLikesRes,
-  BlogReq,
   BlogRes,
-  ChatReq,
   ChatRes,
   CreateBlogReq,
   CreateBlogRes,
@@ -23,41 +17,27 @@ import {
   CreateMsgRes,
   CreateSpaceReq,
   CreateSpaceRes,
-  DeleteBlogReq,
   DeleteBlogRes,
-  DeleteCommentReq,
   DeleteCommentRes,
   ENDPOINT,
-  FeedsReq,
   FeedsRes,
   FollowUserReq,
   FollowUserRes,
-  GetFollowersReq,
   GetFollowersRes,
-  GetUserCardReq,
   GetUserCardRes,
-  GetUsersListReq,
   GetUsersListRes,
   JoinSpaceReq,
   JoinSpaceRes,
-  LeaveSpaceReq,
   LeaveSpaceRes,
   LoginReq,
   LoginRes,
-  MembersReq,
   MembersRes,
-  NumOfCommentsReq,
   NumOfCommentsRes,
-  RemoveLikeReq,
   RemoveLikeRes,
   SignUpReq,
-  SpaceBlogsReq,
   SpaceBlogsRes,
-  SpaceReq,
   SpaceRes,
-  UnFollowUserReq,
   UnFollowUserRes,
-  UnReadMsgsNumReq,
   UnReadMsgsNumRes,
   UpdateCommentReq,
   UpdateCommentRes,
@@ -65,259 +45,129 @@ import {
   UpdatePasswordRes,
   UpdateSpaceReq,
   UpdateSpaceRes,
-  UserBlogsReq,
   UserBlogsRes,
-  UserSpacesReq,
   UserSpacesRes,
   updateBlogReq,
   updateBlogRes,
 } from '@nest/shared';
+import { deleteFn, getFn, postFn, putFn } from 'src/fetch';
 
-import { fetchFn } from '../fetch';
-import { LOCALS } from './localStorage';
+// Space APIs
+export const spcApi = (spcId: string) => () => getFn<SpaceRes>(ENDPOINT.GET_SPACE, [spcId]);
 
-const currUser = JSON.parse(localStorage.getItem(LOCALS.CURR_USER) || '{}');
-
-export const spcApi = (spcId: string) => () =>
-  fetchFn<SpaceReq, SpaceRes>(ENDPOINT.GET_SPACE, 'GET', undefined, currUser?.jwt, [spcId]);
-
-export const blogsApi =
-  (spcId: string) =>
-  ({ pageParam = 1 }) => {
-    return fetchFn<SpaceBlogsReq, SpaceBlogsRes>(
-      ENDPOINT.GET_SPACE_BLOGS,
-      'GET',
-      undefined,
-      currUser?.jwt,
-      [spcId, pageParam + '']
-    );
-  };
+export const blogsApi = (spcId: string, pageParam: number = 1) =>
+  getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spcId, pageParam.toString()]);
 
 export const membersApi = (spcId: string) => () =>
-  fetchFn<MembersReq, MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, 'GET', undefined, currUser?.jwt, [
-    spcId,
-  ]);
+  getFn<MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, [spcId]);
 
 export const joinSpcApi = (spcId: string) => () =>
-  fetchFn<JoinSpaceReq, JoinSpaceRes>(ENDPOINT.JOIN_SPACE, 'POST', undefined, currUser?.jwt, [
-    spcId,
-  ]);
-
-export const feedsApi =
-  () =>
-  ({ pageParam = 1 }) =>
-    fetchFn<FeedsReq, FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, 'GET', undefined, currUser?.jwt, [
-      pageParam + '',
-    ]);
-
-export const smarterFeedsApi =
-  () =>
-  ({ pageParam = 1 }) =>
-    fetchFn<FeedsReq, FeedsRes>(ENDPOINT.Get_SMART_FEEDS, 'GET', undefined, currUser?.jwt, [
-      pageParam + '',
-    ]);
-
-export const createBlogApi = (title: string, content: string, spaceId: string) => () =>
-  fetchFn<CreateBlogReq, CreateBlogRes>(
-    ENDPOINT.CREATE_BLOG,
-    'POST',
-    { title, content, spaceId },
-    currUser?.jwt
-  );
-
-export const deleteBlogApi = (blogId: string) => () =>
-  fetchFn<DeleteBlogReq, DeleteBlogRes>(ENDPOINT.DELETE_BLOG, 'DELETE', undefined, currUser?.jwt, [
-    blogId,
-  ]);
-
-export const createShortApi = (title: string, content: string, spaceId: string) => () =>
-  fetchFn<CreateBlogReq, CreateBlogRes>(
-    ENDPOINT.CREATE_BLOG,
-    'POST',
-    { title, content, spaceId },
-    currUser?.jwt
-  );
-
-export const blogApi = (blogId: string) => () =>
-  fetchFn<BlogReq, BlogRes>(ENDPOINT.GET_BLOG, 'GET', undefined, currUser?.jwt, [blogId]);
-
-// api.ts
-export const updateBlogApi = (blogId: string, data: updateBlogReq) => () =>
-  fetchFn<updateBlogReq, updateBlogRes>(ENDPOINT.UPDATE_BLOG, 'PUT', data, currUser?.jwt, [blogId]);
-
-export const blogCommentsApi = (blogId: string) => () =>
-  fetchFn<BlogCommentsReq, BlogCommentsRes>(
-    ENDPOINT.GET_BLOG_COMMENTS,
-    'GET',
-    undefined,
-    currUser?.jwt,
-    [blogId]
-  );
-
-export const chatApi = (spaceId: string) => () =>
-  fetchFn<ChatReq, ChatRes>(ENDPOINT.Get_SPACE_CHAT, 'GET', undefined, currUser?.jwt, [spaceId]);
-
-export const createMsgApi = (content: string, spaceId: string) => () =>
-  fetchFn<CreateMsgReq, CreateMsgRes>(ENDPOINT.CREATE_MESSAGE, 'POST', { content }, currUser?.jwt, [
-    spaceId,
-  ]);
-
-export const blogLikesListApi = (blogId: string) => () =>
-  fetchFn<BlogLikesListReq, BlogLikesListRes>(
-    ENDPOINT.GET_BLOG_LIKES_LIST,
-    'GET',
-    undefined,
-    currUser?.jwt,
-    [blogId]
-  );
-
-export const createLikeApi = (blogId: string) => () =>
-  fetchFn<CreateLikeReq, CreateLikeRes>(ENDPOINT.LIKE_BLOG, 'POST', undefined, currUser?.jwt, [
-    blogId,
-  ]);
-
-export const deleteLikeApi = (blogId: string) => () =>
-  fetchFn<RemoveLikeReq, RemoveLikeRes>(ENDPOINT.UNLIKE_BLOG, 'DELETE', undefined, currUser?.jwt, [
-    blogId,
-  ]);
-
-export const userCardApi = (userId: string) => () =>
-  fetchFn<GetUserCardReq, GetUserCardRes>(ENDPOINT.GET_USER_CARD, 'GET', undefined, currUser?.jwt, [
-    userId,
-  ]);
-
-export const userSpacesApi = (userId: string) => () =>
-  fetchFn<UserSpacesReq, UserSpacesRes>(ENDPOINT.GET_USER_SPACES, 'GET', undefined, currUser?.jwt, [
-    userId,
-  ]);
-
-export const userBlogsApi =
-  (userId: string) =>
-  ({ pageParam = 1 }) =>
-    fetchFn<UserBlogsReq, UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, 'GET', undefined, currUser?.jwt, [
-      userId,
-      pageParam + '',
-    ]);
-
-export const userListApi = () => () =>
-  fetchFn<GetUsersListReq, GetUsersListRes>(
-    ENDPOINT.GET_USERS_LIST,
-    'GET',
-    undefined,
-    currUser?.jwt
-  );
-
-export const addMemberApi = (member: string, isAdmin: boolean, spaceId: string) => () =>
-  fetchFn<AddMemberReq, AddMemberRes>(
-    ENDPOINT.ADD_MEMBER,
-    'POST',
-    { member, isAdmin },
-    currUser?.jwt,
-    [spaceId]
-  );
-
-export const createCommApi = (content: string, blogId: string) => () =>
-  fetchFn<CreateCommentReq, CreateCommentRes>(
-    ENDPOINT.CREATE_COMMENT,
-    'POST',
-    { content },
-    currUser?.jwt,
-    [blogId]
-  );
-
-// utils/api.ts
-export const updateCommentApi = (commentId: string, data: UpdateCommentReq) => () =>
-  fetchFn<UpdateCommentReq, UpdateCommentRes>(ENDPOINT.UPDATE_COMMENT, 'PUT', data, currUser?.jwt, [
-    commentId,
-  ]);
-
-export const deleteCommentApi = (commentId: string) => () =>
-  fetchFn<DeleteCommentReq, DeleteCommentRes>(
-    ENDPOINT.DELETE_COMMENT,
-    'DELETE',
-    undefined,
-    currUser?.jwt,
-    [commentId]
-  );
-
-export const createSpcApi = (input: CreateSpaceReq) => () =>
-  fetchFn<CreateSpaceReq, CreateSpaceRes>(ENDPOINT.CREATE_SPACE, 'POST', input, currUser?.jwt);
-
-export const updateSpcApi = (input: CreateSpaceReq, spcId: string) => () =>
-  fetchFn<UpdateSpaceReq, UpdateSpaceRes>(ENDPOINT.UPDATE_SPACE, 'PUT', input, currUser?.jwt, [
-    spcId,
-  ]);
-
-export const userFollowersApi = (userId: string) => () =>
-  fetchFn<GetFollowersReq, GetFollowersRes>(
-    ENDPOINT.GET_FOLLOWERS,
-    'GET',
-    undefined,
-    currUser?.jwt,
-    [userId]
-  );
-
-export const followUserApi = (userId: string) => () =>
-  fetchFn<FollowUserReq, FollowUserRes>(ENDPOINT.FOLLOW_USER, 'POST', undefined, currUser?.jwt, [
-    userId,
-  ]);
-
-export const unfollowUserApi = (userId: string) => () =>
-  fetchFn<UnFollowUserReq, UnFollowUserRes>(
-    ENDPOINT.UNFOLLOW_USER,
-    'DELETE',
-    undefined,
-    currUser?.jwt,
-    [userId]
-  );
-
-export const blogLikesApi = (blogId: string) => () =>
-  fetchFn<BlogLikesReq, BlogLikesRes>(ENDPOINT.GET_BLOG_LIKES, 'GET', undefined, currUser?.jwt, [
-    blogId,
-  ]);
-
-export const loginApi = (login: string, password: string) =>
-  fetchFn<LoginReq, LoginRes>(ENDPOINT.LOGIN, 'POST', { login, password });
-
-export const signUpApi = (email: string, password: string, username: string) =>
-  fetchFn<SignUpReq, LoginRes>(ENDPOINT.SIGNUP, 'POST', { email, password, username });
+  postFn<JoinSpaceReq, JoinSpaceRes>(ENDPOINT.JOIN_SPACE, undefined, [spcId]);
 
 export const leaveSpcApi = (spcId: string) => () =>
-  fetchFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, 'DELETE', undefined, currUser?.jwt, [
-    spcId,
-  ]);
+  deleteFn<LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, [spcId]);
 
-export const getNumOfUnReadMsgsApi = (spaceId: string) => () =>
-  fetchFn<UnReadMsgsNumReq, UnReadMsgsNumRes>(
-    ENDPOINT.GET_UNREAD_MSGS_NUM,
-    'GET',
-    undefined,
-    currUser?.jwt,
-    [spaceId]
-  );
+// Feed APIs
+export const feedsApi = (pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, [pageParam.toString()]);
+
+export const smarterFeedsApi = (pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.Get_SMART_FEEDS, [pageParam.toString()]);
+
+// Blog APIs
+export const blogApi = (blogId: string) => () => getFn<BlogRes>(ENDPOINT.GET_BLOG, [blogId]);
+
+export const createBlogApi = (title: string, content: string, spaceId: string) => () =>
+  postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, { title, content, spaceId });
+
+export const createShortApi = (title: string, content: string, spaceId: string) => () =>
+  postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, { title, content, spaceId });
+
+export const updateBlogApi = (blogId: string, data: updateBlogReq) =>
+  putFn<updateBlogReq, updateBlogRes>(ENDPOINT.UPDATE_BLOG, data, [blogId]);
+
+export const deleteBlogApi = (blogId: string) =>
+  deleteFn<DeleteBlogRes>(ENDPOINT.DELETE_BLOG, [blogId]);
+
+// Comments APIs
+export const blogCommentsApi = (blogId: string) => () =>
+  getFn<BlogCommentsRes>(ENDPOINT.GET_BLOG_COMMENTS, [blogId]);
+
+export const createCommApi = (content: string, blogId: string) => () =>
+  postFn<CreateCommentReq, CreateCommentRes>(ENDPOINT.CREATE_COMMENT, { content }, [blogId]);
+
+export const updateCommentApi = (commentId: string, data: UpdateCommentReq) =>
+  putFn<UpdateCommentReq, UpdateCommentRes>(ENDPOINT.UPDATE_COMMENT, data, [commentId]);
+
+export const deleteCommentApi = (commentId: string) =>
+  deleteFn<DeleteCommentRes>(ENDPOINT.DELETE_COMMENT, [commentId]);
+
+export const numOfCommsApi = (blogId: string) =>
+  getFn<NumOfCommentsRes>(ENDPOINT.NUM_OF_COMMENTS, [blogId]);
+
+// Chat APIs
+export const chatApi = (spaceId: string) => () =>
+  getFn<ChatRes>(ENDPOINT.Get_SPACE_CHAT, [spaceId]);
+
+export const createMsgApi = (content: string, spaceId: string) => () =>
+  postFn<CreateMsgReq, CreateMsgRes>(ENDPOINT.CREATE_MESSAGE, { content }, [spaceId]);
+
+export const getNumOfUnReadMsgsApi = (spaceId: string) =>
+  getFn<UnReadMsgsNumRes>(ENDPOINT.GET_UNREAD_MSGS_NUM, [spaceId]);
 
 export const getAllUnReadMsgsApi = () => () =>
-  fetchFn<AllUnReadMsgsReq, AllUnReadMsgsRes>(
-    ENDPOINT.GET_ALL_UNREAD_MSGS,
-    'GET',
-    undefined,
-    currUser?.jwt
-  );
+  getFn<AllUnReadMsgsRes>(ENDPOINT.GET_ALL_UNREAD_MSGS);
 
-export const numOfCommsApi = (blogId: string) => () => {
-  return fetchFn<NumOfCommentsReq, NumOfCommentsRes>(
-    ENDPOINT.NUM_OF_COMMENTS,
-    'GET',
-    undefined,
-    currUser?.jwt,
-    [blogId]
-  );
-};
+// Likes APIs
+export const blogLikesApi = (blogId: string) => () =>
+  getFn<BlogLikesRes>(ENDPOINT.GET_BLOG_LIKES, [blogId]);
 
-export const updatePasswordApi = (data: UpdatePasswordReq) => () =>
-  fetchFn<UpdatePasswordReq, UpdatePasswordRes>(
-    ENDPOINT.UPDATE_USER_PASSWORD,
-    'POST',
-    data,
-    currUser?.jwt
-  );
+export const blogLikesListApi = (blogId: string) =>
+  getFn<BlogLikesListRes>(ENDPOINT.GET_BLOG_LIKES_LIST, [blogId]);
+
+export const createLikeApi = (blogId: string) => () =>
+  postFn<CreateLikeReq, CreateLikeRes>(ENDPOINT.LIKE_BLOG, undefined, [blogId]);
+
+export const deleteLikeApi = (blogId: string) => () =>
+  deleteFn<RemoveLikeRes>(ENDPOINT.UNLIKE_BLOG, [blogId]);
+
+// User APIs
+export const userCardApi = (userId: string) => () =>
+  getFn<GetUserCardRes>(ENDPOINT.GET_USER_CARD, [userId]);
+
+export const userSpacesApi = (userId: string) => () =>
+  getFn<UserSpacesRes>(ENDPOINT.GET_USER_SPACES, [userId]);
+
+export const userBlogsApi = (userId: string, pageParam: number = 1) =>
+  getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId, pageParam.toString()]);
+
+export const userListApi = () => getFn<GetUsersListRes>(ENDPOINT.GET_USERS_LIST);
+
+export const userFollowersApi = (userId: string) => () =>
+  getFn<GetFollowersRes>(ENDPOINT.GET_FOLLOWERS, [userId]);
+
+export const followUserApi = (userId: string) => () =>
+  postFn<FollowUserReq, FollowUserRes>(ENDPOINT.FOLLOW_USER, undefined, [userId]);
+
+export const unfollowUserApi = (userId: string) => () =>
+  deleteFn<UnFollowUserRes>(ENDPOINT.UNFOLLOW_USER, [userId]);
+
+// Space Management APIs
+export const addMemberApi = (member: string, isAdmin: boolean, spaceId: string) => () =>
+  postFn<AddMemberReq, AddMemberRes>(ENDPOINT.ADD_MEMBER, { member, isAdmin }, [spaceId]);
+
+export const createSpcApi = (input: CreateSpaceReq) => () =>
+  postFn<CreateSpaceReq, CreateSpaceRes>(ENDPOINT.CREATE_SPACE, input);
+
+export const updateSpcApi = (input: CreateSpaceReq, spcId: string) => () =>
+  putFn<UpdateSpaceReq, UpdateSpaceRes>(ENDPOINT.UPDATE_SPACE, input, [spcId]);
+
+// Auth APIs (Public endpoints)
+export const loginApi = (login: string, password: string) =>
+  postFn<LoginReq, LoginRes>(ENDPOINT.LOGIN, { login, password });
+
+export const signUpApi = (email: string, password: string, username: string) =>
+  postFn<SignUpReq, LoginRes>(ENDPOINT.SIGNUP, { email, password, username });
+
+export const updatePasswordApi = (data: UpdatePasswordReq) =>
+  postFn<UpdatePasswordReq, UpdatePasswordRes>(ENDPOINT.UPDATE_USER_PASSWORD, data);

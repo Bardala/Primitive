@@ -1,4 +1,3 @@
-// hooks/useUpdatePassword.ts
 import { UpdatePasswordReq, UpdatePasswordRes } from '@nest/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiError } from 'src/fetch/auth';
@@ -8,7 +7,7 @@ export const useUpdatePassword = () => {
   const queryClient = useQueryClient();
 
   return useMutation<UpdatePasswordRes, ApiError, UpdatePasswordReq>(
-    data => updatePasswordApi(data)(),
+    data => updatePasswordApi(data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['user']);

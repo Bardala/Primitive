@@ -14,8 +14,8 @@ export const UsersList = () => {
   const { t } = useTranslation();
   const key = ['usersList'];
 
-  const usersListQuery = useQuery<GetUsersListRes, ApiError>(key, userListApi(), {
-    enabled: !!currUser?.jwt,
+  const usersListQuery = useQuery<GetUsersListRes, ApiError>(key, () => userListApi(), {
+    enabled: true,
     refetchOnWindowFocus: false,
   });
 
