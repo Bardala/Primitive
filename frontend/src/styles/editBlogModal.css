@@ -1,0 +1,128 @@
+/* Add these styles to your existing CSS */
+
+.space-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.space-icon {
+  color: var(--color-primary);
+}
+
+.current-space-info {
+  background: var(--color-bg-hover);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--color-primary);
+}
+
+.current-space-label {
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-right: 0.5rem;
+}
+
+.current-space-name {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.space-selection {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--color-bg-surface);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.move-space-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.space-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-font);
+  font-size: 0.9rem;
+}
+
+.space-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(26, 172, 131, 0.1);
+}
+
+.space-selection-help {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.space-change-warning {
+  color: var(--color-accent-green);
+  font-weight: 500;
+}
+
+.space-loading,
+.no-other-spaces {
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+  background: var(--color-bg-hover);
+  border-radius: var(--border-radius-md);
+}
+
+.space-error {
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--color-red);
+  background: var(--color-bg-error);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-red);
+}
+
+/* Preview styles */
+.preview-space-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.preview-space-icon {
+  font-size: 0.9rem;
+}
+
+.preview-space-name {
+  font-weight: 500;
+}
+
+.preview-space-change {
+  font-size: 0.8rem;
+  color: var(--color-accent-green);
+  font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .current-space-info {
+    padding: 0.5rem;
+  }
+
+  .space-selection {
+    padding: 0.75rem;
+  }
+}

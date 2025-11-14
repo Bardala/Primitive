@@ -1,4 +1,3 @@
-// components/DeleteConfirmationModal.tsx
 import { useTranslation } from 'react-i18next';
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
 

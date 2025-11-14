@@ -87,6 +87,7 @@
     "deleteBlog": "Delete blog",
     "itemName": "blog"
   },
+
   "comments": {
     "placeholder": "Write your comment",
     "add": "Add comment",
@@ -165,7 +166,8 @@
     "preview": "Preview blog",
     "fields": {
       "title": "Title",
-      "content": "Content"
+      "content": "Content",
+      "space": "Space"
     },
     "placeholders": {
       "title": "Enter blog title",
@@ -176,7 +178,16 @@
     "noContent": "*No content yet*",
     "updating": "Updating...",
     "update": "Update Blog",
-    "error": "Failed to update blog"
+    "error": "Failed to update blog",
+    "currentSpace": "Current space",
+    "moveToSpace": "Move to another space",
+    "keepInCurrentSpace": "Keep in current space",
+    "spaceChangeWarning": "Blog will be moved to the selected space",
+    "loadingSpaces": "Loading your spaces...",
+    "errorLoadingSpaces": "Error loading spaces",
+    "noOtherSpaces": "You don't have any other spaces to move this blog to",
+    "willBeMoved": "Will be moved",
+    "updateAndMove": "Update & Move"
   },
   "common": {
     "cancel": "Cancel"

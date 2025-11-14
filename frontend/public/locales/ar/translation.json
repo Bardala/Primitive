@@ -163,7 +163,8 @@
     "preview": "عرض المدونة",
     "fields": {
       "title": "العنوان",
-      "content": "المحتوى"
+      "content": "المحتوى",
+      "space": "المساحة"
     },
     "placeholders": {
       "title": "أدخل عنوان المدونة",
@@ -174,7 +175,16 @@
     "noContent": "*لا يوجد محتوى بعد*",
     "updating": "جاري التحديث...",
     "update": "تحديث المدونة",
-    "error": "فشل في تحديث المدونة"
+    "error": "فشل في تحديث المدونة",
+    "currentSpace": "المساحة الحالية",
+    "moveToSpace": "نقل إلى مساحة أخرى",
+    "keepInCurrentSpace": "الاحتفاظ في المساحة الحالية",
+    "spaceChangeWarning": "سيتم نقل المدونة إلى المساحة المحددة",
+    "loadingSpaces": "جاري تحميل المساحات الخاصة بك...",
+    "errorLoadingSpaces": "حدث خطأ أثناء تحميل المساحات",
+    "noOtherSpaces": "ليس لديك أي مساحات أخرى لنقل هذه المدونة إليها",
+    "willBeMoved": "سيتم نقلها",
+    "updateAndMove": "تحديث ونقل"
   },
   "common": {
     "cancel": "إلغاء"

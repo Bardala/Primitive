@@ -8,7 +8,7 @@ export interface BlogReq {
 export interface BlogRes {
     blog: Blog;
 }
-export type updateBlogReq = Pick<Blog, 'content' | 'title'>;
+export type updateBlogReq = Pick<Blog, 'content' | 'title' | 'spaceId'>;
 export interface updateBlogRes {
 }
 export interface DeleteBlogReq {

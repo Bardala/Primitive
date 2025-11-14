@@ -13,29 +13,29 @@ import { ApiError } from '../fetch/auth';
 import { getAllUnReadMsgsApi, userBlogsApi, userCardApi, userSpacesApi } from '../utils/api';
 import { useScroll } from './useScroll';
 
-export const useProfileData = (id: string) => {
+export const useProfileData = (userId: string) => {
   const { currUser } = useAuthContext();
-  const isMyPage = currUser?.id === id;
-  const cardKey = ['userCard', id];
-  const spacesKey = ['userSpaces', id];
-  const blogsKey = ['userBlogs', id];
+  const isMyPage = currUser?.id === userId;
+  const cardKey = ['userCard', userId];
+  const spacesKey = ['userSpaces', userId];
+  const blogsKey = ['userBlogs', userId];
   const [isEnd, setIsEnd] = useState(false);
 
-  const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(id), {
-    enabled: !!currUser?.jwt && !!id,
+  const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(userId), {
+    enabled: !!currUser?.jwt && !!userId,
     refetchOnWindowFocus: false,
   });
 
-  const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(id), {
-    enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
+  const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(userId), {
+    enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
     refetchOnWindowFocus: false,
   });
 
   const userBlogsQuery = useInfiniteQuery<UserBlogsRes, ApiError>(
     blogsKey,
-    ({ pageParam = 1 }) => userBlogsApi(id, pageParam),
+    ({ pageParam = 1 }) => userBlogsApi(userId, pageParam),
     {
-      enabled: !!currUser?.jwt && !!id && !!userCardQuery.data?.userCard,
+      enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
       refetchOnWindowFocus: false,
       getNextPageParam: lastPage => lastPage.page + 1,
       onSuccess: data => {
@@ -56,6 +56,11 @@ export const useProfileData = (id: string) => {
     isEnd,
   };
 };
+
+export const useGetAllUserSpaces = (userId: string) =>
+  useQuery<UserSpacesRes, ApiError>(['userSpaces', userId], userSpacesApi(userId), {
+    enabled: !!userId,
+  });
 
 export const useGetAllMissedMsgs = () => {
   const { currUser } = useAuthContext();

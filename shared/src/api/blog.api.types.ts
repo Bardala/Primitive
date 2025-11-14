@@ -11,7 +11,7 @@ export interface BlogRes {
   blog: Blog;
 }
 
-export type updateBlogReq = Pick<Blog, 'content' | 'title'>; // params.blogId
+export type updateBlogReq = Pick<Blog, 'content' | 'title' | 'spaceId'>; // params.blogId
 export interface updateBlogRes {}
 
 export interface DeleteBlogReq {} // params.blogId

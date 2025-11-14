@@ -140,15 +140,21 @@ export class BlogController implements blogController {
   ) => {
     const userId = res.locals.userId;
     const blogId = req.params.blogId;
-    const { content, title } = req.body;
+    const { content, title, spaceId } = req.body;
 
     if (!blogId) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
-    if (!content || !title) return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
+    if (!content || !title || !spaceId)
+      return res.status(400).send({ error: ERROR.ALL_FIELDS_REQUIRED });
+
+    let space = await this.db.getSpace(spaceId);
+    if (!space) return res.status(400).send({ error: ERROR.SPACE_NOT_FOUND });
+    if (!(await this.db.isMember(spaceId, userId))) return res.sendStatus(403);
+
     let blog = await this.db.getBlog(blogId);
     if (!blog) return res.status(400).send({ error: ERROR.BLOG_NOT_FOUND });
     if (blog.userId !== userId) return res.sendStatus(403);
 
-    blog = { id: blogId, content, title, userId, spaceId: blog.spaceId };
+    blog = { id: blogId, content, title, userId, spaceId };
 
     await this.db.updateBlog(blog);
     return res.sendStatus(200);
