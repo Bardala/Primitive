@@ -51,7 +51,7 @@ export interface spaceController {
   getSpaceMembers: HandlerWithParams<{ spaceId: string }, MembersReq, MembersRes>;
   getChat: HandlerWithParams<{ spaceId: string }, ChatReq, ChatRes>;
   getNumOfUnReadMsgs: HandlerWithParams<{ spaceId: string }, UnReadMsgsNumReq, UnReadMsgsNumRes>;
-  feeds: Handler<FeedsReq, FeedsRes>;
+  smarterFeeds: HandlerWithParams<{ page: string }, FeedsReq, FeedsRes>;
   blogs: HandlerWithParams<{ spaceId: string }, SpaceBlogsReq, SpaceBlogsRes>;
 
   deleteMember: HandlerWithParams<
@@ -122,20 +122,17 @@ export class SpaceController implements spaceController {
     return res.sendStatus(200);
   };
 
-  feeds: Handler<FeedsReq, FeedsRes> = async (_, res) => {
-    return res.send({ error: ERROR.EXPIRE_API });
-    const feeds = await this.db.getFeeds(res.locals.userId);
-    return res.send({ feeds });
-  };
-
-  feedsPagination: HandlerWithParams<{ page: string }, FeedsReq, FeedsRes> = async (req, res) => {
+  feeds: HandlerWithParams<{ page: string }, FeedsReq, FeedsRes> = async (req, res) => {
     if (!req.params.page) return res.status(400).send({ error: ERROR.PARAMS_MISSING });
 
     const page = parseInt(req.params.page);
     const pageSize = PageSize;
     const offset = (page - 1) * pageSize;
+    const userId = res.locals.userId;
 
-    const feeds = await this.db.infiniteScroll(res.locals.userId, pageSize, offset);
+    const feeds = userId
+      ? await this.db.getFeeds(res.locals.userId, pageSize, offset)
+      : await this.db.getPublicFeeds(pageSize, offset);
     return res.send({ feeds, page });
   };
 
@@ -149,7 +146,7 @@ export class SpaceController implements spaceController {
 
     const feeds = userId
       ? await this.db.getSmartFeeds(res.locals.userId, pageSize, offset)
-      : await this.db.getPublicFeeds(pageSize, offset);
+      : await this.db.getSmartPublicFeeds(pageSize, offset);
     return res.send({ feeds, page });
   };
 

@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
+import { NotFound } from './components/NotFound';
 import { requireAuth } from './hoc/requireAuth';
 import { BlogDetails } from './pages/BlogDetails';
 import { CreateBlogPage } from './pages/CreateBlogPage';
@@ -32,8 +33,7 @@ function AppContent() {
           <Route path={ROUTES.SIGNUP} element={<SignUp />} />
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.BLOG_DETAILS} element={<BlogDetails />} />
-          {/* // todo: Create Not Found Page */}
-          <Route path="*" element={<h1>Not Found</h1>} />
+          <Route path="*" element={<NotFound />} />
           <Route path={ROUTES.SPACE} element={<ProtectedSpace />} />
           <Route path={ROUTES.USER_PROFILE} element={<ProtectUserProfile />} />
           <Route path={ROUTES.USERS_LIST} element={<ProtectedUserList />} />

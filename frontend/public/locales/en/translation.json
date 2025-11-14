@@ -1,4 +1,23 @@
 {
+  "home": {
+    "view": "View",
+    "smartFeed": "Top",
+    "chronologicalFeed": "Recent",
+    "smartFeedDescription": "Personalized top posts based on your activity",
+    "chronologicalFeedDescription": "Recent posts in chronological order",
+    "noFeedsMessage": "Follow users or join spaces to see posts here",
+    "loadingFeeds": "Loading feed..."
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home",
+    "goBack": "Go Back",
+    "suggestionsTitle": "What you can do:",
+    "suggestion1": "Check the URL for typos",
+    "suggestion2": "Visit our homepage",
+    "suggestion3": "Try refreshing the page"
+  },
   "navbar": {
     "signup": "Sign Up",
     "login": "Login",
@@ -11,24 +30,35 @@
     "dark": "Dark",
     "myProfile": "My Profile"
   },
-
   "login": {
-    "title": "Login",
-    "loginBy": "Login by <strong>Email</strong> or <strong>Username</strong>",
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account to continue",
+    "loginBy": "Email or Username",
     "password": "Password",
-    "button": "Login",
-    "error": "Invalid login credentials"
+    "button": "Sign In",
+    "error": "Invalid credentials. Please try again.",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "loginPlaceholder": "Enter your email or username",
+    "passwordPlaceholder": "Enter your password"
   },
-
   "signup": {
-    "title": "Sign Up",
+    "title": "Create Account",
+    "subtitle": "Join our community today",
     "email": "Email",
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm Password",
-    "button": "Sign Up",
-    "error": "Sign up failed",
-    "passwordMismatch": "Passwords do not match"
+    "button": "Create Account",
+    "error": "Failed to create account. Please try again.",
+    "passwordMismatch": "Passwords do not match",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "emailPlaceholder": "Enter your email address",
+    "usernamePlaceholder": "Choose a username",
+    "passwordPlaceholder": "Create a password",
+    "confirmPasswordPlaceholder": "Confirm your password"
   },
   "blog": {
     "comments": "Comments",

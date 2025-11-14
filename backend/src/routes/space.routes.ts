@@ -53,8 +53,7 @@ export const createSpaceRoutes = (spaceController: SpaceController) => {
   );
 
   // Feeds
-  router.get(ENDPOINT.GET_FEEDS, requireAuth, asyncHandler(spaceController.feeds));
-  router.get(ENDPOINT.GET_FEEDS_PAGE, optionalAuth, asyncHandler(spaceController.feedsPagination));
+  router.get(ENDPOINT.GET_FEEDS_PAGE, optionalAuth, asyncHandler(spaceController.feeds));
   router.get(ENDPOINT.Get_SMART_FEEDS, optionalAuth, asyncHandler(spaceController.smarterFeeds));
 
   return router;

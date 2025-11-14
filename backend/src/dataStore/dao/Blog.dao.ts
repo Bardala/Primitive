@@ -11,8 +11,4 @@ export interface BlogDao {
   deleteComments(blogId: string): Promise<void>;
   blogLikes(blogId: string, userId: string): Promise<{ likes: number; isLiked: boolean }>;
   blogLikesList(blogId: string): Promise<LikedUser[]>;
-
-  infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;
-  getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]>;
-  getPublicFeeds(pageSize: number, offset: number): Promise<Blog[]>;
 }

@@ -479,7 +479,7 @@ export class SqlDataStore implements DataStoreDao {
     return rows as Blog[];
   }
 
-  async getPublicFeeds(pageSize: number, offset: number): Promise<Blog[]> {
+  async getSmartPublicFeeds(pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     WITH blog_scores AS (
       SELECT 
@@ -490,14 +490,32 @@ export class SqlDataStore implements DataStoreDao {
         b.spaceId,
         b.author,
         b.timestamp,
-        -- same scoring logic but without user-dependent filters
-        EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) * 0.6 +
+        -- Enhanced scoring logic for public content
+        EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) as time_score,
+        LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) as like_score,
+        LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) as comment_score,
+        LOG(1 + COUNT(DISTINCT CASE 
+          WHEN rc.timestamp > UNIX_TIMESTAMP() * 1000 - (24 * 60 * 60 * 1000) 
+          THEN rc.id END
+        )) / LOG(20) as recent_comment_score,
+        -- Final weighted score (same weights as authenticated version for consistency)
+        (EXP(-(UNIX_TIMESTAMP() * 1000 - b.timestamp) / (1000 * 60 * 60 * 48)) * 0.4) +
         (LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) * 0.25) +
-        (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.15) as score
+        (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.2) +
+        (LOG(1 + COUNT(DISTINCT CASE 
+          WHEN rc.timestamp > UNIX_TIMESTAMP() * 1000 - (24 * 60 * 60 * 1000) 
+          THEN rc.id END
+        )) / LOG(20) * 0.15) as score
+        
       FROM blogs b
       LEFT JOIN likes l ON b.id = l.blogId
       LEFT JOIN comments c ON b.id = c.blogId
-      WHERE b.spaceId = '1' -- public space
+      LEFT JOIN comments rc ON b.id = rc.blogId
+      LEFT JOIN spaces s ON b.spaceId = s.id
+      
+      -- Include all public spaces (not just spaceId = '1')
+      WHERE s.status = 'public' OR b.spaceId = '1'
+      
       GROUP BY b.id, b.title, b.content, b.userId, b.spaceId, b.author, b.timestamp
     )
     SELECT * FROM blog_scores
@@ -509,7 +527,7 @@ export class SqlDataStore implements DataStoreDao {
     return rows as Blog[];
   }
 
-  async infiniteScroll(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
+  async getFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const query = `
     SELECT blogs.*, SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content FROM blogs
     WHERE blogs.spaceId IN (
@@ -529,6 +547,23 @@ export class SqlDataStore implements DataStoreDao {
       pageSize,
       offset,
     ]);
+    const blogs = rows as Blog[];
+    return blogs;
+  }
+
+  async getPublicFeeds(pageSize: number, offset: number): Promise<Blog[]> {
+    const query = `
+  SELECT 
+    blogs.*, 
+    SUBSTRING(blogs.content, 1, ${this.blogIconLength}) AS content 
+  FROM blogs
+  INNER JOIN spaces ON blogs.spaceId = spaces.id
+  WHERE spaces.status = 'public'  -- Only public spaces
+  ORDER BY blogs.timestamp DESC
+  LIMIT ? OFFSET ?
+  `;
+
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [pageSize, offset]);
     const blogs = rows as Blog[];
     return blogs;
   }
@@ -577,19 +612,6 @@ export class SqlDataStore implements DataStoreDao {
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, shortId);
     return rows as LikedUser[];
-  }
-
-  async getFeeds(userId: string): Promise<Blog[]> {
-    //? this returns all blogs from all spaces that the user is a member of
-    const query = `
-    SELECT blogs.* FROM blogs
-    WHERE blogs.spaceId IN (
-      SELECT spaceId FROM members WHERE memberId = ?
-    )
-    ORDER BY blogs.timestamp DESC
-    `;
-    const [rows] = await this.pool.query<RowDataPacket[]>(query, userId);
-    return rows as Blog[];
   }
 
   async getSpaceChat(spaceId: string, limit = 100): Promise<ChatMessage[]> {

@@ -1,6 +1,8 @@
+// SignUp.tsx
 import { FormEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from 'src/utils/routes';
 
 import { useAuthContext } from '../context/AuthContext';
@@ -17,16 +19,22 @@ export const SignUp = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { refetchCurrUser } = useAuthContext();
 
   const signUpUser = useCallback(
     async (e: FormEvent | MouseEvent) => {
       e.preventDefault();
+      setIsLoading(true);
+      setError(null);
 
       if (password !== confirmPassword) {
         setError(t('signup.passwordMismatch'));
+        setIsLoading(false);
         return;
       }
 
@@ -37,66 +45,139 @@ export const SignUp = () => {
         nav(ROUTES.HOME);
       } catch (err) {
         setError((err as ApiError).message || t('signup.error'));
+      } finally {
+        setIsLoading(false);
       }
     },
     [email, password, confirmPassword, username, refetchCurrUser, nav, t]
   );
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+
   return (
-    <div className="signup-container">
-      <form onSubmit={signUpUser} className="signup-card">
-        <h3 className="signup-title">{t('signup.title')}</h3>
+    <div className="auth-container">
+      <div className="auth-card">
+        {/* Header */}
+        <div className="auth-header">
+          <div className="auth-icon">
+            <FiUser />
+          </div>
+          <h1 className="auth-title">{t('signup.title')}</h1>
+          <p className="auth-subtitle">{t('signup.subtitle')}</p>
+        </div>
 
-        <label htmlFor="email" className="signup-label">
-          {t('signup.email')}
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="signup-input"
-        />
+        <form onSubmit={signUpUser} className="auth-form">
+          {/* Email Field */}
+          <div className="input-group">
+            <label htmlFor="email" className="input-label">
+              <FiMail className="input-icon" />
+              {t('signup.email')}
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="input-field"
+              placeholder={t('signup.emailPlaceholder')}
+              required
+            />
+          </div>
 
-        <label htmlFor="username" className="signup-label">
-          {t('signup.username')}
-        </label>
-        <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          className="signup-input"
-        />
+          {/* Username Field */}
+          <div className="input-group">
+            <label htmlFor="username" className="input-label">
+              <FiUser className="input-icon" />
+              {t('signup.username')}
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              className="input-field"
+              placeholder={t('signup.usernamePlaceholder')}
+              required
+            />
+          </div>
 
-        <label htmlFor="password" className="signup-label">
-          {t('signup.password')}
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="signup-input"
-        />
+          {/* Password Field */}
+          <div className="input-group">
+            <label htmlFor="password" className="input-label">
+              <FiLock className="input-icon" />
+              {t('signup.password')}
+            </label>
+            <div className="password-container">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="input-field password-input"
+                placeholder={t('signup.passwordPlaceholder')}
+                required
+              />
+              <button type="button" className="password-toggle" onClick={togglePasswordVisibility}>
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+          </div>
 
-        <label htmlFor="confirmPassword" className="signup-label">
-          {t('signup.confirmPassword')}
-        </label>
-        <input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
-          className="signup-input"
-        />
+          {/* Confirm Password Field */}
+          <div className="input-group">
+            <label htmlFor="confirmPassword" className="input-label">
+              <FiLock className="input-icon" />
+              {t('signup.confirmPassword')}
+            </label>
+            <div className="password-container">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                className="input-field password-input"
+                placeholder={t('signup.confirmPasswordPlaceholder')}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+          </div>
 
-        <button type="submit" className="signup-btn">
-          {t('signup.button')}
-        </button>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className={`auth-btn ${isLoading ? 'loading' : ''}`}
+            disabled={isLoading}
+          >
+            {isLoading ? <div className="spinner"></div> : t('signup.button')}
+          </button>
 
-        {error && <p className="error">{error}</p>}
-      </form>
+          {/* Error Message */}
+          {error && (
+            <div className="error-message">
+              <span className="error-icon">⚠</span>
+              {error}
+            </div>
+          )}
+
+          {/* Login Link */}
+          <div className="auth-footer">
+            <p className="auth-footer-text">
+              {t('signup.haveAccount')}{' '}
+              <Link to={ROUTES.LOGIN} className="auth-link">
+                {t('signup.signIn')}
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,23 @@
 {
+  "home": {
+    "view": "عرض",
+    "smartFeed": "الأهم",
+    "chronologicalFeed": "الأحدث",
+    "smartFeedDescription": "منشورات مختارة بناءً على نشاطك",
+    "chronologicalFeedDescription": "أحدث المنشورات بالترتيب الزمني",
+    "noFeedsMessage": "تابع المستخدمين أو انضم إلى مساحات لعرض منشوراتهم هنا",
+    "loadingFeeds": "جاري تحميل المحتوى..."
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "goHome": "العودة للرئيسية",
+    "goBack": "العودة للخلف",
+    "suggestionsTitle": "ما يمكنك فعله:",
+    "suggestion1": "تحقق من الرابط للتأكد من عدم وجود أخطاء",
+    "suggestion2": "زر صفحتنا الرئيسية",
+    "suggestion3": "حاول تحديث الصفحة"
+  },
   "navbar": {
     "signup": "إنشاء حساب",
     "login": "تسجيل الدخول",
@@ -12,21 +31,34 @@
     "myProfile": "ملفي الشخصي"
   },
   "login": {
-    "title": "تسجيل الدخول",
-    "loginBy": "سجّل بواسطة <strong>البريد الإلكتروني</strong> أو <strong>اسم المستخدم</strong>",
+    "title": "مرحبًا بعودتك",
+    "subtitle": "سجّل الدخول إلى حسابك للمتابعة",
+    "loginBy": "البريد الإلكتروني أو اسم المستخدم",
     "password": "كلمة المرور",
     "button": "تسجيل الدخول",
-    "error": "بيانات تسجيل الدخول غير صحيحة"
+    "error": "بيانات الدخول غير صحيحة. حاول مرة أخرى.",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "signUp": "إنشاء حساب",
+    "loginPlaceholder": "أدخل بريدك الإلكتروني أو اسم المستخدم",
+    "passwordPlaceholder": "أدخل كلمة المرور"
   },
   "signup": {
     "title": "إنشاء حساب",
+    "subtitle": "انضم إلى مجتمعنا اليوم",
     "email": "البريد الإلكتروني",
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
     "button": "إنشاء حساب",
-    "error": "فشل إنشاء الحساب",
-    "passwordMismatch": "كلمتا المرور غير متطابقتين"
+    "error": "فشل في إنشاء الحساب. حاول مرة أخرى.",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "haveAccount": "هل لديك حساب بالفعل؟",
+    "signIn": "تسجيل الدخول",
+    "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
+    "usernamePlaceholder": "اختر اسم مستخدم",
+    "passwordPlaceholder": "أنشئ كلمة مرور",
+    "confirmPasswordPlaceholder": "أكد كلمة المرور"
   },
   "blog": {
     "comments": "التعليقات",
