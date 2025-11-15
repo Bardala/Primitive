@@ -10,13 +10,21 @@ import { LikeBlogButton } from './LikeBlogButton';
 import { MyMarkdown } from './MyMarkdown';
 import { UserLink } from './UserLink';
 
-export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
+interface BlogIconProps {
+  post: Blog;
+  viewMode: 'titles-only' | 'full-blogs';
+}
+
+export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
   const { numOfComments } = useCommCounts(post.id!);
   const nav = useNavigate();
   const { t } = useTranslation();
 
   return (
-    <div className="blog-preview" key={post.id}>
+    <div
+      className={`blog-preview ${viewMode === 'titles-only' ? 'titles-only' : ''}`}
+      key={post.id}
+    >
       <div className="blog-content">
         <div className="blog-header">
           <Link to={`/b/${post.id}`} className="blog-link">
@@ -48,9 +56,11 @@ export const BlogIcon: React.FC<{ post: Blog }> = ({ post }) => {
           </time>
         </div>
 
-        <div className="blog-excerpt">
-          <MyMarkdown markdown={post.content} />
-        </div>
+        {viewMode === 'full-blogs' && (
+          <div className="blog-excerpt">
+            <MyMarkdown markdown={post.content} />
+          </div>
+        )}
       </div>
     </div>
   );

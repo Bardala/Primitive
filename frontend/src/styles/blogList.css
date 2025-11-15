@@ -244,10 +244,69 @@ time,
     gap: 10px;
     justify-content: space-between;
   }
+}
 
-  /* .created-at {
-    margin-left: 0;
-    flex-basis: 100%;
-    text-align: left;
-  } */
+/* Titles only mode */
+.blog-list.titles-only {
+  gap: 8px;
+}
+
+.blog-preview.titles-only {
+  padding: 12px 16px;
+  min-height: auto;
+}
+
+.blog-preview.titles-only .blog-header {
+  margin-bottom: 0;
+}
+
+.blog-preview.titles-only .blog-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.blog-preview.titles-only .blog-meta {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.blog-preview.titles-only .blog-excerpt {
+  display: none;
+}
+
+/* Compact meta in titles-only mode */
+.blog-preview.titles-only .blog-meta {
+  font-size: 12px;
+  gap: 12px;
+}
+
+.blog-preview.titles-only .created-at {
+  font-size: 12px;
+}
+
+/* Hover effects for titles-only mode */
+.blog-preview.titles-only:hover {
+  background: var(--color-bg-subtle);
+  transform: none;
+}
+
+/* Responsive design for titles-only mode */
+@media screen and (max-width: 600px) {
+  .blog-list.titles-only {
+    gap: 6px;
+  }
+
+  .blog-preview.titles-only {
+    padding: 10px 12px;
+  }
+
+  .blog-preview.titles-only .blog-header h2 {
+    font-size: 16px;
+  }
+
+  .blog-preview.titles-only .blog-meta {
+    gap: 8px;
+    font-size: 11px;
+  }
 }

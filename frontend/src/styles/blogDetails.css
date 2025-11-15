@@ -368,15 +368,6 @@
   background: var(--color-bg-hover);
 }
 
-.error-message {
-  color: var(--color-red);
-  background: var(--color-bg-error);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
-  font-size: 0.9rem;
-  margin-top: var(--spacing-sm);
-}
-
 .blog-actions {
   display: flex;
   gap: var(--spacing-sm);

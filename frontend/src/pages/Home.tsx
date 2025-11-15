@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocalStorage } from 'src/hooks/useLocalStorage';
 import { useFeeds, useSmartFeeds } from 'src/hooks/useSpace';
 
 import { BlogList } from '../components/BlogList';
@@ -7,11 +7,34 @@ import { ActionBar } from '../components/SideBar';
 import '../styles/home.css';
 
 export type FeedType = 'chronological' | 'smart';
+export type BlogListViewMode = 'titles-only' | 'full-blogs';
 
-// todo: feat=> let the user indicate viewing titles only or full blogs.
+interface FeedPreferences {
+  feedType: FeedType;
+  viewMode: BlogListViewMode;
+}
+
+const defaultPreferences: FeedPreferences = {
+  feedType: 'smart',
+  viewMode: 'full-blogs',
+};
+
 export const Home = () => {
-  const [feedType, setFeedType] = useState<FeedType>('smart');
+  const [preferences, setPreferences] = useLocalStorage<FeedPreferences>(
+    'FEED_PREFERENCES',
+    defaultPreferences
+  );
+
+  const { feedType, viewMode } = preferences;
   const { t } = useTranslation();
+
+  const handleFeedTypeChange = (newFeedType: FeedType) => {
+    setPreferences(prev => ({ ...prev, feedType: newFeedType }));
+  };
+
+  const handleViewModeChange = (newViewMode: BlogListViewMode) => {
+    setPreferences(prev => ({ ...prev, viewMode: newViewMode }));
+  };
 
   const {
     smartFeeds,
@@ -37,25 +60,49 @@ export const Home = () => {
   const currentSpaceQuery = feedType === 'smart' ? smartSpaceQuery : chronoSpaceQuery;
 
   if (currentSpaceQuery.isError) return <p className="error">{currentSpaceQuery.error.message}</p>;
-  if (currentSpaceQuery.isLoading) return <div>Loading...</div>;
+  if (currentSpaceQuery.isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="home">
       <main>
-        <div className="feed-tabs">
-          <button
-            className={`feed-tab ${feedType === 'smart' ? 'active' : ''}`}
-            onClick={() => setFeedType('smart')}
-          >
-            {t('home.smartFeed')}
-          </button>
+        <div className="feed-controls">
+          <div className="control-tabs compact">
+            <div className="feed-type-tabs">
+              <button
+                className={`control-tab ${feedType === 'smart' ? 'active' : ''}`}
+                onClick={() => handleFeedTypeChange('smart')}
+              >
+                {t('home.smartFeed')}
+              </button>
 
-          <button
-            className={`feed-tab ${feedType === 'chronological' ? 'active' : ''}`}
-            onClick={() => setFeedType('chronological')}
-          >
-            {t('home.chronologicalFeed')}
-          </button>
+              <button
+                className={`control-tab ${feedType === 'chronological' ? 'active' : ''}`}
+                onClick={() => handleFeedTypeChange('chronological')}
+              >
+                {t('home.chronologicalFeed')}
+              </button>
+            </div>
+
+            <div className="divider"></div>
+
+            <div className="view-mode-tabs">
+              <button
+                className={`control-tab ${viewMode === 'full-blogs' ? 'active' : ''}`}
+                onClick={() => handleViewModeChange('full-blogs')}
+                title={t('home.fullBlogsView')}
+              >
+                {t('home.fullView')}
+              </button>
+
+              <button
+                className={`control-tab ${viewMode === 'titles-only' ? 'active' : ''}`}
+                onClick={() => handleViewModeChange('titles-only')}
+                title={t('home.titlesOnlyView')}
+              >
+                {t('home.titlesOnly')}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Blog List */}
@@ -64,6 +111,7 @@ export const Home = () => {
             posts={currentFeeds}
             isEnd={currentIsEnd}
             fetchNextPage={currentFetchNextPage}
+            viewMode={viewMode}
           />
         )}
 

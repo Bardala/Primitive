@@ -1,13 +1,13 @@
-// SignUp.tsx
 import { FormEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
+import LoadingSpinner from 'src/components/LoadingSpinner';
 import { ROUTES } from 'src/utils/routes';
 
 import { useAuthContext } from '../context/AuthContext';
 import { ApiError } from '../fetch/auth';
-import '../styles/signup.css';
+import '../styles/login.css';
 import { signUpApi } from '../utils/api';
 import { LOCALS } from '../utils/localStorage';
 
@@ -156,7 +156,7 @@ export const SignUp = () => {
             className={`auth-btn ${isLoading ? 'loading' : ''}`}
             disabled={isLoading}
           >
-            {isLoading ? <div className="spinner"></div> : t('signup.button')}
+            {isLoading ? <LoadingSpinner /> : t('signup.button')}
           </button>
 
           {/* Error Message */}

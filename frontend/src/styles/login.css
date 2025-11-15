@@ -185,41 +185,6 @@
   opacity: 0.8;
 }
 
-/* Spinner */
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Error Message */
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--color-bg-error);
-  border: 1px solid var(--color-red);
-  border-radius: var(--border-radius-md);
-  color: var(--color-red);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
 .error-icon {
   font-size: 1.1rem;
 }
@@ -247,6 +212,27 @@
 .auth-link:hover {
   color: var(--color-accent-green);
   text-decoration: underline;
+}
+
+/* For Signup page */
+.password-strength {
+  margin-top: var(--spacing-xs);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.password-strength.weak {
+  color: var(--color-red);
+}
+
+.password-strength.medium {
+  color: orange;
+}
+
+.password-strength.strong {
+  color: var(--color-success);
 }
 
 /* Responsive Design */

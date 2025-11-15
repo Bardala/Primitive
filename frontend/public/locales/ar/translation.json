@@ -6,7 +6,11 @@
     "smartFeedDescription": "منشورات مختارة بناءً على نشاطك",
     "chronologicalFeedDescription": "أحدث المنشورات بالترتيب الزمني",
     "noFeedsMessage": "تابع المستخدمين أو انضم إلى مساحات لعرض منشوراتهم هنا",
-    "loadingFeeds": "جاري تحميل المحتوى..."
+    "loadingFeeds": "جاري تحميل المحتوى...",
+    "fullView": "عرض كامل",
+    "titlesOnly": "العناوين فقط",
+    "fullBlogsView": "عرض المقالات كاملة مع المحتوى",
+    "titlesOnlyView": "عرض العناوين فقط في قائمة مضغوطة"
   },
   "notFound": {
     "title": "الصفحة غير موجودة",

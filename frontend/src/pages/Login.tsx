@@ -1,53 +1,35 @@
-// Login.tsx
 import { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 'react-icons/fi';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import { useLoginMutation } from 'src/hooks/useAuth';
 
-import { useAuthContext } from '../context/AuthContext';
-import { ApiError } from '../fetch/auth';
 import '../styles/login.css';
-import { loginApi } from '../utils/api';
-import { LOCALS } from '../utils/localStorage';
 import { ROUTES } from '../utils/routes';
 
 export const Login = () => {
   const { t } = useTranslation();
-  const nav = useNavigate();
-  const location = useLocation();
-  const { refetchCurrUser } = useAuthContext();
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const loginMutation = useLoginMutation();
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent | React.MouseEvent) => {
       e.preventDefault();
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const currUser = await loginApi(login, password);
-        localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
-        refetchCurrUser();
-
-        const from = location.state?.from?.pathname || ROUTES.HOME;
-        nav(from, { replace: true });
-      } catch (err) {
-        console.error(err);
-        setError((err as ApiError).message);
-      } finally {
-        setIsLoading(false);
-      }
+      loginMutation.mutate({ login, password });
     },
-    [login, nav, password, refetchCurrUser, location.state]
+    [login, password, loginMutation]
   );
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const isLoading = loginMutation.isLoading;
+  const error = loginMutation.error?.message || null;
 
   return (
     <div className="auth-container">
@@ -76,6 +58,7 @@ export const Login = () => {
               className="input-field"
               placeholder={t('login.loginPlaceholder')}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -94,8 +77,14 @@ export const Login = () => {
                 className="input-field password-input"
                 placeholder={t('login.passwordPlaceholder')}
                 required
+                disabled={isLoading}
               />
-              <button type="button" className="password-toggle" onClick={togglePasswordVisibility}>
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={togglePasswordVisibility}
+                disabled={isLoading}
+              >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
@@ -114,14 +103,14 @@ export const Login = () => {
             className={`auth-btn ${isLoading ? 'loading' : ''}`}
             disabled={isLoading}
           >
-            {isLoading ? <div className="spinner"></div> : t('login.button')}
+            {isLoading ? <LoadingSpinner /> : t('login.button')}
           </button>
 
           {/* Error Message */}
           {error && (
             <div className="error-message">
               <span className="error-icon">⚠</span>
-              {t('login.error')}
+              {error}
             </div>
           )}
 

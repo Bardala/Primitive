@@ -1,7 +1,3 @@
-/* signup.css - Use the same styles as login.css */
-/* You can remove signup.css and use login.css for both, or keep it minimal */
-
-/* Any signup-specific styles can go here */
 .password-strength {
   margin-top: var(--spacing-xs);
   font-size: 0.8rem;

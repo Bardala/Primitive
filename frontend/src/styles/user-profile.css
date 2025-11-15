@@ -276,17 +276,6 @@
   cursor: not-allowed;
 }
 
-/* Error and Loading States */
-.error-message {
-  background: var(--color-bg-error);
-  color: var(--color-red);
-  padding: 0.75rem;
-  border-radius: var(--border-radius-md);
-  border-left: 4px solid var(--color-red);
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
 .loading-state {
   text-align: center;
   padding: 1.5rem;

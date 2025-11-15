@@ -1,14 +1,10 @@
 import { ENDPOINT, ERROR, RestMethod } from '@nest/shared';
 import { LOCALS } from 'src/utils/localStorage';
+import { withTimeout } from 'src/utils/withTimeOut';
 
 import { HOST } from '../config';
 import { ROUTES } from '../utils/routes';
 import { ApiError } from './auth';
-
-const errorFn = (status: number, message: string) => {
-  const error = new ApiError(status, message);
-  throw error;
-};
 
 const extractParams = (endPoint: ENDPOINT, params: string[]): string => {
   const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
@@ -47,29 +43,49 @@ export const fetchFn = async <Request, Response>(
   let url = HOST + endpoint;
   if (params) url = extractParams(endpoint, params);
 
-  const res = await fetch(url, {
-    method: method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(authToken && { Authorization: `Bearer ${authToken}` }),
-    },
-    ...(body && { body: JSON.stringify(body) }),
-  });
+  let res;
+  try {
+    res = await withTimeout(
+      fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken && { Authorization: `Bearer ${authToken}` }),
+        },
+        ...(body && { body: JSON.stringify(body) }),
+      }),
+      5000
+    );
+  } catch (err: any) {
+    if (err.message === 'FETCH_TIMEOUT') {
+      throw new ApiError(0, 'Server is waking up... Please wait.');
+    }
+
+    if (!navigator.onLine) {
+      throw new ApiError(0, "You're offline. Check your internet.");
+    }
+
+    if (err.message === 'Failed to fetch') {
+      throw new ApiError(0, "Can't connect to the server. It may be down or blocked.");
+    }
+
+    throw err;
+  }
 
   if (res.headers.get('Content-Type')?.includes('application/json')) {
     const data = await res.json();
     if (!res.ok)
       if (data.error === ERROR.TOKEN_EXPIRED || data.error === ERROR.INVALID_TOKEN) {
         localStorage.removeItem(LOCALS.CURR_USER);
-        errorFn(res.status, data.error);
+        throw new ApiError(res.status, data.error);
       } else if (data.error === ERROR.UNAUTHORIZED) {
         window.location.href = ROUTES.LOGIN;
         throw new ApiError(res.status, data.error);
-      } else errorFn(res.status, data.error);
+      } else throw new ApiError(res.status, data.error);
     return data;
   }
 
-  if (!res.ok) errorFn(res.status, res.statusText);
+  if (!res.ok) throw new ApiError(res.status, res.statusText);
   return res as unknown as Response;
 };
 

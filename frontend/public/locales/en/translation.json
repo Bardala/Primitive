@@ -6,7 +6,11 @@
     "smartFeedDescription": "Personalized top posts based on your activity",
     "chronologicalFeedDescription": "Recent posts in chronological order",
     "noFeedsMessage": "Follow users or join spaces to see posts here",
-    "loadingFeeds": "Loading feed..."
+    "loadingFeeds": "Loading feed...",
+    "fullView": "Full View",
+    "titlesOnly": "Titles Only",
+    "fullBlogsView": "View full blog posts with content",
+    "titlesOnlyView": "View only titles in a compact list"
   },
   "notFound": {
     "title": "Page Not Found",
