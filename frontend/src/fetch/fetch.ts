@@ -1,6 +1,5 @@
 import { ENDPOINT, ERROR, RestMethod } from '@nest/shared';
 import { LOCALS } from 'src/utils/localStorage';
-import { withTimeout } from 'src/utils/withTimeOut';
 
 import { HOST } from '../config';
 import { ROUTES } from '../utils/routes';
@@ -45,28 +44,17 @@ export const fetchFn = async <Request, Response>(
 
   let res;
   try {
-    res = await withTimeout(
-      fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(authToken && { Authorization: `Bearer ${authToken}` }),
-        },
-        ...(body && { body: JSON.stringify(body) }),
-      }),
-      5000
-    );
+    res = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken && { Authorization: `Bearer ${authToken}` }),
+      },
+      ...(body && { body: JSON.stringify(body) }),
+    });
   } catch (err: any) {
-    if (err.message === 'FETCH_TIMEOUT') {
-      throw new ApiError(0, 'Server is waking up... Please wait.');
-    }
-
-    if (!navigator.onLine) {
-      throw new ApiError(0, "You're offline. Check your internet.");
-    }
-
     if (err.message === 'Failed to fetch') {
-      throw new ApiError(0, "Can't connect to the server. It may be down or blocked.");
+      throw new ApiError(0, 'Connection problem…');
     }
 
     throw err;
