@@ -1,20 +1,18 @@
-const path = require("path");
+const path = require('path');
 module.exports = {
   plugins: [
     {
       plugin: {
         overrideWebpackConfig: ({ webpackConfig }) => {
-          const oneOfRule = webpackConfig.module.rules.find(
-            (rule) => rule.oneOf,
-          );
+          const oneOfRule = webpackConfig.module.rules.find(rule => rule.oneOf);
           if (oneOfRule) {
             const tsxRule = oneOfRule.oneOf.find(
-              (rule) => rule.test && rule.test.toString().includes("tsx"),
+              rule => rule.test && rule.test.toString().includes('tsx')
             );
 
             const newIncludePaths = [
               // relative path to the shared module
-              path.resolve(__dirname, "../shared"),
+              path.resolve(__dirname, '../shared'),
             ];
             if (tsxRule) {
               if (Array.isArray(tsxRule.include)) {
@@ -29,4 +27,10 @@ module.exports = {
       },
     },
   ],
+  webpack: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@styles': path.resolve(__dirname, './src/styles'),
+    },
+  },
 };

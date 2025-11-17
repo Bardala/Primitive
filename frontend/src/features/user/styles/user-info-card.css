@@ -1,0 +1,167 @@
+.user-profile {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-profile h1 {
+  font-size: 32px;
+  color: var(--color-accent-green);
+  /* #0a684e */
+  margin-bottom: 20px;
+}
+
+.user-profile h2 {
+  font-size: 24px;
+  color: var(--color-accent-green);
+  /* #0a684e */
+  margin-bottom: 10px;
+}
+
+.user-profile .user-information {
+  background-color: var(--color-secondary);
+  /* #f2f2f2 */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px var(--color-box-shadow);
+  /* rgba(0, 0, 0, 0.1) */
+  margin-bottom: 20px;
+}
+
+.user-profile .user-information p {
+  font-size: 18px;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.user-profile .user-information p:first-child {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.user-profile .user-information p:last-child {
+  margin-bottom: 0;
+}
+
+.user-profile .user-information span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.user-profile .user-information .date {
+  font-style: italic;
+}
+
+.user-information {
+  width: 300px;
+  border: 1px solid var(--color-border);
+  /* #ccc */
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px var(--color-box-shadow);
+  /* rgba(0, 0, 0, 0.1) */
+  margin: 20px auto;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.card-header button {
+  background-color: var(--color-button-bg);
+  /* #00a0d2 */
+  color: var(--color-bg-card);
+  /* White */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.follow {
+  background-color: var(--color-button-bg);
+  /* #00a0d2 */
+  color: var(--color-bg-card);
+  /* White */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.follow:hover {
+  background-color: var(--color-button-hover-bg);
+  /* #008fb3 */
+}
+
+.follow:disabled {
+  background-color: var(--color-disabled-bg);
+  /* #ccc */
+}
+
+.user-information a {
+  text-decoration: none;
+  background: var(--color-bg-card);
+  /* White */
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Poppins';
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 16px;
+}
+
+.user-information a:hover {
+  color: var(--color-primary);
+  /* Assuming primary green for hover text */
+  box-shadow: 1px 3px 5px var(--color-box-shadow);
+  /* rgba(0, 0, 0, 0.1) */
+}
+
+.user-information a :hover {
+  color: var(--color-red);
+  /* Assuming red for hover text on special cases */
+  box-shadow: 1px 3px 5px var(--color-box-shadow);
+  /* rgba(0, 0, 0, 0.1) */
+}
+
+.user-links {
+  display: flex;
+  align-items: center;
+}
+
+.user-links a {
+  text-decoration: none;
+  background: var(--color-bg-card);
+  /* White */
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Poppins';
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 16px;
+  color: var(--color-button-bg);
+  /* #00a0d2 */
+  border: 1px solid var(--color-button-bg);
+  /* #00a0d2 */
+}
+
+.user-links a:hover {
+  color: var(--color-bg-card);
+  /* White */
+  background-color: var(--color-button-bg);
+  /* #00a0d2 */
+  box-shadow: 1px 3px 5px var(--color-box-shadow);
+  /* rgba(0, 0, 0, 0.1) */
+}
+
+.user-links a:active {
+  color: var(--color-bg-card);
+  /* White */
+  background-color: var(--color-button-hover-bg);
+  /* #008fb3 */
+  box-shadow: none;
+}

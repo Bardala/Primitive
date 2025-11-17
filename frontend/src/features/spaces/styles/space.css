@@ -1,0 +1,60 @@
+.space-page h1 {
+  font-family: Arial, sans-serif;
+  font-size: 36px;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
+}
+
+.space-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.space-header span {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: bold;
+}
+
+.space-page nav {
+  margin-top: 10px;
+}
+
+.space-page .join-button {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: var(--color-bg-card);
+  /* White */
+  background-color: var(--color-button-bg);
+  /* #0078d4 */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.space-page button:hover {
+  background-color: var(--color-button-hover-bg);
+  /* #005a9e */
+}
+
+.space-page .space-description {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
+  margin-top: 20px;
+}
+
+.space-page .not-found {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: var(--color-font);
+  /* Nearest match for #333333 */
+}
+
+.join-space {
+  width: inherit;
+}

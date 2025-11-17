@@ -1,0 +1,18 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "arrowParens": "avoid",
+  "importOrder": [
+    "^@/(.*)$",
+    "^@nest/(.*)$",
+    "^[a-zA-Z0-9@].*",
+    "^[./].*(?<!\\.css)$",
+    "^[./].*\\.css$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "printWidth": 100
+}

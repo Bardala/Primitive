@@ -21,7 +21,7 @@
   --color-bg-transparent: transparent;
 
   /* Blog page */
-  --color-box-shadow: #0000001A;
+  --color-box-shadow: #0000001a;
   --color-box-shadow-focus: #00000033;
 
   /* New Variables */
@@ -104,15 +104,15 @@
   /* Lighter muted text for readability */
   --color-bg-transparent: transparent;
 
-  --color-box-shadow: #121212E6;
-  --color-box-shadow-focus: #121212CC;
+  --color-box-shadow: #121212e6;
+  --color-box-shadow-focus: #121212cc;
 
   --color-accent-green: #0a684e;
   --color-button-bg: #00a0d2;
   --color-button-hover-bg: #008fb3;
   --color-disabled-bg: #666;
   /* Darker disabled background for night mode */
-  --color-shadow-light: #0000001A;
+  --color-shadow-light: #0000001a;
   /* Same shadow, but in hex */
   --color-muted: #bbb;
   /* Lighter muted color for night mode */
@@ -124,19 +124,19 @@
   --blockquote-background: rgba(26, 172, 131, 0.1);
 }
 
-:root[dir="rtl"] {
+:root[dir='rtl'] {
   direction: rtl;
   text-align: right;
 }
 
-:root[dir="ltr"] {
+:root[dir='ltr'] {
   direction: ltr;
   text-align: left;
 }
 
 body.dark-mode {
   margin: 0;
-  font-family: "Quicksand", sans-serif;
+  font-family: 'Quicksand', sans-serif;
   color: var(--color-font);
   font-weight: 500;
 }
@@ -144,7 +144,7 @@ body.dark-mode {
 /* Base styles */
 body {
   margin: 0;
-  font-family: "Quicksand", sans-serif;
+  font-family: 'Quicksand', sans-serif;
   color: var(--color-font);
   font-weight: 500;
 }
@@ -256,5 +256,4 @@ input.error {
   .App {
     width: 100%;
   }
-
 }
