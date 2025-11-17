@@ -15,7 +15,7 @@ import { db, initDb } from './dataStore';
 import { flagSlowReq } from './middleware';
 import { errorHandler } from './middleware/errorHandler';
 import { createRoutes } from './routes';
-import { Origin, logger } from './utils';
+import { logger } from './utils';
 
 (async () => {
   dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
@@ -23,18 +23,23 @@ import { Origin, logger } from './utils';
 
   const app = express();
   const port = process.env.PORT;
+
   const server = http.createServer(app);
   app.use(express.static('public'));
 
   initSockets(server, db);
 
-  app.use(express.json());
-  app.use(
-    cors({
-      origin: Origin,
+  const getCorsOptions = () => {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+    return {
+      origin: allowedOrigins,
       credentials: true,
-    })
-  );
+    };
+  };
+
+  app.use(express.json());
+  app.use(cors(getCorsOptions()));
 
   const user = new UserController(db);
   const blog = new BlogController(db);
@@ -45,7 +50,7 @@ import { Origin, logger } from './utils';
   app.use(flagSlowReq);
   app.use(morgan('dev', { stream: { write: message => logger.info(message.trim()) } }));
 
-  app.get('/health', (_, res) => res.send('😊'));
+  app.get('/health', (_, res) => res.send('OK😊'));
   app.use(createRoutes(user, blog, comm, space, chat));
 
   app.use(errorHandler);
