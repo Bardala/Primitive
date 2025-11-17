@@ -2,6 +2,7 @@ import { useAuthContext } from '@/core/context';
 import { formatTimeShort, isArabic } from '@/core/utils';
 import { UserLink } from '@/features/user';
 
+import GithubSlugger from 'github-slugger';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
@@ -27,28 +28,23 @@ const calculateReadingTime = (text: string): number => {
   return Math.max(1, Math.round(wordCount / wordsPerMinute));
 };
 
-const extractHeadings = (markdown: string): Array<{ id: string; text: string; level: number }> => {
+const extractHeadings = (markdown: string) => {
   const lines = markdown.split('\n');
   const results: Array<{ id: string; text: string; level: number }> = [];
+  const slugger = new GithubSlugger();
 
   for (const line of lines) {
-    if (line[0] !== '#') continue;
+    if (!line.startsWith('#')) continue;
 
     let level = 0;
-
-    while (level < line.length && line[level] === '#') level++;
+    while (line[level] === '#') level++;
 
     if (line[level] !== ' ') continue;
 
     const text = line.slice(level + 1).trim();
-
     if (!text) continue;
 
-    // Generate safe ID
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9\u0600-\u06FF\s]/g, '')
-      .replace(/\s+/g, '-');
+    const id = slugger.slug(text); // EXACT MATCH with rehype-slug
 
     results.push({ id, text, level });
   }
