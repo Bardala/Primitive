@@ -1,0 +1,16 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "importOrder": [
+    "^@nestjs/(.*)$",
+    "^[a-zA-Z0-9@].*$",
+    "^@app/(.*)$",
+    "^@modules/(.*)$",
+    "^@shared/(.*)$",
+
+    "^[./].*$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "printWidth": 100
+}
