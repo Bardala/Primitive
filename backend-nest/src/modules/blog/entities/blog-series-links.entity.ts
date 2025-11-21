@@ -6,20 +6,20 @@ import { BlogSeries } from './blog-series.entity';
 @Unique(['seriesId', 'position'])
 export class BlogSeriesLink {
   @PrimaryColumn('char', { length: 36 })
-  seriesId: string;
+  seriesId!: string;
 
   @PrimaryColumn('char', { length: 36 })
-  blogId: string;
+  blogId!: string;
 
   @Column()
-  position: number;
+  position!: number;
 
   // Relationships
   @ManyToOne(() => BlogSeries, (series) => series.blogLinks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'seriesId' })
-  series: BlogSeries;
+  series!: BlogSeries;
 
   @ManyToOne(() => Blog, (blog) => blog.tags, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogId' })
-  blog: Blog;
+  blog!: Blog;
 }

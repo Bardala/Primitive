@@ -9,30 +9,31 @@ import {
 } from 'typeorm';
 import { PrivateMessage } from './private-message.entity';
 import { User } from 'src/modules/user/entities/user.entity';
+import { PrivateConversation as IPrivateConversation } from '@nest/shared';
 
 @Entity('private_conversations')
-export class PrivateConversation {
+export class PrivateConversation implements IPrivateConversation {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column('char', { length: 36 })
-  user1Id: string;
+  user1Id!: string;
 
   @Column('char', { length: 36 })
-  user2Id: string;
+  user2Id!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: string;
 
   // Relationships
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user1Id' })
-  user1: User;
+  user1!: User;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user2Id' })
-  user2: User;
+  user2!: User;
 
   @OneToMany(() => PrivateMessage, (message) => message.conversation)
-  messages: PrivateMessage[];
+  messages!: PrivateMessage[];
 }

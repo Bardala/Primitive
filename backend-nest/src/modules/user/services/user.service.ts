@@ -206,7 +206,6 @@ export class UserService {
     const offset = (page - 1) * pageSize;
 
     const [blogs, _total] = await this.blogRepository.findAndCount({
-      // 'total' is declared but its value is never read.ts(6133)
       where: { userId },
       relations: ['user', 'space'],
       order: { timestamp: 'DESC' },
@@ -231,7 +230,7 @@ export class UserService {
   async getUserSpaces(userId: string): Promise<any[]> {
     const spaces = await this.spaceRepository.find({
       where: { ownerId: userId },
-      select: ['id', 'name', 'description', 'status', 'createdAt'],
+      select: ['id', 'name', 'description', 'status', 'timestamp'],
     });
 
     return spaces;

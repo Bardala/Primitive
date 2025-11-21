@@ -6,17 +6,17 @@ import { Space } from 'src/modules/space/entities/space.entity';
 @Entity('tags')
 export class Tag {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column({ unique: true, length: 100 })
-  name: string;
+  name!: string;
 
   @ManyToMany(() => Blog, (blog) => blog.tags)
-  blogs: Blog[];
+  blogs!: Blog[];
 
   @ManyToMany(() => Space, (space) => space.tags)
-  spaces: Space[];
+  spaces!: Space[];
 
   @ManyToMany(() => User, (user) => user.tags)
-  users: User[];
+  users!: User[];
 }

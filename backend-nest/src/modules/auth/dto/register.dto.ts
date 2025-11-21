@@ -10,7 +10,7 @@ export class RegisterDto implements SignUpReq {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     example: 'JohnDoe',
@@ -26,7 +26,7 @@ export class RegisterDto implements SignUpReq {
   @Matches(/^[A-Za-z][A-Za-z0-9]*$/, {
     message: 'Username must start with a letter and contain only letters and numbers',
   })
-  username: string;
+  username!: string;
 
   @ApiProperty({
     example: 'password123',
@@ -39,5 +39,5 @@ export class RegisterDto implements SignUpReq {
   @IsNotEmpty()
   @MinLength(8)
   @MaxLength(20)
-  password: string;
+  password!: string;
 }

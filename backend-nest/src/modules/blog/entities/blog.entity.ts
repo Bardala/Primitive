@@ -12,47 +12,46 @@ import {
   ManyToMany,
   JoinTable,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
+import { Blog as IBlog } from '@nest/shared';
 
 @Entity('blogs')
-export class Blog {
+export class Blog implements IBlog {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column({ length: 255 })
-  title: string;
+  title!: string;
 
   @Column({ type: 'mediumtext' })
-  content: string;
+  content!: string;
 
   @Column('char', { length: 36 })
-  userId: string;
+  userId!: string;
 
   @Column('char', { length: 36 })
-  spaceId: string;
+  spaceId!: string;
 
   @Column({ length: 255 })
-  author: string;
+  author!: string;
 
   @Column({ type: 'bigint' })
-  timestamp: number;
+  timestamp!: number;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.blogs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @ManyToOne(() => Space, (space) => space.blogs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'spaceId' })
-  space: Space;
+  space!: Space;
 
   @OneToMany(() => Comment, (comment) => comment.blog)
-  comments: Comment[];
+  comments!: Comment[];
 
   @OneToMany(() => Like, (like) => like.blog)
-  likes: Like[];
+  likes!: Like[];
 
   @ManyToMany(() => Tag, (tag) => tag.blogs)
   @JoinTable({
@@ -60,11 +59,11 @@ export class Blog {
     joinColumn: { name: 'blogId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
   })
-  tags: Tag[];
+  tags!: Tag[];
 
-  @CreateDateColumn()
-  createdAt: Date;
+  // @CreateDateColumn()
+  // createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  // @UpdateDateColumn()
+  // updatedAt: Date;
 }

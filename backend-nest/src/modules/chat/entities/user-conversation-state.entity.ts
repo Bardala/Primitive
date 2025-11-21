@@ -1,5 +1,6 @@
 import { User } from 'src/modules/user/entities/user.entity';
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { UserConversationState as IUserConversationState } from '@nest/shared';
 
 export enum ConversationType {
   SPACE = 'space',
@@ -7,33 +8,33 @@ export enum ConversationType {
 }
 
 @Entity('user_conversation_state')
-export class UserConversationState {
+export class UserConversationState implements IUserConversationState {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column('char', { length: 36 })
-  userId: string;
+  userId!: string;
 
   @Column('char', { length: 36 })
-  conversationId: string;
+  conversationId!: string;
 
   @Column({
     type: 'enum',
     enum: ConversationType,
   })
-  conversationType: ConversationType;
+  conversationType!: ConversationType;
 
   @Column({ type: 'timestamp', nullable: true })
-  lastReadAt: Date;
+  lastReadAt!: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  lastSoundPlayedAt: Date;
+  lastSoundPlayedAt!: Date;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.activity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

@@ -1,41 +1,34 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Space } from './space.entity';
-
-export enum PermissionType {
-  POST_BLOG = 'post_blog',
-  SEND_CHAT = 'send_chat',
-}
-
-export enum AllowedRole {
-  OWNER = 'owner',
-  ADMIN = 'admin',
-  MEMBER = 'member',
-  EVERYONE = 'everyone',
-}
+import {
+  SpacePermission as ISpacePermission,
+  SpacePermissionType,
+  AllowedRole,
+} from '@nest/shared';
 
 @Entity('space_permissions')
-export class SpacePermission {
+export class SpacePermission implements ISpacePermission {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column('char', { length: 36 })
-  spaceId: string;
+  spaceId!: string;
 
   @Column({
     type: 'enum',
-    enum: PermissionType,
-    default: PermissionType.POST_BLOG,
+    enum: SpacePermissionType,
+    default: SpacePermissionType.POST_BLOG,
   })
-  permission: PermissionType;
+  permission!: SpacePermissionType;
 
   @Column({
     type: 'enum',
     enum: AllowedRole,
     default: AllowedRole.MEMBER,
   })
-  allowedRole: AllowedRole;
+  allowedRole!: AllowedRole;
 
   @ManyToOne(() => Space, (space) => space.permissions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'spaceId' })
-  space: Space;
+  space!: Space;
 }

@@ -5,16 +5,16 @@ import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 @Entity('likes')
 export class Like {
   @PrimaryColumn('char', { length: 36 })
-  blogId: string;
+  blogId!: string;
 
   @PrimaryColumn('char', { length: 36 })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => Blog, (blog) => blog.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogId' })
-  blog: Blog;
+  blog!: Blog;
 
   @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 }

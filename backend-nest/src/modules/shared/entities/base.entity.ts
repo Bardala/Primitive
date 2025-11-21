@@ -3,13 +3,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 export abstract class BaseEntity {
   @PrimaryColumn('varchar', { length: 36 })
-  id: string;
+  id!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @BeforeInsert()
   generateId() {

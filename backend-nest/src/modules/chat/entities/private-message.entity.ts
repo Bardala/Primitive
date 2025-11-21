@@ -1,32 +1,33 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { PrivateConversation } from './private-conversation.entity';
 import { User } from 'src/modules/user/entities/user.entity';
+import { PrivateMessage as IPrivateMessage } from '@nest/shared';
 
 @Entity('private_messages')
-export class PrivateMessage {
+export class PrivateMessage implements IPrivateMessage {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column('char', { length: 36 })
-  conversationId: string;
+  conversationId!: string;
 
   @Column('char', { length: 36 })
-  senderId: string;
+  senderId!: string;
 
   @Column({ type: 'text' })
-  content: string;
+  content!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   // Relationships
   @ManyToOne(() => PrivateConversation, (conversation) => conversation.messages, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'conversationId' })
-  conversation: PrivateConversation;
+  conversation!: PrivateConversation;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'senderId' })
-  sender: User;
+  sender!: User;
 }

@@ -6,8 +6,6 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
-  CreateDateColumn,
-  UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
@@ -16,42 +14,44 @@ import { User } from 'src/modules/user/entities/user.entity';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { ChatMessage } from 'src/modules/chat/entities/chat-message.entity';
 import { Tag } from 'src/modules/shared/entities/tag.entity';
+import { Space as ISpace, type SpaceStatus } from '@nest/shared';
+
 @Entity('spaces')
-export class Space {
+export class Space implements ISpace {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column({ length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ length: 255 })
-  status: string;
+  status!: SpaceStatus;
 
   @Column({ name: 'ownerId', type: 'char', length: 36 })
-  ownerId: string;
+  ownerId!: string;
 
   @Column({ length: 255 })
-  description: string;
+  description!: string;
 
   @Column({ type: 'bigint' })
-  timestamp: number;
+  timestamp!: number;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.ownedSpaces, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ownerId' })
-  owner: User;
+  owner!: User;
 
   @OneToMany(() => Blog, (blog) => blog.space)
-  blogs: Blog[];
+  blogs!: Blog[];
 
   @OneToMany(() => Member, (member) => member.space)
-  members: Member[];
+  members!: Member[];
 
   @OneToMany(() => SpacePermission, (permission) => permission.space)
-  permissions: SpacePermission[];
+  permissions!: SpacePermission[];
 
   @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.space)
-  chatMessages: ChatMessage[];
+  chatMessages!: ChatMessage[];
 
   @ManyToMany(() => Tag, (tag) => tag.spaces)
   @JoinTable({
@@ -59,11 +59,11 @@ export class Space {
     joinColumn: { name: 'spaceId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
   })
-  tags: Tag[];
+  tags!: Tag[];
 
-  @CreateDateColumn()
-  createdAt: Date;
+  // @CreateDateColumn()
+  // createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  // @UpdateDateColumn()
+  // updatedAt: Date;
 }

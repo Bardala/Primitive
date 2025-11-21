@@ -10,7 +10,7 @@ export class LoginDto implements LoginReq {
   })
   @IsString()
   @IsNotEmpty()
-  login: string;
+  login!: string;
 
   @ApiProperty({
     example: 'password123',
@@ -20,5 +20,5 @@ export class LoginDto implements LoginReq {
   })
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password!: string;
 }

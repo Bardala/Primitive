@@ -62,11 +62,7 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log('mysql host:', configService.get('MYSQLHOST'));
-  console.log('mysql port:', configService.get('MY_SQL_DB_PORT'));
-  console.log('mysql user:', configService.get('MYSQLUSER'));
-  console.log('mysql database:', configService.get('MYSQL_DATABASE'));
-  console.log('mysql password:', configService.get('MYSQL_ROOT_PASSWORD'));
+  console.log(`📚 Swagger docs available at: http://localhost:${port}/api`);
   console.log(`📊 Environment: ${configService.get('NODE_ENV')}`);
 }
 

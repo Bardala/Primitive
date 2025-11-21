@@ -4,16 +4,16 @@ import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 @Entity('follows')
 export class Follow {
   @PrimaryColumn('char', { length: 36 })
-  followerId: string;
+  followerId!: string;
 
   @PrimaryColumn('char', { length: 36 })
-  followingId: string;
+  followingId!: string;
 
   @ManyToOne(() => User, (user) => user.following, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'followerId' })
-  follower: User;
+  follower!: User;
 
   @ManyToOne(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'followingId' })
-  following: User;
+  following!: User;
 }

@@ -5,16 +5,16 @@ import { Tag } from 'src/modules/shared/entities/tag.entity';
 @Entity('blog_tags')
 export class BlogTag {
   @PrimaryColumn('char', { length: 36 })
-  blogId: string;
+  blogId!: string;
 
   @PrimaryColumn('char', { length: 36 })
-  tagId: string;
+  tagId!: string;
 
   @ManyToOne(() => Blog, (blog) => blog.tags, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogId' })
-  blog: Blog;
+  blog!: Blog;
 
   @ManyToOne(() => Tag, (tag) => tag.blogs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tagId' })
-  tag: Tag;
+  tag!: Tag;
 }

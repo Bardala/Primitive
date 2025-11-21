@@ -7,8 +7,8 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe,
-  DefaultValuePipe,
+  UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,9 +22,12 @@ import { UserService } from '../services/user.service';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { GetUser } from '../../../common/decorators/user.decorator';
 import { User } from '../entities/user.entity';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { PaginationQuery } from 'src/modules/shared/dto/PaginationQuery';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -78,7 +81,7 @@ export class UserController {
       },
     },
   })
-  async getUserCard(@GetUser() user: User, @Param('id') targetUserId: string) {
+  async getUserCard(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {
     return { userCard: await this.userService.getUserCard(user.id, targetUserId) };
   }
 
@@ -97,7 +100,7 @@ export class UserController {
       },
     },
   })
-  async getFollowers(@Param('id') userId: string) {
+  async getFollowers(@Param('id', ParseUUIDPipe) userId: string) {
     return { followers: await this.userService.getFollowers(userId) };
   }
 
@@ -113,7 +116,7 @@ export class UserController {
       },
     },
   })
-  async createFollow(@GetUser() user: User, @Param('id') targetUserId: string) {
+  async createFollow(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {
     await this.userService.createFollow(user.id, targetUserId);
     return { message: 'Successfully followed user' };
   }
@@ -130,7 +133,7 @@ export class UserController {
       },
     },
   })
-  async deleteFollow(@GetUser() user: User, @Param('id') targetUserId: string) {
+  async deleteFollow(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {
     await this.userService.deleteFollow(user.id, targetUserId);
     return { message: 'Successfully unfollowed user' };
   }
@@ -157,11 +160,8 @@ export class UserController {
       },
     },
   })
-  async getUserBlogs(
-    @Param('id') userId: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  ) {
-    return await this.userService.getUserBlogs(userId, page);
+  async getUserBlogs(@Param('id', ParseUUIDPipe) userId: string, @Query() query: PaginationQuery) {
+    return await this.userService.getUserBlogs(userId, query.page);
   }
 
   @Get(':id/spaces')
@@ -183,7 +183,7 @@ export class UserController {
       },
     },
   })
-  async getUserSpaces(@Param('id') userId: string) {
+  async getUserSpaces(@Param('id', ParseUUIDPipe) userId: string) {
     return { spaces: await this.userService.getUserSpaces(userId) };
   }
 

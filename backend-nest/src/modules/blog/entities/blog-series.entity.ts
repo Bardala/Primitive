@@ -13,26 +13,26 @@ import { BlogSeriesLink } from './blog-series-links.entity';
 @Entity('blog_series')
 export class BlogSeries {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column({ length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description!: string;
 
   @Column('char', { length: 36 })
-  createdBy: string;
+  createdBy!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.blogs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdBy' })
-  creator: User;
+  creator!: User;
 
   // Unsafe return of a value of type error.eslint@typescript-eslint/no-unsafe-return
   @OneToMany(() => BlogSeriesLink, (link) => link.series)
-  blogLinks: BlogSeriesLink[];
+  blogLinks!: BlogSeriesLink[];
 }

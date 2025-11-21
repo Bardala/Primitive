@@ -1,3 +1,5 @@
+// todo: make all timestamp fields consistent (number vs string vs Date)
+
 export interface Blog {
   id: string;
   title: string;
@@ -40,7 +42,7 @@ export interface SpaceMember {
 export interface LastReadMsg {
   userId: string;
   spaceId: string;
-  msgId: string;
+  lastReadId: string;
 }
 
 export interface UnReadMsgs {
@@ -105,12 +107,12 @@ export interface PrivateMessage {
   conversationId: string;
   senderId: string;
   content: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 export interface UserActivity {
   userId: string;
-  lastActive: string; // ISO datetime
+  lastActive: Date;
 }
 
 export interface Tag {
@@ -147,7 +149,12 @@ export interface BlogSeriesLink {
   position: number;
 }
 
-export type NotificationType = 'message' | 'mention' | 'comment' | 'system';
+export enum NotificationType {
+  MESSAGE = 'message',
+  MENTION = 'mention',
+  COMMENT = 'comment',
+  SYSTEM = 'system',
+}
 
 export interface Notification {
   id: string;
@@ -156,22 +163,34 @@ export interface Notification {
   refId?: string;
   payload?: Record<string, any>;
   isRead: boolean;
-  createdAt: string; // ISO string
+  createdAt: Date;
 }
 
-export type ConversationType = 'space' | 'private';
+export enum ConversationType {
+  SPACE = 'space',
+  PRIVATE = 'private',
+}
 
 export interface UserConversationState {
   id: string;
   userId: string;
   conversationId: string;
   conversationType: ConversationType;
-  lastReadAt?: string; // ISO timestamp
-  lastSoundPlayedAt?: string;
+  lastReadAt?: Date;
+  lastSoundPlayedAt?: Date;
 }
 
-export type SpacePermissionType = 'post_blog' | 'send_chat';
-export type AllowedRole = 'owner' | 'admin' | 'member' | 'everyone';
+export enum SpacePermissionType {
+  POST_BLOG = 'post_blog',
+  SEND_CHAT = 'send_chat',
+}
+
+export enum AllowedRole {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  EVERYONE = 'everyone',
+}
 
 export interface SpacePermission {
   id: string;

@@ -8,53 +8,54 @@ import { Space } from 'src/modules/space/entities/space.entity';
 import { Comment } from 'src/modules/comment/entities/comment.entity';
 import { Entity, Column, PrimaryColumn, OneToMany, OneToOne, JoinTable, ManyToMany } from 'typeorm';
 import { UserActivity } from './user-activity.entity';
+import { User as IUser } from '@nest/shared';
 
 @Entity('users')
-export class User {
+export class User implements IUser {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column({ unique: true, length: 255 })
-  username: string;
+  username!: string;
 
   @Column({ length: 255 })
-  password: string;
+  password!: string;
 
   @Column({ unique: true, length: 255 })
-  email: string;
+  email!: string;
 
   @Column({ name: 'timestamp', type: 'bigint' })
-  timestamp: number;
+  timestamp!: number;
 
   // Relationships
   @OneToMany(() => Blog, (blog) => blog.user)
-  blogs: Blog[];
+  blogs!: Blog[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
+  comments!: Comment[];
 
   @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  likes!: Like[];
 
   @OneToMany(() => Space, (space) => space.owner)
-  ownedSpaces: Space[];
+  ownedSpaces!: Space[];
 
   @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.user)
-  chatMessages: ChatMessage[];
+  chatMessages!: ChatMessage[];
 
   @OneToMany(() => Member, (member) => member.user)
-  spaceMemberships: Member[];
+  spaceMemberships!: Member[];
 
   // Following/Followers relationships (self-referencing)
   @OneToMany(() => Follow, (follow) => follow.follower)
-  following: Follow[];
+  following!: Follow[];
 
   @OneToMany(() => Follow, (follow) => follow.following)
-  followers: Follow[];
+  followers!: Follow[];
 
   @OneToOne(() => UserActivity, (activity) => activity.user)
   // @JoinColumn({ name: 'userId' })
-  activity: UserActivity;
+  activity!: UserActivity;
 
   // In User entity, add this relationship
   @ManyToMany(() => Tag, (tag) => tag.users)
@@ -63,7 +64,7 @@ export class User {
     joinColumn: { name: 'userId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
   })
-  tags: Tag[];
+  tags!: Tag[];
 
   // Optional: Add these columns if they exist in your actual database
   // @Column({ nullable: true, length: 255 })

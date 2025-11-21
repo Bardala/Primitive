@@ -1,41 +1,35 @@
 import { User } from 'src/modules/user/entities/user.entity';
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-
-export enum NotificationType {
-  MESSAGE = 'message',
-  MENTION = 'mention',
-  COMMENT = 'comment',
-  SYSTEM = 'system',
-}
+import { Notification as INotification, NotificationType } from '@nest/shared';
 
 @Entity('notifications')
-export class Notification {
+export class Notification implements INotification {
   @PrimaryColumn('char', { length: 36 })
-  id: string;
+  id!: string;
 
   @Column('char', { length: 36 })
-  userId: string;
+  userId!: string;
 
   @Column({
     type: 'enum',
     enum: NotificationType,
   })
-  type: NotificationType;
+  type!: NotificationType;
 
   @Column('char', { length: 36, nullable: true })
-  refId: string;
+  refId!: string;
 
   @Column({ type: 'json', nullable: true })
-  payload: any;
+  payload!: any;
 
   @Column({ default: false })
-  isRead: boolean;
+  isRead!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.activity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 }

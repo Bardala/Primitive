@@ -10,7 +10,7 @@ export class UpdatePasswordDto implements UpdatePasswordReq {
   })
   @IsString()
   @IsNotEmpty()
-  oldPassword: string;
+  oldPassword!: string;
 
   @ApiProperty({
     example: 'newPassword123',
@@ -24,5 +24,5 @@ export class UpdatePasswordDto implements UpdatePasswordReq {
   @MinLength(8)
   @MaxLength(20)
   @NotEquals('oldPassword', { message: 'New password must be different from old password' })
-  newPassword: string;
+  newPassword!: string;
 }
