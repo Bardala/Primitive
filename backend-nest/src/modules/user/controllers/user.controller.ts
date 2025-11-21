@@ -19,11 +19,11 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
-import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { GetUser } from '../../../common/decorators/user.decorator';
 import { User } from '../entities/user.entity';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { PaginationQuery } from 'src/modules/shared/dto/PaginationQuery';
+import { UpdatePasswordReq } from '../dto/update-password.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -203,7 +203,7 @@ export class UserController {
     status: 400,
     description: 'Bad request - validation failed',
   })
-  async updatePassword(@GetUser() user: User, @Body() updatePasswordDto: UpdatePasswordDto) {
+  async updatePassword(@GetUser() user: User, @Body() updatePasswordDto: UpdatePasswordReq) {
     await this.userService.updatePassword(user.id, updatePasswordDto);
     return { message: 'Password updated successfully' };
   }

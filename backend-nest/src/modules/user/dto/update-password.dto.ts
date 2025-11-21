@@ -1,8 +1,11 @@
 import { IsString, IsNotEmpty, MinLength, MaxLength, NotEquals } from 'class-validator';
-import { UpdatePasswordReq } from '@nest/shared';
+import {
+  UpdatePasswordReq as IUpdatePasswordReq,
+  UpdatePasswordRes as IUpdatePasswordRes,
+} from '@nest/shared';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdatePasswordDto implements UpdatePasswordReq {
+export class UpdatePasswordReq implements IUpdatePasswordReq {
   @ApiProperty({
     example: 'oldPassword123',
     description: 'Current password',
@@ -26,3 +29,5 @@ export class UpdatePasswordDto implements UpdatePasswordReq {
   @NotEquals('oldPassword', { message: 'New password must be different from old password' })
   newPassword!: string;
 }
+
+export class UpdatePasswordRes implements IUpdatePasswordRes {}

@@ -11,11 +11,11 @@ import { User } from '../entities/user.entity';
 import { UserActivity } from '../entities/user-activity.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { UpdatePasswordReq } from '../dto/update-password.dto';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { Follow } from 'src/modules/shared/entities/follow.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
-import { GetUserCardDto } from '../dto/get-user-card.dto';
+import { GetUserCardRes } from '../dto/get-user-card.dto';
 
 @Injectable()
 export class UserService {
@@ -90,7 +90,7 @@ export class UserService {
     return await this.findById(id);
   }
 
-  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): Promise<void> {
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordReq): Promise<void> {
     const user = await this.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -107,7 +107,7 @@ export class UserService {
     await this.userRepository.update(id, { password: hashedPassword });
   }
 
-  async getUserCard(currentUserId: string, targetUserId: string): Promise<GetUserCardDto> {
+  async getUserCard(currentUserId: string, targetUserId: string): Promise<GetUserCardRes> {
     const user = await this.userRepository.findOne({
       where: { id: targetUserId },
       select: ['id', 'username', 'email', 'timestamp'],
@@ -135,7 +135,7 @@ export class UserService {
       where: { followerId: targetUserId },
     });
 
-    const userCardDto = new GetUserCardDto();
+    const userCardDto = new GetUserCardRes();
     userCardDto.userCard = {
       ...user,
       isFollowing: isFollowing ? 1 : 0,
