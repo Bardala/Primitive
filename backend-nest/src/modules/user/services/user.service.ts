@@ -9,22 +9,24 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
 import { UserActivity } from '../entities/user-activity.entity';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { UpdatePasswordReq } from '../dto/update-password.dto';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { Follow } from 'src/modules/shared/entities/follow.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
-import { GetUserCardRes } from '../dto/get-user-card.dto';
+import { Member } from 'src/modules/space/entities/member.entity';
+import { randomUUID } from 'crypto';
+import { CreateUserDto, UpdateUserDto, GetUserCardRes, UpdatePasswordReq } from '../dto';
+import { DefaultSpaceId } from '@nest/shared';
+import { IUserService, IUserFollowService } from './interfaces';
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService, IUserFollowService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserActivity) private userActivityRepository: Repository<UserActivity>,
     @InjectRepository(Follow) private followRepository: Repository<Follow>,
     @InjectRepository(Blog) private blogRepository: Repository<Blog>,
     @InjectRepository(Space) private spaceRepository: Repository<Space>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -45,6 +47,11 @@ export class UserService {
     }
 
     const user = this.userRepository.create(createUserDto);
+    const member = this.memberRepository.create({
+      memberId: randomUUID(),
+      spaceId: DefaultSpaceId,
+    });
+    await this.memberRepository.save(member);
     return await this.userRepository.save(user);
   }
 

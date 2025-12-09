@@ -54,7 +54,7 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
           )}
 
           <time className="created-at" dateTime={String(post.timestamp)}>
-            {formatTimeShort(new Date(post.timestamp!))}
+            {formatTimeShort(Number(post.timestamp))}
           </time>
         </div>
 

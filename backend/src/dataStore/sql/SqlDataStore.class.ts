@@ -1517,8 +1517,8 @@ export class SqlDataStore implements DataStoreDao {
     await this.pool.query(query, [
       lastRead.userId,
       lastRead.spaceId,
-      lastRead.msgId,
-      lastRead.msgId,
+      lastRead.lastReadId,
+      lastRead.lastReadId,
     ]);
   }
 

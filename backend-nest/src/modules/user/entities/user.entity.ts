@@ -31,7 +31,7 @@ export class User implements IUser {
   @OneToMany(() => Blog, (blog) => blog.user)
   blogs!: Blog[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.author)
   comments!: Comment[];
 
   @OneToMany(() => Like, (like) => like.user)

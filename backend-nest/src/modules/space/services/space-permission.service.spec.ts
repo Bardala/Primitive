@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { SpacePermissionService } from './space-permission.service';
 
 describe('SpacePermissionService', () => {

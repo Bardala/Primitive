@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,6 +31,8 @@ async function bootstrap() {
     origin: (configService.get('CLIENT_URL') as string) || 'http://localhost:3000',
     credentials: true,
   });
+
+  app.setGlobalPrefix('/api/v0');
 
   // Swagger Configuration
   const config = new DocumentBuilder()
@@ -61,7 +64,6 @@ async function bootstrap() {
   const port = (configService.get('PORT') as string | number) || 3000;
   await app.listen(port);
 
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger docs available at: http://localhost:${port}/api`);
   console.log(`📊 Environment: ${configService.get('NODE_ENV')}`);
 }

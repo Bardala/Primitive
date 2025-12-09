@@ -7,10 +7,12 @@
     "^@app/(.*)$",
     "^@modules/(.*)$",
     "^@shared/(.*)$",
-
+    "src/(.*)$",
     "^[./].*$"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "printWidth": 100
+  "printWidth": 100,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "parser": "babel-ts"
 }

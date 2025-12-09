@@ -27,7 +27,7 @@ export class Comment implements IComment {
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  author!: User;
 
   // @CreateDateColumn()
   // createdAt: Date;

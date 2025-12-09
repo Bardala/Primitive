@@ -274,7 +274,7 @@ export class SpaceController implements spaceController {
     const member: SpaceMember = { spaceId, memberId: userId, isAdmin: false };
     await this.db.addMember(member);
     const lastMsgId = await this.db.getLastMsgId(spaceId);
-    if (lastMsgId) await this.db.updateLastRead({ userId, spaceId, msgId: lastMsgId });
+    if (lastMsgId) await this.db.updateLastRead({ userId, spaceId, lastReadId: lastMsgId });
 
     return res.send({ member });
   };

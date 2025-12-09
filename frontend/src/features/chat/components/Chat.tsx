@@ -32,7 +32,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
       socket.emit(SOCKET_EVENT.READ_MESSAGE, {
         spaceId: space.id,
         userId: currUser.id,
-        msgId: lastMsgId,
+        lastReadId: lastMsgId,
       } as LastReadMsg);
     }
   }, [chatQuery.data?.messages, currUser?.id, space.id]);
@@ -45,7 +45,7 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
         socket.emit(SOCKET_EVENT.LEAVE_ROOM, {
           spaceId: space.id,
           userId: currUser.id,
-          msgId: lastMsgId,
+          lastReadId: lastMsgId,
         } as LastReadMsg);
       }
     };

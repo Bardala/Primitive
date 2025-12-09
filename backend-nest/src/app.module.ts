@@ -12,7 +12,11 @@ import { BlogModule } from './modules/blog/blog.module';
 import { SpaceModule } from './modules/space/space.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { LikeModule } from './modules/like/like.module';
+import { TagModule } from './modules/tag/tag.module';
+import { ShortModule } from './modules/short/short.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ValidationModule } from './modules/shared/validation/validation.module';
 
 @Module({
   imports: [
@@ -35,7 +39,11 @@ import { NotificationModule } from './modules/notification/notification.module';
     SpaceModule,
     ChatModule,
     CommentModule,
+    LikeModule,
+    TagModule,
+    ShortModule,
     NotificationModule,
+    ValidationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

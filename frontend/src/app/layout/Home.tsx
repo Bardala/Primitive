@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@/core/hooks';
 import { BlogList } from '@/features/blog';
-import { useFeeds, useSmartFeeds } from '@/features/spaces';
+import { useGetDefaultSpace, usePublicFeeds, useSmartPublicFeeds } from '@/features/spaces';
 
 import { useTranslation } from 'react-i18next';
 
@@ -38,28 +38,28 @@ export const Home = () => {
     setPreferences(prev => ({ ...prev, viewMode: newViewMode }));
   };
 
+  const spaceQuery = useGetDefaultSpace();
+
   const {
-    smartFeeds,
+    feeds: smartFeeds,
+    isLoading: isSmartLoading,
     fetchNextPage: fetchSmartNextPage,
     isEnd: isSmartEnd,
-    isLoading: isSmartLoading,
-    spaceQuery: smartSpaceQuery,
-  } = useSmartFeeds();
+  } = useSmartPublicFeeds();
 
   const {
     feeds: chronologicalFeeds,
+    isLoading: isChronoLoading,
     fetchNextPage: fetchChronoNextPage,
     isEnd: isChronoEnd,
-    isLoading: isChronoLoading,
-    spaceQuery: chronoSpaceQuery,
-  } = useFeeds();
+  } = usePublicFeeds();
 
   // Use the appropriate feed based on selection
   const currentFeeds = feedType === 'smart' ? smartFeeds : chronologicalFeeds;
   const currentFetchNextPage = feedType === 'smart' ? fetchSmartNextPage : fetchChronoNextPage;
   const currentIsEnd = feedType === 'smart' ? isSmartEnd : isChronoEnd;
   const currentIsLoading = feedType === 'smart' ? isSmartLoading : isChronoLoading;
-  const currentSpaceQuery = feedType === 'smart' ? smartSpaceQuery : chronoSpaceQuery;
+  const currentSpaceQuery = spaceQuery;
 
   if (currentSpaceQuery.isError) return <p className="error">{currentSpaceQuery.error.message}</p>;
   if (currentSpaceQuery.isLoading) return <div className="loading">Loading...</div>;

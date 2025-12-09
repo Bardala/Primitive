@@ -14,7 +14,7 @@ export class UpdateCommentReq implements IUpdateCommentReq {
   })
   @IsUUID()
   @IsNotEmpty()
-  id!: string;
+  readonly id!: string;
 
   @ApiProperty({
     example: 'Updated comment content',

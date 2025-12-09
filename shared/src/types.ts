@@ -214,3 +214,16 @@ export type StatusMessage =
 export type WithError<T> = T & { error: string };
 
 export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+/**
+ * Unified API Response type used across frontend and backend
+ * Wraps the actual response data with metadata
+ * Used for both success (with data) and error responses (with message)
+ */
+export interface ApiResponse<T = any> {
+  data?: T;
+  statusCode: number;
+  timestamp: string;
+  path: string;
+  message?: string;
+}

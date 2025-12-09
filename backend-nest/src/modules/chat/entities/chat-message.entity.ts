@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
 import { ChatMessage as IChatMessage } from '@nest/shared';
@@ -32,6 +32,6 @@ export class ChatMessage implements IChatMessage {
   @JoinColumn({ name: 'spaceId' })
   space!: Space;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  // @CreateDateColumn()
+  // createdAt!: Date;
 }

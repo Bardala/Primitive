@@ -1,23 +1,24 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from '../modules/user/entities/user.entity';
-import { UserActivity } from '../modules/user/entities/user-activity.entity';
-import { Blog } from '../modules/blog/entities/blog.entity';
-import { BlogSeries } from '../modules/blog/entities/blog-series.entity';
-import { BlogSeriesLink } from '../modules/blog/entities/blog-series-links.entity';
-import { BlogTag } from '../modules/blog/entities/blog-tag.entity';
-import { Space } from '../modules/space/entities/space.entity';
-import { Member } from '../modules/space/entities/member.entity';
-import { SpacePermission } from '../modules/space/entities/space-permission.entity';
-import { Comment } from '../modules/comment/entities/comment.entity';
-import { ChatMessage } from '../modules/chat/entities/chat-message.entity';
-import { PrivateConversation } from '../modules/chat/entities/private-conversation.entity';
-import { PrivateMessage } from '../modules/chat/entities/private-message.entity';
-import { UserConversationState } from '../modules/chat/entities/user-conversation-state.entity';
-import { LastRead } from '../modules/chat/entities/last-read.entity';
-import { Notification } from '../modules/notification/entities/notification.entity';
-import { Tag } from '../modules/shared/entities/tag.entity';
-import { Like } from '../modules/shared/entities/like.entity';
-import { Follow } from '../modules/shared/entities/follow.entity';
+
+import { BlogSeriesLink } from 'src/modules/blog/entities/blog-series-links.entity';
+import { BlogSeries } from 'src/modules/blog/entities/blog-series.entity';
+import { BlogTag } from 'src/modules/blog/entities/blog-tag.entity';
+import { Blog } from 'src/modules/blog/entities/blog.entity';
+import { ChatMessage } from 'src/modules/chat/entities/chat-message.entity';
+import { LastRead } from 'src/modules/chat/entities/last-read.entity';
+import { PrivateConversation } from 'src/modules/chat/entities/private-conversation.entity';
+import { PrivateMessage } from 'src/modules/chat/entities/private-message.entity';
+import { UserConversationState } from 'src/modules/chat/entities/user-conversation-state.entity';
+import { Follow } from 'src/modules/shared/entities/follow.entity';
+import { Tag } from 'src/modules/shared/entities/tag.entity';
+import { Member } from 'src/modules/space/entities/member.entity';
+import { SpacePermission } from 'src/modules/space/entities/space-permission.entity';
+import { Space } from 'src/modules/space/entities/space.entity';
+import { Comment } from 'src/modules/comment/entities/comment.entity';
+import { Notification } from 'src/modules/notification/entities/notification.entity';
+import { UserActivity } from 'src/modules/user/entities/user-activity.entity';
+import { User } from 'src/modules/user/entities/user.entity';
+import { Like } from 'src/modules/shared/entities/like.entity';
 
 export const databaseConfig: TypeOrmModuleOptions = {
   type: 'mysql',

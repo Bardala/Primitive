@@ -14,7 +14,7 @@ export class UpdateShortReq implements IUpdateShortReq {
   })
   @IsUUID()
   @IsNotEmpty()
-  id!: string;
+  readonly id!: string;
 
   @ApiProperty({
     example: 'Updated Short Title',

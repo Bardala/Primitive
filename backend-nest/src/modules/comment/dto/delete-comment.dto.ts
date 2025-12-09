@@ -13,7 +13,7 @@ export class DeleteCommentReq implements IDeleteCommentReq {
   })
   @IsUUID()
   @IsNotEmpty()
-  id!: string;
+  readonly id!: string;
 }
 
 export class DeleteCommentRes implements IDeleteCommentRes {}

@@ -45,7 +45,7 @@ class Connection {
   private async handleLeaveRoom(data: LastReadMsg) {
     this.socket.leave(data.spaceId);
     // await this.db.updateLastReadMsg(data);
-    logger.info(`user ${data.userId} left room ${data.spaceId}, last read msg ${data.msgId}`);
+    logger.info(`user ${data.userId} left room ${data.spaceId}, last read msg ${data.lastReadId}`);
   }
 }
 

@@ -1,102 +1,187 @@
-import { ENDPOINT, ERROR, RestMethod } from '@nest/shared';
+import { ApiResponse, ENDPOINT, RestMethod } from '@nest/shared';
 
 import { HOST, LOCALS, ROUTES } from '../utils';
 import { ApiError } from './auth';
 
-const extractParams = (endPoint: ENDPOINT, params: string[]): string => {
-  const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
-  let res = String(endPoint);
+const API_PREFIX = '/api/v0';
+function addQueryParams(url: string, query: Record<string, any> | undefined): string {
+  if (query && Object.keys(query).length > 0) {
+    const queryString = new URLSearchParams();
 
-  if (apiParamsCount !== params.length) throw new Error('params count mismatch');
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        // Handle arrays and objects
+        if (Array.isArray(value)) {
+          value.forEach(item => queryString.append(`${key}[]`, String(item)));
+        } else if (typeof value === 'object' && value !== null) {
+          queryString.append(key, JSON.stringify(value));
+        } else {
+          queryString.append(key, String(value));
+        }
+      }
+    });
 
-  for (let i = 0; i < apiParamsCount; i++) res = res.replace(/:\w+/, params[i]);
-
-  return HOST + res;
-};
-
-interface FetchOptions<Request> {
-  endpoint: ENDPOINT;
-  method: RestMethod;
-  body?: Request;
-  params?: string[];
-  token?: string | null;
-}
-
-export const fetchFn = async <Request, Response>(
-  options: FetchOptions<Request>
-): Promise<Response> => {
-  const { endpoint, method, body, params, token } = options;
-
-  let authToken = token;
-  const currUser = localStorage.getItem(LOCALS.CURR_USER);
-  if (currUser) {
-    try {
-      authToken = JSON.parse(currUser).jwt;
-    } catch {
-      console.warn('Invalid Authentication');
+    const queryStr = queryString.toString();
+    if (queryStr) {
+      url += `?${queryStr}`;
     }
   }
 
-  let url = HOST + endpoint;
-  if (params) url = extractParams(endpoint, params);
+  return url;
+}
 
-  let res;
+/**
+ * Constructs a complete URL by replacing route parameters with actual values
+ * @param endpoint - The endpoint path with optional parameters (e.g., "/:id/profile")
+ * @param params - Array of parameter values to replace in order
+ * @returns Complete URL string
+ */
+/**
+ * Constructs a complete URL by replacing route parameters with actual values
+ * @param endpoint - The endpoint path with optional parameters (e.g., "/:id/profile")
+ * @param params - Array of parameter values to replace in order
+ * @param query - Query parameters object to append to URL
+ * @returns Complete URL string
+ */
+const buildUrl = (endpoint: ENDPOINT, params?: string[], query?: Record<string, any>): string => {
+  let path = String(endpoint);
+
+  // Count and validate parameters
+  const paramPattern = /:[\w]+/g;
+  const expectedParamCount = (path.match(paramPattern) || []).length;
+
+  if (params && expectedParamCount !== params.length) {
+    throw new Error(
+      `Parameter count mismatch: expected ${expectedParamCount}, got ${params.length}`
+    );
+  }
+
+  // Replace parameters in order
+  if (params) {
+    params.forEach(param => {
+      path = path.replace(paramPattern, param);
+    });
+  }
+
+  // Construct base URL
+  let url = `${HOST}${API_PREFIX}${path}`;
+  url = addQueryParams(url, query);
+
+  return url;
+};
+
+interface FetchOptions<TRequest> {
+  endpoint: ENDPOINT;
+  method: RestMethod;
+  body?: TRequest;
+  params?: string[];
+  token?: string | null;
+  queryParams?: Record<string, any>;
+}
+
+/**
+ * Core fetch function with automatic error handling and response parsing
+ */
+export const fetchFn = async <TRequest, TResponse>(
+  options: FetchOptions<TRequest>
+): Promise<TResponse> => {
+  const { endpoint, method, body, params, token, queryParams } = options;
+
+  // Get auth token from localStorage
+  let authToken = token;
+  if (!authToken) {
+    const currUser = localStorage.getItem(LOCALS.CURR_USER);
+    if (currUser) {
+      try {
+        authToken = JSON.parse(currUser).jwt;
+      } catch (err) {
+        console.warn('Invalid stored authentication token');
+      }
+    }
+  }
+
+  // Build URL with parameters
+  const url = buildUrl(endpoint, params, queryParams);
+
+  // Prepare fetch headers
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+
+  // Execute fetch request
+  let response: Response;
   try {
-    res = await fetch(url, {
+    response = await fetch(url, {
       method,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken && { Authorization: `Bearer ${authToken}` }),
-      },
+      headers,
       ...(body && { body: JSON.stringify(body) }),
     });
   } catch (err: any) {
-    if (err.message === 'Failed to fetch') {
-      throw new ApiError(0, 'Connection problem…');
+    const errorMessage =
+      err?.message === 'Failed to fetch' ? 'Connection problem…' : 'Network error occurred';
+    throw new ApiError(0, errorMessage);
+  }
+
+  // Handle JSON responses
+  const contentType = response.headers.get('Content-Type');
+  if (contentType?.includes('application/json')) {
+    const apiResponse: ApiResponse<TResponse> = await response.json();
+
+    // Handle error status codes
+    if (apiResponse.statusCode >= 400) {
+      // Handle authentication errors
+      if (apiResponse.statusCode === 401 || apiResponse.statusCode === 403) {
+        localStorage.removeItem(LOCALS.CURR_USER);
+        window.location.href = ROUTES.LOGIN;
+        throw new ApiError(apiResponse.statusCode, apiResponse.message || 'Unauthorized access');
+      }
+
+      // Handle other errors
+      throw new ApiError(apiResponse.statusCode, apiResponse.message || response.statusText);
     }
 
-    throw err;
+    // Return parsed data on success
+    return apiResponse.data as TResponse;
   }
 
-  if (res.headers.get('Content-Type')?.includes('application/json')) {
-    const data = await res.json();
-    if (!res.ok)
-      if (data.error === ERROR.TOKEN_EXPIRED || data.error === ERROR.INVALID_TOKEN) {
-        localStorage.removeItem(LOCALS.CURR_USER);
-        throw new ApiError(res.status, data.error);
-      } else if (data.error === ERROR.UNAUTHORIZED) {
-        window.location.href = ROUTES.LOGIN;
-        throw new ApiError(res.status, data.error);
-      } else throw new ApiError(res.status, data.error);
-    return data;
+  // Handle non-JSON responses
+  if (!response.ok) {
+    throw new ApiError(response.status, response.statusText);
   }
 
-  if (!res.ok) throw new ApiError(res.status, res.statusText);
-  return res as unknown as Response;
+  return response as unknown as TResponse;
 };
 
-export const getFn = <Response>(
+export const getFn = <TResponse>(
   endpoint: ENDPOINT,
   params?: string[],
-  token?: string | null
-): Promise<Response> => fetchFn({ endpoint, method: 'GET', params, token });
+  token?: string | null,
+  queryParams?: Record<string, any>
+): Promise<TResponse> => fetchFn({ endpoint, method: 'GET', params, token, queryParams });
 
-export const postFn = <Request, Response>(
+export const postFn = <TRequest, TResponse>(
   endpoint: ENDPOINT,
-  body?: Request,
+  body?: TRequest,
   params?: string[],
-  token?: string | null
-): Promise<Response> => fetchFn({ endpoint, method: 'POST', body, params, token });
+  token?: string | null,
+  queryParams?: Record<string, any>
+): Promise<TResponse> => fetchFn({ endpoint, method: 'POST', body, params, token, queryParams });
 
-export const putFn = <Request, Response>(
+export const putFn = <TRequest, TResponse>(
   endpoint: ENDPOINT,
-  body?: Request,
+  body?: TRequest,
   params?: string[],
-  token?: string | null
-): Promise<Response> => fetchFn({ endpoint, method: 'PUT', body, params, token });
+  token?: string | null,
+  queryParams?: Record<string, any>
+): Promise<TResponse> => fetchFn({ endpoint, method: 'PUT', body, params, token, queryParams });
 
-export const deleteFn = <Response>(
+export const deleteFn = <TResponse>(
   endpoint: ENDPOINT,
   params?: string[],
-  token?: string | null
-): Promise<Response> => fetchFn({ endpoint, method: 'DELETE', params, token });
+  token?: string | null,
+  queryParams?: Record<string, any>
+): Promise<TResponse> => fetchFn({ endpoint, method: 'DELETE', params, token, queryParams });
