@@ -6,10 +6,19 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { LoggerService } from './common/services/logger.service';
+import { AuthenticatedSocketAdapter } from './common/adapters/authenticated-socket.adapter';
+import { JwtService } from '@nestjs/jwt';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const jwtService = app.get(JwtService);
+  const loggerService = app.get(LoggerService);
+
+  // app.useWebSocketAdapter(new AuthenticatedSocketAdapter(jwtService, configService));
+  const adapter = new AuthenticatedSocketAdapter(jwtService, configService, app);
+  app.useWebSocketAdapter(adapter);
 
   // Global pipes for validation
   app.useGlobalPipes(
@@ -48,7 +57,7 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+      'JWT-auth',
     )
     .build();
 
@@ -61,11 +70,23 @@ async function bootstrap() {
     },
   });
 
-  const port = (configService.get('PORT') as string | number) || 3000;
+  const port = Number(configService.get('PORT') || 3000);
+  const environment = configService.get('NODE_ENV') as string;
+
   await app.listen(port);
 
-  console.log(`📚 Swagger docs available at: http://localhost:${port}/api`);
-  console.log(`📊 Environment: ${configService.get('NODE_ENV')}`);
+  loggerService.logStartup(port, environment);
+
+  // Handle graceful shutdown
+  process.on('SIGINT', () => {
+    loggerService.logShutdown();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', () => {
+    loggerService.logShutdown();
+    process.exit(0);
+  });
 }
 
 void bootstrap();

@@ -34,12 +34,6 @@ function addQueryParams(url: string, query: Record<string, any> | undefined): st
  * Constructs a complete URL by replacing route parameters with actual values
  * @param endpoint - The endpoint path with optional parameters (e.g., "/:id/profile")
  * @param params - Array of parameter values to replace in order
- * @returns Complete URL string
- */
-/**
- * Constructs a complete URL by replacing route parameters with actual values
- * @param endpoint - The endpoint path with optional parameters (e.g., "/:id/profile")
- * @param params - Array of parameter values to replace in order
  * @param query - Query parameters object to append to URL
  * @returns Complete URL string
  */
@@ -126,22 +120,24 @@ export const fetchFn = async <TRequest, TResponse>(
     throw new ApiError(0, errorMessage);
   }
 
-  // Handle JSON responses
   const contentType = response.headers.get('Content-Type');
   if (contentType?.includes('application/json')) {
     const apiResponse: ApiResponse<TResponse> = await response.json();
 
-    // Handle error status codes
-    if (apiResponse.statusCode >= 400) {
-      // Handle authentication errors
-      if (apiResponse.statusCode === 401 || apiResponse.statusCode === 403) {
+    const { statusCode, message } = apiResponse;
+    const location = window.location;
+    const isAuthPath = location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.SIGNUP;
+
+    if (statusCode >= 400) {
+      if (statusCode === 401 && isAuthPath) localStorage.removeItem(LOCALS.CURR_USER);
+      else if (statusCode === 401) {
         localStorage.removeItem(LOCALS.CURR_USER);
-        window.location.href = ROUTES.LOGIN;
-        throw new ApiError(apiResponse.statusCode, apiResponse.message || 'Unauthorized access');
+        location.href = ROUTES.LOGIN;
+        throw new ApiError(statusCode, message || 'Unauthenticated');
       }
 
       // Handle other errors
-      throw new ApiError(apiResponse.statusCode, apiResponse.message || response.statusText);
+      throw new ApiError(statusCode, message || response.statusText);
     }
 
     // Return parsed data on success

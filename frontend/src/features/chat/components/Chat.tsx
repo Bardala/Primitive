@@ -22,7 +22,9 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
   const handleSubmit = (e: FormEvent | MouseEvent) => {
     e.preventDefault();
     if (newMsg.trim() === '') return;
-    msgMutate.mutate();
+
+    msgMutate.mutate({ content: newMsg, spaceId: space.id });
+    if (msgMutate.isSuccess) setNewMsg('');
   };
 
   // Emit READ_MESSAGE whenever messages update

@@ -1,5 +1,7 @@
 import { AuthContextProvider, ThemeProvider } from '@/core/context';
 import { requireAuth } from '@/core/hoc';
+import { ErrorBoundary } from '@/core/hoc';
+import { useNotificationSocket } from '@/core/hooks';
 import { ROUTES } from '@/core/utils';
 import { Login, SignUp } from '@/features/auth';
 import { BlogDetails, CreateBlogPage } from '@/features/blog';
@@ -12,6 +14,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Home } from './Home';
 import { NavBar } from './NavBar';
@@ -25,10 +29,13 @@ const ProtectUserProfile = requireAuth(UserProfile);
 const ProtectedSpace = requireAuth(Space);
 
 function AppContent() {
+  useNotificationSocket();
+
   return (
     <div className="App">
       <BrowserRouter>
         <NavBar />
+        <ToastContainer />
         <Routes>
           <Route path={ROUTES.HOME} element={<Home />} />
           <Route path={ROUTES.SIGNUP} element={<SignUp />} />
@@ -56,7 +63,9 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthContextProvider>
-          <AppContent />
+          <ErrorBoundary>
+            <AppContent />
+          </ErrorBoundary>
           <ReactQueryDevtools />
         </AuthContextProvider>
       </ThemeProvider>

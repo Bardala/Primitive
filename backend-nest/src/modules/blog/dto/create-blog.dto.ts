@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, ValidateIf } from 'class-validator';
 import type {
   CreateBlogReq as ICreateBlogReq,
   CreateBlogRes as ICreateBlogRes,
@@ -31,7 +31,7 @@ export class CreateBlogReq implements ICreateBlogReq {
       'Space ID where the blog will be created, if not provided, blog will be created in default space',
     required: false,
   })
-  @IsOptional()
+  @ValidateIf((o) => o.spaceId !== '1')
   @IsUUID()
   spaceId!: string; // if not provided, blog will be created in default space
 }

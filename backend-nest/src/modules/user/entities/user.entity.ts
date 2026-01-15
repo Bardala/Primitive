@@ -24,7 +24,14 @@ export class User implements IUser {
   @Column({ unique: true, length: 255 })
   email!: string;
 
-  @Column({ name: 'timestamp', type: 'bigint' })
+  @Column({
+    name: 'timestamp',
+    type: 'bigint',
+    transformer: {
+      from: (value: string) => Number(value),
+      to: (value: number) => value,
+    },
+  })
   timestamp!: number;
 
   // Relationships

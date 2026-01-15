@@ -35,6 +35,7 @@ import {
   GetUsersListRes,
   JoinSpaceReq,
   JoinSpaceRes,
+  LeaveSpaceReq,
   LeaveSpaceRes,
   LoginReq,
   LoginRes,
@@ -76,7 +77,9 @@ export const spcApi = (spcId: string) => () => getFn<SpaceRes>(ENDPOINT.GET_SPAC
 export const defaultSpcApi = () => () => getFn<SpaceRes>(ENDPOINT.GET_DEFAULT_SPACE);
 
 export const blogsApi = (spcId: string, pageParam: number = 1) =>
-  getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spcId, pageParam.toString()]);
+  getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spcId], undefined, {
+    page: pageParam.toString(),
+  });
 
 export const membersApi = (spcId: string) => () =>
   getFn<MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, [spcId]);
@@ -85,7 +88,7 @@ export const joinSpcApi = (spcId: string) => () =>
   postFn<JoinSpaceReq, JoinSpaceRes>(ENDPOINT.JOIN_SPACE, undefined, [spcId]);
 
 export const leaveSpcApi = (spcId: string) => () =>
-  deleteFn<LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, [spcId]);
+  postFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, undefined, [spcId]);
 
 // Feed APIs
 export const feedsApi = (pageParam: number = 1) =>
@@ -173,7 +176,7 @@ export const userSpacesApi = (userId: string) => () =>
   getFn<UserSpacesRes>(ENDPOINT.GET_USER_SPACES, [userId]);
 
 export const userBlogsApi = (userId: string, pageParam: number = 1) =>
-  getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId, pageParam.toString()]);
+  getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId], undefined, { page: pageParam });
 
 export const userListApi = () => getFn<GetUsersListRes>(ENDPOINT.GET_USERS_LIST);
 

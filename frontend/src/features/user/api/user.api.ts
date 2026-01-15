@@ -15,7 +15,8 @@ import {
 export const UserApi = {
   getUserCard: (userId: string) => getFn<GetUserCardRes>(ENDPOINT.GET_USER_CARD, [userId]),
 
-  getUserSpaces: (userId: string) => getFn<UserSpacesRes>(ENDPOINT.GET_USER_SPACES, [userId]),
+  getUserSpaces: (userId: string, pageParam: number = 1) =>
+    getFn<UserSpacesRes>(ENDPOINT.GET_USER_SPACES, [userId], undefined, { page: pageParam }),
 
   getUserBlogs: (userId: string, page: number = 1) =>
     getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId, page.toString()]),

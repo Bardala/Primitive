@@ -16,8 +16,8 @@ interface Props {
 export const BlogList = ({ posts, isEnd, fetchNextPage, viewMode = 'full-blogs' }: Props) => {
   return (
     <div className={`blog-list ${viewMode === 'titles-only' ? 'titles-only' : ''}`}>
-      {posts.map(post => (
-        <BlogIcon post={post} key={post.id} viewMode={viewMode} />
+      {posts.map((post, key) => (
+        <BlogIcon post={post} key={key} viewMode={viewMode} />
       ))}
       {/* {!isEnd && (
         <button disabled={isEnd} onClick={() => fetchNextPage}>

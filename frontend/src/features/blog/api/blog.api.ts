@@ -13,21 +13,21 @@ import {
 export const BlogApi = {
   getBlog: (blogId: string) => getFn<BlogRes>(ENDPOINT.GET_BLOG, [blogId]),
 
-  createBlog: (title: string, content: string, spaceId: string) =>
+  createBlog: (title: string, content: string, spaceId: string) => () =>
     postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, {
       title,
       content,
       spaceId,
     }),
 
-  createShort: (title: string, content: string, spaceId: string) =>
+  createShort: (title: string, content: string, spaceId: string) => () =>
     postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, {
       title,
       content,
       spaceId,
     }),
 
-  updateBlog: (blogId: string, data: updateBlogReq) =>
+  updateBlog: (blogId: string, data: updateBlogReq) => () =>
     putFn<updateBlogReq, updateBlogRes>(ENDPOINT.UPDATE_BLOG, data, [blogId]),
 
   deleteBlog: (blogId: string) => deleteFn<DeleteBlogRes>(ENDPOINT.DELETE_BLOG, [blogId]),

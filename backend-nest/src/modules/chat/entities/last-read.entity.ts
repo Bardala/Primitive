@@ -7,13 +7,13 @@ import { LastReadMsg as ILastReadMsg } from '@nest/shared';
 @Entity('last_read')
 export class LastRead implements ILastReadMsg {
   @PrimaryColumn('char', { length: 36 })
-  userId!: string;
+  userId: string;
 
   @PrimaryColumn('char', { length: 36 })
-  spaceId!: string;
+  spaceId: string;
 
   @PrimaryColumn('char', { length: 36 })
-  lastReadId!: string;
+  lastReadId: string;
 
   // Relationships
   @ManyToOne(() => User, (user) => user.activity, { onDelete: 'CASCADE' })
@@ -27,4 +27,10 @@ export class LastRead implements ILastReadMsg {
   @ManyToOne(() => ChatMessage, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lastReadId' })
   lastReadMessage!: ChatMessage;
+
+  constructor(userId: string, spaceId: string, lastReadId: string) {
+    this.userId = userId;
+    this.spaceId = spaceId;
+    this.lastReadId = lastReadId;
+  }
 }

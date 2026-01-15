@@ -22,7 +22,7 @@ export const SpaceApi = {
   getDefaultSpace: () => getFn<SpaceRes>(ENDPOINT.GET_DEFAULT_SPACE),
 
   getSpaceBlogs: (spaceId: string, page: number = 1) =>
-    getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spaceId, page.toString()]),
+    getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spaceId], undefined, { page: page.toString() }),
 
   getSpaceMembers: (spaceId: string) => getFn<MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, [spaceId]),
 

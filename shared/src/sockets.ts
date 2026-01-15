@@ -7,4 +7,5 @@ export enum SOCKET_EVENT {
   LEAVE_ROOM = 'leave_room',
   DISCONNECT = 'disconnect',
   NOTIFY_MISSED_MSG = 'notify_missed_msg',
+  NOTIFICATION = 'notification',
 }

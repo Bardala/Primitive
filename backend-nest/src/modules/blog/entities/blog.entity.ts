@@ -35,7 +35,13 @@ export class Blog implements IBlog {
   @Column({ length: 255 })
   author!: string;
 
-  @Column({ type: 'bigint' })
+  @Column({
+    type: 'bigint',
+    transformer: {
+      from: (value: string) => Number(value),
+      to: (value: number) => value,
+    },
+  })
   timestamp!: number;
 
   // Relationships

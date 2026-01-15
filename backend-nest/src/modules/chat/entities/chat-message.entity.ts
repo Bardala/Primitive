@@ -20,7 +20,13 @@ export class ChatMessage implements IChatMessage {
   @Column({ type: 'text' })
   content!: string;
 
-  @Column({ type: 'bigint' })
+  @Column({
+    type: 'bigint',
+    transformer: {
+      from: (value: string) => Number(value),
+      to: (value: number) => value,
+    },
+  })
   timestamp!: number;
 
   // Relationships

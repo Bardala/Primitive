@@ -156,7 +156,7 @@ export const BlogDetails = () => {
               <div className="blog-content">{MarkdownSection}</div>
 
               <div className="blog-meta">
-                <p className="created-at">{formatTimeShort(Number(blog.timestamp))}</p>
+                <p className="created-at">{formatTimeShort(blog.timestamp!)}</p>
 
                 <LikeBlogButton post={blog} />
 

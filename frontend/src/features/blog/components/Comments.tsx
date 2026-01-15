@@ -206,7 +206,7 @@ export const Comments: FC<{
                 <div className="comment-meta">
                   <UserLink userId={comment.userId} username={comment.author} />
                   <p className="created-at">
-                    {formatDistanceToNow(new Date(comment.timestamp as number))} {t('comments.ago')}
+                    {formatDistanceToNow(Number(comment.timestamp))} {t('comments.ago')}
                   </p>
                 </div>
 

@@ -8,6 +8,8 @@ import {
   UseGuards,
   ParseUUIDPipe,
   HttpCode,
+  Post,
+  Delete,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ENDPOINT } from '@nest/shared';
@@ -56,7 +58,7 @@ export class UserController {
   @HttpCode(200)
   @GetUserCardSwagger()
   async getUserCard(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {
-    return { userCard: await this.userService.getUserCard(user.id, targetUserId) };
+    return await this.userService.getUserCard(user.id, targetUserId);
   }
 
   @Get(ENDPOINT.GET_FOLLOWERS)
@@ -66,7 +68,7 @@ export class UserController {
     return { followers: await this.userService.getFollowers(userId) };
   }
 
-  @Put(ENDPOINT.FOLLOW_USER)
+  @Post(ENDPOINT.FOLLOW_USER)
   @HttpCode(200)
   @CreateFollowerSwagger()
   async createFollow(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {
@@ -74,7 +76,7 @@ export class UserController {
     return { message: 'Successfully followed user' };
   }
 
-  @Put(ENDPOINT.UNFOLLOW_USER)
+  @Delete(ENDPOINT.UNFOLLOW_USER)
   @HttpCode(200)
   @DeleteFollowerSwagger()
   async deleteFollow(@GetUser() user: User, @Param('id', ParseUUIDPipe) targetUserId: string) {

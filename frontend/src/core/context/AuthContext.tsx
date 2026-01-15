@@ -1,9 +1,10 @@
 import { LoginRes } from '@nest/shared';
 
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext, useEffect } from 'react';
 
 import { isLoggedIn } from '../services';
+import { connectSocket, disconnectSocket } from '../utils';
 import { LOCALS } from '../utils/localStorage';
 
 type UserContext = {
@@ -25,6 +26,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     enabled: isLoggedIn(),
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (currUser?.jwt) {
+      connectSocket(currUser.jwt);
+    } else {
+      disconnectSocket();
+    }
+  }, [currUser]);
 
   return (
     <AuthContext.Provider value={{ currUser, refetchCurrUser }}>{children}</AuthContext.Provider>

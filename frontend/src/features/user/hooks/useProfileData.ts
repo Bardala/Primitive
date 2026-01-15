@@ -63,12 +63,17 @@ export const useGetAllUserSpaces = (userId: string) =>
     enabled: !!userId,
   });
 
+/**
+ * Un-enabled
+ * @returns
+ */
 export const useGetAllMissedMsgs = () => {
   const { currUser } = useAuthContext();
   const key = ['missedMsgs'];
 
   const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
-    enabled: !!currUser?.jwt,
+    // enabled: !!currUser?.jwt,
+    enabled: false,
   });
 
   return { missedMsgs: query.data?.numberOfMsgs, refetch: query.refetch };

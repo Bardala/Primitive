@@ -108,4 +108,70 @@ export class ChatService implements IChatService {
 
     return this.chatRepository.findBySpaceId(spaceId, limit);
   }
+
+  // TODO: Create DTO for message
+  /**
+   * Create a message from WebSocket event
+   * This is used by the socket gateway to save messages
+   */
+  async createMessageFromSocket(message: any): Promise<CreateMsgRes> {
+    if (!message || !message.spaceId || !message.username || !message.content) {
+      throw new BadRequestException('Invalid message data');
+    }
+
+    const user = await this.userRepository.findOne({ where: { username: message.username } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Check if user is a member of the space
+    const isMember = await this.memberRepository.findOne({
+      where: { spaceId: message.spaceId, memberId: user.id },
+    });
+
+    if (!isMember) {
+      throw new ForbiddenException('User is not a member of this space');
+    }
+
+    // Create message entity
+    const chatMessage = new ChatMessage();
+    chatMessage.id = message.id || randomUUID();
+    chatMessage.spaceId = message.spaceId;
+    chatMessage.userId = user.id;
+    chatMessage.username = user.username;
+    chatMessage.content = message.content;
+    chatMessage.timestamp = message.timestamp || Date.now();
+
+    return { message: await this.chatRepository.save(chatMessage) };
+  }
+
+  /**
+   * Update the last read message for a user in a space
+   */
+  async updateLastReadMessage(userId: string, spaceId: string, lastReadId: string): Promise<void> {
+    if (!userId || !spaceId || !lastReadId) {
+      throw new BadRequestException('Invalid parameters for updating last read message');
+    }
+
+    // Verify user is member of space
+    const isMember = await this.memberRepository.findOne({
+      where: { spaceId, memberId: userId },
+    });
+
+    if (!isMember) {
+      throw new ForbiddenException('User is not a member of this space');
+    }
+
+    // TODO: Implement storing last read message state
+    // This would typically update a user_conversation_state table
+    // to track which message the user has read up to
+  }
+
+  async getSpaceMembers(spaceId: string): Promise<string[]> {
+    const members = await this.memberRepository.find({
+      where: { spaceId },
+      select: ['memberId'],
+    });
+    return members.map((m) => m.memberId);
+  }
 }

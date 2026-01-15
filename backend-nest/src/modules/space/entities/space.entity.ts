@@ -33,7 +33,13 @@ export class Space implements ISpace {
   @Column({ length: 255 })
   description!: string;
 
-  @Column({ type: 'bigint' })
+  @Column({
+    type: 'bigint',
+    transformer: {
+      from: (value: string) => Number(value),
+      to: (value: number) => value,
+    },
+  })
   timestamp!: number;
 
   // Relationships

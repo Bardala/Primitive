@@ -14,7 +14,13 @@ import { Follow } from 'src/modules/shared/entities/follow.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
 import { Member } from 'src/modules/space/entities/member.entity';
 import { randomUUID } from 'crypto';
-import { CreateUserDto, UpdateUserDto, GetUserCardRes, UpdatePasswordReq } from '../dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  GetUserCardRes,
+  UpdatePasswordReq,
+  UserBlogsRes,
+} from '../dto';
 import { DefaultSpaceId } from '@nest/shared';
 import { IUserService, IUserFollowService } from './interfaces';
 
@@ -209,7 +215,7 @@ export class UserService implements IUserService, IUserFollowService {
     userId: string,
     page: number = 1,
     pageSize: number = 10,
-  ): Promise<{ blogs: any[]; page: number }> {
+  ): Promise<UserBlogsRes> {
     const offset = (page - 1) * pageSize;
 
     const [blogs, _total] = await this.blogRepository.findAndCount({
@@ -221,15 +227,10 @@ export class UserService implements IUserService, IUserFollowService {
     });
 
     return {
-      blogs: blogs.map((blog) => ({
-        id: blog.id,
-        title: blog.title,
-        content: blog.content,
-        author: blog.author,
-        timestamp: blog.timestamp,
-        user: { id: blog.user.id, username: blog.user.username },
-        space: { id: blog.space.id, name: blog.space.name },
-      })),
+      blogs: blogs
+        // todo: implement it in the database
+        .filter((b) => b.space.status !== 'private')
+        .map((b) => ({ ...b, content: b.content.substring(0, 500) })),
       page,
     };
   }

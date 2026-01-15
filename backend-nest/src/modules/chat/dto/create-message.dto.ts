@@ -3,6 +3,7 @@ import type {
   CreateMsgReq as ICreateMsgReq,
   CreateMsgRes as ICreateMsgRes,
   ChatMessage,
+  CreateSocketMsgReq as ICreateSocketMsgReq,
 } from '@nest/shared';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -15,6 +16,16 @@ export class CreateMsgReq implements ICreateMsgReq {
   @IsString()
   @IsNotEmpty()
   content!: string;
+}
+
+export class CreateSocketMsgReq implements ICreateSocketMsgReq {
+  @IsString()
+  @IsNotEmpty()
+  content!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  spaceId!: string;
 }
 
 export class CreateMsgRes implements ICreateMsgRes {

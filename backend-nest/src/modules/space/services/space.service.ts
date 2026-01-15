@@ -4,6 +4,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,6 +45,8 @@ export class SpaceService {
     @InjectRepository(Blog)
     private blogRepository: Repository<Blog>,
   ) {}
+
+  private readonly logger = new Logger(SpaceService.name);
 
   async createSpace(userId: string, req: CreateSpaceReq): Promise<CreateSpaceRes> {
     if (!req.name || !req.description || !req.status) {
@@ -163,6 +166,7 @@ export class SpaceService {
   }
 
   async leaveSpace(userId: string, spaceId: string): Promise<LeaveSpaceRes> {
+    this.logger.log(userId, spaceId);
     const space = await this.spaceRepository.findOne({ where: { id: spaceId } });
     if (!space) {
       throw new NotFoundException('Space not found');
@@ -175,6 +179,8 @@ export class SpaceService {
     const member = await this.memberRepository.findOne({
       where: { spaceId, memberId: userId },
     });
+
+    this.logger.log(member);
 
     if (!member) {
       throw new NotFoundException('Not a member');
@@ -304,7 +310,6 @@ export class SpaceService {
     const offset = (page - 1) * PAGE_SIZE;
     const blogs = await this.blogRepository.find({
       where: { spaceId },
-      relations: ['user'],
       skip: offset,
       take: PAGE_SIZE,
       order: { timestamp: 'DESC' },
@@ -317,7 +322,6 @@ export class SpaceService {
     const offset = (page - 1) * PAGE_SIZE;
     const blogs = await this.blogRepository.find({
       where: { spaceId: DefaultSpaceId },
-      relations: ['user'],
       skip: offset,
       take: PAGE_SIZE,
       order: { timestamp: 'DESC' },

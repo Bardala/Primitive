@@ -7,6 +7,7 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginRes, SignUpRes } from '@nest/shared';
 import { UserService } from 'src/modules/user/services/user.service';
 import { IAuthService } from './interfaces';
+import { Payload } from 'src/modules/shared/types';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -38,7 +39,7 @@ export class AuthService implements IAuthService {
       timestamp: Date.now(),
     });
 
-    const payload = { sub: user.id, username: user.username };
+    const payload: Payload = { sub: user.id, username: user.username };
     const jwt = this.jwtService.sign(payload);
 
     return {
@@ -63,7 +64,7 @@ export class AuthService implements IAuthService {
 
     await this.userService.updateLastActive(user.id);
 
-    const payload = { sub: user.id, username: user.username };
+    const payload: Payload = { sub: user.id, username: user.username };
     const jwt = this.jwtService.sign(payload);
 
     return {
