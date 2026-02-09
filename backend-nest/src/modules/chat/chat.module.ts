@@ -17,6 +17,7 @@ import { PrivateChatService } from './services/private-chat.service';
 import { UserConversationStateService } from './services/user-conversation-state.service';
 import { UserModule } from '../user/user.module';
 import { ValidationModule } from '../shared/validation/validation.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ValidationModule } from '../shared/validation/validation.module';
     ]),
     ValidationModule,
     UserModule,
+    NotificationModule,
   ],
   controllers: [ChatController, PrivateChatController],
   providers: [

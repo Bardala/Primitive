@@ -226,6 +226,37 @@
   display: inline-block;
 }
 
+@keyframes highlight-fade {
+  0% {
+    background-color: rgba(26, 172, 131, 0.2);
+    box-shadow: 0 0 0 4px rgba(26, 172, 131, 0.1);
+  }
+
+  100% {
+    background-color: var(--color-bg-card);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.highlighted-comment {
+  animation: highlight-fade 3s ease-out forwards;
+  border-left: 5px solid var(--color-primary) !important;
+}
+
+.mention {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(26, 172, 131, 0.1);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.mention:hover {
+  text-decoration: underline;
+  background: rgba(26, 172, 131, 0.2);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .comment-actions {

@@ -18,6 +18,8 @@ import { UserConversationStateService } from './user-conversation-state.service'
 import { ConversationType } from '../entities/user-conversation-state.entity';
 
 import { PresenceService } from '../../presence/presence.service';
+import { NotificationService } from '../../notification/services/notification.service';
+import { NotificationType } from '@nest/shared';
 
 @Injectable()
 export class PrivateChatService implements IPrivateChatService {
@@ -28,6 +30,7 @@ export class PrivateChatService implements IPrivateChatService {
     private messageRepository: Repository<PrivateMessage>,
     private userConversationStateService: UserConversationStateService,
     private presenceService: PresenceService,
+    private notificationService: NotificationService,
   ) {}
 
   async createConversation(user1Id: string, user2Id: string): Promise<IPrivateConversation> {
@@ -152,6 +155,15 @@ export class PrivateChatService implements IPrivateChatService {
       senderId,
       conversationId,
       ConversationType.PRIVATE,
+    );
+
+    const recipientId =
+      conversation.user1Id === senderId ? conversation.user2Id : conversation.user1Id;
+    await this.notificationService.sendNotification(
+      recipientId,
+      NotificationType.MESSAGE,
+      conversationId,
+      { messageId: message.id, senderId, conversationId, content: message.content },
     );
 
     return message;

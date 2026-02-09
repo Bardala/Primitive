@@ -6,6 +6,7 @@ import { ROUTES } from '@/core/utils';
 import { Login, SignUp } from '@/features/auth';
 import { BlogDetails, CreateBlogPage } from '@/features/blog';
 import { PrivateChatPage } from '@/features/chat';
+import { NotificationProvider } from '@/features/notification/context/NotificationContext';
 import { NotificationPage } from '@/features/notification/pages';
 import { Space } from '@/features/spaces';
 import { UserProfile, UsersList } from '@/features/user';
@@ -63,15 +64,17 @@ export function App() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthContextProvider>
-          <ErrorBoundary>
-            <AppContent />
-          </ErrorBoundary>
-          <ReactQueryDevtools />
-        </AuthContextProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthContextProvider>
+            <NotificationProvider>
+              <AppContent />
+            </NotificationProvider>
+            <ReactQueryDevtools />
+          </AuthContextProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

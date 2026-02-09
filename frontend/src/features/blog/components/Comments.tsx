@@ -14,10 +14,10 @@ import {
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { FC, FormEvent, useState } from 'react';
+import { FC, FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiCheck, FiEdit, FiTrash2, FiX } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { MyMarkdown } from './MyMarkdown';
 
@@ -40,6 +40,7 @@ export const Comments: FC<{
   // Track which comments are expanded
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
+  const location = useLocation();
 
   const createCommMutation = useMutation<CreateCommentRes, ApiError>(createCommApi(content, id!), {
     onSuccess: () => {
@@ -124,6 +125,25 @@ export const Comments: FC<{
 
   const isPending = createCommMutation.isLoading;
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const commentId = searchParams.get('commentId');
+
+    if (commentId && !isPending) {
+      // Small delay to ensure comments are rendered
+      const timer = setTimeout(() => {
+        const element = document.getElementById(`comment-${commentId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted-comment');
+          // Optional: remove highlight after some time
+          setTimeout(() => element.classList.remove('highlighted-comment'), 3000);
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.search, isPending, comments]);
+
   return (
     <div className="blog-comments">
       <form onSubmit={handleSubmit} className="create-comment">
@@ -153,7 +173,7 @@ export const Comments: FC<{
                 : truncateComment(comment.content, MAX_WORDS_PREVIEW);
 
             return (
-              <div className="comment" key={comment.id}>
+              <div className="comment" key={comment.id} id={`comment-${comment.id}`}>
                 {editingCommentId === comment.id ? (
                   <div className="comment-edit">
                     <textarea

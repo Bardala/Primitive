@@ -4,5 +4,3 @@ In blog detail page, add to series featuer. [Update styles, Add "enter blog posi
 In user page, create series feature, series list feature. [Update styles]
 In blog card. [appear space name, and series name if exists]
 In series details and series list, [Update styles]
-
-Continue from private-chat.api.ts

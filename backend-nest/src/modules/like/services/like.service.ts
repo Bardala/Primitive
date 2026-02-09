@@ -7,6 +7,8 @@ import { LikePostRes } from '../dto/like-post.dto';
 import { UnLikePostRes } from '../dto/unlike-post.dto';
 import { GetPostLikesRes } from '../dto/get-post-likes.dto';
 import { ILikeService } from './interfaces';
+import { NotificationService } from '../../notification/services/notification.service';
+import { NotificationType } from '@nest/shared';
 
 @Injectable()
 export class LikeService implements ILikeService {
@@ -15,6 +17,7 @@ export class LikeService implements ILikeService {
     private likeRepository: Repository<Like>,
     @InjectRepository(Blog)
     private blogRepository: Repository<Blog>,
+    private notificationService: NotificationService,
   ) {}
 
   async likePost(userId: string, postId: string): Promise<LikePostRes> {
@@ -36,6 +39,13 @@ export class LikeService implements ILikeService {
     like.userId = userId;
 
     await this.likeRepository.save(like);
+
+    if (userId !== blog.userId) {
+      await this.notificationService.sendNotification(blog.userId, NotificationType.LIKE, blog.id, {
+        blogId: blog.id,
+        likerId: userId,
+      });
+    }
 
     return { statusMessage: 'Post liked successfully' };
   }

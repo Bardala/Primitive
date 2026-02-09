@@ -4,6 +4,7 @@ import { isArabic } from '@/core/utils';
 import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Components } from 'react-markdown';
+import { Link } from 'react-router-dom';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
@@ -13,7 +14,26 @@ import MermaidDiagram from './MermaidDiagram';
 
 export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   const { isDarkMode } = useTheme();
+
+  // Pre-process markdown to turn @username into mentions
+  const processedMarkdown = markdown.replace(/@(\w+)/g, '[@$1](/u/$1)');
+
   const components: Components = {
+    a: ({ href, children, node, ...props }) => {
+      const isMention = href?.startsWith('/u/');
+      if (isMention) {
+        return (
+          <Link to={href!} className="mention">
+            {children}
+          </Link>
+        );
+      }
+      return (
+        <a href={href} {...props}>
+          {children}
+        </a>
+      );
+    },
     code: ({ className, children, ...props }) => {
       const match = /language-(\w+)/.exec(className || '');
       const isInline = !className?.includes('language-');
@@ -84,7 +104,7 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
         rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
         components={components}
       >
-        {markdown}
+        {processedMarkdown}
       </ReactMarkdown>
     </div>
   );

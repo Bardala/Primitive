@@ -1,97 +1,83 @@
 import { useClickOutside } from '@/core/hooks';
-import { useGetAllMissedMsgs } from '@/features/user';
 
 import { useRef, useState } from 'react';
-import { TbMessageCirclePlus } from 'react-icons/tb';
+import { TbBell } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 
+import { useNotifications } from '../hooks/useNotifications';
+import { NotificationItem } from './NotificationItem';
+
 import '../../../app/styles/navBar.css';
+import '../styles/notifications.css';
 
 export const NotificationMenu = () => {
-  const { missedMsgs } = useGetAllMissedMsgs();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
   const [showNotification, setShowNotification] = useState(false);
-  const numOfMissedMegs = missedMsgs?.reduce((acc, curr) => acc + curr.unread_count, 0);
   const notificationRef = useRef<HTMLDivElement>(null);
   useClickOutside(notificationRef, () => setShowNotification(false));
 
-  // useEffect(() => {
-  //   if (missedMsgs?.length! > 0) {
-  //     const lastMsg = missedMsgs![0];
-  //     if (Notification.permission === 'granted') {
-  //       new Notification('New message', {
-  //         body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
-  //       });
-  //     } else if (Notification.permission !== 'denied') {
-  //       Notification.requestPermission().then(permission => {
-  //         if (permission === 'granted') {
-  //           new Notification('New message', {
-  //             body: `You have ${lastMsg?.unread_count} new messages in ${lastMsg.spaceName}`,
-  //           });
-  //         }
-  //       });
-  //     }
-  //   }
-  // }, [missedMsgs]);
-
   return (
-    <div ref={notificationRef}>
+    <div ref={notificationRef} className="notification-menu-container">
       <div
-        style={{
-          cursor: 'pointer',
-        }}
+        className="notification-trigger"
+        onClick={() => setShowNotification(!showNotification)}
+        style={{ cursor: 'pointer', position: 'relative' }}
       >
-        <TbMessageCirclePlus
-          className="notification-icon"
-          style={numOfMissedMegs! > 0 ? { color: 'green' } : { color: '#dbd8d8' }}
-          onClick={() => setShowNotification(!showNotification)}
+        <TbBell
+          className="notification-icon-trigger"
+          style={{ fontSize: '1.5rem', color: unreadCount > 0 ? '#ef4444' : '#dbd8d8' }}
         />
-        {numOfMissedMegs! > 0 && (
+        {unreadCount > 0 && (
           <span
-            className="notification-number"
+            className="notification-badge"
             style={{
-              color: 'green',
+              position: 'absolute',
+              top: -5,
+              right: -5,
+              backgroundColor: '#ef4444',
+              color: 'white',
+              borderRadius: '50%',
+              padding: '2px 6px',
+              fontSize: '0.7rem',
               fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: '18px',
+              height: '18px',
             }}
           >
-            {numOfMissedMegs}
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </div>
+
       {showNotification && (
-        <div className="notification-menu">
-          <div className="notification-menu-header">
-            <h3>Missed Messages</h3>
+        <div className="notification-menu" style={{ width: '320px', right: 0 }}>
+          <div
+            className="notification-menu-header"
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          >
+            <h3>Notifications</h3>
+            <Link
+              to="/notifications"
+              onClick={() => setShowNotification(false)}
+              style={{ fontSize: '0.8rem', color: '#3b82f6', textDecoration: 'none' }}
+            >
+              View All
+            </Link>
           </div>
-          <div className="notification-menu-body">
-            {missedMsgs!.length > 0 ? (
-              missedMsgs?.map((m, index) => (
-                <Link
-                  to={`/space/${m.chat_spaceId}`}
-                  key={index}
-                  onClick={() => setShowNotification(false)}
-                >
-                  You have{' '}
-                  <span
-                    style={{
-                      color: 'green',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {m.unread_count}
-                  </span>{' '}
-                  new messages in space{' '}
-                  <span
-                    style={{
-                      color: 'green',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {m.spaceName}
-                  </span>
-                </Link>
-              ))
+          <div className="notification-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            {notifications.length > 0 ? (
+              notifications
+                .slice(0, 5)
+                .map(n => (
+                  <NotificationItem key={n.id} notification={n} onRead={id => markAsRead(id)} />
+                ))
             ) : (
-              <p>No new messages</p>
+              <p style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                No new notifications
+              </p>
             )}
           </div>
         </div>

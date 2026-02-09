@@ -157,6 +157,7 @@ export enum NotificationType {
   MESSAGE = 'message',
   MENTION = 'mention',
   COMMENT = 'comment',
+  LIKE = 'like',
   SYSTEM = 'system',
 }
 

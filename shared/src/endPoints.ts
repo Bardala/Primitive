@@ -97,8 +97,10 @@ export enum ENDPOINT {
   GET_SPACE_TAGS = '/tags/space/:spaceId/tags',
 
   // *Notifications
-  GET_NOTIFICATIONS = '/notification',
-  MARK_AS_READ = '/notification/:notificationId/read',
+  // *Notifications
+  GET_NOTIFICATIONS = '/notifications',
+  MARK_AS_READ = '/notifications/:id/read',
+  MARK_ALL_AS_READ = '/notifications/read-all',
 
   // *Blog Series
   CREATE_SERIES = '/series',

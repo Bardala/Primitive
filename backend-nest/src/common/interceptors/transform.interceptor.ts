@@ -6,9 +6,14 @@ import { ApiResponse } from '@nest/shared';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<ExpressResponse>();
+
+    // Skip transformation for SSE (Server-Sent Events)
+    if (request.headers.accept === 'text/event-stream') {
+      return next.handle();
+    }
 
     return next.handle().pipe(
       map((data: any) => ({
