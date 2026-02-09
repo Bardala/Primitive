@@ -37,31 +37,29 @@ function addQueryParams(url: string, query: Record<string, any> | undefined): st
  * @param query - Query parameters object to append to URL
  * @returns Complete URL string
  */
-const buildUrl = (endpoint: ENDPOINT, params?: string[], query?: Record<string, any>): string => {
+const buildUrl = (
+  endpoint: ENDPOINT,
+  params: string[] = [],
+  query?: Record<string, any>
+): string => {
   let path = String(endpoint);
 
-  // Count and validate parameters
-  const paramPattern = /:[\w]+/g;
-  const expectedParamCount = (path.match(paramPattern) || []).length;
+  // Extract parameter placeholders (e.g., ":id")
+  const placeholders = [...path.matchAll(/:[\w]+/g)].map(m => m[0]);
 
-  if (params && expectedParamCount !== params.length) {
+  if (placeholders.length !== params.length)
     throw new Error(
-      `Parameter count mismatch: expected ${expectedParamCount}, got ${params.length}`
+      `Parameter count mismatch: expected ${placeholders.length}, got ${params.length}`
     );
-  }
 
-  // Replace parameters in order
-  if (params) {
-    params.forEach(param => {
-      path = path.replace(paramPattern, param);
-    });
-  }
+  // Replace placeholders with provided params
+  placeholders.forEach((placeholder, i) => {
+    path = path.replace(placeholder, params[i]);
+  });
 
-  // Construct base URL
-  let url = `${HOST}${API_PREFIX}${path}`;
-  url = addQueryParams(url, query);
-
-  return url;
+  // Construct final URL
+  const url = `${HOST}${API_PREFIX}${path}`;
+  return addQueryParams(url, query);
 };
 
 interface FetchOptions<TRequest> {
@@ -174,6 +172,14 @@ export const putFn = <TRequest, TResponse>(
   token?: string | null,
   queryParams?: Record<string, any>
 ): Promise<TResponse> => fetchFn({ endpoint, method: 'PUT', body, params, token, queryParams });
+
+export const patchFn = <TRequest, TResponse>(
+  endpoint: ENDPOINT,
+  body?: TRequest,
+  params?: string[],
+  token?: string | null,
+  queryParams?: Record<string, any>
+): Promise<TResponse> => fetchFn({ endpoint, method: 'PATCH', body, params, token, queryParams });
 
 export const deleteFn = <TResponse>(
   endpoint: ENDPOINT,

@@ -99,4 +99,27 @@ export enum ENDPOINT {
   // *Notifications
   GET_NOTIFICATIONS = '/notification',
   MARK_AS_READ = '/notification/:notificationId/read',
+
+  // *Blog Series
+  CREATE_SERIES = '/series',
+  UPDATE_SERIES = '/series/:seriesId',
+  GET_SERIES = '/series/:seriesId',
+  GET_USER_SERIES = '/series/user',
+  DELETE_SERIES = '/series/:seriesId',
+  ADD_BLOG_TO_SERIES = '/series/:seriesId/blogs',
+  REMOVE_BLOG_FROM_SERIES = '/series/:seriesId/blogs/:blogId',
+
+  // *Space Permissions
+  GET_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',
+  UPDATE_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',
+
+  // *Private Chat
+  GET_PRIVATE_CONVERSATIONS = '/chats/private',
+  GET_PRIVATE_MESSAGES = '/chats/private/:conversationId',
+  CREATE_PRIVATE_CONVERSATION = '/chats/private',
+  SEND_PRIVATE_MESSAGE = '/chats/private/:conversationId/message',
+  MARK_PRIVATE_CHAT_AS_READ = '/chats/private/:conversationId/read',
+
+  // *Space Chat Read Tracking
+  MARK_SPACE_CHAT_AS_READ = '/spaces/:spaceId/messages/read',
 }

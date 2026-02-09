@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
+import { PresenceService } from '../../presence/presence.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -33,6 +34,7 @@ export class UserService implements IUserService, IUserFollowService {
     @InjectRepository(Blog) private blogRepository: Repository<Blog>,
     @InjectRepository(Space) private spaceRepository: Repository<Space>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    private presenceService: PresenceService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -69,10 +71,17 @@ export class UserService implements IUserService, IUserFollowService {
   }
 
   async findById(id: string): Promise<User | null> {
-    return await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id },
       relations: ['activity'],
     });
+
+    if (user) {
+      (user as any).isOnline = this.presenceService.isOnline(id);
+      (user as any).lastSeen = user.activity?.lastActive;
+    }
+
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -124,11 +133,16 @@ export class UserService implements IUserService, IUserFollowService {
     const user = await this.userRepository.findOne({
       where: { id: targetUserId },
       select: ['id', 'username', 'email', 'timestamp'],
+      relations: ['activity'],
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    // Set real-time online status
+    (user as any).isOnline = this.presenceService.isOnline(targetUserId);
+    (user as any).lastSeen = user.activity?.lastActive;
 
     // Check if current user is following target user
     const isFollowing = await this.followRepository.findOne({

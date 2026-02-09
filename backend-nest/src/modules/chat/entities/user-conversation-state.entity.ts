@@ -1,5 +1,5 @@
 import { User } from 'src/modules/user/entities/user.entity';
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { UserConversationState as IUserConversationState } from '@nest/shared';
 
 export enum ConversationType {
@@ -8,6 +8,8 @@ export enum ConversationType {
 }
 
 @Entity('user_conversation_state')
+@Index(['userId', 'conversationId', 'conversationType'], { unique: true })
+@Index(['userId', 'conversationType'])
 export class UserConversationState implements IUserConversationState {
   @PrimaryColumn('char', { length: 36 })
   id!: string;
@@ -35,6 +37,6 @@ export class UserConversationState implements IUserConversationState {
   @JoinColumn({ name: 'userId' })
   user!: User;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  // @CreateDateColumn()
+  // createdAt!: Date;
 }

@@ -11,10 +11,16 @@ import { SpaceMemberService } from './services/space-member.service';
 import { SpacePermissionService } from './services/space-permission.service';
 import { ValidationModule } from '../shared/validation/validation.module';
 
+import { SpacePermissionController } from './controllers/space-permission.controller';
+import { SpacePermission } from './entities/space-permission.entity';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Space, Member, User, ChatMessage, Blog]), ValidationModule],
-  controllers: [SpaceController],
+  imports: [
+    TypeOrmModule.forFeature([Space, Member, User, ChatMessage, Blog, SpacePermission]),
+    ValidationModule,
+  ],
+  controllers: [SpaceController, SpacePermissionController],
   providers: [SpaceService, SpaceMemberService, SpacePermissionService],
-  exports: [SpaceService],
+  exports: [SpaceService, SpacePermissionService],
 })
 export class SpaceModule {}

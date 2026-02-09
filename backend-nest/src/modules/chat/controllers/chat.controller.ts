@@ -59,4 +59,16 @@ export class ChatController {
     const messages = await this.chatService.getSpaceChat(spaceId, user.id);
     return { messages };
   }
+
+  @Post(ENDPOINT.MARK_SPACE_CHAT_AS_READ)
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Mark all messages in a space as read' })
+  @ApiResponse({ status: 200, description: 'Messages marked as read' })
+  async markAsRead(
+    @GetUser() user: User,
+    @Param('spaceId', ParseUUIDPipe) spaceId: string,
+  ): Promise<{ success: boolean }> {
+    await this.chatService.markAsRead(user.id, spaceId);
+    return { success: true };
+  }
 }

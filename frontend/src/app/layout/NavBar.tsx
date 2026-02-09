@@ -6,6 +6,7 @@ import { UserLink } from '@/features/user';
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsChatDots } from 'react-icons/bs';
 import { FaCog } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { TiHome } from 'react-icons/ti';
@@ -95,6 +96,10 @@ export const NavBar = () => {
           <Link to="/settings" className="nav-link" title={t('navbar.settings')}>
             <FaCog />
             {!isMobile && <span className="nav-text">{t('navbar.settings')}</span>}
+          </Link>
+          <Link to="/chat" className="nav-link" title="Messages">
+            <BsChatDots />
+            {!isMobile && <span className="nav-text">Chat</span>}
           </Link>
 
           <ToggleThemeButton />

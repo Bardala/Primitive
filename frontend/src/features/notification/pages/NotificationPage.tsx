@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import '../styles/notifications.css';
 
+// TODO: Enhance the notification page to view new notifications
 export const NotificationPage = () => {
   const { missedMsgs } = useGetAllMissedMsgs();
   const { t } = useTranslation();

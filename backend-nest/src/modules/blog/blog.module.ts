@@ -15,9 +15,25 @@ import { BlogService } from './services/blog.service';
 import { FeedsService } from './services/feeds.service';
 import { FeedsController } from './controllers/feeds.controller';
 
+import { BlogSeriesController } from './controllers/blog-series.controller';
+import { BlogSeriesLink } from './entities/blog-series-links.entity';
+import { BlogSeries } from './entities/blog-series.entity';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Blog, Like, Comment, Space, User, Member]), ValidationModule],
-  controllers: [BlogController, FeedsController],
+  imports: [
+    TypeOrmModule.forFeature([
+      Blog,
+      Like,
+      Comment,
+      Space,
+      User,
+      Member,
+      BlogSeries,
+      BlogSeriesLink,
+    ]),
+    ValidationModule,
+  ],
+  controllers: [BlogController, FeedsController, BlogSeriesController],
   providers: [BlogService, BlogRepository, BlogTagService, BlogSeriesService, FeedsService],
   exports: [BlogService],
 })

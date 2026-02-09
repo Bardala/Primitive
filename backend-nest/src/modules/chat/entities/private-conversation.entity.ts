@@ -11,7 +11,6 @@ import { PrivateMessage } from './private-message.entity';
 import { User } from 'src/modules/user/entities/user.entity';
 import { PrivateConversation as IPrivateConversation } from '@nest/shared';
 
-// todo: Remove this entity, it's unnecessary, depend on a single PrivateMessage entity with two user references instead
 @Entity('private_conversations')
 export class PrivateConversation implements IPrivateConversation {
   @PrimaryColumn('char', { length: 36 })

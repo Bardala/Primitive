@@ -15,6 +15,8 @@ import { Space } from 'src/modules/space/entities/space.entity';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Member } from 'src/modules/space/entities/member.entity';
 import { IChatService } from './interfaces';
+import { UserConversationStateService } from './user-conversation-state.service';
+import { ConversationType } from '../entities/user-conversation-state.entity';
 
 @Injectable()
 export class ChatService implements IChatService {
@@ -26,6 +28,7 @@ export class ChatService implements IChatService {
     private userRepository: Repository<User>,
     @InjectRepository(Member)
     private memberRepository: Repository<Member>,
+    private userConversationStateService: UserConversationStateService,
   ) {}
 
   async createMessage(userId: string, spaceId: string, req: CreateMsgReq): Promise<CreateMsgRes> {
@@ -70,6 +73,9 @@ export class ChatService implements IChatService {
 
     await this.chatRepository.save(message);
 
+    // Auto-mark as read for sender
+    await this.userConversationStateService.markAsRead(userId, spaceId, ConversationType.SPACE);
+
     return { message };
   }
 
@@ -109,6 +115,29 @@ export class ChatService implements IChatService {
     return this.chatRepository.findBySpaceId(spaceId, limit);
   }
 
+  /**
+   * Get unread count for a space conversation.
+   */
+  async getSpaceUnreadCount(userId: string, spaceId: string): Promise<number> {
+    return this.userConversationStateService.getSpaceUnreadCount(userId, spaceId);
+  }
+
+  /**
+   * Mark all messages in a space as read for a user.
+   */
+  async markAsRead(userId: string, spaceId: string): Promise<void> {
+    // Verify user is member of space
+    const isMember = await this.memberRepository.findOne({
+      where: { spaceId, memberId: userId },
+    });
+
+    if (!isMember) {
+      throw new ForbiddenException('User is not a member of this space');
+    }
+
+    await this.userConversationStateService.markAsRead(userId, spaceId, ConversationType.SPACE);
+  }
+
   // TODO: Create DTO for message
   /**
    * Create a message from WebSocket event
@@ -142,29 +171,24 @@ export class ChatService implements IChatService {
     chatMessage.content = message.content;
     chatMessage.timestamp = message.timestamp || Date.now();
 
-    return { message: await this.chatRepository.save(chatMessage) };
+    const savedMessage = await this.chatRepository.save(chatMessage);
+
+    // Auto-mark as read for sender
+    await this.userConversationStateService.markAsRead(
+      user.id,
+      chatMessage.spaceId,
+      ConversationType.SPACE,
+    );
+
+    return { message: savedMessage };
   }
 
   /**
    * Update the last read message for a user in a space
+   * @deprecated Use markAsRead instead
    */
-  async updateLastReadMessage(userId: string, spaceId: string, lastReadId: string): Promise<void> {
-    if (!userId || !spaceId || !lastReadId) {
-      throw new BadRequestException('Invalid parameters for updating last read message');
-    }
-
-    // Verify user is member of space
-    const isMember = await this.memberRepository.findOne({
-      where: { spaceId, memberId: userId },
-    });
-
-    if (!isMember) {
-      throw new ForbiddenException('User is not a member of this space');
-    }
-
-    // TODO: Implement storing last read message state
-    // This would typically update a user_conversation_state table
-    // to track which message the user has read up to
+  async updateLastReadMessage(userId: string, spaceId: string, _lastReadId: string): Promise<void> {
+    await this.markAsRead(userId, spaceId);
   }
 
   async getSpaceMembers(spaceId: string): Promise<string[]> {

@@ -9,6 +9,7 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   CREATE_BLOG: '/new/b/:spaceName/:spaceId',
   SETTINGS: '/settings',
+  CHAT: '/chat',
   GET_SPACE: (id: string) => `/space/${id}`,
   GET_BLOG_DETAILS: (id: string) => `/b/${id}`,
   GET_USER_PROFILE: (id: string) => `/u/${id}`,

@@ -19,6 +19,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { ShortModule } from './modules/short/short.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ValidationModule } from './modules/shared/validation/validation.module';
+import { PresenceModule } from './modules/presence/presence.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ValidationModule } from './modules/shared/validation/validation.module'
     ShortModule,
     NotificationModule,
     ValidationModule,
+    PresenceModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggerService],

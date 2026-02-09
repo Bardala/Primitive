@@ -8,4 +8,7 @@ export enum SOCKET_EVENT {
   DISCONNECT = 'disconnect',
   NOTIFY_MISSED_MSG = 'notify_missed_msg',
   NOTIFICATION = 'notification',
+  JOIN_PRIVATE_CONVO = 'JOIN_PRIVATE_CONVO',
+  PRIVATE_MSG = 'PRIVATE_MSG',
+  PRIVATE_MESSAGE_NEW = 'PRIVATE_MESSAGE_NEW',
 }

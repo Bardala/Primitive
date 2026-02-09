@@ -1,5 +1,5 @@
 import { useAuthContext } from '@/core/context';
-import { BlogList } from '@/features/blog';
+import { BlogList, CreateSeriesModal, SeriesDetail, SeriesList } from '@/features/blog';
 
 import { Space } from '@nest/shared';
 
@@ -26,6 +26,8 @@ export const UserProfile = () => {
     : userSpacesQuery.data?.spaces.filter(space => space.status === 'public');
   const userCard = userCardQuery.data?.userCard;
   const [search, setSearch] = useState<Space[]>(spaces!);
+  const [showCreateSeriesModal, setShowCreateSeriesModal] = useState(false);
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
 
   const handleSearch = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -103,6 +105,26 @@ export const UserProfile = () => {
                   )}
                 </div>
               </div>
+
+              {isMyPage && (
+                <div className="user-spaces-section">
+                  <div className="section-header">
+                    <h2>Blog Series</h2>
+                    <button onClick={() => setShowCreateSeriesModal(true)} className="create-link">
+                      Create Series
+                    </button>
+                  </div>
+
+                  {selectedSeriesId ? (
+                    <SeriesDetail
+                      seriesId={selectedSeriesId}
+                      onBack={() => setSelectedSeriesId(null)}
+                    />
+                  ) : (
+                    <SeriesList onSelectSeries={setSelectedSeriesId} />
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="user-blogs-section">
@@ -142,6 +164,11 @@ export const UserProfile = () => {
           </div>
         </div>
       )}
+
+      <CreateSeriesModal
+        isOpen={showCreateSeriesModal}
+        onClose={() => setShowCreateSeriesModal(false)}
+      />
     </div>
   );
 };

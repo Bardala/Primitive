@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
 import { useLocation, useParams } from 'react-router-dom';
 
+import { AddToSeries } from '../components/AddToSeries';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
 import { Comments } from '../components/Comments';
 import { LikeBlogButton } from '../components/LikeBlogButton';
@@ -163,6 +164,8 @@ export const BlogDetails = () => {
                 <p className="comms-count" onClick={goToComments} title={t('blogDetails.comments')}>
                   {comments?.length} <LiaCommentSolid size={20} />
                 </p>
+
+                {currUser && currUser.id === blog.userId && <AddToSeries blogId={blog.id} />}
               </div>
             </article>
 

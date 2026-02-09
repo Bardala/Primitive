@@ -9,9 +9,10 @@ import {
 } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
 import { BlogSeriesLink } from './blog-series-links.entity';
+import { BlogSeries as IBlogSeries } from '@nest/shared';
 
 @Entity('blog_series')
-export class BlogSeries {
+export class BlogSeries implements IBlogSeries {
   @PrimaryColumn('char', { length: 36 })
   id!: string;
 

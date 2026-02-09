@@ -7,3 +7,6 @@ export * from './feeds.api.types';
 export * from './short.api.types';
 export * from './like.api.types';
 export * from './tag.api.types';
+export * from './blog-series.api.types';
+export * from './space-permissions.api.types';
+export * from './private-chat.api.types';

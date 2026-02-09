@@ -9,3 +9,4 @@ export * from './LeaveSpc';
 export * from './SpaceForm';
 export * from './SpaceMembers';
 export * from './UserSpacesSidebar';
+export * from './SpacePermissions';

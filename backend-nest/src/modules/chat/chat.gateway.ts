@@ -15,12 +15,20 @@ import { SocketConfig } from 'src/config/socket.config';
 import { CreateSocketMsgReq } from './dto';
 import { WsExceptionsFilter } from 'src/common/filters/ws-exceptions.filter';
 import { SocketUserData } from 'src/common/adapters/authenticated-socket.adapter';
+import { PrivateChatService } from './services/private-chat.service';
+
+import { UserActivityService } from '../user/services/user-activity.service';
+import { PresenceService } from '../presence/presence.service';
 
 interface ChatGatewayEvents {
   handleJoinRoom(socket: Socket, data: { spaceId: string }): void;
   handleLeaveRoom(socket: Socket, data: { spaceId: string }): Promise<void>;
   handleIncomingMsg(socket: Socket, msg: CreateSocketMsgReq): Promise<void>;
   handleMarkAsRead(socket: Socket, data: { spaceId: string; lastReadId: string }): Promise<void>;
+  handlePrivateMsg(
+    socket: Socket,
+    data: { conversationId: string; content: string; toUserId: string },
+  ): Promise<void>;
 }
 
 @Injectable()
@@ -35,20 +43,48 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
   constructor(
     private readonly chatService: ChatService,
     private readonly lastReadService: LastReadService,
+    private readonly privateChatService: PrivateChatService,
+    private readonly presenceService: PresenceService,
+    private readonly userActivityService: UserActivityService,
   ) {}
 
   handleConnection(socket: Socket) {
     const user: SocketUserData = socket.data?.user;
     if (user?.sub) {
       void socket.join(user.sub);
+
+      // Update presence
+      const isFirstConnection = this.presenceService.addConnection(user.sub);
+      if (isFirstConnection) {
+        // Broadcast that user is now online
+        this.server.emit('USER_STATUS_CHANGE', {
+          userId: user.sub,
+          isOnline: true,
+        });
+      }
     }
     this.logger.log(
       `User ${user?.username || 'unknown'} (${user.sub}) connected with socket id: ${socket.id}`,
     );
   }
 
-  handleDisconnect(socket: Socket) {
+  async handleDisconnect(socket: Socket) {
     const user: SocketUserData = socket.data?.user;
+    if (user?.sub) {
+      // Update presence
+      const isLastConnection = this.presenceService.removeConnection(user.sub);
+      if (isLastConnection) {
+        // Update lastActive in DB
+        await this.userActivityService.updateLastActive(user.sub);
+
+        // Broadcast that user is now offline
+        this.server.emit('USER_STATUS_CHANGE', {
+          userId: user.sub,
+          isOnline: false,
+          lastActive: new Date(),
+        });
+      }
+    }
     this.logger.log(
       `User ${user?.username || 'unknown'} (${user?.sub}) disconnected: ${socket.id}`,
     );
@@ -75,6 +111,59 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Error in handleJoinRoom: ${message}`);
       socket.emit('error', { message: 'Failed to join room' });
+    }
+  }
+
+  @SubscribeMessage('JOIN_PRIVATE_CONVO')
+  handleJoinPrivateConvo(socket: Socket, data: { conversationId: string }): void {
+    try {
+      const user: SocketUserData = socket.data?.user;
+      if (!user) throw new Error('User ID not found');
+
+      const roomName = `private_convo_${data.conversationId}`;
+      void socket.join(roomName);
+      this.logger.log(`User ${user.username} joined private convo ${data.conversationId}`);
+    } catch (error) {
+      this.logger.error(error);
+      socket.emit('error', { message: 'Failed to join private conversation' });
+    }
+  }
+
+  @SubscribeMessage('PRIVATE_MSG')
+  async handlePrivateMsg(
+    socket: Socket,
+    data: { conversationId: string; content: string; toUserId: string },
+  ): Promise<void> {
+    try {
+      const user: SocketUserData = socket.data?.user;
+      if (!user) throw new Error('User ID not found');
+
+      const message = await this.privateChatService.createMessage(
+        data.conversationId,
+        user.sub,
+        data.content,
+      );
+
+      const roomName = `private_convo_${data.conversationId}`;
+
+      // Emit to conversation participants (including sender)
+      this.server.to(roomName).emit('PRIVATE_MSG', message);
+
+      // Notify recipient if online but not in conversation
+      const socketsInRoom = await this.server.in(roomName).fetchSockets();
+      const usersInRoom = new Set(socketsInRoom.map((s) => s.data.user.sub));
+
+      if (!usersInRoom.has(data.toUserId)) {
+        this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
+          type: 'PRIVATE_MESSAGE_NEW',
+          message,
+          conversationId: data.conversationId,
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error in handlePrivateMsg: ${message}`);
+      socket.emit('error', { message: 'Failed to send private message' });
     }
   }
 
@@ -194,5 +283,16 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       this.logger.error(`Error in handleLeaveRoom: ${message}`);
       socket.emit('error', { message: 'Failed to leave room' });
     }
+  }
+  /**
+   * Broadcast read receipt to a private conversation
+   */
+  public sendReadReceipt(conversationId: string, readByUserId: string): void {
+    const roomName = `private_convo_${conversationId}`;
+    this.server.to(roomName).emit('PRIVATE_MSG_READ', {
+      conversationId,
+      readByUserId,
+      readAt: new Date(),
+    });
   }
 }

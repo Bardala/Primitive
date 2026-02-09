@@ -8,6 +8,7 @@ interface State {
   showEditSpace: boolean;
   showChat: boolean;
   showLeaveSpc: boolean;
+  showPermissions: boolean;
   hideAll: boolean;
 }
 
@@ -18,7 +19,8 @@ export type SideBarAction =
   | { type: 'showMembers' }
   | { type: 'showEditSpace' }
   | { type: 'showChat' }
-  | { type: 'showLeaveSpc' };
+  | { type: 'showLeaveSpc' }
+  | { type: 'showPermissions' };
 
 export const useSideBarReducer = () => {
   const sidebarReducer = (state: any, action: SideBarAction) => {
@@ -100,6 +102,20 @@ export const useSideBarReducer = () => {
           showChat: false,
           hideAll: false,
           showLeaveSpc: !state.showLeaveSpc,
+          showPermissions: false,
+        };
+      case 'showPermissions':
+        return {
+          ...state,
+          showCreateSpace: false,
+          showCreateBlog: false,
+          showAddMember: false,
+          showMembers: false,
+          showEditSpace: false,
+          showChat: false,
+          hideAll: false,
+          showLeaveSpc: false,
+          showPermissions: !state.showPermissions,
         };
       default:
         return state;
@@ -115,6 +131,7 @@ export const useSideBarReducer = () => {
     showChat: false,
     hideAll: false,
     showLeaveSpc: false,
+    showPermissions: false,
   } as never);
 
   return { state, dispatch };

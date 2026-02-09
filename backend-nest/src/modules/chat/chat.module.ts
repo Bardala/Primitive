@@ -5,27 +5,44 @@ import { LastRead } from './entities/last-read.entity';
 import { Space } from '../space/entities/space.entity';
 import { User } from '../user/entities/user.entity';
 import { ChatGateway } from './chat.gateway';
-import { ChatController } from './controllers/chat.controller';
+import { ChatController, PrivateChatController } from './controllers';
 import { Member } from '../space/entities/member.entity';
 import { ChatRepository } from './repositories/chat.repository';
-import {
-  ChatService,
-  PrivateChatService,
-  UserConversationStateService,
-  LastReadService,
-} from './services';
+import { ChatService, LastReadService } from './services';
+
+import { PrivateConversation } from './entities/private-conversation.entity';
+import { PrivateMessage } from './entities/private-message.entity';
+import { UserConversationState } from './entities/user-conversation-state.entity';
+import { PrivateChatService } from './services/private-chat.service';
+import { UserConversationStateService } from './services/user-conversation-state.service';
+import { UserModule } from '../user/user.module';
+import { ValidationModule } from '../shared/validation/validation.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatMessage, Space, User, Member, LastRead])],
+  imports: [
+    TypeOrmModule.forFeature([
+      ChatMessage,
+      LastRead,
+      Space,
+      User,
+      Member,
+      PrivateConversation,
+      PrivateMessage,
+      UserConversationState,
+    ]),
+    ValidationModule,
+    UserModule,
+  ],
+  controllers: [ChatController, PrivateChatController],
   providers: [
     ChatGateway,
-    ChatService,
-    PrivateChatService,
-    UserConversationStateService,
     ChatRepository,
     LastReadService,
+    // UserConversationStateService must be before services that depend on it
+    UserConversationStateService,
+    ChatService,
+    PrivateChatService,
   ],
-  controllers: [ChatController],
-  exports: [ChatService],
+  exports: [ChatService, UserConversationStateService],
 })
 export class ChatModule {}

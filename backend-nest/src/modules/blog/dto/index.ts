@@ -2,6 +2,8 @@ export * from './blog-comments.dto';
 export * from './blog-likes-list.dto';
 export * from './blog-likes.dto';
 export * from './create-blog.dto';
+export * from './blog-series.dto';
+
 export * from './create-like.dto';
 export * from './delete-blog.dto';
 export * from './feeds/feed-query-req.dto';

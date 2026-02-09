@@ -57,6 +57,8 @@ export interface User {
   email: string;
   password: string;
   timestamp?: number;
+  isOnline?: boolean;
+  lastSeen?: Date | string;
 }
 
 export interface UserCard {
@@ -67,6 +69,8 @@ export interface UserCard {
   followersNum: number;
   followingNum: number;
   isFollowing: number;
+  isOnline?: boolean;
+  lastSeen?: Date | string;
 }
 
 export type ChatMessage = {
@@ -140,7 +144,7 @@ export interface BlogSeries {
   name: string;
   description?: string;
   createdBy: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 export interface BlogSeriesLink {
@@ -213,7 +217,7 @@ export type StatusMessage =
 
 export type WithError<T> = T & { error: string };
 
-export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 /**
  * Unified API Response type used across frontend and backend

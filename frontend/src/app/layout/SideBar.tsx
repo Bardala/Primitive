@@ -3,7 +3,14 @@ import { useSideBarReducer } from '@/core/hooks/sideBarReducer';
 import { Chat } from '@/features/chat';
 import { NotificationMsgsNumber } from '@/features/notification/components';
 import { ShortForm } from '@/features/short-form';
-import { AddMember, CreateSpace, EditSpaceForm, LeaveSpc, SpaceMembers } from '@/features/spaces';
+import {
+  AddMember,
+  CreateSpace,
+  EditSpaceForm,
+  LeaveSpc,
+  SpaceMembers,
+  SpacePermissions,
+} from '@/features/spaces';
 
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
 
@@ -201,6 +208,15 @@ export const ActionBar: React.FC<{
                     <span className="btn-icon">✏️</span>
                     <span className="btn-text">{t('sidebar.editSpace')}</span>
                   </button>
+
+                  <button
+                    title="Permissions"
+                    onClick={() => dispatch({ type: 'showPermissions' })}
+                    className={`management-btn ${state.showPermissions ? 'active' : ''}`}
+                  >
+                    <span className="btn-icon">🔒</span>
+                    <span className="btn-text">Permissions</span>
+                  </button>
                 </>
               )}
 
@@ -224,6 +240,7 @@ export const ActionBar: React.FC<{
         {state.showEditSpace && list && <EditSpaceForm />}
         {state.showChat && <Chat space={space!} />}
         {state.showLeaveSpc && list && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
+        {state.showPermissions && list && <SpacePermissions spaceId={space?.id!} />}
       </aside>
     </>
   );

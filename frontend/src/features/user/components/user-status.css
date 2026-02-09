@@ -1,0 +1,45 @@
+.user-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.user-status__indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.user-status--online .user-status__indicator {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.user-status--offline .user-status__indicator {
+  background-color: #6b7280;
+}
+
+.user-status__text {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.user-status--online .user-status__text {
+  color: #10b981;
+  font-weight: 500;
+}
+
+@keyframes pulse-green {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+  }
+}

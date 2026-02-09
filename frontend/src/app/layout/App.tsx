@@ -5,6 +5,7 @@ import { useNotificationSocket } from '@/core/hooks';
 import { ROUTES } from '@/core/utils';
 import { Login, SignUp } from '@/features/auth';
 import { BlogDetails, CreateBlogPage } from '@/features/blog';
+import { PrivateChatPage } from '@/features/chat';
 import { NotificationPage } from '@/features/notification/pages';
 import { Space } from '@/features/spaces';
 import { UserProfile, UsersList } from '@/features/user';
@@ -27,6 +28,7 @@ const ProtectedSettings = requireAuth(Settings);
 const ProtectedUserList = requireAuth(UsersList);
 const ProtectUserProfile = requireAuth(UserProfile);
 const ProtectedSpace = requireAuth(Space);
+const ProtectedPrivateChatPage = requireAuth(PrivateChatPage);
 
 function AppContent() {
   useNotificationSocket();
@@ -48,6 +50,7 @@ function AppContent() {
           <Route path={ROUTES.NOTIFICATIONS} element={<ProtectedNotificationPage />} />
           <Route path={ROUTES.CREATE_BLOG} element={<ProtectedCreateBlogPage />} />
           <Route path={ROUTES.SETTINGS} element={<ProtectedSettings />} />
+          <Route path={ROUTES.CHAT} element={<ProtectedPrivateChatPage />} />
         </Routes>
       </BrowserRouter>
 
