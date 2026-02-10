@@ -67,8 +67,29 @@ export class ChatController {
   async markAsRead(
     @GetUser() user: User,
     @Param('spaceId', ParseUUIDPipe) spaceId: string,
+    @Body() body?: { lastReadId?: string },
   ): Promise<{ success: boolean }> {
-    await this.chatService.markAsRead(user.id, spaceId);
+    await this.chatService.markAsRead(user.id, spaceId, body?.lastReadId);
+    return { success: true };
+  }
+
+  @Get('conversations')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get all user conversations' })
+  async getUnifiedChat(@GetUser() user: User) {
+    return this.chatService.getUnifiedConversations(user.id);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  @Post(ENDPOINT.MUTE_SPACE_CHAT)
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Toggle mute for a space' })
+  async toggleMute(
+    @GetUser() user: User,
+    @Param('spaceId', ParseUUIDPipe) spaceId: string,
+    @Body() body: { isMuted?: boolean },
+  ): Promise<{ success: boolean }> {
+    await this.chatService.toggleMute(user.id, spaceId, body.isMuted);
     return { success: true };
   }
 }

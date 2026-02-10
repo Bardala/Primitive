@@ -125,17 +125,29 @@ export class ChatService implements IChatService {
   /**
    * Mark all messages in a space as read for a user.
    */
-  async markAsRead(userId: string, spaceId: string): Promise<void> {
+  async markAsRead(userId: string, spaceId: string, lastReadId?: string): Promise<void> {
     // Verify user is member of space
     const isMember = await this.memberRepository.findOne({
       where: { spaceId, memberId: userId },
     });
-
     if (!isMember) {
       throw new ForbiddenException('User is not a member of this space');
     }
 
-    await this.userConversationStateService.markAsRead(userId, spaceId, ConversationType.SPACE);
+    let lastReadAt: Date | undefined;
+    if (lastReadId) {
+      const msg = await this.chatRepository.findById(lastReadId);
+      if (msg) {
+        lastReadAt = new Date(Number(msg.timestamp));
+      }
+    }
+
+    await this.userConversationStateService.markAsRead(
+      userId,
+      spaceId,
+      ConversationType.SPACE,
+      lastReadAt,
+    );
   }
 
   // TODO: Create DTO for message
@@ -197,5 +209,64 @@ export class ChatService implements IChatService {
       select: ['memberId'],
     });
     return members.map((m) => m.memberId);
+  }
+
+  /**
+   * Get all conversations (spaces and private) for a user with unread counts.
+   */
+  async getUnifiedConversations(userId: string) {
+    const members = await this.memberRepository.find({
+      where: { memberId: userId },
+      relations: ['space'],
+    });
+
+    const spacesWithUnread = await Promise.all(
+      members.map(async (m) => {
+        const state = await this.userConversationStateService.getOrCreate(
+          userId,
+          m.spaceId,
+          ConversationType.SPACE,
+        );
+        const unreadCount = await this.userConversationStateService.getSpaceUnreadCount(
+          userId,
+          m.spaceId,
+        );
+        const lastMessage = await this.chatRepository.find({
+          where: { spaceId: m.spaceId },
+          order: { timestamp: 'DESC' },
+          take: 1,
+        });
+
+        return {
+          ...m.space,
+          unreadCount,
+          lastMessage: lastMessage[0] || null,
+          isMuted: state.isMuted,
+          type: 'space',
+        };
+      }),
+    );
+
+    return { spaces: spacesWithUnread };
+  }
+
+  /**
+   * Toggle mute status for a space.
+   */
+  async toggleMute(userId: string, spaceId: string, isMuted?: boolean): Promise<void> {
+    const member = await this.memberRepository.findOne({
+      where: { spaceId, memberId: userId },
+    });
+
+    if (!member) {
+      throw new ForbiddenException('Not a member of this space');
+    }
+
+    await this.userConversationStateService.toggleMute(
+      userId,
+      spaceId,
+      ConversationType.SPACE,
+      isMuted,
+    );
   }
 }

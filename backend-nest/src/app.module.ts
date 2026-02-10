@@ -26,7 +26,6 @@ import { PresenceModule } from './modules/presence/presence.module';
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: `.env.${process.env.NODE_ENV || 'dev'}`,
     }),
 
     // Task Scheduling

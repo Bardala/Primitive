@@ -23,9 +23,9 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
-    // "paths": {
-    //   "@nest/shared": ["../shared/src"]
-    // }
+    "noUnusedParameters": true,
+    "paths": {
+      "src/*": ["src/*"]
+    }
   }
 }

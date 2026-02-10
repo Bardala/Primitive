@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { PrivateChatList } from '../components/PrivateChatList';
 import { PrivateChatWindow } from '../components/PrivateChatWindow';
@@ -8,6 +8,7 @@ import '../styles/private-chat.css';
 
 export const PrivateChatPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [recipientName, setRecipientName] = useState<string>('');
 
@@ -19,7 +20,11 @@ export const PrivateChatPage: React.FC = () => {
     }
   }, [searchParams, activeConversationId]);
 
-  const handleSelectConversation = (id: string, name: string) => {
+  const handleSelectConversation = (id: string, name: string, type: 'private' | 'space') => {
+    if (type === 'space') {
+      navigate(`/space/${id}`);
+      return;
+    }
     setActiveConversationId(id);
     setRecipientName(name);
     // Update URL to reflect selected conversation
@@ -40,10 +45,7 @@ export const PrivateChatPage: React.FC = () => {
       role="application"
       aria-label="Private messaging"
     >
-      <PrivateChatList
-        activeConversationId={activeConversationId}
-        onSelectConversation={handleSelectConversation}
-      />
+      <PrivateChatList activeId={activeConversationId} onSelect={handleSelectConversation} />
 
       {activeConversationId ? (
         <PrivateChatWindow

@@ -29,7 +29,6 @@ import {
   AddMemberRes,
   MembersRes,
   DeleteMemRes,
-  ChatRes,
   UnReadMsgsNumRes,
   SpaceBlogsRes,
   CreateSpaceReq,
@@ -151,17 +150,6 @@ export class SpaceController {
     @Param('memberId', ParseUUIDPipe) memberId: string,
   ): Promise<DeleteMemRes> {
     return await this.spaceService.deleteMember(user.id, spaceId, memberId);
-  }
-
-  @Get(ENDPOINT.Get_SPACE_CHAT)
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Get space chat messages' })
-  @ApiResponse({ status: 200, description: 'Chat messages retrieved', type: ChatRes })
-  async getChat(
-    @GetUser() user: User,
-    @Param('spaceId', ParseUUIDPipe) spaceId: string,
-  ): Promise<ChatRes> {
-    return await this.spaceService.getChat(user.id, spaceId);
   }
 
   @Get(ENDPOINT.GET_UNREAD_MSGS_NUM)

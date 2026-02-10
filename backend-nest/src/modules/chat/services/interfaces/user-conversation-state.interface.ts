@@ -16,12 +16,13 @@ export interface IUserConversationStateService {
   ): Promise<UserConversationState>;
 
   /**
-   * Mark all messages in a conversation as read up to now.
+   * Mark all messages in a conversation as read up to now or up to a specific time.
    */
   markAsRead(
     userId: string,
     conversationId: string,
     conversationType: ConversationType,
+    lastReadAt?: Date,
   ): Promise<UserConversationState>;
 
   /**
@@ -59,4 +60,13 @@ export interface IUserConversationStateService {
     userId: string,
     conversationIds: string[],
   ): Promise<Map<string, number>>;
+  /**
+   * Toggle mute status for a conversation.
+   */
+  toggleMute(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType,
+    isMuted?: boolean,
+  ): Promise<UserConversationState>;
 }

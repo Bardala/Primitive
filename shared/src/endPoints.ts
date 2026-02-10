@@ -124,4 +124,6 @@ export enum ENDPOINT {
 
   // *Space Chat Read Tracking
   MARK_SPACE_CHAT_AS_READ = '/spaces/:spaceId/messages/read',
+  MUTE_PRIVATE_CHAT = '/chats/private/:conversationId/mute',
+  MUTE_SPACE_CHAT = '/spaces/:spaceId/mute',
 }

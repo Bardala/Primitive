@@ -3,6 +3,7 @@ import { UserStatus } from '@/features/user/components/UserStatus';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useChatContext } from '../context/ChatContext';
 import {
   useGetOtherUserId,
   useMarkAsRead,
@@ -70,6 +71,7 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
   );
   const { markAsRead } = useMarkAsRead();
   const { data: conversationsData } = usePrivateConversations();
+  const { setActiveConversation } = useChatContext();
 
   // Get recipient info from conversations
   const conversation = conversationsData?.conversations.find(c => c.id === conversationId);
@@ -87,13 +89,22 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  // Set active conversation when component mounts, clear when unmounts
+  useEffect(() => {
+    setActiveConversation(conversationId, 'private');
+    return () => {
+      setActiveConversation(null, null);
+    };
+  }, [conversationId, setActiveConversation]);
+
   // Mark as read when viewing conversation
   useEffect(() => {
     if (conversationId && !hasMarkedAsRead.current) {
+      const lastMsgId = messages && messages.length > 0 ? messages[0].id : undefined;
       hasMarkedAsRead.current = true;
-      void markAsRead(conversationId);
+      void markAsRead(conversationId, lastMsgId);
     }
-  }, [conversationId, markAsRead]);
+  }, [conversationId, markAsRead, messages]);
 
   // Reset read marker when conversation changes
   useEffect(() => {
@@ -108,9 +119,9 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
   // Mark as read when new messages arrive while viewing
   useEffect(() => {
     if (messages && messages.length > 0 && conversationId) {
-      void markAsRead(conversationId);
+      void markAsRead(conversationId, messages[0].id);
     }
-  }, [messages?.length, conversationId, markAsRead]);
+  }, [messages?.length, conversationId, markAsRead, messages]);
 
   const getCurrentUserId = useCallback((): string | null => {
     const userStr = localStorage.getItem(LOCALS.CURR_USER);

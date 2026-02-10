@@ -18,8 +18,6 @@ import { UserConversationStateService } from './user-conversation-state.service'
 import { ConversationType } from '../entities/user-conversation-state.entity';
 
 import { PresenceService } from '../../presence/presence.service';
-import { NotificationService } from '../../notification/services/notification.service';
-import { NotificationType } from '@nest/shared';
 
 @Injectable()
 export class PrivateChatService implements IPrivateChatService {
@@ -30,7 +28,6 @@ export class PrivateChatService implements IPrivateChatService {
     private messageRepository: Repository<PrivateMessage>,
     private userConversationStateService: UserConversationStateService,
     private presenceService: PresenceService,
-    private notificationService: NotificationService,
   ) {}
 
   async createConversation(user1Id: string, user2Id: string): Promise<IPrivateConversation> {
@@ -96,6 +93,12 @@ export class PrivateChatService implements IPrivateChatService {
         // Set real-time online status
         const isOnline = this.presenceService.isOnline(otherUser.id);
 
+        const state = await this.userConversationStateService.getOrCreate(
+          userId,
+          c.id,
+          ConversationType.PRIVATE,
+        );
+
         return {
           ...c,
           otherUser: {
@@ -106,6 +109,7 @@ export class PrivateChatService implements IPrivateChatService {
           lastMessage: lastMessage ?? undefined,
           unreadCount: unreadCounts.get(c.id) ?? 0,
           otherUserLastReadAt,
+          isMuted: state.isMuted,
         };
       }),
     );
@@ -157,15 +161,6 @@ export class PrivateChatService implements IPrivateChatService {
       ConversationType.PRIVATE,
     );
 
-    const recipientId =
-      conversation.user1Id === senderId ? conversation.user2Id : conversation.user1Id;
-    await this.notificationService.sendNotification(
-      recipientId,
-      NotificationType.MESSAGE,
-      conversationId,
-      { messageId: message.id, senderId, conversationId, content: message.content },
-    );
-
     return message;
   }
 
@@ -199,7 +194,7 @@ export class PrivateChatService implements IPrivateChatService {
   /**
    * Mark all messages in a conversation as read for a user.
    */
-  async markAsRead(userId: string, conversationId: string): Promise<void> {
+  async markAsRead(userId: string, conversationId: string, lastReadId?: string): Promise<void> {
     const conversation = await this.conversationRepository.findOne({
       where: { id: conversationId },
     });
@@ -212,10 +207,19 @@ export class PrivateChatService implements IPrivateChatService {
       throw new ForbiddenException('You are not a participant in this conversation');
     }
 
+    let lastReadAt: Date | undefined;
+    if (lastReadId) {
+      const msg = await this.messageRepository.findOne({ where: { id: lastReadId } });
+      if (msg) {
+        lastReadAt = msg.createdAt;
+      }
+    }
+
     await this.userConversationStateService.markAsRead(
       userId,
       conversationId,
       ConversationType.PRIVATE,
+      lastReadAt,
     );
   }
 
@@ -230,5 +234,29 @@ export class PrivateChatService implements IPrivateChatService {
   async getDecoratedConversations(userId: string): Promise<any[]> {
     const result = await this.getConversations(userId);
     return result.conversations;
+  }
+
+  /**
+   * Toggle mute status for a private conversation.
+   */
+  async toggleMute(userId: string, conversationId: string, isMuted?: boolean): Promise<void> {
+    const conversation = await this.conversationRepository.findOne({
+      where: { id: conversationId },
+    });
+
+    if (!conversation) {
+      throw new NotFoundException('Conversation not found');
+    }
+
+    if (conversation.user1Id !== userId && conversation.user2Id !== userId) {
+      throw new ForbiddenException('Not a participant in this conversation');
+    }
+
+    await this.userConversationStateService.toggleMute(
+      userId,
+      conversationId,
+      ConversationType.PRIVATE,
+      isMuted,
+    );
   }
 }

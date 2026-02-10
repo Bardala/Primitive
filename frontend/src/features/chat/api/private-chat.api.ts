@@ -42,10 +42,12 @@ export const PrivateChatApi = {
    * Mark all messages in a conversation as read
    * Updates the UserConversationState.lastReadAt timestamp
    */
-  markAsRead: (conversationId: string) =>
-    postFn<undefined, { success: boolean }>(ENDPOINT.MARK_PRIVATE_CHAT_AS_READ, undefined, [
-      conversationId,
-    ]),
+  markAsRead: (conversationId: string, lastReadId?: string) =>
+    postFn<{ lastReadId?: string }, { success: boolean }>(
+      ENDPOINT.MARK_PRIVATE_CHAT_AS_READ,
+      { lastReadId },
+      [conversationId]
+    ),
 
   // NOTE: sendMessage has been removed - use PrivateChatSocketApi.sendMessage() instead
   // Messages are now sent exclusively via WebSocket for real-time delivery

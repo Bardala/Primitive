@@ -183,6 +183,7 @@ export interface UserConversationState {
   conversationType: ConversationType;
   lastReadAt?: Date;
   lastSoundPlayedAt?: Date;
+  isMuted?: boolean;
 }
 
 export enum SpacePermissionType {

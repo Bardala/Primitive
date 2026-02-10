@@ -1,12 +1,12 @@
 import { useAuthContext, useTheme } from '@/core/context';
 import { isLoggedIn } from '@/core/services';
 import { ROUTES } from '@/core/utils';
+import { ChatIcon } from '@/features/chat/components/ChatIcon';
 import { NotificationIcon } from '@/features/notification/components';
 import { UserLink } from '@/features/user';
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BsChatDots } from 'react-icons/bs';
 import { FaCog } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { TiHome } from 'react-icons/ti';
@@ -97,10 +97,7 @@ export const NavBar = () => {
             <FaCog />
             {!isMobile && <span className="nav-text">{t('navbar.settings')}</span>}
           </Link>
-          <Link to="/chat" className="nav-link" title="Messages">
-            <BsChatDots />
-            {!isMobile && <span className="nav-text">Chat</span>}
-          </Link>
+          <ChatIcon />
 
           <ToggleThemeButton />
         </nav>

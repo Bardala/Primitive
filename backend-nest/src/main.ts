@@ -37,7 +37,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: (configService.get('CLIENT_URL') as string) || 'http://localhost:3000',
+    origin: (configService.get('ORIGIN') as string) || 'http://localhost:3000',
     credentials: true,
   });
 
@@ -70,7 +70,7 @@ async function bootstrap() {
     },
   });
 
-  const port = Number(configService.get('PORT') || 3000);
+  const port = Number(configService.get('PORT'));
   const environment = configService.get('NODE_ENV') as string;
 
   await app.listen(port);

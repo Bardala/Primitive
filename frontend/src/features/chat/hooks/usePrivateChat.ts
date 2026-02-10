@@ -259,9 +259,9 @@ export const useMarkAsRead = () => {
   const queryClient = useQueryClient();
 
   const markAsRead = useCallback(
-    async (conversationId: string) => {
+    async (conversationId: string, lastReadId?: string) => {
       try {
-        await PrivateChatApi.markAsRead(conversationId);
+        await PrivateChatApi.markAsRead(conversationId, lastReadId);
         // Refresh conversations to update unread counts
         void queryClient.invalidateQueries(PRIVATE_CHAT_KEYS.conversations);
       } catch (error) {

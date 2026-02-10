@@ -59,12 +59,24 @@ export class PrivateChatController {
   async markAsRead(
     @GetUser() user: User,
     @Param('conversationId', ParseUUIDPipe) conversationId: string,
+    @Body() body?: { lastReadId?: string },
   ): Promise<{ success: boolean }> {
-    await this.privateChatService.markAsRead(user.id, conversationId);
+    await this.privateChatService.markAsRead(user.id, conversationId, body?.lastReadId);
 
     // Broadcast read receipt via WebSocket
     this.chatGateway.sendReadReceipt(conversationId, user.id);
 
+    return { success: true };
+  }
+
+  @Post(ENDPOINT.MUTE_PRIVATE_CHAT as any)
+  @HttpCode(200)
+  async toggleMute(
+    @GetUser() user: User,
+    @Param('conversationId', ParseUUIDPipe) conversationId: string,
+    @Body() body: { isMuted?: boolean },
+  ): Promise<{ success: boolean }> {
+    await this.privateChatService.toggleMute(user.id, conversationId, body.isMuted);
     return { success: true };
   }
 }

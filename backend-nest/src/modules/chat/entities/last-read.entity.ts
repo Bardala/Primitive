@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { ChatMessage } from './chat-message.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
 import { User } from 'src/modules/user/entities/user.entity';
@@ -12,7 +12,7 @@ export class LastRead implements ILastReadMsg {
   @PrimaryColumn('char', { length: 36 })
   spaceId: string;
 
-  @PrimaryColumn('char', { length: 36 })
+  @Column('char', { length: 36 })
   lastReadId: string;
 
   // Relationships

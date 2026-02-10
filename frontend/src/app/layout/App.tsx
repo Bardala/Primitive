@@ -6,6 +6,7 @@ import { ROUTES } from '@/core/utils';
 import { Login, SignUp } from '@/features/auth';
 import { BlogDetails, CreateBlogPage } from '@/features/blog';
 import { PrivateChatPage } from '@/features/chat';
+import { ChatProvider } from '@/features/chat/context/ChatContext';
 import { NotificationProvider } from '@/features/notification/context/NotificationContext';
 import { NotificationPage } from '@/features/notification/pages';
 import { Space } from '@/features/spaces';
@@ -68,9 +69,11 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthContextProvider>
-            <NotificationProvider>
-              <AppContent />
-            </NotificationProvider>
+            <ChatProvider>
+              <NotificationProvider>
+                <AppContent />
+              </NotificationProvider>
+            </ChatProvider>
             <ReactQueryDevtools />
           </AuthContextProvider>
         </ThemeProvider>

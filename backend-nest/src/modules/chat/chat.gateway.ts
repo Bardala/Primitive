@@ -9,13 +9,13 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SOCKET_EVENT } from '@nest/shared';
 import { ChatService } from './services/chat.service';
-import { LastReadService } from './services/last-read.service';
-import { LastRead } from './entities';
 import { SocketConfig } from 'src/config/socket.config';
 import { CreateSocketMsgReq } from './dto';
 import { WsExceptionsFilter } from 'src/common/filters/ws-exceptions.filter';
 import { SocketUserData } from 'src/common/adapters/authenticated-socket.adapter';
 import { PrivateChatService } from './services/private-chat.service';
+import { UserConversationStateService } from './services/user-conversation-state.service';
+import { ConversationType } from './entities/user-conversation-state.entity';
 
 import { UserActivityService } from '../user/services/user-activity.service';
 import { PresenceService } from '../presence/presence.service';
@@ -42,10 +42,10 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
 
   constructor(
     private readonly chatService: ChatService,
-    private readonly lastReadService: LastReadService,
     private readonly privateChatService: PrivateChatService,
     private readonly presenceService: PresenceService,
     private readonly userActivityService: UserActivityService,
+    private readonly userConversationStateService: UserConversationStateService,
   ) {}
 
   handleConnection(socket: Socket) {
@@ -154,11 +154,20 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       const usersInRoom = new Set(socketsInRoom.map((s) => s.data.user.sub));
 
       if (!usersInRoom.has(data.toUserId)) {
-        this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
-          type: 'PRIVATE_MESSAGE_NEW',
-          message,
-          conversationId: data.conversationId,
-        });
+        // Check if recipient muted this conversation
+        const state = await this.userConversationStateService.getOrCreate(
+          data.toUserId,
+          data.conversationId,
+          ConversationType.PRIVATE,
+        );
+
+        if (!state.isMuted) {
+          this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
+            type: 'PRIVATE_MESSAGE_NEW',
+            message,
+            conversationId: data.conversationId,
+          });
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -208,11 +217,20 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
         // Skip if user is currently looking at the room
         if (onlineUserIdsInRoom.has(memberId)) continue;
 
-        this.server.to(memberId).emit(SOCKET_EVENT.NOTIFICATION, {
-          type: 'MESSAGE_NEW',
-          message,
-          spaceId: message.spaceId,
-        });
+        // Check if member muted this space
+        const state = await this.userConversationStateService.getOrCreate(
+          memberId,
+          message.spaceId,
+          ConversationType.SPACE,
+        );
+
+        if (!state.isMuted) {
+          this.server.to(memberId).emit(SOCKET_EVENT.NOTIFICATION, {
+            type: 'MESSAGE_NEW',
+            message,
+            spaceId: message.spaceId,
+          });
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -239,8 +257,14 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       }
 
       const { spaceId, lastReadId } = data;
-      const lastRead = new LastRead(user.sub, spaceId, lastReadId);
-      await this.lastReadService.updateLastRead(lastRead);
+      await this.chatService.markAsRead(user.sub, spaceId, lastReadId);
+
+      // Notify the same user (on other devices/tabs) to clear unread counts
+      this.server.to(user.sub).emit('READ_CONFIRMED', {
+        spaceId,
+        conversationType: 'space',
+      });
+
       this.logger.debug(
         `User ${user?.username} (${user?.sub}) marked messages as read in space ${spaceId}`,
       );
@@ -272,8 +296,7 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       void socket.leave(spaceId);
 
       // Update last read message before leaving
-      const lastRead = new LastRead(user.sub, spaceId, lastReadId);
-      await this.lastReadService.updateLastRead(lastRead);
+      await this.chatService.markAsRead(user.sub, spaceId, lastReadId);
 
       this.logger.log(
         `User ${user?.username} (${user?.sub}) left room ${spaceId}, last read msg ${lastReadId}`,

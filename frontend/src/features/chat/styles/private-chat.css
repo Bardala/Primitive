@@ -82,12 +82,48 @@
   width: 100%;
 }
 
-.private-chat-list__user-name-container {
+.private-chat-list__avatar-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background-color: #f0f2f5;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #8696a0;
+  flex-shrink: 0;
+}
+
+.private-chat-list__item--space .private-chat-list__avatar-container {
+  background-color: #e7fce3;
+  color: #00a884;
+}
+
+.private-chat-list__online-indicator {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 12px;
+  height: 12px;
+  background-color: #00a884;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.private-chat-list__content {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.private-chat-list__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .private-chat-list__username {
@@ -99,26 +135,15 @@
   white-space: nowrap;
 }
 
-.private-chat-list__online-indicator {
-  width: 10px;
-  height: 10px;
-  background-color: #00a884;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 0 0 2px #ffffff;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.6;
-  }
+.private-chat-list__item {
+  position: relative;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .private-chat-list__meta {
@@ -148,6 +173,31 @@
 .private-chat-list__preview--empty {
   font-style: italic;
   color: #8696a0;
+}
+
+.private-chat-list__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.private-chat-list__mute-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #8696a0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.private-chat-list__mute-btn:hover {
+  background-color: #e9edef;
+  color: #54656f;
 }
 
 .private-chat-list__unread-badge {

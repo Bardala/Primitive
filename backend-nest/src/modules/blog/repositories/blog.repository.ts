@@ -84,10 +84,10 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
 
   async getSmartFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const currentTime = Date.now();
-    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
     const oneDayInMs = 24 * 60 * 60 * 1000;
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
 
-    const blogScoresQuery = this.createQueryBuilder('b')
+    const rawResults = await this.createQueryBuilder('b')
       .select([
         'b.id as id',
         'b.title as title',
@@ -95,25 +95,16 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
         'b.spaceId as spaceId',
         'b.author as author',
         'b.timestamp as timestamp',
-        `SUBSTRING(b.content, 1, ${this.blogIconLength}) as content`,
-        `EXP(-(${currentTime} - b.timestamp) / ${twoDaysInMs}) as time_score`,
-        `LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) as like_score`,
-        `LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) as comment_score`,
-        `LOG(1 + COUNT(DISTINCT CASE 
-          WHEN rc.timestamp > ${currentTime} - ${oneDayInMs} 
-          THEN rc.id END
-        )) / LOG(20) as recent_comment_score`,
-        `(EXP(-(${currentTime} - b.timestamp) / ${twoDaysInMs}) * 0.4) +
-         (LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) * 0.25) +
-         (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.2) +
-         (LOG(1 + COUNT(DISTINCT CASE 
-           WHEN rc.timestamp > ${currentTime} - ${oneDayInMs} 
-           THEN rc.id END
-         )) / LOG(20) * 0.15) as score`,
       ])
-      .leftJoin('b.likes', 'l')
-      .leftJoin('b.comments', 'c')
-      .leftJoin('b.comments', 'rc')
+      .addSelect(`SUBSTRING(b.content, 1, ${this.blogIconLength})`, 'content')
+      .addSelect('(SELECT COUNT(*) FROM likes WHERE blogId = b.id)', 'likeCount')
+      .addSelect('(SELECT COUNT(*) FROM comments WHERE blogId = b.id)', 'commentCount')
+      .addSelect(
+        `(SELECT COUNT(*) FROM comments WHERE blogId = b.id AND timestamp > ${
+          currentTime - oneDayInMs
+        })`,
+        'recentCommentCount',
+      )
       .where((qb) => {
         const memberSpaces = qb
           .subQuery()
@@ -143,24 +134,25 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
         memberId,
         publicSpaceId: '1',
       })
-      .groupBy('b.id, b.title, b.content, b.userId, b.spaceId, b.author, b.timestamp')
       .getRawMany();
 
-    const rawResults = await blogScoresQuery;
+    // Calculate score and paginate in JS
+    const scoredResults = rawResults.map((r) => {
+      const likeScore = Math.log(1 + Number(r.likeCount)) / Math.log(100);
+      const commentScore = Math.log(1 + Number(r.commentCount)) / Math.log(50);
+      const recentCommentScore = Math.log(1 + Number(r.recentCommentCount)) / Math.log(20);
+      const timeScore = Math.exp(-(currentTime - Number(r.timestamp)) / twoDaysInMs);
 
-    // Convert raw results to Blog entities with pagination
-    const paginatedResults = rawResults
-      .sort((a, b) => {
-        if (b.score !== a.score) {
-          return b.score - a.score;
-        }
-        return (
-          new Date(b.timestamp as number).getTime() - new Date(a.timestamp as number).getTime()
-        );
-      })
+      const score =
+        timeScore * 0.4 + likeScore * 0.25 + commentScore * 0.2 + recentCommentScore * 0.15;
+      return { ...r, score };
+    });
+
+    const paginatedResults = scoredResults
+      .sort((a, b) => b.score - a.score || Number(b.timestamp) - Number(a.timestamp))
       .slice(offset, offset + pageSize);
 
-    const blogs: Blog[] = this.create(
+    return this.create(
       paginatedResults.map((result) => ({
         id: result.id,
         title: result.title,
@@ -168,19 +160,17 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
         userId: result.userId,
         spaceId: result.spaceId,
         author: result.author,
-        timestamp: result.timestamp,
+        timestamp: Number(result.timestamp),
       })),
     );
-
-    return blogs;
   }
 
   async getSmartPublicFeeds(pageSize: number, offset: number): Promise<Blog[]> {
     const currentTime = Date.now();
-    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
     const oneDayInMs = 24 * 60 * 60 * 1000;
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
 
-    const blogScoresQuery = this.createQueryBuilder('b')
+    const rawResults = await this.createQueryBuilder('b')
       .select([
         'b.id as id',
         'b.title as title',
@@ -188,49 +178,50 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
         'b.spaceId as spaceId',
         'b.author as author',
         'b.timestamp as timestamp',
-        `SUBSTRING(b.content, 1, ${this.blogIconLength}) as content`,
-        `EXP(-(${currentTime} - b.timestamp) / ${twoDaysInMs}) as time_score`,
-        `LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) as like_score`,
-        `LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) as comment_score`,
-        `LOG(1 + COUNT(DISTINCT CASE 
-          WHEN rc.timestamp > ${currentTime} - ${oneDayInMs} 
-          THEN rc.id END
-        )) / LOG(20) as recent_comment_score`,
-        `(EXP(-(${currentTime} - b.timestamp) / ${twoDaysInMs}) * 0.4) +
-         (LOG(1 + COUNT(DISTINCT l.userId)) / LOG(100) * 0.25) +
-         (LOG(1 + COUNT(DISTINCT c.id)) / LOG(50) * 0.2) +
-         (LOG(1 + COUNT(DISTINCT CASE 
-           WHEN rc.timestamp > ${currentTime} - ${oneDayInMs} 
-           THEN rc.id END
-         )) / LOG(20) * 0.15) as score`,
       ])
-      .leftJoin('b.likes', 'l')
-      .leftJoin('b.comments', 'c')
-      .leftJoin('b.comments', 'rc')
+      .addSelect(`SUBSTRING(b.content, 1, ${this.blogIconLength})`, 'content')
+      .addSelect('(SELECT COUNT(*) FROM likes WHERE blogId = b.id)', 'likeCount')
+      .addSelect('(SELECT COUNT(*) FROM comments WHERE blogId = b.id)', 'commentCount')
+      .addSelect(
+        `(SELECT COUNT(*) FROM comments WHERE blogId = b.id AND timestamp > ${
+          currentTime - oneDayInMs
+        })`,
+        'recentCommentCount',
+      )
       .leftJoin('b.space', 's')
       .where('s.status = :status OR b.spaceId = :publicSpaceId', {
         status: 'public',
         publicSpaceId: '1',
       })
-      .groupBy('b.id, b.title, b.content, b.userId, b.spaceId, b.author, b.timestamp')
       .getRawMany();
 
-    const rawResults = await blogScoresQuery;
+    // Calculate score and paginate in JS
+    const scoredResults = rawResults.map((r) => {
+      const likeScore = Math.log(1 + Number(r.likeCount)) / Math.log(100);
+      const commentScore = Math.log(1 + Number(r.commentCount)) / Math.log(50);
+      const recentCommentScore = Math.log(1 + Number(r.recentCommentCount)) / Math.log(20);
+      const timeScore = Math.exp(-(currentTime - Number(r.timestamp)) / twoDaysInMs);
 
-    // Convert raw results to Blog entities with pagination
-    const paginatedResults = rawResults
-      .sort((a, b) => {
-        if (b.score !== a.score) {
-          return b.score - a.score;
-        }
-        return (
-          new Date(b.timestamp as number).getTime() - new Date(a.timestamp as number).getTime()
-        );
-      })
+      const score =
+        timeScore * 0.4 + likeScore * 0.25 + commentScore * 0.2 + recentCommentScore * 0.15;
+      return { ...r, score };
+    });
+
+    const paginatedResults = scoredResults
+      .sort((a, b) => b.score - a.score || Number(b.timestamp) - Number(a.timestamp))
       .slice(offset, offset + pageSize);
 
-    // const feeds = paginatedResults.map((b: Blog) => new Feed(b));
-    return paginatedResults as Blog[];
+    return this.create(
+      paginatedResults.map((result) => ({
+        id: result.id,
+        title: result.title,
+        content: result.content,
+        userId: result.userId,
+        spaceId: result.spaceId,
+        author: result.author,
+        timestamp: Number(result.timestamp),
+      })),
+    );
   }
 
   async findById(id: string): Promise<Blog | null> {

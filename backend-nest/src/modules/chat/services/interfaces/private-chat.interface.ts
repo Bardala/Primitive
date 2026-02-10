@@ -13,5 +13,8 @@ export interface IPrivateChatService {
     limit: number,
     offset: number,
   ): Promise<PrivateMessage[]>;
+  getConversations(userId: string): Promise<any>;
+  markAsRead(userId: string, conversationId: string, lastReadId?: string): Promise<void>;
   getDecoratedConversations(userId: string): Promise<any[]>;
+  toggleMute(userId: string, conversationId: string, isMuted?: boolean): Promise<void>;
 }

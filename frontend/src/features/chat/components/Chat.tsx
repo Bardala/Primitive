@@ -8,6 +8,7 @@ import { FormEvent, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BiSend } from 'react-icons/bi';
 
+import { useChatContext } from '../context/ChatContext';
 import { useChat } from '../hooks/useChat';
 
 import '../styles/chat.css';
@@ -27,6 +28,16 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
     if (msgMutate.isSuccess) setNewMsg('');
   };
 
+  const { markSpaceAsRead, setActiveConversation } = useChatContext();
+
+  // Set active conversation when viewing this space
+  useEffect(() => {
+    setActiveConversation(space.id, 'space');
+    return () => {
+      setActiveConversation(null, null);
+    };
+  }, [space.id, setActiveConversation]);
+
   // Emit READ_MESSAGE whenever messages update
   useEffect(() => {
     const lastMsgId = chatQuery.data?.messages[0]?.id;
@@ -36,8 +47,10 @@ export const Chat: React.FC<{ space: Space }> = ({ space }) => {
         userId: currUser.id,
         lastReadId: lastMsgId,
       } as LastReadMsg);
+      // Immediately update local state unread count
+      void markSpaceAsRead(space.id);
     }
-  }, [chatQuery.data?.messages, currUser?.id, space.id]);
+  }, [chatQuery.data?.messages, currUser?.id, space.id, markSpaceAsRead]);
 
   // Emit LEAVE_ROOM on unmount
   useEffect(() => {

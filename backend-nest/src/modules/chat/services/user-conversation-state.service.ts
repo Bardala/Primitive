@@ -48,15 +48,16 @@ export class UserConversationStateService implements IUserConversationStateServi
   }
 
   /**
-   * Mark all messages in a conversation as read up to now.
+   * Mark all messages in a conversation as read up to now or up to a specific time.
    */
   async markAsRead(
     userId: string,
     conversationId: string,
     conversationType: ConversationType,
+    lastReadAt?: Date,
   ): Promise<UserConversationState> {
     const state = await this.getOrCreate(userId, conversationId, conversationType);
-    state.lastReadAt = new Date();
+    state.lastReadAt = lastReadAt ?? new Date();
     return this.stateRepository.save(state);
   }
 
@@ -164,5 +165,19 @@ export class UserConversationStateService implements IUserConversationStateServi
     );
 
     return result;
+  }
+
+  /**
+   * Toggle mute status for a conversation.
+   */
+  async toggleMute(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType,
+    isMuted?: boolean,
+  ): Promise<UserConversationState> {
+    const state = await this.getOrCreate(userId, conversationId, conversationType);
+    state.isMuted = isMuted ?? !state.isMuted;
+    return this.stateRepository.save(state);
   }
 }

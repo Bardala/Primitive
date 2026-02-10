@@ -32,6 +32,9 @@ export class UserConversationState implements IUserConversationState {
   @Column({ type: 'timestamp', nullable: true })
   lastSoundPlayedAt!: Date;
 
+  @Column({ type: 'boolean', default: false })
+  isMuted!: boolean;
+
   // Relationships
   @ManyToOne(() => User, (user) => user.activity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
