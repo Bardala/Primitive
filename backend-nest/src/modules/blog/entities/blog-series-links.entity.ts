@@ -19,7 +19,7 @@ export class BlogSeriesLink {
   @JoinColumn({ name: 'seriesId' })
   series!: BlogSeries;
 
-  @ManyToOne(() => Blog, (blog) => blog.tags, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Blog, (blog) => blog.seriesLinks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogId' })
   blog!: Blog;
 }

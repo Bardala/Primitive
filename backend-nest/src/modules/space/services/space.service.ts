@@ -313,6 +313,7 @@ export class SpaceService {
       skip: offset,
       take: PAGE_SIZE,
       order: { timestamp: 'DESC' },
+      relations: ['space', 'seriesLinks', 'seriesLinks.series', 'tags'],
     });
 
     return { blogs, page };
@@ -325,6 +326,7 @@ export class SpaceService {
       skip: offset,
       take: PAGE_SIZE,
       order: { timestamp: 'DESC' },
+      relations: ['space', 'seriesLinks', 'seriesLinks.series', 'tags'],
     });
 
     return { blogs, page };

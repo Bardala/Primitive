@@ -13,6 +13,7 @@ import {
   JoinTable,
   JoinColumn,
 } from 'typeorm';
+import { BlogSeriesLink } from './blog-series-links.entity';
 import { Blog as IBlog } from '@nest/shared';
 
 @Entity('blogs')
@@ -67,9 +68,6 @@ export class Blog implements IBlog {
   })
   tags!: Tag[];
 
-  // @CreateDateColumn()
-  // createdAt: Date;
-
-  // @UpdateDateColumn()
-  // updatedAt: Date;
+  @OneToMany(() => BlogSeriesLink, (link) => link.blog)
+  seriesLinks!: BlogSeriesLink[];
 }

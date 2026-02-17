@@ -5,7 +5,7 @@ import { Blog, DefaultSpaceId } from '@nest/shared';
 
 import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
-import { RiGroup2Fill } from 'react-icons/ri';
+import { RiGroup2Fill, RiStackLine } from 'react-icons/ri';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useCommCounts } from '../hooks/useBlog';
@@ -47,9 +47,21 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
             {numOfComments.data?.numOfComments} <LiaCommentSolid size={20} />
           </span>
 
-          {post.spaceId !== DefaultSpaceId && (
-            <Link to={`/space/${post?.spaceId}`} className="space-link" title={t('blog.space')}>
-              <RiGroup2Fill size={20} />
+          {post.space && post.spaceId !== DefaultSpaceId && (
+            <Link to={`/space/${post.spaceId}`} className="space-link" title={t('blog.space')}>
+              <RiGroup2Fill size={18} />
+              <span className="meta-text">{post.space.name}</span>
+            </Link>
+          )}
+
+          {post.seriesLinks && post.seriesLinks.length > 0 && post.seriesLinks[0].series && (
+            <Link
+              to={`/series/${post.seriesLinks[0].series.id}`}
+              className="series-link"
+              title={t('blog.series')}
+            >
+              <RiStackLine size={18} />
+              <span className="meta-text">{post.seriesLinks[0].series.name}</span>
             </Link>
           )}
 
@@ -57,6 +69,16 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
             {formatTimeShort(Number(post.timestamp))}
           </time>
         </div>
+
+        {post.tags && post.tags.length > 0 && (
+          <div className="tags-container">
+            {post.tags.map(tag => (
+              <Link key={tag.id} to={`/tag/${tag.id}`} className="tag-link">
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {viewMode === 'full-blogs' && (
           <div className="blog-excerpt">

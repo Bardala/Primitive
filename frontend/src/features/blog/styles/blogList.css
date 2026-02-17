@@ -310,3 +310,30 @@ time,
     font-size: 11px;
   }
 }
+
+/* Tags */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tag-link {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: var(--color-bg-subtle);
+  color: var(--color-primary);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.tag-link:hover {
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-primary-light);
+  transform: translateY(-1px);
+}

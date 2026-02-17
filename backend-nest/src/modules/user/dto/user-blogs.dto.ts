@@ -12,6 +12,8 @@ export class UserBlogsRes implements IUserBlogsRes {
         content: 'Blog content...',
         author: 'JohnDoe',
         timestamp: 1633046400000,
+        space: { id: 'space1', name: 'My Space', status: 'public' },
+        tags: [{ id: 'tag1', name: 'react' }],
       },
     ],
     description: 'User blogs',

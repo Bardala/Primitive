@@ -109,7 +109,7 @@ export class BlogService implements IBlogService {
   async getBlog(userId: string | undefined, blogId: string): Promise<BlogRes> {
     const blog = await this.blogRepository.findOne({
       where: { id: blogId },
-      relations: ['space', 'user'],
+      relations: ['space', 'user', 'seriesLinks', 'seriesLinks.series', 'tags'],
     });
 
     if (!blog) {

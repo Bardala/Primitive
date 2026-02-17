@@ -2,11 +2,14 @@ import { useAuthContext } from '@/core/context';
 import { formatTimeShort, isArabic } from '@/core/utils';
 import { UserLink } from '@/features/user';
 
+import { DefaultSpaceId } from '@nest/shared';
+
 import GithubSlugger from 'github-slugger';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LiaCommentSolid } from 'react-icons/lia';
-import { useLocation, useParams } from 'react-router-dom';
+import { RiGroup2Fill, RiStackLine } from 'react-icons/ri';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { AddToSeries } from '../components/AddToSeries';
 import { BlogDetailsAction } from '../components/BlogDetailsAction';
@@ -129,6 +132,28 @@ export const BlogDetails = () => {
                   userId={blog.userId!}
                   username={blog.author || t('blogDetails.unknown')}
                 />
+                {blog.space && blog.space.id !== DefaultSpaceId && (
+                  <>
+                    <span className="mx-2">•</span>
+                    <Link
+                      to={`/space/${blog.space.id}`}
+                      className="hover:underline flex items-center gap-1 inline-flex"
+                    >
+                      <RiGroup2Fill /> {blog.space.name}
+                    </Link>
+                  </>
+                )}
+                {blog.seriesLinks && blog.seriesLinks.length > 0 && blog.seriesLinks[0].series && (
+                  <>
+                    <span className="mx-2">•</span>
+                    <Link
+                      to={`/series/${blog.seriesLinks[0].series.id}`}
+                      className="hover:underline flex items-center gap-1 inline-flex"
+                    >
+                      <RiStackLine /> {blog.seriesLinks[0].series.name}
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="reading-time">
@@ -155,6 +180,16 @@ export const BlogDetails = () => {
               )}
 
               <div className="blog-content">{MarkdownSection}</div>
+
+              {blog.tags && blog.tags.length > 0 && (
+                <div className="blog-tags">
+                  {blog.tags.map(tag => (
+                    <Link key={tag.id} to={`/tag/${tag.id}`} className="tag-pill">
+                      #{tag.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               <div className="blog-meta">
                 <p className="created-at">{formatTimeShort(blog.timestamp!)}</p>

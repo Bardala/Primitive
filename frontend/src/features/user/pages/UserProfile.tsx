@@ -148,6 +148,7 @@ export const UserProfile = () => {
                   posts={blogs}
                   isEnd={isEnd}
                   fetchNextPage={userBlogsQuery.fetchNextPage}
+                  viewMode="full-blogs"
                 />
               ) : (
                 !userBlogsQuery.isLoading && (

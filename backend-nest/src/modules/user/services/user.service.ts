@@ -234,7 +234,7 @@ export class UserService implements IUserService, IUserFollowService {
 
     const [blogs, _total] = await this.blogRepository.findAndCount({
       where: { userId },
-      relations: ['user', 'space'],
+      relations: ['user', 'space', 'seriesLinks', 'seriesLinks.series', 'tags'],
       order: { timestamp: 'DESC' },
       skip: offset,
       take: pageSize,

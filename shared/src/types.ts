@@ -8,6 +8,9 @@ export interface Blog {
   spaceId: string;
   author?: string;
   timestamp?: number;
+  space?: Space;
+  seriesLinks?: (BlogSeriesLink & { series: BlogSeries })[];
+  tags?: Tag[];
 }
 
 export interface Comment {

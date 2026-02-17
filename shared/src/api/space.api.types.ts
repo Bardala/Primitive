@@ -30,6 +30,7 @@ export interface DefaultSpaceRes {
 
 export interface SpaceBlogsReq {}
 export interface SpaceBlogsRes {
+  // Includes space, tags, series info
   blogs: Blog[];
   page: number;
 }

@@ -45,6 +45,7 @@ export interface GetFollowersRes {
 
 export interface UserBlogsReq {}
 export interface UserBlogsRes {
+  // Includes space, tags, series info
   blogs: Blog[];
   page: number;
 }

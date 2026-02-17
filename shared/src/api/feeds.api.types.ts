@@ -6,6 +6,7 @@ export interface FeedsReq {
 }
 
 export interface FeedsRes {
+  // Includes space, tags, series info
   feeds: Blog[];
   page: number;
 }
