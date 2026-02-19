@@ -8,6 +8,7 @@ export enum ENDPOINT {
   FOLLOW_USER = '/users/:id/follow',
   UNFOLLOW_USER = '/users/:id/unfollow',
   GET_FOLLOWERS = '/users/:id/followers',
+  GET_FOLLOWING = '/users/:id/following',
   GET_USERS_LIST = '/users',
   GET_USER_BLOGS = '/users/:id/blogs',
   GET_ALL_USER_BLOGS = '/users/blogs/:page/all',

@@ -21,6 +21,7 @@ import {
   CreateLikeRes,
   CreateMsgReq,
   CreateMsgRes,
+  CreatePrivateConvoReq,
   CreateSpaceReq,
   CreateSpaceRes,
   DeleteBlogRes,
@@ -30,6 +31,7 @@ import {
   FeedsRes,
   FollowUserReq,
   FollowUserRes,
+  GetConversationsRes,
   GetFollowersRes,
   GetUserCardRes,
   GetUsersListRes,
@@ -41,6 +43,7 @@ import {
   LoginRes,
   MembersRes,
   NumOfCommentsRes,
+  PrivateConversation,
   RemoveLikeRes,
   SignUpReq,
   SpaceBlogsRes,
@@ -110,6 +113,14 @@ export const smartPublicFeedsApi = (query: FeedsReq) =>
 
 export const userFeedsApi = (userId: string, query: FeedsReq) =>
   getFn<FeedsRes>(ENDPOINT.USER_FEEDS, [userId]);
+
+export const createPrivateConversationApi = (otherUserId: string) => () =>
+  postFn<CreatePrivateConvoReq, PrivateConversation>(ENDPOINT.CREATE_PRIVATE_CONVERSATION, {
+    otherUserId,
+  });
+
+export const getPrivateConversationsApi = () => () =>
+  getFn<GetConversationsRes>(ENDPOINT.GET_PRIVATE_CONVERSATIONS);
 
 // Blog APIs
 export const blogApi = (blogId: string) => () => getFn<BlogRes>(ENDPOINT.GET_BLOG, [blogId]);
@@ -182,6 +193,9 @@ export const userListApi = () => getFn<GetUsersListRes>(ENDPOINT.GET_USERS_LIST)
 
 export const userFollowersApi = (userId: string) => () =>
   getFn<GetFollowersRes>(ENDPOINT.GET_FOLLOWERS, [userId]);
+
+export const userFollowingApi = (userId: string) => () =>
+  getFn<GetFollowersRes>(ENDPOINT.GET_FOLLOWING, [userId]);
 
 export const followUserApi = (userId: string) => () =>
   postFn<FollowUserReq, FollowUserRes>(ENDPOINT.FOLLOW_USER, undefined, [userId]);

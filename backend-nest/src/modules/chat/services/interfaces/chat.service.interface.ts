@@ -14,4 +14,5 @@ export interface IChatService {
   getSpaceMembers(spaceId: string): Promise<string[]>;
   getUnifiedConversations(userId: string): Promise<{ spaces: any[] }>;
   toggleMute(userId: string, spaceId: string, isMuted?: boolean): Promise<void>;
+  updateLastSoundPlayed(userId: string, spaceId: string): Promise<void>;
 }

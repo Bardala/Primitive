@@ -1,259 +1,176 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+@config "../tailwind.config.js";
 
-/* Light mode variables */
-:root {
-  --color-font: #333;
-  --color-primary: #1aac83;
-  --color-secondary: #f2f2f2;
-  --color-red: #e7195a;
-  --color-success: #5adb4e;
-  --color-bg-surface: #fafafa;
-  --color-input-border: #ddd;
-  --color-bg-light: #f0f0f0;
-  --color-bg-card: #fff;
-  --color-text-muted: #666;
-  --color-bg-error: #ffefef;
-  --color-success-bg: #ffefef;
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
-  /* These colors from blogList.css */
-  --color-border: #ddd;
-  --color-text-muted: #666;
-  --color-bg-transparent: transparent;
+@theme {
+  /* Your existing theme variables remain unchanged */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary-950: #042f2e;
 
-  /* Blog page */
-  --color-box-shadow: #0000001a;
-  --color-box-shadow-focus: #00000033;
+  --color-background-light: #f8fafc;
+  --color-background-dark: var(--color-night-core);
 
-  /* New Variables */
-  --color-accent-green: #0a684e;
-  --color-button-bg: #00a0d2;
-  --color-button-hover-bg: #008fb3;
-  --color-disabled-bg: #ccc;
-  --color-shadow-light: rgba(0, 0, 0, 0.1);
-  --color-muted: #666;
-  --color-bg-hover: #fafafa;
+  --color-surface-light: #ffffff;
+  --color-surface-dark: rgba(15, 22, 44, 0.7);
 
-  /* Spacing */
-  --padding-large: 40px;
-  --padding-medium: 20px;
-  --padding-small: 10px;
+  --color-text-primary-light: #1e293b;
+  --color-text-primary-dark: #f1f5f9;
 
-  /* Margin */
-  --margin-large: 40px;
-  --margin-medium: 20px;
-  --margin-small: 10px;
+  --color-text-secondary-light: #64748b;
+  --color-text-secondary-dark: #94a3b8;
 
-  /* New typography variables */
-  --font-family-base: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-mono: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  --color-border-light: #e2e8f0;
+  --color-border-dark: rgba(255, 255, 255, 0.08);
 
-  /* New spacing variables */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-xxl: 3rem;
+  --font-family-sans: 'Quicksand', 'Inter', sans-serif;
+  --font-family-serif: 'Merriweather', serif;
 
-  /* New border variables */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 16px;
-
-  --max-content-width: 800px;
-  --max-nav-width: 900px;
-
-  --code-block-background: rgb(250, 250, 250);
-  --code-block-border: #d0d7de;
-  --inline-code-background: rgba(175, 184, 193, 0.25);
-
-  --inline-code-background: rgba(175, 184, 193, 0.2);
-  --blockquote-border: var(--color-primary);
-  --blockquote-background: rgba(26, 172, 131, 0.05);
-
-  /* Shadow variables */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
-  --color-highlight: rgba(255, 255, 0, 0.2);
+  /* Calm night specific tokens for easy theming */
+  --color-night-core: #070b16;
+  --color-night-deep: #0b1020;
+  --color-night-mid: #0f162c;
+  --color-night-glow: #1a2340;
+  --vignette-opacity: 0.35;
+  --grain-opacity: 0.08;
 }
 
-/* Dark mode variables */
-:root.dark-mode {
-  --color-font: #ddd;
-  --color-primary: #1aac83;
-  --color-secondary: #2e2e2e;
-  --color-red: #ff667a;
-  --color-success: #39d27a;
-  --color-bg-surface: #1f1f1f;
-  --color-input-border: #555;
-  --color-bg-dark: #3a3a3a;
-  --color-bg-card: #444;
-  --color-text-muted: #aaa;
-  --color-bg-error: #512e2e;
-  --color-success-bg: #2e512e;
+@layer base {
+  body {
+    @apply bg-background-light text-text-primary-light transition-colors duration-300;
+    position: relative;
+    min-height: 100vh;
+  }
 
-  background-color: #121212;
-  color: var(--color-font);
-
-  --color-border: #444;
-  /* Darker border for contrast */
-  --color-text-muted: #aaa;
-  /* Lighter muted text for readability */
-  --color-bg-transparent: transparent;
-
-  --color-box-shadow: #121212e6;
-  --color-box-shadow-focus: #121212cc;
-
-  --color-accent-green: #0a684e;
-  --color-button-bg: #00a0d2;
-  --color-button-hover-bg: #008fb3;
-  --color-disabled-bg: #666;
-  /* Darker disabled background for night mode */
-  --color-shadow-light: #0000001a;
-  /* Same shadow, but in hex */
-  --color-muted: #bbb;
-  /* Lighter muted color for night mode */
-  --color-bg-hover: #2a2a2a;
-
-  --code-block-background: #1e2227;
-  --code-block-border: #2c313a;
-  --inline-code-background: rgba(110, 118, 129, 0.4);
-  --blockquote-background: rgba(26, 172, 131, 0.1);
+  /* Apply the calm night background globally to the body in dark mode */
+  .dark-mode body {
+    @apply text-text-primary-dark;
+  }
 }
 
-:root[dir='rtl'] {
-  direction: rtl;
-  text-align: right;
+@layer utilities {
+  .glass-dark {
+    @apply bg-surface-dark backdrop-blur-md border border-white/5;
+  }
+
+  .glass-dark-strong {
+    @apply bg-night-mid/80 backdrop-blur-xl border border-white/10;
+  }
+
+  /* 
+   * Calm Night Background Utility
+   * 
+   * Creates a deep, atmospheric background with:
+   * 1. Multi-stop radial gradient (center glow → deep navy → near black)
+   * 2. Subtle film grain texture for organic feel (pseudo ::before)
+   * 3. Gentle vignette for focus (pseudo ::after)
+   */
+  .bg-calm-night {
+    background: radial-gradient(
+      circle at 50% 40%,
+      var(--color-night-glow) 0%,
+      var(--color-night-mid) 35%,
+      var(--color-night-deep) 65%,
+      var(--color-night-core) 90%
+    );
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Subtle Grain Layer */
+  .bg-calm-night::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    /* Optimized Noise Approach: 
+       We prefer a physical noise.png if it's available and under 10KB.
+       As a robust fallback, we use a resolution-independent SVG data URI (<1KB).
+    */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+
+    /* If noise.png exists and is preferred, uncomment the next line */
+    /* background-image: url('/textures/noise.png'); */
+
+    background-repeat: repeat;
+    background-size: 128px;
+    mix-blend-mode: soft-light;
+    opacity: var(--grain-opacity, 0.05);
+  }
+
+  /* Focus Vignette Layer */
+  .bg-calm-night::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at center,
+      transparent 40%,
+      rgba(0, 0, 0, var(--vignette-opacity, 0.3)) 100%
+    );
+  }
+
+  /* Optional: Light theme variant for future use */
+  .bg-paper-light {
+    background: radial-gradient(circle at 50% 40%, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bg-paper-light::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.03) 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
 }
 
-:root[dir='ltr'] {
-  direction: ltr;
-  text-align: left;
-}
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all duration-200;
+  }
 
-body.dark-mode {
-  margin: 0;
-  font-family: 'Quicksand', sans-serif;
-  color: var(--color-font);
-  font-weight: 500;
-}
+  .btn-primary:hover {
+    @apply bg-primary-700 shadow-md;
+  }
 
-/* Base styles */
-body {
-  margin: 0;
-  font-family: 'Quicksand', sans-serif;
-  color: var(--color-font);
-  font-weight: 500;
-}
+  .btn-primary:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 
-form input,
-form button {
-  width: calc(100% - var(--padding-small) * 2);
-  padding: var(--padding-small);
-  margin: var(--padding-small) auto;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-}
+  .input-base {
+    @apply w-full px-4 py-2 rounded-lg border border-border-light bg-surface-light text-text-primary-light outline-none transition-all duration-200;
+  }
 
-form button {
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+  .input-base:focus {
+    @apply ring-2 ring-primary-500 border-transparent;
+  }
 
-form button:hover {
-  background-color: var(--color-button-hover-bg);
-}
+  .dark-mode .input-base {
+    @apply border-white/10 bg-night-core/40 text-text-primary-dark;
+  }
 
-/* button {
-  width: calc(100% - var(--padding-small) * 2);
-  padding: var(--padding-small);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-} */
+  .card-base {
+    @apply bg-surface-light rounded-xl shadow-soft border border-border-light p-6 transition-all duration-200;
+  }
 
-.error {
-  padding: 10px;
-  background: var(--color-bg-error);
-  border: 1px solid var(--color-red);
-  color: var(--color-red);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-.success {
-  padding: 10px;
-  background: var(--color-success-bg);
-  border: 1px solid var(--color-success);
-  color: var(--color-success);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-input.error {
-  border: 1px solid var(--color-red);
-}
-
-.home {
-  margin: 20px auto;
-  /* display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px; */
-}
-
-/* Not Found Page */
-.not-found {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.not-found h2 {
-  font-size: 20px;
-  color: var(--color-primary);
-  margin-bottom: 30px;
-}
-
-.not-found p {
-  margin: 10px 0;
-}
-
-.not-found a {
-  text-decoration: none;
-  color: var(--color-primary);
-}
-
-.arabic {
-  direction: rtl;
-  text-align: right;
-}
-
-.english {
-  direction: ltr;
-  text-align: left;
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--color-bg-error);
-  border: 1px solid var(--color-red);
-  border-radius: var(--border-radius-md);
-  color: var(--color-red);
-  font-size: 0.9rem;
-  font-weight: 500;
-  border-left: 4px solid var(--color-red);
-  margin-bottom: 1rem;
-  margin-top: var(--spacing-sm);
-}
-
-@media screen and (max-width: 600px) {
-  .App {
-    width: 100%;
+  .dark-mode .card-base {
+    @apply bg-surface-dark border-white/5 backdrop-blur-md;
   }
 }

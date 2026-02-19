@@ -68,6 +68,12 @@ export class UserController {
     return { followers: await this.userService.getFollowers(userId) };
   }
 
+  @Get(ENDPOINT.GET_FOLLOWING)
+  @HttpCode(200)
+  async getFollowing(@Param('id', ParseUUIDPipe) userId: string) {
+    return { followers: await this.userService.getFollowing(userId) };
+  }
+
   @Post(ENDPOINT.FOLLOW_USER)
   @HttpCode(200)
   @CreateFollowerSwagger()

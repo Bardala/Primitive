@@ -259,4 +259,12 @@ export class PrivateChatService implements IPrivateChatService {
       isMuted,
     );
   }
+
+  async updateLastSoundPlayed(userId: string, conversationId: string): Promise<void> {
+    await this.userConversationStateService.updateLastSoundPlayed(
+      userId,
+      conversationId,
+      ConversationType.PRIVATE,
+    );
+  }
 }

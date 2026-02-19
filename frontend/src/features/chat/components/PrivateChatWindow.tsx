@@ -12,8 +12,6 @@ import {
   useSendPrivateMessage,
 } from '../hooks/usePrivateChat';
 
-import '../styles/private-chat.css';
-
 interface PrivateChatWindowProps {
   conversationId: string;
   recipientName: string;
@@ -165,9 +163,9 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
 
   if (isLoading) {
     return (
-      <main className="private-chat-window private-chat-window--loading">
-        <div className="private-chat-window__loading-spinner">
-          <div className="spinner"></div>
+      <main className="flex h-full w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark">
+        <div className="flex flex-col items-center gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500 border-t-transparent"></div>
           <p>Loading messages...</p>
         </div>
       </main>
@@ -175,25 +173,27 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
   }
 
   return (
-    <main className="private-chat-window" aria-label={`Chat with ${recipientName}`}>
-      <header className="private-chat-window__header">
-        <div className="private-chat-window__header-left">
+    <main
+      className="flex h-full flex-col bg-background-light dark:bg-background-dark"
+      aria-label={`Chat with ${recipientName}`}
+    >
+      <header className="flex h-16 items-center border-b border-border-light bg-surface-light px-4 shadow-sm dark:border-border-dark dark:bg-surface-dark">
+        <div className="flex items-center gap-3">
           {onBack && (
             <button
-              className="private-chat-window__back-btn"
+              className="mr-2 rounded-full p-2 text-text-secondary-light hover:bg-gray-100 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 md:hidden"
               onClick={onBack}
               aria-label="Back to conversations"
             >
-              <svg viewBox="0 0 24 24" width="24" height="24">
-                <path
-                  fill="currentColor"
-                  d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
-                />
+              <svg viewBox="0 0 24 24" width="24" height="24" className="fill-current">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
               </svg>
             </button>
           )}
-          <div className="private-chat-window__header-info">
-            <h1 className="private-chat-window__recipient-name">{recipientName}</h1>
+          <div className="flex flex-col">
+            <h1 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark">
+              {recipientName}
+            </h1>
             {recipientUser && (
               <UserStatus
                 isOnline={recipientUser.isOnline}
@@ -207,17 +207,25 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
 
       <section
         ref={messagesContainerRef}
-        className="private-chat-window__messages"
+        className="flex-1 overflow-y-auto bg-[#efeae2] p-4 custom-scrollbar dark:bg-[#0b141a]"
         aria-label="Message history"
         aria-live="polite"
+        style={{
+          backgroundImage:
+            "url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')",
+          backgroundBlendMode: 'overlay',
+          backgroundSize: 'contain',
+        }}
       >
         {sortedMessages.length === 0 ? (
-          <div className="private-chat-window__empty">
-            <span className="private-chat-window__empty-icon" aria-hidden="true">
+          <div className="flex h-full flex-col items-center justify-center text-center opacity-60">
+            <span className="mb-4 text-6xl" aria-hidden="true">
               💬
             </span>
-            <p className="private-chat-window__empty-title">No messages yet</p>
-            <p className="private-chat-window__empty-subtitle">
+            <p className="mb-2 text-lg font-medium text-text-primary-light dark:text-text-primary-dark">
+              No messages yet
+            </p>
+            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
               Start the conversation with {recipientName}
             </p>
           </div>
@@ -252,10 +260,10 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
             const isSent = !isDelivered;
 
             return (
-              <div key={msg.id}>
+              <div key={msg.id} className="mb-2">
                 {showDateSeparator && msg.createdAt && (
-                  <div className="private-chat-window__date-separator">
-                    <span>
+                  <div className="mb-4 flex justify-center">
+                    <span className="rounded-lg bg-surface-light px-3 py-1 text-xs font-medium text-text-secondary-light shadow-sm dark:bg-surface-dark dark:text-text-secondary-dark">
                       {new Date(msg.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -268,49 +276,45 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
                   </div>
                 )}
                 <article
-                  className={`private-chat-window__message ${
-                    isOwn ? 'private-chat-window__message--own' : ''
-                  }`}
+                  className={`flex w-full ${isOwn ? 'justify-end' : 'justify-start'}`}
                   aria-label={isOwn ? 'Your message' : `Message from ${recipientName}`}
                 >
-                  <div className="private-chat-window__message-bubble">
-                    <p className="private-chat-window__message-text">{msg.content}</p>
-                    <div className="private-chat-window__message-meta">
-                      <time className="private-chat-window__message-time">
-                        {formatMessageTime(msg.createdAt)}
-                      </time>
+                  <div
+                    className={`relative max-w-[85%] rounded-lg px-3 py-2 text-sm shadow-sm md:max-w-[65%] ${
+                      isOwn
+                        ? 'bg-[#d9fdd3] text-gray-900 rounded-tr-none dark:bg-[#005c4b] dark:text-gray-100'
+                        : 'bg-white text-gray-900 rounded-tl-none dark:bg-[#202c33] dark:text-gray-100'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap break-words pr-16">{msg.content}</p>
+                    <div className="absolute bottom-1 right-2 flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+                      <time>{formatMessageTime(msg.createdAt)}</time>
                       {isOwn && (
                         <span
-                          className={`private-chat-window__message-status ${
-                            isRead ? 'private-chat-window__message-status--read' : ''
+                          className={`ml-1 ${
+                            isRead ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'
                           }`}
                           aria-label={isRead ? 'Read' : isDelivered ? 'Delivered' : 'Sent'}
                         >
                           {isSent ? (
-                            // Single checkmark - Sent but not delivered
+                            // Single checkmark
                             <svg
                               viewBox="0 0 16 15"
                               width="16"
                               height="15"
-                              className="message-status-icon"
+                              className="h-3 w-3 fill-current"
                             >
-                              <path
-                                fill="currentColor"
-                                d="M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
-                              />
+                              <path d="M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" />
                             </svg>
                           ) : (
-                            // Double checkmark - Delivered or Read
+                            // Double checkmark
                             <svg
                               viewBox="0 0 16 15"
                               width="16"
                               height="15"
-                              className="message-status-icon"
+                              className="h-3 w-3 fill-current"
                             >
-                              <path
-                                fill="currentColor"
-                                d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"
-                              />
+                              <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" />
                             </svg>
                           )}
                         </span>
@@ -326,14 +330,14 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
       </section>
 
       <form
-        className="private-chat-window__input-area"
+        className="flex items-end gap-2 border-t border-border-light bg-surface-light p-3 dark:border-border-dark dark:bg-surface-dark"
         onSubmit={handleSend}
         aria-label="Send message"
       >
-        <div className="private-chat-window__input-wrapper">
+        <div className="flex-1 rounded-xl bg-background-light px-4 py-2 dark:bg-background-dark">
           <input
             id="message-input"
-            className="private-chat-window__input"
+            className="w-full bg-transparent py-2 text-sm focus:outline-none dark:text-text-primary-dark"
             type="text"
             value={content}
             onChange={e => setContent(e.target.value)}
@@ -343,21 +347,18 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
             aria-describedby="send-hint"
             disabled={isSending}
           />
-          <button
-            type="submit"
-            className="private-chat-window__send-btn"
-            disabled={!content.trim() || isSending}
-            aria-label="Send message"
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <path
-                fill="currentColor"
-                d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"
-              />
-            </svg>
-          </button>
         </div>
-        <span id="send-hint" className="visually-hidden">
+        <button
+          type="submit"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-white transition-all hover:bg-primary-700 hover:shadow-md disabled:opacity-50"
+          disabled={!content.trim() || isSending}
+          aria-label="Send message"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" className="fill-current ml-1">
+            <path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z" />
+          </svg>
+        </button>
+        <span id="send-hint" className="visually-hidden hidden">
           Press Enter or click Send to send your message
         </span>
       </form>

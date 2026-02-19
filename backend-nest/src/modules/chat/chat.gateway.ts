@@ -151,7 +151,7 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
 
       // Notify recipient if online but not in conversation
       const socketsInRoom = await this.server.in(roomName).fetchSockets();
-      const usersInRoom = new Set(socketsInRoom.map((s) => s.data.user.sub));
+      const usersInRoom = new Set(socketsInRoom.map((s: any) => s.data.user.sub as string));
 
       if (!usersInRoom.has(data.toUserId)) {
         // Check if recipient muted this conversation
@@ -162,11 +162,26 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
         );
 
         if (!state.isMuted) {
+          const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
+            data.toUserId,
+            data.conversationId,
+            ConversationType.PRIVATE,
+          );
+          // TODO: Update types in shared folder
           this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
             type: 'PRIVATE_MESSAGE_NEW',
             message,
             conversationId: data.conversationId,
+            playSound: shouldPlaySound,
           });
+
+          if (shouldPlaySound) {
+            await this.userConversationStateService.updateLastSoundPlayed(
+              data.toUserId,
+              data.conversationId,
+              ConversationType.PRIVATE,
+            );
+          }
         }
       }
     } catch (error) {
@@ -206,8 +221,7 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
 
       // 2. Get sockets currently in the room
       const socketsInRoom = await this.server.in(message.spaceId).fetchSockets();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      const onlineUserIdsInRoom = new Set(socketsInRoom.map((s) => s.data.user.sub));
+      const onlineUserIdsInRoom = new Set(socketsInRoom.map((s: any) => s.data.user.sub as string));
 
       // 3. Notify members who are NOT in the room
       for (const memberId of members) {
@@ -225,11 +239,26 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
         );
 
         if (!state.isMuted) {
+          const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
+            memberId,
+            message.spaceId,
+            ConversationType.SPACE,
+          );
+          // TODO: Update types in shared folder
           this.server.to(memberId).emit(SOCKET_EVENT.NOTIFICATION, {
             type: 'MESSAGE_NEW',
             message,
             spaceId: message.spaceId,
+            playSound: shouldPlaySound,
           });
+
+          if (shouldPlaySound) {
+            await this.userConversationStateService.updateLastSoundPlayed(
+              memberId,
+              message.spaceId,
+              ConversationType.SPACE,
+            );
+          }
         }
       }
     } catch (error) {

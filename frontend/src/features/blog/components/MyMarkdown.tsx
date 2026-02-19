@@ -19,17 +19,24 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
   const processedMarkdown = markdown.replace(/@(\w+)/g, '[@$1](/u/$1)');
 
   const components: Components = {
-    a: ({ href, children, node, ...props }) => {
+    a: ({ href, children, ...props }) => {
       const isMention = href?.startsWith('/u/');
       if (isMention) {
         return (
-          <Link to={href!} className="mention">
+          <Link
+            to={href!}
+            className="rounded-md bg-yellow-100 px-1.5 py-0.5 text-sm font-bold text-yellow-700 no-underline transition-colors hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
+          >
             {children}
           </Link>
         );
       }
       return (
-        <a href={href} {...props}>
+        <a
+          href={href}
+          className="font-bold text-primary-600 no-underline decoration-primary-500/30 decoration-2 underline-offset-4 transition-all hover:text-primary-700 hover:underline dark:text-primary-400 dark:decoration-primary-400/30 dark:hover:text-primary-300"
+          {...props}
+        >
           {children}
         </a>
       );
@@ -40,7 +47,6 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
       const language = match ? match[1] : '';
       const codeContent = String(children).replace(/\n$/, '');
 
-      // Handle Mermaid diagrams
       if (language === 'mermaid') {
         return <MermaidDiagram chart={codeContent} isDark={isDarkMode} />;
       }
@@ -51,18 +57,7 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
 
       return (
         <code
-          className={className}
-          style={{
-            background: 'var(--inline-code-background)',
-            borderRadius: 'var(--border-radius-sm)',
-            fontFamily: 'var(--font-family-mono)',
-            fontSize: '0.9em',
-            whiteSpace: 'nowrap',
-            overflowX: 'auto',
-            maxWidth: '100%',
-            display: 'inline-block',
-            verticalAlign: 'middle',
-          }}
+          className="rounded-lg bg-gray-100 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-red-500 transition-colors dark:bg-white/5 dark:text-red-400"
           {...props}
         >
           {children}
@@ -71,34 +66,37 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
     },
 
     table: ({ ...props }) => (
-      <div style={{ overflowX: 'auto', margin: 'var(--spacing-lg) 0' }}>
-        <table {...props} style={{ width: '100%', borderCollapse: 'collapse' }} />
+      <div className="my-8 overflow-x-auto rounded-2xl border border-border-light shadow-sm dark:border-border-dark">
+        <table className="w-full border-collapse text-left text-sm" {...props} />
       </div>
     ),
+    thead: ({ ...props }) => <thead className="bg-gray-50 dark:bg-white/5" {...props} />,
     th: ({ ...props }) => (
       <th
+        className="border-b border-border-light px-4 py-3 font-bold text-text-primary-light dark:border-border-dark dark:text-text-primary-dark"
         {...props}
-        style={{
-          padding: 'var(--spacing-sm)',
-          border: '1px solid var(--color-border)',
-          background: 'var(--color-bg-surface)',
-          fontWeight: '600',
-        }}
       />
     ),
     td: ({ ...props }) => (
       <td
+        className="border-b border-border-light px-4 py-3 text-text-secondary-light dark:border-border-dark dark:text-text-secondary-dark"
         {...props}
-        style={{
-          padding: 'var(--spacing-sm)',
-          border: '1px solid var(--color-border)',
-        }}
+      />
+    ),
+    blockquote: ({ ...props }) => (
+      <blockquote
+        className="my-6 border-l-4 border-primary-500 bg-primary-50/30 py-2 pr-4 pl-6 italic text-text-secondary-light dark:bg-primary-900/10 dark:text-text-secondary-dark"
+        {...props}
       />
     ),
   };
 
   return (
-    <div className={`markdown-content ${isArabic(markdown) ? 'arabic' : 'english'}`}>
+    <div
+      className={`prose prose-neutral max-w-none dark:prose-invert prose-headings:font-extrabold prose-headings:tracking-tight prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-lg ${
+        isArabic(markdown) ? 'text-right [direction:rtl]' : 'text-left [direction:ltr]'
+      }`}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}

@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useCreateBlog } from '../hooks/useBlog';
 
-import '../styles/create-blog-page.css';
+// import '../styles/create-blog-page.css';
 
 export const CreateBlogPage: React.FC = () => {
   const { spaceId, spaceName } = useParams();
@@ -85,19 +85,25 @@ export const CreateBlogPage: React.FC = () => {
   ];
 
   return (
-    <div className="create-blog-container">
-      <h2>
-        {t('createBlog.addNew')} <i>{spaceName}</i> {t('createBlog.space')}
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <h2 className="mb-8 text-center text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
+        {t('createBlog.addNew')}{' '}
+        <i className="text-primary-600 dark:text-primary-400">{spaceName}</i>{' '}
+        {t('createBlog.space')}
       </h2>
 
       {createBlogMutation.isError && (
-        <div className="error-message">{createBlogMutation.error.message}</div>
+        <div className="mb-6 rounded-lg bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          {createBlogMutation.error?.message}
+        </div>
       )}
 
-      <div className="create-blog-form">
-        <div className="title-section">
+      <div className="rounded-xl border border-border-light bg-surface-light p-4 shadow-sm dark:border-border-dark dark:bg-surface-dark sm:p-8">
+        <div className="mb-6">
           <input
-            className={`title-input ${isArabic(title) ? 'arabic' : 'english'}`}
+            className={`w-full rounded-lg border border-border-light bg-background-light p-4 text-2xl font-bold text-text-primary-light placeholder-text-secondary-light focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 dark:border-border-dark dark:bg-background-dark dark:text-text-primary-dark dark:placeholder-text-secondary-dark dark:focus:border-primary-400 dark:focus:ring-primary-400 ${
+              isArabic(title) ? 'text-right' : 'text-left'
+            }`}
             type="text"
             required
             value={title}
@@ -106,16 +112,24 @@ export const CreateBlogPage: React.FC = () => {
           />
         </div>
 
-        <div className="editor-container">
-          <div className="editor-tabs">
+        <div className="mb-6 overflow-hidden rounded-lg border border-border-light dark:border-border-dark">
+          <div className="flex border-b border-border-light bg-gray-50 dark:border-border-dark dark:bg-gray-800/50">
             <button
-              className={activeTab === 'write' ? 'active' : ''}
+              className={`px-6 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'write'
+                  ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                  : 'text-text-secondary-light hover:bg-gray-100 hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:bg-gray-800 dark:hover:text-text-primary-dark'
+              }`}
               onClick={() => setActiveTab('write')}
             >
               {t('createBlog.write')}
             </button>
             <button
-              className={activeTab === 'preview' ? 'active' : ''}
+              className={`px-6 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'preview'
+                  ? 'border-b-2 border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                  : 'text-text-secondary-light hover:bg-gray-100 hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:bg-gray-800 dark:hover:text-text-primary-dark'
+              }`}
               onClick={() => setActiveTab('preview')}
             >
               {t('createBlog.preview')}
@@ -123,15 +137,15 @@ export const CreateBlogPage: React.FC = () => {
           </div>
 
           {activeTab === 'write' ? (
-            <div className="markdown-editor">
-              <div className="toolbar">
+            <div className="flex flex-col">
+              <div className="flex flex-wrap gap-1 border-b border-border-light bg-background-light p-2 dark:border-border-dark dark:bg-background-dark">
                 {formattingOptions.map((option, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={option.action}
                     title={option.title}
-                    className="format-button"
+                    className="rounded p-2 text-text-secondary-light hover:bg-gray-100 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-gray-800 dark:hover:text-primary-400"
                   >
                     {option.icon}
                   </button>
@@ -141,48 +155,72 @@ export const CreateBlogPage: React.FC = () => {
               <textarea
                 ref={textareaRef}
                 placeholder={t('createBlog.contentPlaceholder')}
-                className={`content-textarea ${isArabic(content) ? 'arabic' : 'english'}`}
+                className={`min-h-[400px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-relaxed text-text-primary-light focus:outline-none dark:text-text-primary-dark ${
+                  isArabic(content) ? 'text-right' : 'text-left'
+                }`}
                 value={content}
                 onChange={e => setContent(e.target.value)}
               ></textarea>
 
-              <div className="markdown-cheatsheet">
-                <h4>{t('createBlog.markdownReference')}</h4>
-                <ul>
+              <div className="border-t border-border-light bg-gray-50 p-4 text-xs text-text-secondary-light dark:border-border-dark dark:bg-gray-800/50 dark:text-text-secondary-dark">
+                <h4 className="mb-2 font-semibold text-primary-600 dark:text-primary-400">
+                  {t('createBlog.markdownReference')}
+                </h4>
+                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
                   <li>
-                    <strong>**{t('createBlog.bold')}**</strong> - <code>**text**</code>
+                    <strong>**{t('createBlog.bold')}**</strong> -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      **text**
+                    </code>
                   </li>
                   <li>
-                    <em>*{t('createBlog.italic')}*</em> - <code>*text*</code>
+                    <em>*{t('createBlog.italic')}*</em> -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">*text*</code>
                   </li>
                   <li>
-                    <code>`{t('createBlog.inlineCode')}`</code> - <code>`code`</code>
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      `{t('createBlog.inlineCode')}`
+                    </code>{' '}
+                    -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">`code`</code>
                   </li>
                   <li>
-                    # {t('createBlog.heading1')} - <code># Heading</code>
+                    # {t('createBlog.heading1')} -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      # Heading
+                    </code>
                   </li>
                   <li>
-                    ## {t('createBlog.heading2')} - <code>## Heading</code>
+                    ## {t('createBlog.heading2')} -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      ## Heading
+                    </code>
                   </li>
                   <li>
-                    [{t('createBlog.link')}]({t('createBlog.url')}) - <code>[text](url)</code>
+                    [{t('createBlog.link')}]({t('createBlog.url')}) -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      [text](url)
+                    </code>
                   </li>
                   <li>
-                    ![{t('createBlog.image')}]({t('createBlog.url')}) - <code>![alt](url)</code>
+                    ![{t('createBlog.image')}]({t('createBlog.url')}) -{' '}
+                    <code className="rounded bg-gray-200 px-1 py-0.5 dark:bg-gray-700">
+                      ![alt](url)
+                    </code>
                   </li>
                 </ul>
               </div>
             </div>
           ) : (
-            <div className="markdown-preview">
+            <div className="prose prose-slate dark:prose-invert min-h-[400px] max-w-none overflow-y-auto p-6">
               <MyMarkdown markdown={content || `*${t('createBlog.nothingToPreview')}*`} />
             </div>
           )}
         </div>
 
-        <div className="actions">
+        <div className="flex justify-end">
           <button
-            className="submit-button"
+            className="btn-primary w-full sm:w-auto"
             onClick={handleSubmit}
             disabled={createBlogMutation.isLoading || !title.trim() || !content.trim()}
           >

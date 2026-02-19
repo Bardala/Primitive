@@ -69,4 +69,13 @@ export interface IUserConversationStateService {
     conversationType: ConversationType,
     isMuted?: boolean,
   ): Promise<UserConversationState>;
+
+  /**
+   * Check if a notification sound should be played for a user in a conversation.
+   */
+  shouldPlaySound(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType,
+  ): Promise<boolean>;
 }

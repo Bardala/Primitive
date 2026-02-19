@@ -1,8 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import React from 'react';
 
-import './user-status.css';
-
 interface UserStatusProps {
   isOnline?: boolean;
   lastSeen?: Date | string;
@@ -16,9 +14,11 @@ export const UserStatus: React.FC<UserStatusProps> = ({
 }) => {
   if (isOnline) {
     return (
-      <div className="user-status user-status--online">
-        <span className="user-status__indicator"></span>
-        {showText && <span className="user-status__text">Online</span>}
+      <div className="flex items-center gap-2">
+        <span className="h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-surface-dark"></span>
+        {showText && (
+          <span className="text-xs font-medium text-green-600 dark:text-green-400">Online</span>
+        )}
       </div>
     );
   }
@@ -28,9 +28,13 @@ export const UserStatus: React.FC<UserStatusProps> = ({
     const timeAgo = formatDistanceToNow(lastSeenDate, { addSuffix: true });
 
     return (
-      <div className="user-status user-status--offline">
-        <span className="user-status__indicator"></span>
-        {showText && <span className="user-status__text">Last seen {timeAgo}</span>}
+      <div className="flex items-center gap-2">
+        <span className="h-2.5 w-2.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+        {showText && (
+          <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
+            Last seen {timeAgo}
+          </span>
+        )}
       </div>
     );
   }

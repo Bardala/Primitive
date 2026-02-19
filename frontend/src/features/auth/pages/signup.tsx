@@ -8,8 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 
-import '../styles/login.css';
-
 export const SignUp = () => {
   const { t } = useTranslation();
   const nav = useNavigate();
@@ -55,22 +53,29 @@ export const SignUp = () => {
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="flex min-h-[80vh] items-center justify-center p-4">
+      <div className="w-full max-w-md rounded-2xl border border-border-light bg-surface-light p-8 shadow-xl dark:border-border-dark dark:bg-surface-dark">
         {/* Header */}
-        <div className="auth-header">
-          <div className="auth-icon">
-            <FiUser />
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+            <FiUser size={24} />
           </div>
-          <h1 className="auth-title">{t('signup.title')}</h1>
-          <p className="auth-subtitle">{t('signup.subtitle')}</p>
+          <h1 className="mb-2 text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
+            {t('signup.title')}
+          </h1>
+          <p className="text-text-secondary-light dark:text-text-secondary-dark">
+            {t('signup.subtitle')}
+          </p>
         </div>
 
-        <form onSubmit={signUpUser} className="auth-form">
+        <form onSubmit={signUpUser} className="space-y-6">
           {/* Email Field */}
-          <div className="input-group">
-            <label htmlFor="email" className="input-label">
-              <FiMail className="input-icon" />
+          <div className="space-y-2">
+            <label
+              htmlFor="email"
+              className="flex items-center gap-2 text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+            >
+              <FiMail className="text-primary-500" />
               {t('signup.email')}
             </label>
             <input
@@ -78,16 +83,19 @@ export const SignUp = () => {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="input-field"
+              className="input-base w-full"
               placeholder={t('signup.emailPlaceholder')}
               required
             />
           </div>
 
           {/* Username Field */}
-          <div className="input-group">
-            <label htmlFor="username" className="input-label">
-              <FiUser className="input-icon" />
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className="flex items-center gap-2 text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+            >
+              <FiUser className="text-primary-500" />
               {t('signup.username')}
             </label>
             <input
@@ -95,56 +103,66 @@ export const SignUp = () => {
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="input-field"
+              className="input-base w-full"
               placeholder={t('signup.usernamePlaceholder')}
               required
             />
           </div>
 
           {/* Password Field */}
-          <div className="input-group">
-            <label htmlFor="password" className="input-label">
-              <FiLock className="input-icon" />
+          <div className="space-y-2">
+            <label
+              htmlFor="password"
+              className="flex items-center gap-2 text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+            >
+              <FiLock className="text-primary-500" />
               {t('signup.password')}
             </label>
-            <div className="password-container">
+            <div className="relative">
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="input-field password-input"
+                className="input-base w-full pr-10"
                 placeholder={t('signup.passwordPlaceholder')}
                 required
               />
-              <button type="button" className="password-toggle" onClick={togglePasswordVisibility}>
-                {showPassword ? <FiEyeOff /> : <FiEye />}
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light hover:text-primary-600 dark:text-text-secondary-dark dark:hover:text-primary-400"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
             </div>
           </div>
 
           {/* Confirm Password Field */}
-          <div className="input-group">
-            <label htmlFor="confirmPassword" className="input-label">
-              <FiLock className="input-icon" />
+          <div className="space-y-2">
+            <label
+              htmlFor="confirmPassword"
+              className="flex items-center gap-2 text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+            >
+              <FiLock className="text-primary-500" />
               {t('signup.confirmPassword')}
             </label>
-            <div className="password-container">
+            <div className="relative">
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                className="input-field password-input"
+                className="input-base w-full pr-10"
                 placeholder={t('signup.confirmPasswordPlaceholder')}
                 required
               />
               <button
                 type="button"
-                className="password-toggle"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light hover:text-primary-600 dark:text-text-secondary-dark dark:hover:text-primary-400"
                 onClick={toggleConfirmPasswordVisibility}
               >
-                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
             </div>
           </div>
@@ -152,7 +170,7 @@ export const SignUp = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`auth-btn ${isLoading ? 'loading' : ''}`}
+            className="btn-primary flex w-full justify-center py-3 text-base"
             disabled={isLoading}
           >
             {isLoading ? <LoadingSpinner /> : t('signup.button')}
@@ -160,17 +178,20 @@ export const SignUp = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="error-message">
-              <span className="error-icon">⚠</span>
+            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+              <span className="text-lg">⚠</span>
               {error}
             </div>
           )}
 
           {/* Login Link */}
-          <div className="auth-footer">
-            <p className="auth-footer-text">
-              {t('signup.haveAccount')}{' '}
-              <Link to={ROUTES.LOGIN} className="auth-link">
+          <div className="mt-6 text-center text-sm text-text-secondary-light dark:text-text-secondary-dark">
+            <p className="flex items-center justify-center gap-1">
+              {t('signup.haveAccount')}
+              <Link
+                to={ROUTES.LOGIN}
+                className="font-semibold text-primary-600 hover:underline dark:text-primary-400"
+              >
                 {t('signup.signIn')}
               </Link>
             </p>

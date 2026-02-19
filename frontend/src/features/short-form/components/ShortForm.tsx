@@ -31,14 +31,26 @@ export const ShortForm = () => {
 
   return (
     <>
-      {createShortMutation.isError && <p className="error">{createShortMutation.error.message}</p>}
+      {createShortMutation.isError && (
+        <p className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-900">
+          {createShortMutation.error.message}
+        </p>
+      )}
 
-      <form className="create-blog-form" onSubmit={handleSubmit}>
-        <div className="button-container">
-          <button type="submit" disabled={createShortMutation.isLoading}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={createShortMutation.isLoading}
+            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
             {t('shortForm.create')}
           </button>
-          <button type="button" onClick={() => setPreview(!preview)}>
+          <button
+            type="button"
+            onClick={() => setPreview(!preview)}
+            className="rounded-lg border border-border-light bg-surface-light px-4 py-2 text-sm font-semibold text-text-secondary-light transition-all hover:bg-background-light dark:border-border-dark dark:bg-surface-dark dark:text-text-secondary-dark dark:hover:bg-background-dark"
+          >
             {t('shortForm.preview')}
           </button>
         </div>
@@ -50,11 +62,13 @@ export const ShortForm = () => {
           name="title"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          className={isArabic(title) ? 'arabic' : 'english'}
+          className={`input-base w-full ${isArabic(title) ? 'text-right' : 'text-left'}`}
         />
 
         {preview ? (
-          <MyMarkdown markdown={content} />
+          <div className="rounded-xl border border-border-light bg-background-light p-4 dark:border-border-dark dark:bg-background-dark">
+            <MyMarkdown markdown={content} />
+          </div>
         ) : (
           <textarea
             placeholder={t('shortForm.contentPlaceholder')}
@@ -62,13 +76,21 @@ export const ShortForm = () => {
             id="content"
             value={content}
             onChange={e => setContent(e.target.value)}
-            className={isArabic(content) ? 'arabic' : 'english'}
+            className={`input-base min-h-[150px] w-full resize-y ${
+              isArabic(content) ? 'text-right' : 'text-left'
+            }`}
           />
         )}
 
-        {createShortMutation.isLoading && <p>{t('shortForm.creating')}</p>}
+        {createShortMutation.isLoading && (
+          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark animate-pulse">
+            {t('shortForm.creating')}
+          </p>
+        )}
         {createShortMutation.isSuccess && (
-          <p className="success">{t('shortForm.createdSuccess')}</p>
+          <p className="animate-in fade-in zoom-in duration-300 rounded-lg bg-green-50 p-3 text-sm font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400 border border-green-200 dark:border-green-900">
+            {t('shortForm.createdSuccess')}
+          </p>
         )}
       </form>
     </>

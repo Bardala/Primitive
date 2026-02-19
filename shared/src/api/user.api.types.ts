@@ -40,7 +40,7 @@ export interface UnFollowUserRes {
 
 export interface GetFollowersReq {}
 export interface GetFollowersRes {
-  followers: Pick<User, 'id' | 'username'>[];
+  followers: (Pick<User, 'id' | 'username'> & { isOnline?: boolean; lastSeen?: Date | string })[];
 }
 
 export interface UserBlogsReq {}

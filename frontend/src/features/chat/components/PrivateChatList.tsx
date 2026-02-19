@@ -2,8 +2,6 @@ import { TbBell, TbBellOff, TbUser, TbUsers } from 'react-icons/tb';
 
 import { useChatContext } from '../context/ChatContext';
 
-import '../styles/private-chat.css';
-
 interface ConversationListProps {
   activeId: string | null;
   onSelect: (id: string, name: string, type: 'private' | 'space') => void;
@@ -23,9 +21,11 @@ export const PrivateChatList: React.FC<ConversationListProps> = ({ activeId, onS
 
   if (isLoading) {
     return (
-      <aside className="private-chat-list private-chat-list--loading">
-        <div className="spinner"></div>
-        <p>Loading chats...</p>
+      <aside className="fixed inset-y-0 left-0 w-full overflow-hidden border-r border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark md:relative md:w-80">
+        <div className="flex h-full flex-col items-center justify-center gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500 border-t-transparent"></div>
+          <p>Loading chats...</p>
+        </div>
       </aside>
     );
   }
@@ -45,26 +45,35 @@ export const PrivateChatList: React.FC<ConversationListProps> = ({ activeId, onS
   });
 
   return (
-    <aside className="private-chat-list" aria-label="Chats">
-      <header className="private-chat-list__header">
-        <h2>Messages</h2>
+    <aside
+      className="flex h-full w-full flex-col border-r border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark md:w-80"
+      aria-label="Chats"
+    >
+      <header className="flex h-16 items-center justify-between border-b border-border-light px-4 dark:border-border-dark">
+        <h2 className="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">
+          Messages
+        </h2>
       </header>
 
       {allChats.length === 0 ? (
-        <div className="private-chat-list__empty">
-          <span className="private-chat-list__empty-icon" aria-hidden="true">
+        <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-text-secondary-light dark:text-text-secondary-dark/60">
+          <span className="mb-4 text-4xl opacity-50" aria-hidden="true">
             💬
           </span>
           <p>No conversations yet</p>
         </div>
       ) : (
-        <ul className="private-chat-list__items" role="listbox" aria-label="Conversation list">
+        <ul
+          className="flex-1 overflow-y-auto custom-scrollbar"
+          role="listbox"
+          aria-label="Conversation list"
+        >
           {allChats.map(chat => (
             <li key={chat.id}>
               <article
-                className={`private-chat-list__item ${
-                  activeId === chat.id ? 'private-chat-list__item--active' : ''
-                } ${chat.chatType === 'space' ? 'private-chat-list__item--space' : ''}`}
+                className={`group relative flex cursor-pointer gap-3 border-b border-border-light p-4 transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-none dark:border-border-dark dark:hover:bg-primary-900/10 dark:focus:bg-primary-900/10 ${
+                  activeId === chat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''
+                }`}
                 onClick={() =>
                   onSelect(
                     chat.id,
@@ -76,49 +85,63 @@ export const PrivateChatList: React.FC<ConversationListProps> = ({ activeId, onS
                 aria-selected={activeId === chat.id}
                 tabIndex={0}
               >
-                <div className="private-chat-list__avatar-container">
-                  {chat.chatType === 'space' ? <TbUsers /> : <TbUser />}
+                <div className="relative shrink-0">
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-full text-white ${
+                      chat.chatType === 'space'
+                        ? 'bg-gradient-to-br from-indigo-500 to-purple-500'
+                        : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                    }`}
+                  >
+                    {chat.chatType === 'space' ? <TbUsers size={24} /> : <TbUser size={24} />}
+                  </div>
                   {chat.chatType === 'private' && chat.otherUser.isOnline && (
-                    <span className="private-chat-list__online-indicator"></span>
+                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-surface-light bg-green-500 dark:border-surface-dark"></span>
                   )}
                 </div>
 
-                <div className="private-chat-list__content">
-                  <div className="private-chat-list__header-row">
-                    <span className="private-chat-list__username">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="truncate text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">
                       {chat.chatType === 'private' ? chat.otherUser.username : chat.name}
                     </span>
-                    <div className="private-chat-list__meta">
+                    <div className="flex items-center gap-2">
                       {chat.lastMessage && (
-                        <time className="private-chat-list__time">
+                        <time className="text-[10px] text-text-secondary-light dark:text-text-secondary-dark">
                           {formatMessageTime(
                             chat.lastMessage.createdAt || chat.lastMessage.timestamp
                           )}
                         </time>
                       )}
-                      <div className="private-chat-list__actions">
-                        <button
-                          className="private-chat-list__mute-btn"
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleToggleMute(chat.id, chat.chatType, chat.isMuted);
-                          }}
-                          title={chat.isMuted ? 'Unmute' : 'Mute'}
-                        >
-                          {chat.isMuted ? <TbBellOff /> : <TbBell />}
-                        </button>
-                        {chat.unreadCount > 0 && (
-                          <span className="private-chat-list__unread-badge">
-                            {chat.unreadCount}
-                          </span>
-                        )}
-                      </div>
                     </div>
                   </div>
 
-                  <p className="private-chat-list__preview">
-                    {chat.lastMessage?.content ?? 'No messages yet'}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="truncate text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                      {chat.lastMessage?.content ?? 'No messages yet'}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <button
+                        className={`opacity-0 transition-opacity group-hover:opacity-100 ${
+                          chat.isMuted
+                            ? 'text-red-500 opacity-100'
+                            : 'text-text-secondary-light dark:text-text-secondary-dark'
+                        }`}
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleToggleMute(chat.id, chat.chatType, chat.isMuted);
+                        }}
+                        title={chat.isMuted ? 'Unmute' : 'Mute'}
+                      >
+                        {chat.isMuted ? <TbBellOff size={16} /> : <TbBell size={16} />}
+                      </button>
+                      {chat.unreadCount > 0 && (
+                        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white shadow-sm">
+                          {chat.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </article>
             </li>

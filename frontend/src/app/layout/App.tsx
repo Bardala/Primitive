@@ -1,4 +1,5 @@
 import { AuthContextProvider, ThemeProvider } from '@/core/context';
+import { SideBarProvider } from '@/core/context/SideBarContext';
 import { requireAuth } from '@/core/hoc';
 import { ErrorBoundary } from '@/core/hoc';
 import { useNotificationSocket } from '@/core/hooks';
@@ -36,7 +37,7 @@ function AppContent() {
   useNotificationSocket();
 
   return (
-    <div className="App">
+    <div className="relative">
       <BrowserRouter>
         <NavBar />
         <ToastContainer />
@@ -45,7 +46,6 @@ function AppContent() {
           <Route path={ROUTES.SIGNUP} element={<SignUp />} />
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.BLOG_DETAILS} element={<BlogDetails />} />
-          <Route path="*" element={<NotFound />} />
           <Route path={ROUTES.SPACE} element={<ProtectedSpace />} />
           <Route path={ROUTES.USER_PROFILE} element={<ProtectUserProfile />} />
           <Route path={ROUTES.USERS_LIST} element={<ProtectedUserList />} />
@@ -53,6 +53,7 @@ function AppContent() {
           <Route path={ROUTES.CREATE_BLOG} element={<ProtectedCreateBlogPage />} />
           <Route path={ROUTES.SETTINGS} element={<ProtectedSettings />} />
           <Route path={ROUTES.CHAT} element={<ProtectedPrivateChatPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
 
@@ -71,7 +72,9 @@ export function App() {
           <AuthContextProvider>
             <ChatProvider>
               <NotificationProvider>
-                <AppContent />
+                <SideBarProvider>
+                  <AppContent />
+                </SideBarProvider>
               </NotificationProvider>
             </ChatProvider>
             <ReactQueryDevtools />

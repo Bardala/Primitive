@@ -10,3 +10,4 @@ export * from './localStorage';
 export * from './routes';
 export * from './socket';
 export * from './StatesMsgs';
+export * from './sound';

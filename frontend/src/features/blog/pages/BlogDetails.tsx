@@ -19,7 +19,7 @@ import { MyMarkdown } from '../components/MyMarkdown';
 import { TableOfContents } from '../components/TableOfContent';
 import { useBlogPage } from '../hooks/useBlogPage';
 
-import '../styles/blogDetails.css';
+// import '../styles/blogDetails.css';
 
 const calculateReadingTime = (text: string): number => {
   const wordsPerMinute = 200;
@@ -112,32 +112,50 @@ export const BlogDetails = () => {
     }
   }, [commentsQuery.isLoading, location]);
 
-  if (blogQuery.isError) return <p className="error">{blogQuery.error.message}</p>;
+  if (blogQuery.isError)
+    return (
+      <div className="p-8 text-center text-red-600 dark:text-red-400">
+        {blogQuery.error.message}
+      </div>
+    );
 
   return (
-    <div className="blog-details">
-      {blogQuery.isError && <p className="error">{t('state.error')}</p>}
-      {blogQuery.isLoading && <p className="loading">{t('state.loading')}</p>}
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      {blogQuery.isError && (
+        <div className="rounded-lg bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          {t('state.error')}
+        </div>
+      )}
+      {blogQuery.isLoading && (
+        <div className="animate-pulse p-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
+          {t('state.loading')}
+        </div>
+      )}
 
       {blog && (
         <div>
-          <div className="blog-content">
-            <article>
-              <h2 className={isArabic(blog.title) ? 'blog-title arabic' : 'blog-title english'}>
+          <div className="rounded-2xl bg-surface-light p-6 shadow-sm ring-1 ring-border-light dark:bg-surface-dark dark:ring-border-dark sm:p-10">
+            <article className="prose prose-slate dark:prose-invert max-w-none">
+              <h1
+                className={`mb-4 text-3xl font-extrabold text-text-primary-light dark:text-text-primary-dark sm:text-4xl ${
+                  isArabic(blog.title) ? 'font-arabic text-right' : 'text-left'
+                }`}
+              >
                 {blog.title}
-              </h2>
-              <div className="author-name">
-                {t('blogDetails.writtenBy')}{' '}
+              </h1>
+
+              <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                <span className="font-medium">{t('blogDetails.writtenBy')}</span>
                 <UserLink
                   userId={blog.userId!}
                   username={blog.author || t('blogDetails.unknown')}
                 />
                 {blog.space && blog.space.id !== DefaultSpaceId && (
                   <>
-                    <span className="mx-2">•</span>
+                    <span className="text-gray-300 dark:text-gray-600">•</span>
                     <Link
                       to={`/space/${blog.space.id}`}
-                      className="hover:underline flex items-center gap-1 inline-flex"
+                      className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300"
                     >
                       <RiGroup2Fill /> {blog.space.name}
                     </Link>
@@ -145,72 +163,110 @@ export const BlogDetails = () => {
                 )}
                 {blog.seriesLinks && blog.seriesLinks.length > 0 && blog.seriesLinks[0].series && (
                   <>
-                    <span className="mx-2">•</span>
+                    <span className="text-gray-300 dark:text-gray-600">•</span>
                     <Link
                       to={`/series/${blog.seriesLinks[0].series.id}`}
-                      className="hover:underline flex items-center gap-1 inline-flex"
+                      className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300"
                     >
                       <RiStackLine /> {blog.seriesLinks[0].series.name}
                     </Link>
                   </>
                 )}
-              </div>
 
-              <div className="reading-time">
-                {t('blogDetails.readingTime', { minutes: readingTime })}
+                <span className="text-gray-300 dark:text-gray-600">•</span>
+                <span className="italic">
+                  {t('blogDetails.readingTime', { minutes: readingTime })}
+                </span>
               </div>
 
               {/* Table of Contents */}
               {hasHeadings && (
-                <>
-                  <div className="toc-toggle-container">
-                    <button onClick={toggleToc} className="toc-toggle-btn">
+                <div className="mb-8 rounded-xl border border-border-light bg-background-light/50 p-4 dark:border-border-dark dark:bg-background-dark/50">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark">
+                      Contents
+                    </h3>
+                    <button
+                      onClick={toggleToc}
+                      className="rounded-lg px-3 py-1 text-sm font-medium text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-900/10"
+                    >
                       {showToc ? t('blogDetails.hideToc') : t('blogDetails.showToc')}
                     </button>
                   </div>
 
-                  <TableOfContents
-                    headings={headings}
-                    show={showToc}
-                    toggle={toggleToc}
-                    scrollTo={scrollToHeading}
-                    t={t}
-                  />
-                </>
+                  <div
+                    className={`transition-all duration-300 ${
+                      showToc
+                        ? 'mt-4 max-h-[500px] opacity-100'
+                        : 'max-h-0 opacity-0 overflow-hidden'
+                    }`}
+                  >
+                    <TableOfContents
+                      headings={headings}
+                      show={showToc}
+                      toggle={toggleToc}
+                      scrollTo={scrollToHeading}
+                      t={t}
+                    />
+                  </div>
+                </div>
               )}
 
-              <div className="blog-content">{MarkdownSection}</div>
+              <div className="mt-8">{MarkdownSection}</div>
 
               {blog.tags && blog.tags.length > 0 && (
-                <div className="blog-tags">
+                <div className="mt-8 flex flex-wrap gap-2 border-t border-border-light pt-6 dark:border-border-dark">
                   {blog.tags.map(tag => (
-                    <Link key={tag.id} to={`/tag/${tag.id}`} className="tag-pill">
+                    <Link
+                      key={tag.id}
+                      to={`/tag/${tag.id}`}
+                      className="rounded-full bg-surface-light px-3 py-1 text-sm font-medium text-text-secondary-light ring-1 ring-border-light transition-all hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-200 dark:bg-surface-dark dark:text-text-secondary-dark dark:ring-border-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:ring-primary-800"
+                    >
                       #{tag.name}
                     </Link>
                   ))}
                 </div>
               )}
 
-              <div className="blog-meta">
-                <p className="created-at">{formatTimeShort(blog.timestamp!)}</p>
+              <div className="mt-8 flex items-center justify-between border-t border-border-light pt-6 dark:border-border-dark">
+                <div className="flex items-center gap-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                  <p>{formatTimeShort(blog.timestamp!)}</p>
+                </div>
 
-                <LikeBlogButton post={blog} />
+                <div className="flex items-center gap-4">
+                  <LikeBlogButton post={blog} />
 
-                <p className="comms-count" onClick={goToComments} title={t('blogDetails.comments')}>
-                  {comments?.length} <LiaCommentSolid size={20} />
-                </p>
+                  <button
+                    className="flex items-center gap-1 text-text-secondary-light hover:text-primary-600 dark:text-text-secondary-dark dark:hover:text-primary-400"
+                    onClick={goToComments}
+                    title={t('blogDetails.comments')}
+                  >
+                    <span>{comments?.length}</span>
+                    <LiaCommentSolid size={22} />
+                  </button>
 
-                {currUser && currUser.id === blog.userId && <AddToSeries blogId={blog.id} />}
+                  {currUser && currUser.id === blog.userId && <AddToSeries blogId={blog.id} />}
+                </div>
               </div>
             </article>
 
-            {currUser && <BlogDetailsAction blog={blog} owner={blog.userId} currUser={currUser} />}
+            {currUser && (
+              <div className="mt-8 border-t border-border-light pt-6 dark:border-border-dark">
+                <BlogDetailsAction blog={blog} owner={blog.userId} currUser={currUser} />
+              </div>
+            )}
           </div>
 
-          {commentsQuery.isError && <p className="error">{t('state.error')}</p>}
-          {commentsQuery.isLoading && <p className="loading">{t('state.loading')}</p>}
-          <div ref={commentsRef} />
-          {currUser && id && <Comments blogId={id} comments={comments!} />}
+          <div className="mt-8" ref={commentsRef}>
+            {commentsQuery.isError && <div className="text-red-500">{t('state.error')}</div>}
+            {commentsQuery.isLoading && (
+              <div className="animate-pulse text-center text-text-secondary-light dark:text-text-secondary-dark">
+                {t('state.loading')}
+              </div>
+            )}
+
+            {currUser && id && <Comments blogId={id} comments={comments!} />}
+          </div>
         </div>
       )}
     </div>

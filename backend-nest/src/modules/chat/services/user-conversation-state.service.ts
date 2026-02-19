@@ -180,4 +180,23 @@ export class UserConversationStateService implements IUserConversationStateServi
     state.isMuted = isMuted ?? !state.isMuted;
     return this.stateRepository.save(state);
   }
+
+  /**
+   * Check if a notification sound should be played for a user in a conversation.
+   * Returns true if NOT muted and sound hasn't been played in the last 10 seconds.
+   */
+  async shouldPlaySound(
+    userId: string,
+    conversationId: string,
+    conversationType: ConversationType,
+  ): Promise<boolean> {
+    const state = await this.getOrCreate(userId, conversationId, conversationType);
+
+    if (state.isMuted) return false;
+
+    if (!state.lastSoundPlayedAt) return true;
+
+    const tenSecondsAgo = new Date(Date.now() - 10000);
+    return state.lastSoundPlayedAt < tenSecondsAgo;
+  }
 }

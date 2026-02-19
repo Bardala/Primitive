@@ -4,8 +4,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PrivateChatList } from '../components/PrivateChatList';
 import { PrivateChatWindow } from '../components/PrivateChatWindow';
 
-import '../styles/private-chat.css';
-
 export const PrivateChatPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -39,33 +37,45 @@ export const PrivateChatPage: React.FC = () => {
 
   return (
     <div
-      className={`private-chat-page ${
-        activeConversationId ? 'private-chat-page--window-active' : ''
-      }`}
+      className="flex h-[calc(100vh-64px)] w-full overflow-hidden bg-background-light dark:bg-background-dark"
       role="application"
       aria-label="Private messaging"
     >
-      <PrivateChatList activeId={activeConversationId} onSelect={handleSelectConversation} />
+      <div
+        className={`${
+          activeConversationId ? 'hidden md:flex' : 'flex'
+        } w-full flex-col border-r border-border-light dark:border-border-dark md:w-80 lg:w-96`}
+      >
+        <PrivateChatList activeId={activeConversationId} onSelect={handleSelectConversation} />
+      </div>
 
-      {activeConversationId ? (
-        <PrivateChatWindow
-          conversationId={activeConversationId}
-          recipientName={recipientName}
-          onBack={handleBackToList}
-        />
-      ) : (
-        <main className="private-chat-window desktop-only">
-          <div className="private-chat-window__empty">
-            <span className="private-chat-window__empty-icon" aria-hidden="true">
-              💬
-            </span>
-            <p className="private-chat-window__empty-title">Select a conversation</p>
-            <p className="private-chat-window__empty-subtitle">
-              Choose a conversation from the list to start chatting
-            </p>
-          </div>
-        </main>
-      )}
+      <div
+        className={`${
+          !activeConversationId ? 'hidden md:flex' : 'flex'
+        } w-full flex-1 flex-col bg-surface-light dark:bg-surface-dark`}
+      >
+        {activeConversationId ? (
+          <PrivateChatWindow
+            conversationId={activeConversationId}
+            recipientName={recipientName}
+            onBack={handleBackToList}
+          />
+        ) : (
+          <main className="flex h-full flex-col items-center justify-center p-8 text-center text-text-secondary-light dark:text-text-secondary-dark hidden md:flex">
+            <div className="flex flex-col items-center justify-center">
+              <span className="mb-4 text-6xl opacity-50" aria-hidden="true">
+                💬
+              </span>
+              <p className="mb-2 text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">
+                Select a conversation
+              </p>
+              <p className="max-w-xs text-sm">
+                Choose a conversation from the list to start chatting
+              </p>
+            </div>
+          </main>
+        )}
+      </div>
     </div>
   );
 };

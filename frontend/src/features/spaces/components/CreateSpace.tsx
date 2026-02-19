@@ -31,7 +31,11 @@ export const CreateSpace = () => {
 
   return (
     <>
-      {createSpaceMutate.isError && <p className="error">{createSpaceMutate.error.message}</p>}
+      {createSpaceMutate.isError && (
+        <p className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+          {createSpaceMutate.error.message}
+        </p>
+      )}
       <SpaceForm
         handleSubmit={handleSubmit}
         isLoading={createSpaceMutate.isLoading}

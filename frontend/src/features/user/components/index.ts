@@ -7,3 +7,4 @@ export * from './FollowersModal';
 export * from './UserInfoCard';
 export * from './UserLink';
 export * from './UserStatus';
+export * from './FollowedUsersList';

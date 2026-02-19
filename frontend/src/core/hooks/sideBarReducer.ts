@@ -10,6 +10,9 @@ interface State {
   showLeaveSpc: boolean;
   showPermissions: boolean;
   hideAll: boolean;
+  activeChatId?: string | null;
+  activeChatType?: 'private' | 'space' | null;
+  activeChatName?: string | null;
 }
 
 export type SideBarAction =
@@ -20,11 +23,29 @@ export type SideBarAction =
   | { type: 'showEditSpace' }
   | { type: 'showChat' }
   | { type: 'showLeaveSpc' }
-  | { type: 'showPermissions' };
+  | { type: 'showPermissions' }
+  | { type: 'closeAll' }
+  | {
+      type: 'setActiveChat';
+      payload: { id: string | null; type: 'private' | 'space' | null; name?: string | null };
+    };
 
 export const useSideBarReducer = () => {
   const sidebarReducer = (state: any, action: SideBarAction) => {
     switch (action.type) {
+      case 'closeAll':
+        return {
+          ...state,
+          showCreateSpace: false,
+          showCreateBlog: false,
+          showAddMember: false,
+          showMembers: false,
+          showEditSpace: false,
+          showChat: false,
+          showLeaveSpc: false,
+          showPermissions: false,
+          hideAll: true,
+        };
       case 'showCreateSpace':
         return {
           ...state,
@@ -117,6 +138,14 @@ export const useSideBarReducer = () => {
           showLeaveSpc: false,
           showPermissions: !state.showPermissions,
         };
+      case 'setActiveChat':
+        return {
+          ...state,
+          activeChatId: action.payload.id,
+          activeChatType: action.payload.type,
+          activeChatName: action.payload.name,
+          showChat: !!action.payload.id,
+        };
       default:
         return state;
     }
@@ -132,6 +161,9 @@ export const useSideBarReducer = () => {
     hideAll: false,
     showLeaveSpc: false,
     showPermissions: false,
+    activeChatId: null,
+    activeChatType: null,
+    activeChatName: null,
   } as never);
 
   return { state, dispatch };

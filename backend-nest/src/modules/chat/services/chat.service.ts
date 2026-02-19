@@ -269,4 +269,12 @@ export class ChatService implements IChatService {
       isMuted,
     );
   }
+
+  async updateLastSoundPlayed(userId: string, spaceId: string): Promise<void> {
+    await this.userConversationStateService.updateLastSoundPlayed(
+      userId,
+      spaceId,
+      ConversationType.SPACE,
+    );
+  }
 }

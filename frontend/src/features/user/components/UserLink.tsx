@@ -3,27 +3,30 @@ import { Link } from 'react-router-dom';
 
 export const UserLink: React.FC<{
   userId: string;
-  username: string;
+  username?: string;
   complete?: boolean;
   className?: string;
-}> = ({ userId, username, complete = true, className }) => {
+  children?: React.ReactNode;
+}> = ({ userId, username, complete = true, className, children }) => {
   return (
     <Link
       to={`/u/${userId}`}
-      className={className || 'user-link'}
-      style={{
-        textDecoration: 'none',
-        color: 'var(--color-text-primary)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        fontWeight: '500',
-      }}
+      className={
+        className ||
+        'flex items-center gap-1.5 font-medium text-text-primary-light no-underline transition-colors hover:text-primary-600 dark:text-text-primary-dark dark:hover:text-primary-400'
+      }
       title={username}
     >
-      <FaUser />
-      <strong>{complete ? username : username?.substring(0, 8)}</strong>
-      {/* <span className="user-status"></span> */}
+      {children ? (
+        children
+      ) : (
+        <>
+          <FaUser className="text-sm" />
+          <strong className="font-semibold">
+            {complete ? username : username?.substring(0, 8)}
+          </strong>
+        </>
+      )}
     </Link>
   );
 };

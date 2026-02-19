@@ -99,6 +99,14 @@
     "error": "Failed to load users",
     "loading": "Loading users..."
   },
+  "user": {
+    "online": "Active Now",
+    "offline": "Offline",
+    "lastSeen": "Last seen",
+    "ago": "ago",
+    "noFollowings": "No followed users yet",
+    "following": "Following"
+  },
   "followButton": {
     "follow": "Follow",
     "following": "Following"

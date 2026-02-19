@@ -4,8 +4,6 @@ import React from 'react';
 
 import { useSpacePermissions, useUpdatePermission } from '../hooks/usePermissions';
 
-import '../styles/permissions.css';
-
 interface SpacePermissionsProps {
   spaceId: string;
 }
@@ -14,7 +12,12 @@ export const SpacePermissions: React.FC<SpacePermissionsProps> = ({ spaceId }) =
   const { data, isLoading } = useSpacePermissions(spaceId);
   const { mutate: updatePermission } = useUpdatePermission(spaceId);
 
-  if (isLoading) return <div>Loading permissions...</div>;
+  if (isLoading)
+    return (
+      <div className="p-4 text-center text-text-secondary-light dark:text-text-secondary-dark">
+        Loading permissions...
+      </div>
+    );
 
   const permissions = data?.permissions || [];
 
@@ -28,17 +31,23 @@ export const SpacePermissions: React.FC<SpacePermissionsProps> = ({ spaceId }) =
   };
 
   return (
-    <div className="space-permissions">
-      <div className="space-permissions__header">
-        <h3>Space Permissions</h3>
-        <p>Configure who can perform actions in this space.</p>
+    <div className="card-base p-6">
+      <div className="mb-6 border-b border-border-light pb-4 dark:border-border-dark">
+        <h3 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark">
+          Space Permissions
+        </h3>
+        <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+          Configure who can perform actions in this space.
+        </p>
       </div>
 
-      <div className="space-permissions__list">
-        <div className="space-permissions__item">
-          <span className="space-permissions__label">Post Blogs</span>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col justify-between gap-2 rounded-lg border border-border-light bg-background-light p-4 dark:border-border-dark dark:bg-background-dark sm:flex-row sm:items-center">
+          <span className="font-medium text-text-primary-light dark:text-text-primary-dark">
+            Post Blogs
+          </span>
           <select
-            className="space-permissions__select"
+            className="input-base w-full sm:w-48"
             value={getRoleForPermission(SpacePermissionType.POST_BLOG)}
             onChange={e => handleUpdate(SpacePermissionType.POST_BLOG, e.target.value)}
           >
@@ -48,10 +57,12 @@ export const SpacePermissions: React.FC<SpacePermissionsProps> = ({ spaceId }) =
           </select>
         </div>
 
-        <div className="space-permissions__item">
-          <span className="space-permissions__label">Send Chat Messages</span>
+        <div className="flex flex-col justify-between gap-2 rounded-lg border border-border-light bg-background-light p-4 dark:border-border-dark dark:bg-background-dark sm:flex-row sm:items-center">
+          <span className="font-medium text-text-primary-light dark:text-text-primary-dark">
+            Send Chat Messages
+          </span>
           <select
-            className="space-permissions__select"
+            className="input-base w-full sm:w-48"
             value={getRoleForPermission(SpacePermissionType.SEND_CHAT)}
             onChange={e => handleUpdate(SpacePermissionType.SEND_CHAT, e.target.value)}
           >

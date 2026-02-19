@@ -17,4 +17,5 @@ export interface IPrivateChatService {
   markAsRead(userId: string, conversationId: string, lastReadId?: string): Promise<void>;
   getDecoratedConversations(userId: string): Promise<any[]>;
   toggleMute(userId: string, conversationId: string, isMuted?: boolean): Promise<void>;
+  updateLastSoundPlayed(userId: string, conversationId: string): Promise<void>;
 }

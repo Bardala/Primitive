@@ -1,5 +1,5 @@
 import { useAuthContext } from '@/core/context';
-import { HOST, socket } from '@/core/utils';
+import { HOST, playNotificationSound, socket } from '@/core/utils';
 import { PrivateChatApi } from '@/features/chat/api/private-chat.api';
 
 import { ChatMessage, PrivateMessage, SOCKET_EVENT, Space } from '@nest/shared';
@@ -98,18 +98,29 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!currUser) return;
 
-    const handlePrivateMsg = (message: PrivateMessage) => {
+    const handlePrivateMsg = (message: PrivateMessage, playSound?: boolean) => {
       setPrivateConversations(prev => {
         const index = prev.findIndex(c => c.id === message.conversationId);
-        if (index === -1) {
-          fetchPrivateConversations(); // New conversation started
-          return prev;
-        }
-        const convo = prev[index];
+        const convo = index !== -1 ? prev[index] : null;
 
         // Check if user is currently viewing this conversation
         const isActiveConversation =
           activeConversationId === message.conversationId && activeConversationType === 'private';
+
+        // Determine if we should play sound
+        // If playSound is explicitly provided (from handleNotification), honor it.
+        // Otherwise, if this is a direct PRIVATE_MSG event, we only play sound if
+        // the server wouldn't have sent a notification (i.e. we ARE in the room).
+        // BUT, if we are in the room, we don't play sound anyway because isActiveConversation is true.
+        // So the simple rule: if playSound is true, play it.
+        if (playSound) {
+          playNotificationSound();
+        }
+
+        if (index === -1) {
+          fetchPrivateConversations(); // New conversation started
+          return prev;
+        }
 
         const newConversations = [...prev];
         newConversations[index] = {
@@ -124,16 +135,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       });
     };
 
-    const handleSpaceMsg = (message: ChatMessage) => {
+    const handleSpaceMsg = (message: ChatMessage, playSound?: boolean) => {
       setSpaces(prev => {
         const index = prev.findIndex(s => s.id === message.spaceId);
-        if (index === -1) return prev;
-
-        const space = prev[index];
+        const space = index !== -1 ? prev[index] : null;
 
         // Check if user is currently viewing this space
         const isActiveSpace =
           activeConversationId === message.spaceId && activeConversationType === 'space';
+
+        // Determine if we should play sound
+        if (playSound) {
+          playNotificationSound();
+        }
+
+        if (index === -1 || !space) return prev;
 
         const newSpaces = [...prev];
         newSpaces[index] = {
@@ -147,9 +163,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const handleNotification = (data: any) => {
       if (data.type === 'PRIVATE_MESSAGE_NEW') {
-        handlePrivateMsg(data.message);
+        handlePrivateMsg(data.message, data.playSound);
       } else if (data.type === 'MESSAGE_NEW') {
-        handleSpaceMsg(data.message);
+        handleSpaceMsg(data.message, data.playSound);
       }
     };
 

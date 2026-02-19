@@ -185,6 +185,23 @@ export class UserService implements IUserService, IUserFollowService {
     }));
   }
 
+  async getFollowing(userId: string): Promise<any[]> {
+    const followings = await this.followRepository.find({
+      where: { followerId: userId },
+      relations: ['following', 'following.activity'],
+    });
+
+    return followings.map((follow) => {
+      const u = follow.following;
+      return {
+        id: u.id,
+        username: u.username,
+        isOnline: this.presenceService.isOnline(u.id),
+        lastSeen: u.activity?.lastActive,
+      };
+    });
+  }
+
   async createFollow(followerId: string, followingId: string): Promise<void> {
     if (followerId === followingId) {
       throw new BadRequestException('Cannot follow yourself');
