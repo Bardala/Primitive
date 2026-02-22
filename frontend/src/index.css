@@ -17,6 +17,7 @@
   --color-primary-800: #115e59;
   --color-primary-900: #134e4a;
   --color-primary-950: #042f2e;
+  /* TODO: Fix dark color mode, it should converted automatically*/
 
   --color-background-light: #f8fafc;
   --color-background-dark: var(--color-night-core);
@@ -44,9 +45,10 @@
   --vignette-opacity: 0.35;
   --grain-opacity: 0.08;
 }
-
+/*@layer base: Used for foundational styles (HTML elements, typography defaults)*/
 @layer base {
   body {
+    /*@apply directive: Injects Tailwind utility classes into your CSS*/
     @apply bg-background-light text-text-primary-light transition-colors duration-300;
     position: relative;
     min-height: 100vh;
@@ -57,7 +59,7 @@
     @apply text-text-primary-dark;
   }
 }
-
+/* @layer utilities: For custom utility classes you want to create */
 @layer utilities {
   .glass-dark {
     @apply bg-surface-dark backdrop-blur-md border border-white/5;
@@ -141,6 +143,7 @@
   }
 }
 
+/* @layer components: For reusable component classes */
 @layer components {
   .btn-primary {
     @apply bg-primary-600 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all duration-200;
@@ -174,3 +177,20 @@
     @apply bg-surface-dark border-white/5 backdrop-blur-md;
   }
 }
+
+
+/* Tailwind’s @layer utilities and @layer components are organizational conventions, not strict rules.
+ They exist to keep your CSS clean, predictable, and layered properly,
+ but technically you could put everything in one layer and it would still work. */
+
+ /* ✅ Best Practice
+
+    Use utilities for small, atomic helpers (like .glass-dark, .bg-calm-night).
+
+    Use components for larger, reusable UI patterns (like .btn-primary, .card-base).
+
+This way, your team (or future you) can quickly understand:
+
+    “Utilities = building blocks”
+
+    “Components = ready-to-use UI pieces” */

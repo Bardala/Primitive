@@ -129,12 +129,35 @@ export class SpaceService {
   }
 
   async getDefaultSpace(): Promise<DefaultSpaceRes> {
-    const space = await this.spaceRepository.findOne({ where: { id: '1' } });
+    let space = await this.spaceRepository.findOne({ where: { id: '1' } });
     if (!space) {
-      throw new NotFoundException('Default space not found');
+      const firstUser = await this.getFirstCreatedUser();
+
+      space = new Space();
+      space.id = '1';
+      space.name = 'Default Space';
+      space.description = 'Default Space';
+      space.status = 'public';
+      space.ownerId = firstUser.id;
+      space.timestamp = Date.now();
+
+      await this.spaceRepository.save(space);
+      await this.joinSpace(firstUser.id, space.id);
     }
 
     return { space };
+  }
+
+  private async getFirstCreatedUser(): Promise<User> {
+    const firstUser = await this.userRepository.findOne({
+      where: {},
+      order: { timestamp: 'ASC' },
+    });
+
+    if (!firstUser) 
+      throw new BadRequestException('No users found in database to assign as space owner');
+    
+    return firstUser;
   }
 
   async joinSpace(userId: string, spaceId: string): Promise<JoinSpaceRes> {
@@ -341,6 +364,15 @@ export class SpaceService {
   }
 
   private async checkAdmin(spaceId: string, userId: string): Promise<boolean> {
+    const space = await this.spaceRepository.findOne({ where: { id: spaceId } });
+    if (!space) {
+      throw new NotFoundException('Space not found');
+    }
+
+    if (space.ownerId === userId) {
+      return true;
+    }
+
     const member = await this.memberRepository.findOne({
       where: { spaceId, memberId: userId, isAdmin: true },
     });

@@ -1,7 +1,28 @@
+/**
+ * This is Tailwind's configuration file that controls how Tailwind generates your CSS at build time.
+ * It defines your design system, content sources, and plugins.
+ */
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
+  /**
+   * TypeScript JSDoc comment: Provides type hints in editors
+   * content: CRITICAL - Tells Tailwind which files to scan for class names
+   * Only the classes found in these files will be included in the final CSS (purging unused styles)
+   * The pattern ./src/**...{js,jsx,ts,tsx} scans all JS/TS files in src recursively
+   */
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  /**
+   * darkMode: Configures how dark mode is activated
+   * 'selector' means dark mode is triggered by a CSS selector
+   * '.dark-mode' is the specific class name (matches your CSS)
+   */
   darkMode: ['selector', '.dark-mode'], // Respect existing theme toggle
+  /**
+   * theme.extend: Adds to Tailwind's default theme without overriding it
+   * colors.primary: Creates a semantic color palette (notice it matches your CSS variables)
+   * background: Custom semantic color names
+   */
   theme: {
     extend: {
       colors: {

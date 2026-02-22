@@ -12,6 +12,7 @@
     "vercel:build": "cd ./shared && npm install && npm run vercel:build && cd ../frontend && npm install && npm run vercel:build",
     "start:backend": "cd backend && npm start",
     "start:backend-nest": "cd backend-nest && npm run start:dev",
+    "backend-migration": "cd backend-nest && npm run migration:run",
     "start:backend:js": "cd backend && npm run start:js",
     "start:backend-dev": "cd backend && npm run start:dev",
     "start:frontend": "cd frontend && npm start",
