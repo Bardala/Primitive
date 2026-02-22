@@ -6,9 +6,9 @@ import { ChatIcon } from '@/features/chat/components/ChatIcon';
 import { NotificationIcon } from '@/features/notification/components';
 
 import { useTranslation } from 'react-i18next';
+import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { TiHome } from 'react-icons/ti';
 import { Link, useNavigate } from 'react-router-dom';
-import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
 const AppIcon = '/PrimitiveIcon.ico';
 
@@ -58,7 +58,6 @@ export const NavBar = () => {
               {t('navbar.login')}
             </Link>
             <ToggleThemeButton />
-
           </nav>
         </div>
       </header>
@@ -80,20 +79,35 @@ export const NavBar = () => {
         {/* Right: Nav Actions */}
         <nav className="flex items-center gap-1">
           <div className="flex items-center gap-1">
-            <NavAction to={ROUTES.HOME} icon={
-              <div className={`relative inline-block text-text-secondary-light dark:text-text-secondary-dark`}>
-                <TiHome className="text-2xl align-middle" />
-              </div>
-              } />
-            <NavAction to={ROUTES.NOTIFICATIONS} icon={<NotificationIcon className="text-text-secondary-light dark:text-text-secondary-dark" />} />
-            <NavAction to={ROUTES.CHAT} icon={<ChatIcon className="text-text-secondary-light dark:text-text-secondary-dark" />} />
+            <NavAction
+              to={ROUTES.HOME}
+              icon={
+                <div
+                  className={`relative inline-block text-text-secondary-light dark:text-text-secondary-dark`}
+                >
+                  <TiHome className="text-2xl align-middle" />
+                </div>
+              }
+            />
+            <NavAction
+              to={ROUTES.NOTIFICATIONS}
+              icon={
+                <NotificationIcon className="text-text-secondary-light dark:text-text-secondary-dark" />
+              }
+            />
+            <NavAction
+              to={ROUTES.CHAT}
+              icon={
+                <ChatIcon className="text-text-secondary-light dark:text-text-secondary-dark" />
+              }
+            />
           </div>
 
           {/* User Avatar */}
           <div className="ml-1">
             <Link
               // to={`/u/${currUser?.id}`}
-             to={ROUTES.GET_USER_PROFILE(currUser?.id!)} 
+              to={ROUTES.GET_USER_PROFILE(currUser?.id!)}
               className="group relative block h-8 w-8 overflow-hidden rounded-full ring-2 ring-border-light transition-all hover:ring-primary-500 dark:ring-border-dark/60"
             >
               <div className="flex h-full w-full items-center justify-center bg-primary-100 text-sm font-bold text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">

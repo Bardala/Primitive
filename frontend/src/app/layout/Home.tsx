@@ -5,14 +5,14 @@ import { BlogList } from '@/features/blog';
 import { useGetDefaultSpace, usePublicFeeds, useSmartPublicFeeds } from '@/features/spaces';
 
 import { useTranslation } from 'react-i18next';
+import { CiLocationOn } from 'react-icons/ci';
 import { FiGrid, FiList } from 'react-icons/fi';
 import { IoImageOutline } from 'react-icons/io5';
-import { MdOutlineGifBox, MdOutlineEmojiEmotions } from 'react-icons/md';
-import { RiListRadio, RiCalendarCheckLine } from 'react-icons/ri';
-import { CiLocationOn } from 'react-icons/ci';
+import { MdOutlineEmojiEmotions, MdOutlineGifBox } from 'react-icons/md';
+import { RiCalendarCheckLine, RiListRadio } from 'react-icons/ri';
+import { Link } from 'react-router-dom';
 
 import { MainLayout } from './MainLayout';
-import { Link } from 'react-router-dom';
 
 export type FeedType = 'chronological' | 'smart';
 export type BlogListViewMode = 'titles-only' | 'full-blogs';
@@ -81,7 +81,6 @@ export const Home = () => {
   return (
     <MainLayout>
       <div className="flex flex-col w-full h-full relative">
-        
         {/* Sticky Header with Tabs */}
         <div className="sticky top-0 z-10 sm:z-20 w-full bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark/60 flex items-center justify-between">
           <div className="flex flex-1 items-center h-[53px]">
@@ -91,7 +90,13 @@ export const Home = () => {
               onClick={() => handleFeedTypeChange('smart')}
             >
               <div className="relative flex items-center justify-center font-bold h-full px-2">
-                <span className={`${feedType === 'smart' ? 'text-text-primary-light dark:text-text-primary-dark font-bold' : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'}`}>
+                <span
+                  className={`${
+                    feedType === 'smart'
+                      ? 'text-text-primary-light dark:text-text-primary-dark font-bold'
+                      : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'
+                  }`}
+                >
                   {t('home.smartFeed') || 'For you'}
                 </span>
                 {feedType === 'smart' && (
@@ -99,14 +104,20 @@ export const Home = () => {
                 )}
               </div>
             </button>
-            
+
             {/* Following Tab */}
             <button
               className="flex-1 flex justify-center h-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors relative"
               onClick={() => handleFeedTypeChange('chronological')}
             >
               <div className="relative flex items-center justify-center font-bold h-full px-2">
-                <span className={`${feedType === 'chronological' ? 'text-text-primary-light dark:text-text-primary-dark font-bold' : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'}`}>
+                <span
+                  className={`${
+                    feedType === 'chronological'
+                      ? 'text-text-primary-light dark:text-text-primary-dark font-bold'
+                      : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'
+                  }`}
+                >
                   {t('home.chronologicalFeed') || 'Following'}
                 </span>
                 {feedType === 'chronological' && (
@@ -120,7 +131,9 @@ export const Home = () => {
           <div className="flex items-center px-4 shrink-0">
             <button
               className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-text-secondary-light dark:text-text-secondary-dark"
-              onClick={() => handleViewModeChange(viewMode === 'full-blogs' ? 'titles-only' : 'full-blogs')}
+              onClick={() =>
+                handleViewModeChange(viewMode === 'full-blogs' ? 'titles-only' : 'full-blogs')
+              }
               title={t('home.toggleViewMode')}
             >
               {viewMode === 'full-blogs' ? <FiGrid size={18} /> : <FiList size={18} />}
@@ -130,19 +143,19 @@ export const Home = () => {
 
         {/* Dummy Post Composer */}
         {currUser && (
-          <div 
+          <div
             className="flex px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/60 cursor-pointer"
             onClick={() => dispatch({ type: 'showCreateBlog' })}
           >
             {/* Avatar */}
             <div className="mr-3 shrink-0">
-              <Link to={`/u/${currUser.id}`} onClick={(e) => e.stopPropagation()}>
+              <Link to={`/u/${currUser.id}`} onClick={e => e.stopPropagation()}>
                 <div className="h-10 w-10 overflow-hidden rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 font-bold hover:brightness-90 transition-all">
                   {currUser.username.charAt(0).toUpperCase()}
                 </div>
               </Link>
             </div>
-            
+
             {/* Composer Body */}
             <div className="flex-1 flex flex-col justify-center min-w-0 pb-1">
               <div className="py-2 text-xl text-text-secondary-light dark:text-gray-500">

@@ -1,6 +1,6 @@
 import { useSideBar } from '@/core/context/SideBarContext';
-import { Chat, PrivateChatWindow } from '@/features/chat';
 import { CreateSeriesModal } from '@/features/blog';
+import { Chat, PrivateChatWindow } from '@/features/chat';
 import { ShortForm } from '@/features/short-form';
 import {
   AddMember,
@@ -52,13 +52,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
         (state.showChat && !isChatActive) || // Fallback modal
         state.showLeaveSpc ||
         state.showPermissions) && (
-        <div 
+        <div
           className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200"
           onClick={() => dispatch({ type: 'closeAll' })}
         >
-          <div 
+          <div
             className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-surface-light p-8 shadow-2xl dark:bg-surface-dark animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <button
               onClick={() => {
@@ -71,7 +71,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
 
             <div className="mt-2">
               {state.showCreateBlog && <ShortForm />}
-              <CreateSeriesModal isOpen={state.showCreateSeries} onClose={() => dispatch({ type: 'closeAll' })} />
+              <CreateSeriesModal
+                isOpen={state.showCreateSeries}
+                onClose={() => dispatch({ type: 'closeAll' })}
+              />
               {state.showCreateSpace && <CreateSpace />}
               {state.showMembers && space && members && (
                 <SpaceMembers space={space} users={members} />
@@ -117,7 +120,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
           </div>
         </div>
       )}
-
     </div>
   );
 };
