@@ -1,20 +1,15 @@
-import { TbMessage } from 'react-icons/tb';
-import { useNavigate } from 'react-router-dom';
+import { FiMail } from 'react-icons/fi';
 
 import { useChatContext } from '../context/ChatContext';
 
-export const ChatIcon = () => {
+export const ChatIcon = ({ className = '' }: { className?: string }) => {
   const { totalUnreadCount } = useChatContext();
-  const navigate = useNavigate();
 
   return (
-    <div
-      className="relative inline-block cursor-pointer transition-transform hover:scale-110"
-      onClick={() => navigate('/chat')}
-    >
-      <TbMessage className="text-2xl text-text-secondary-light transition-colors hover:text-primary-600 dark:text-text-secondary-dark dark:hover:text-primary-400" />
+    <div className={`relative inline-block ${className}`}>
+      <FiMail className="text-2xl align-middle" />
       {totalUnreadCount > 0 && (
-        <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-green-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-surface-dark">
+        <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[0.7rem] font-bold text-white">
           {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
         </span>
       )}

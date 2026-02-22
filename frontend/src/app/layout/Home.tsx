@@ -1,11 +1,18 @@
+import { useAuthContext } from '@/core/context';
+import { useSideBar } from '@/core/context/SideBarContext';
 import { useLocalStorage } from '@/core/hooks';
 import { BlogList } from '@/features/blog';
 import { useGetDefaultSpace, usePublicFeeds, useSmartPublicFeeds } from '@/features/spaces';
 
 import { useTranslation } from 'react-i18next';
-import { FiClock, FiGrid, FiList, FiZap } from 'react-icons/fi';
+import { FiGrid, FiList } from 'react-icons/fi';
+import { IoImageOutline } from 'react-icons/io5';
+import { MdOutlineGifBox, MdOutlineEmojiEmotions } from 'react-icons/md';
+import { RiListRadio, RiCalendarCheckLine } from 'react-icons/ri';
+import { CiLocationOn } from 'react-icons/ci';
 
 import { MainLayout } from './MainLayout';
+import { Link } from 'react-router-dom';
 
 export type FeedType = 'chronological' | 'smart';
 export type BlogListViewMode = 'titles-only' | 'full-blogs';
@@ -28,6 +35,8 @@ export const Home = () => {
 
   const { feedType, viewMode } = preferences;
   const { t } = useTranslation();
+  const { currUser } = useAuthContext();
+  const { dispatch } = useSideBar();
 
   const handleFeedTypeChange = (newFeedType: FeedType) => {
     setPreferences(prev => ({ ...prev, feedType: newFeedType }));
@@ -71,93 +80,137 @@ export const Home = () => {
 
   return (
     <MainLayout>
-      <div className="mx-auto flex w-full max-w-4xl flex-col transition-all">
-        <div className="mb-8 flex flex-col gap-6">
-          <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border-light/50 bg-surface-light/80 p-2 backdrop-blur-md dark:border-border-dark/50 dark:bg-surface-dark/80 sm:flex-row sm:items-center">
-            {/* Feed Type Segmented Control */}
-            <div className="flex flex-1 items-center rounded-xl bg-background-light p-1 dark:bg-background-dark/50 sm:flex-none">
-              <button
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-all sm:flex-none ${
-                  feedType === 'smart'
-                    ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md active:scale-95'
-                    : 'text-text-secondary-light hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:text-white'
-                }`}
-                onClick={() => handleFeedTypeChange('smart')}
-              >
-                <FiZap className={feedType === 'smart' ? 'fill-current' : ''} />
-                <span>{t('home.smartFeed')}</span>
-              </button>
+      <div className="flex flex-col w-full h-full relative">
+        
+        {/* Sticky Header with Tabs */}
+        <div className="sticky top-0 z-10 sm:z-20 w-full bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark/60 flex items-center justify-between">
+          <div className="flex flex-1 items-center h-[53px]">
+            {/* For you Tab */}
+            <button
+              className="flex-1 flex justify-center h-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors relative"
+              onClick={() => handleFeedTypeChange('smart')}
+            >
+              <div className="relative flex items-center justify-center font-bold h-full px-2">
+                <span className={`${feedType === 'smart' ? 'text-text-primary-light dark:text-text-primary-dark font-bold' : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'}`}>
+                  {t('home.smartFeed') || 'For you'}
+                </span>
+                {feedType === 'smart' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-t-full"></div>
+                )}
+              </div>
+            </button>
+            
+            {/* Following Tab */}
+            <button
+              className="flex-1 flex justify-center h-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors relative"
+              onClick={() => handleFeedTypeChange('chronological')}
+            >
+              <div className="relative flex items-center justify-center font-bold h-full px-2">
+                <span className={`${feedType === 'chronological' ? 'text-text-primary-light dark:text-text-primary-dark font-bold' : 'text-text-secondary-light dark:text-text-secondary-dark font-medium'}`}>
+                  {t('home.chronologicalFeed') || 'Following'}
+                </span>
+                {feedType === 'chronological' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-t-full"></div>
+                )}
+              </div>
+            </button>
+          </div>
 
-              <button
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-all sm:flex-none ${
-                  feedType === 'chronological'
-                    ? 'bg-surface-light text-primary-600 shadow-sm ring-1 ring-border-light dark:bg-surface-dark dark:text-white dark:ring-border-dark active:scale-95'
-                    : 'text-text-secondary-light hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:text-white'
-                }`}
-                onClick={() => handleFeedTypeChange('chronological')}
-              >
-                <FiClock />
-                <span>{t('home.chronologicalFeed')}</span>
-              </button>
-            </div>
-
-            {/* View Mode Segmented Control */}
-            <div className="flex items-center justify-center gap-1 rounded-xl bg-background-light p-1 dark:bg-background-dark/50">
-              <button
-                className={`rounded-lg p-2 transition-all ${
-                  viewMode === 'full-blogs'
-                    ? 'bg-surface-light text-primary-600 shadow-sm dark:bg-surface-dark dark:text-primary-400 active:scale-90'
-                    : 'text-text-secondary-light hover:bg-gray-200/50 dark:text-text-secondary-dark dark:hover:bg-white/5'
-                }`}
-                onClick={() => handleViewModeChange('full-blogs')}
-                title={t('home.fullBlogsView')}
-              >
-                <FiList size={20} />
-              </button>
-
-              <button
-                className={`rounded-lg p-2 transition-all ${
-                  viewMode === 'titles-only'
-                    ? 'bg-surface-light text-primary-600 shadow-sm dark:bg-surface-dark dark:text-primary-400 active:scale-90'
-                    : 'text-text-secondary-light hover:bg-gray-200/50 dark:text-text-secondary-dark dark:hover:bg-white/5'
-                }`}
-                onClick={() => handleViewModeChange('titles-only')}
-                title={t('home.titlesOnlyView')}
-              >
-                <FiGrid size={20} />
-              </button>
-            </div>
+          {/* View Mode Settings Icon (kept for primitive feature) */}
+          <div className="flex items-center px-4 shrink-0">
+            <button
+              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-text-secondary-light dark:text-text-secondary-dark"
+              onClick={() => handleViewModeChange(viewMode === 'full-blogs' ? 'titles-only' : 'full-blogs')}
+              title={t('home.toggleViewMode')}
+            >
+              {viewMode === 'full-blogs' ? <FiGrid size={18} /> : <FiList size={18} />}
+            </button>
           </div>
         </div>
 
-        {/* Blog List */}
-        {!!currentFeeds?.length && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <BlogList
-              posts={currentFeeds}
-              isEnd={currentIsEnd}
-              fetchNextPage={currentFetchNextPage}
-              viewMode={viewMode}
-            />
+        {/* Dummy Post Composer */}
+        {currUser && (
+          <div 
+            className="flex px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/60 cursor-pointer"
+            onClick={() => dispatch({ type: 'showCreateBlog' })}
+          >
+            {/* Avatar */}
+            <div className="mr-3 shrink-0">
+              <Link to={`/u/${currUser.id}`} onClick={(e) => e.stopPropagation()}>
+                <div className="h-10 w-10 overflow-hidden rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 font-bold hover:brightness-90 transition-all">
+                  {currUser.username.charAt(0).toUpperCase()}
+                </div>
+              </Link>
+            </div>
+            
+            {/* Composer Body */}
+            <div className="flex-1 flex flex-col justify-center min-w-0 pb-1">
+              <div className="py-2 text-xl text-text-secondary-light dark:text-gray-500">
+                What is happening?!
+              </div>
+
+              <div className="flex items-center justify-between mt-3 mb-1">
+                {/* Icons */}
+                <div className="flex items-center gap-1 text-primary-500">
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors">
+                    <IoImageOutline size={20} />
+                  </div>
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors">
+                    <MdOutlineGifBox size={22} />
+                  </div>
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
+                    <RiListRadio size={20} />
+                  </div>
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors">
+                    <MdOutlineEmojiEmotions size={22} />
+                  </div>
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
+                    <RiCalendarCheckLine size={20} />
+                  </div>
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors opacity-50 cursor-not-allowed">
+                    <CiLocationOn size={22} />
+                  </div>
+                </div>
+
+                {/* Post Button */}
+                <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold px-4 py-1.5 rounded-full shadow-sm disabled:opacity-50 transition-colors">
+                  Post
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
-        {currentFeeds?.length === 0 && !currentIsLoading && (
-          <div className="mt-12 flex flex-col items-center justify-center text-center">
-            <p className="text-lg font-medium text-text-secondary-light dark:text-text-secondary-dark/60">
-              {t('home.noFeedsMessage')}
-            </p>
-          </div>
-        )}
+        {/* Blog List Feed */}
+        <div className="flex-1 w-full min-h-0">
+          {!!currentFeeds?.length && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full mb-10 sm:mb-0">
+              <BlogList
+                posts={currentFeeds}
+                isEnd={currentIsEnd}
+                fetchNextPage={currentFetchNextPage}
+                viewMode={viewMode}
+              />
+            </div>
+          )}
 
-        {/* Loading State */}
-        {currentIsLoading && (
-          <div className="mt-12 flex justify-center">
-            <p className="animate-pulse text-lg font-medium text-primary-600 dark:text-primary-400">
-              {t('home.loadingFeeds')}
-            </p>
-          </div>
-        )}
+          {currentFeeds?.length === 0 && !currentIsLoading && (
+            <div className="mt-12 flex flex-col items-center justify-center text-center">
+              <p className="text-lg font-medium text-text-secondary-light dark:text-text-secondary-dark/60">
+                {t('home.noFeedsMessage')}
+              </p>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {currentIsLoading && (
+            <div className="mt-12 flex justify-center">
+              <p className="animate-pulse text-lg font-medium text-primary-600 dark:text-primary-400">
+                {t('home.loadingFeeds')}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </MainLayout>
   );

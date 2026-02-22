@@ -181,7 +181,7 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
         <div className="flex items-center gap-3">
           {onBack && (
             <button
-              className="mr-2 rounded-full p-2 text-text-secondary-light hover:bg-gray-100 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 md:hidden"
+              className="mr-2 rounded-full p-2 text-text-secondary-light hover:bg-gray-100 dark:text-text-secondary-dark dark:hover:bg-primary-900/20"
               onClick={onBack}
               aria-label="Back to conversations"
             >
@@ -286,7 +286,7 @@ export const PrivateChatWindow: React.FC<PrivateChatWindowProps> = ({
                         : 'bg-white text-gray-900 rounded-tl-none dark:bg-[#202c33] dark:text-gray-100'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap break-words pr-16">{msg.content}</p>
+                    <p className="whitespace-pre-wrap wrap-break-word pr-16">{msg.content}</p>
                     <div className="absolute bottom-1 right-2 flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
                       <time>{formatMessageTime(msg.createdAt)}</time>
                       {isOwn && (

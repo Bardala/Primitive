@@ -20,14 +20,16 @@ export const BlogList = ({
   titlesOnly = false,
 }: Props) => {
   const finalViewMode = titlesOnly ? 'titles-only' : viewMode;
+  const uniquePosts = Array.from(new Map(posts.map(post => [post.id, post])).values());
+
   return (
     <div
       className={`flex flex-col gap-4 transition-all ${
         finalViewMode === 'titles-only' ? 'gap-2' : ''
       }`}
     >
-      {posts.map((post, key) => (
-        <BlogIcon post={post as Blog} key={key} viewMode={finalViewMode as any} />
+      {uniquePosts.map(post => (
+        <BlogIcon post={post as Blog} key={post.id} viewMode={finalViewMode as any} />
       ))}
       {/* {!isEnd && (
         <button disabled={isEnd} onClick={() => fetchNextPage}>

@@ -14,6 +14,6 @@ export const ROUTES = {
   GET_CONVERSATION: (id: string) => `/chat?conversationId=${id}`,
   GET_SPACE: (id: string) => `/space/${id}`,
   GET_BLOG_DETAILS: (id: string) => `/b/${id}`,
-  GET_USER_PROFILE: (id: string) => `/u/${id}`,
+  GET_USER_PROFILE: (id: string | number) => `/u/${id}`,
   GET_CREATE_BLOG: (spaceName: string, spaceId: string) => `/new/b/${spaceName}/${spaceId}`,
 } as const;

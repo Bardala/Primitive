@@ -1,3 +1,4 @@
+import { MainLayout } from '@/app/layout';
 import { useAuthContext } from '@/core/context';
 import { ApiError } from '@/core/services';
 import { userListApi } from '@/core/utils';
@@ -23,7 +24,8 @@ export const UsersList = () => {
   const users = usersListQuery.data?.usersList;
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
+    <MainLayout>
+    <div className="mx-auto max-w-4xl w-full p-6">
       <h2 className="mb-6 text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
         {t('usersList.title')}
       </h2>
@@ -53,5 +55,6 @@ export const UsersList = () => {
           ))}
       </ul>
     </div>
+    </MainLayout>
   );
 };

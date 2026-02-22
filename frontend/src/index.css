@@ -178,12 +178,11 @@
   }
 }
 
-
 /* Tailwind’s @layer utilities and @layer components are organizational conventions, not strict rules.
  They exist to keep your CSS clean, predictable, and layered properly,
  but technically you could put everything in one layer and it would still work. */
 
- /* ✅ Best Practice
+/* ✅ Best Practice
 
     Use utilities for small, atomic helpers (like .glass-dark, .bg-calm-night).
 

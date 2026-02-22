@@ -1,3 +1,4 @@
+import { MainLayout } from '@/app/layout';
 import { useAuthContext } from '@/core/context';
 import { formatTimeShort, isArabic } from '@/core/utils';
 import { UserLink } from '@/features/user';
@@ -120,7 +121,8 @@ export const BlogDetails = () => {
     );
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    <MainLayout>
+    <div className="mx-auto max-w-4xl w-full px-4 py-8 sm:px-6 lg:px-8">
       {blogQuery.isError && (
         <div className="rounded-lg bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
           {t('state.error')}
@@ -270,5 +272,6 @@ export const BlogDetails = () => {
         </div>
       )}
     </div>
+    </MainLayout>
   );
 };

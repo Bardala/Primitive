@@ -1,3 +1,4 @@
+import { MainLayout } from '@/app/layout';
 import { useTranslation } from 'react-i18next';
 
 import { NotificationList } from '../components/NotificationList';
@@ -8,7 +9,8 @@ export const NotificationPage = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   return (
-    <div className="mx-auto max-w-4xl p-4 md:p-6">
+    <MainLayout>
+    <div className="mx-auto max-w-4xl p-4 md:p-6 w-full">
       <div className="mb-6 flex flex-col justify-between gap-4 border-b border-border-light pb-4 dark:border-border-dark sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
@@ -30,5 +32,6 @@ export const NotificationPage = () => {
         />
       </div>
     </div>
+    </MainLayout>
   );
 };

@@ -1,3 +1,4 @@
+import { MainLayout } from '@/app/layout';
 import { isArabic } from '@/core/utils';
 
 import { FormEvent, useRef, useState } from 'react';
@@ -85,7 +86,8 @@ export const CreateBlogPage: React.FC = () => {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <MainLayout>
+    <div className="mx-auto max-w-5xl w-full px-4 py-8 sm:px-6 lg:px-8">
       <h2 className="mb-8 text-center text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
         {t('createBlog.addNew')}{' '}
         <i className="text-primary-600 dark:text-primary-400">{spaceName}</i>{' '}
@@ -229,5 +231,6 @@ export const CreateBlogPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </MainLayout>
   );
 };

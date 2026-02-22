@@ -1,4 +1,6 @@
 import { Blog, Short } from '@nest/shared';
+import { FaHeart } from 'react-icons/fa';
+import { FiHeart } from 'react-icons/fi';
 
 import { useLikeButton } from '../hooks/useLike';
 
@@ -15,8 +17,8 @@ export const LikeBlogButton: React.FC<{ post: Blog | Short }> = props => {
         }
         disabled={blogLikes.isLoading || postLikeMutate.isLoading || deleteLikeMutate.isLoading}
       >
-        <span className="text-lg">
-          {blogLikes.data?.likes} {blogLikes.data?.isLiked ? '❤️' : '🤍'}
+        <span className="text-lg flex items-center gap-1.5 font-bold">
+          {blogLikes.data?.likes} {blogLikes.data?.isLiked ? <FaHeart className="text-white" /> : <FiHeart />}
         </span>
       </button>
     </div>

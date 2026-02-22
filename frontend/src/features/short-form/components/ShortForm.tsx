@@ -38,23 +38,6 @@ export const ShortForm = () => {
       )}
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={createShortMutation.isLoading}
-            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {t('shortForm.create')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setPreview(!preview)}
-            className="rounded-lg border border-border-light bg-surface-light px-4 py-2 text-sm font-semibold text-text-secondary-light transition-all hover:bg-background-light dark:border-border-dark dark:bg-surface-dark dark:text-text-secondary-dark dark:hover:bg-background-dark"
-          >
-            {t('shortForm.preview')}
-          </button>
-        </div>
-
         <input
           placeholder={t('shortForm.titlePlaceholder')}
           type="text"
@@ -76,11 +59,28 @@ export const ShortForm = () => {
             id="content"
             value={content}
             onChange={e => setContent(e.target.value)}
-            className={`input-base min-h-[150px] w-full resize-y ${
+            className={`input-base min-h-[250px] w-full resize-y ${
               isArabic(content) ? 'text-right' : 'text-left'
             }`}
           />
         )}
+
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => setPreview(!preview)}
+            className="rounded-lg border border-border-light bg-surface-light px-4 py-2 text-sm font-semibold text-text-secondary-light transition-all hover:bg-background-light dark:border-border-dark dark:bg-surface-dark dark:text-text-secondary-dark dark:hover:bg-background-dark"
+          >
+            {t('shortForm.preview')}
+          </button>
+          <button
+            type="submit"
+            disabled={createShortMutation.isLoading}
+            className="rounded-lg bg-primary-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {t('shortForm.create')}
+          </button>
+        </div>
 
         {createShortMutation.isLoading && (
           <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark animate-pulse">
