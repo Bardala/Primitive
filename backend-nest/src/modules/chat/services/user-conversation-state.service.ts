@@ -196,7 +196,7 @@ export class UserConversationStateService implements IUserConversationStateServi
 
     if (!state.lastSoundPlayedAt) return true;
 
-    const tenSecondsAgo = new Date(Date.now() - 10000);
-    return state.lastSoundPlayedAt < tenSecondsAgo;
+    const twoSecondsAgo = new Date(Date.now() - 2000);
+    return state.lastSoundPlayedAt < twoSecondsAgo;
   }
 }

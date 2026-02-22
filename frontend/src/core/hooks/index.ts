@@ -3,7 +3,7 @@
  */
 
 export * from './useAuth';
-export * from './useNotificationSocket';
+
 export * from './sideBarReducer';
 export * from './useClickOutside';
 export * from './useLocalStorage';

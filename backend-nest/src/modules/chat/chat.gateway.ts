@@ -170,7 +170,10 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
           // TODO: Update types in shared folder
           this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
             type: 'PRIVATE_MESSAGE_NEW',
-            message,
+            message: {
+              ...message,
+              senderName: user.username,
+            },
             conversationId: data.conversationId,
             playSound: shouldPlaySound,
           });

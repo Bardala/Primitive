@@ -1,5 +1,5 @@
 import { useAuthContext } from '@/core/context';
-import { HOST, playNotificationSound, socket } from '@/core/utils';
+import { HOST, playNotificationSound, showSystemNotification, socket } from '@/core/utils';
 import { PrivateChatApi } from '@/features/chat/api/private-chat.api';
 
 import { ChatMessage, PrivateMessage, SOCKET_EVENT, Space } from '@nest/shared';
@@ -107,14 +107,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         const isActiveConversation =
           activeConversationId === message.conversationId && activeConversationType === 'private';
 
-        // Determine if we should play sound
-        // If playSound is explicitly provided (from handleNotification), honor it.
-        // Otherwise, if this is a direct PRIVATE_MSG event, we only play sound if
-        // the server wouldn't have sent a notification (i.e. we ARE in the room).
-        // BUT, if we are in the room, we don't play sound anyway because isActiveConversation is true.
-        // So the simple rule: if playSound is true, play it.
-        if (playSound) {
+        const isFromOthers = message.senderId !== currUser?.id;
+
+        // If playSound is undefined, it means this came from 'PRIVATE_MSG' (in-room)
+        // If playSound is boolean, it came from 'NOTIFICATION' (out-of-room)
+        const isNotification = typeof playSound === 'boolean';
+
+        if (isFromOthers && (playSound || !isNotification)) {
           playNotificationSound();
+        }
+
+        if (isFromOthers && isNotification) {
+          const senderName = (message as any).senderName || 'someone';
+          const title = `New private message from ${senderName}`;
+          showSystemNotification(title, {
+            body: message.content,
+          });
         }
 
         if (index === -1) {
@@ -144,9 +152,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         const isActiveSpace =
           activeConversationId === message.spaceId && activeConversationType === 'space';
 
-        // Determine if we should play sound
-        if (playSound) {
+        const isFromOthers = message.userId !== currUser?.id;
+        const isNotification = typeof playSound === 'boolean';
+
+        if (isFromOthers && (playSound || !isNotification)) {
           playNotificationSound();
+        }
+
+        if (isFromOthers && isNotification) {
+          const sender = space?.name || 'a space';
+          const title = `New message in ${sender}`;
+          showSystemNotification(title, {
+            body: `${message.username}: ${message.content}`,
+          });
         }
 
         if (index === -1 || !space) return prev;
