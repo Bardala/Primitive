@@ -187,7 +187,11 @@
     "url": "url",
     "nothingToPreview": "Nothing to preview yet",
     "publish": "Publish Blog",
-    "publishing": "Publishing..."
+    "publishing": "Publishing...",
+    "selectSeries": "Select Series",
+    "noSeries": "None (Personal Post)",
+    "tags": "Tags",
+    "tagsPlaceholder": "Add tags (press Enter or comma)"
   },
   "shortForm": {
     "create": "Create",

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Like } from 'src/modules/shared/entities/like.entity';
+import { Tag } from 'src/modules/shared/entities/tag.entity';
 import { Comment } from '../comment/entities/comment.entity';
 import { ValidationModule } from '../shared/validation/validation.module';
 import { Member } from '../space/entities/member.entity';
@@ -30,6 +31,7 @@ import { BlogSeries } from './entities/blog-series.entity';
       Member,
       BlogSeries,
       BlogSeriesLink,
+      Tag,
     ]),
     ValidationModule,
   ],

@@ -35,7 +35,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
       <ActionsSidebar space={space} members={members} />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full sm:w-[600px] sm:max-w-[600px] border-r border-border-light dark:border-border-dark/60 min-h-screen pb-20 sm:pb-0 relative">
+      <main className="flex-1 w-full sm:w-[750px] sm:max-w-[750px] border-r border-border-light dark:border-border-dark/60 min-h-screen pb-20 sm:pb-0 relative">
         {children}
       </main>
 

@@ -23,6 +23,8 @@ import { Comment } from 'src/modules/comment/entities/comment.entity';
 import { Space } from 'src/modules/space/entities/space.entity';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Member } from 'src/modules/space/entities/member.entity';
+import { Tag } from 'src/modules/shared/entities/tag.entity';
+import { BlogSeriesLink } from '../entities/blog-series-links.entity';
 import { DefaultSpaceId } from '@nest/shared';
 import { IBlogService } from './interfaces';
 
@@ -41,6 +43,10 @@ export class BlogService implements IBlogService {
     private userRepository: Repository<User>,
     @InjectRepository(Member)
     private memberRepository: Repository<Member>,
+    @InjectRepository(Tag)
+    private tagRepository: Repository<Tag>,
+    @InjectRepository(BlogSeriesLink)
+    private seriesLinkRepository: Repository<BlogSeriesLink>,
   ) {}
 
   async createBlog(userId: string, req: CreateBlogReq): Promise<CreateBlogRes> {
@@ -73,7 +79,44 @@ export class BlogService implements IBlogService {
 
     await this.blogRepository.save(blog);
 
-    return { blog };
+    // Handle Tags
+    if (req.tagNames && req.tagNames.length > 0) {
+      const tags: Tag[] = [];
+      for (const name of req.tagNames) {
+        let tag = await this.tagRepository.findOne({ where: { name: name.toLowerCase().trim() } });
+        if (!tag) {
+          tag = Tag.create(name);
+          tag = await this.tagRepository.save(tag);
+        }
+        tags.push(tag);
+      }
+      blog.tags = tags;
+      await this.blogRepository.save(blog);
+    }
+
+    // Handle Series
+    if (req.seriesId) {
+      // Get current max position for this series
+      const lastLink = await this.seriesLinkRepository.findOne({
+        where: { seriesId: req.seriesId },
+        order: { position: 'DESC' },
+      });
+      const nextPosition = lastLink ? lastLink.position + 1 : 1;
+
+      const link = new BlogSeriesLink();
+      link.seriesId = req.seriesId;
+      link.blogId = blog.id;
+      link.position = nextPosition;
+      await this.seriesLinkRepository.save(link);
+    }
+
+    // Reload blog with relations for nice response
+    return {
+      blog: await this.blogRepository.findOne({
+        where: { id: blog.id },
+        relations: ['space', 'seriesLinks', 'seriesLinks.series', 'tags'],
+      }),
+    } as any;
   }
 
   async updateBlog(userId: string, blogId: string, req: UpdateBlogReq): Promise<UpdateBlogRes> {

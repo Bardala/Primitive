@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, ValidateIf } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, ValidateIf, IsOptional, IsArray } from 'class-validator';
 import type {
   CreateBlogReq as ICreateBlogReq,
   CreateBlogRes as ICreateBlogRes,
@@ -34,6 +34,25 @@ export class CreateBlogReq implements ICreateBlogReq {
   @ValidateIf((o) => o.spaceId !== '1')
   @IsUUID()
   spaceId!: string; // if not provided, blog will be created in default space
+
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    description: 'Series ID to associate the blog with',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  seriesId?: string;
+
+  @ApiProperty({
+    example: ['typescript', 'nest'],
+    description: 'Tags for the blog',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tagNames?: string[];
 }
 
 export class CreateBlogRes implements ICreateBlogRes {

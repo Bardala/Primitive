@@ -1,7 +1,10 @@
 import { Blog, CommentWithUser, LikedUser, StatusMessage } from '../types';
 
 // * Blog APIs
-export type CreateBlogReq = Pick<Blog, 'title' | 'content' | 'spaceId'>;
+export type CreateBlogReq = Pick<Blog, 'title' | 'content' | 'spaceId'> & {
+  seriesId?: string;
+  tagNames?: string[];
+};
 export interface CreateBlogRes {
   blog: Blog;
 }

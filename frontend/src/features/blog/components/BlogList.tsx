@@ -24,7 +24,7 @@ export const BlogList = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 transition-all ${
+      className={`flex flex-col transition-all ${
         finalViewMode === 'titles-only' ? 'gap-2' : ''
       }`}
     >

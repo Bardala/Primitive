@@ -16,3 +16,5 @@ export * from './SeriesList';
 export * from './SeriesDetail';
 export * from './CreateSeriesModal';
 export * from './AddToSeries';
+export * from './BlogForm';
+export * from './TableOfContent';

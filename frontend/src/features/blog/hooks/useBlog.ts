@@ -19,14 +19,14 @@ import { BlogApi } from '../api';
 const getSpcKey = (spaceId: string) =>
   spaceId === DefaultSpaceId ? ['feeds'] : ['blogs', spaceId];
 
-export const useCreateBlog = (spaceId: string, title: string, content: string) => {
+export const useCreateBlog = (spaceId: string, title: string, content: string, seriesId?: string, tagNames?: string[]) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const navToSpace = () =>
     spaceId === DefaultSpaceId ? nav(ROUTES.HOME) : nav(ROUTES.GET_SPACE(spaceId));
 
   const createBlogMutation = useMutation<CreateBlogRes, ApiError>(
-    BlogApi.createBlog(title, content, spaceId),
+    BlogApi.createBlog(title, content, spaceId, seriesId, tagNames),
     {
       onSuccess: data => {
         queryClient.invalidateQueries(getSpcKey(spaceId));
