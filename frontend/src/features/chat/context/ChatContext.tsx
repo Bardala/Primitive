@@ -65,7 +65,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     if (!currUser) return;
     try {
       const response = await fetch(`${HOST}/api/v0/conversations`, {
-        headers: { Authorization: `Bearer ${currUser.jwt}` },
+        credentials: 'include',
       });
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -113,7 +113,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         // If playSound is boolean, it came from 'NOTIFICATION' (out-of-room)
         const isNotification = typeof playSound === 'boolean';
 
-        if (isFromOthers && (playSound || !isNotification)) {
+        // Play sound if:
+        // 1. It's from others
+        // 2. AND (If notification: backend said playSound, If in-room: it's not muted and not the active chat)
+        const shouldPlay = isFromOthers && (
+          isNotification ? playSound : (!convo?.isMuted && !isActiveConversation)
+        );
+
+        if (shouldPlay) {
           playNotificationSound();
         }
 
@@ -155,7 +162,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         const isFromOthers = message.userId !== currUser?.id;
         const isNotification = typeof playSound === 'boolean';
 
-        if (isFromOthers && (playSound || !isNotification)) {
+        // Play sound if:
+        // 1. It's from others
+        // 2. AND (If notification: backend said playSound, If in-room: it's not muted and not the active space)
+        const shouldPlay = isFromOthers && (
+          isNotification ? playSound : (!space?.isMuted && !isActiveSpace)
+        );
+
+        if (shouldPlay) {
           playNotificationSound();
         }
 
@@ -244,7 +258,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       try {
         await fetch(`${HOST}/api/v0/spaces/${spaceId}/messages/read`, {
           method: 'POST',
-          headers: { Authorization: `Bearer ${currUser?.jwt}` },
+          credentials: 'include',
         });
         setSpaces(prev => prev.map(s => (s.id === spaceId ? { ...s, unreadCount: 0 } : s)));
       } catch (error) {
@@ -259,8 +273,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       try {
         await fetch(`${HOST}/api/v0/chats/private/${conversationId}/mute`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
-            Authorization: `Bearer ${currUser?.jwt}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ isMuted }),
@@ -280,8 +294,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       try {
         await fetch(`${HOST}/api/v0/spaces/${spaceId}/mute`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
-            Authorization: `Bearer ${currUser?.jwt}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ isMuted }),

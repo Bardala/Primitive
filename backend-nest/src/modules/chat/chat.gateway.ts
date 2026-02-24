@@ -154,37 +154,29 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
       const usersInRoom = new Set(socketsInRoom.map((s: any) => s.data.user.sub as string));
 
       if (!usersInRoom.has(data.toUserId)) {
-        // Check if recipient muted this conversation
-        const state = await this.userConversationStateService.getOrCreate(
+
+        const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
           data.toUserId,
           data.conversationId,
           ConversationType.PRIVATE,
         );
+        // Always send notification so unread counts update, but respect sound preference
+        this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
+          type: 'PRIVATE_MESSAGE_NEW',
+          message: {
+            ...message,
+            senderName: user.username,
+          },
+          conversationId: data.conversationId,
+          playSound: shouldPlaySound,
+        });
 
-        if (!state.isMuted) {
-          const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
+        if (shouldPlaySound) {
+          await this.userConversationStateService.updateLastSoundPlayed(
             data.toUserId,
             data.conversationId,
             ConversationType.PRIVATE,
           );
-          // TODO: Update types in shared folder
-          this.server.to(data.toUserId).emit(SOCKET_EVENT.NOTIFICATION, {
-            type: 'PRIVATE_MESSAGE_NEW',
-            message: {
-              ...message,
-              senderName: user.username,
-            },
-            conversationId: data.conversationId,
-            playSound: shouldPlaySound,
-          });
-
-          if (shouldPlaySound) {
-            await this.userConversationStateService.updateLastSoundPlayed(
-              data.toUserId,
-              data.conversationId,
-              ConversationType.PRIVATE,
-            );
-          }
         }
       }
     } catch (error) {
@@ -234,34 +226,26 @@ export class ChatGateway implements ChatGatewayEvents, OnGatewayConnection, OnGa
         // Skip if user is currently looking at the room
         if (onlineUserIdsInRoom.has(memberId)) continue;
 
-        // Check if member muted this space
-        const state = await this.userConversationStateService.getOrCreate(
+
+        const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
           memberId,
           message.spaceId,
           ConversationType.SPACE,
         );
+        // Always send notification so unread counts update, but respect sound preference
+        this.server.to(memberId).emit(SOCKET_EVENT.NOTIFICATION, {
+          type: 'MESSAGE_NEW',
+          message,
+          spaceId: message.spaceId,
+          playSound: shouldPlaySound,
+        });
 
-        if (!state.isMuted) {
-          const shouldPlaySound = await this.userConversationStateService.shouldPlaySound(
+        if (shouldPlaySound) {
+          await this.userConversationStateService.updateLastSoundPlayed(
             memberId,
             message.spaceId,
             ConversationType.SPACE,
           );
-          // TODO: Update types in shared folder
-          this.server.to(memberId).emit(SOCKET_EVENT.NOTIFICATION, {
-            type: 'MESSAGE_NEW',
-            message,
-            spaceId: message.spaceId,
-            playSound: shouldPlaySound,
-          });
-
-          if (shouldPlaySound) {
-            await this.userConversationStateService.updateLastSoundPlayed(
-              memberId,
-              message.spaceId,
-              ConversationType.SPACE,
-            );
-          }
         }
       }
     } catch (error) {
