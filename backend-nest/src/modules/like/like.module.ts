@@ -12,6 +12,6 @@ import { NotificationModule } from '../notification/notification.module';
   imports: [TypeOrmModule.forFeature([Like, Blog, User]), NotificationModule],
   controllers: [LikeController],
   providers: [LikeService, LikeRepository],
-  exports: [LikeService],
+  exports: [LikeService, LikeRepository],
 })
 export class LikeModule {}

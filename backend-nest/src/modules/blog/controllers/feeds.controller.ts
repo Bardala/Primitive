@@ -26,6 +26,18 @@ export class FeedsController {
     return await this.feedsService.getPersonalFeeds(user.id, feedRequest.page);
   }
 
+  @Get('relative')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get relative feeds based on affinity scores' })
+  @ApiResponse({ status: 200, description: 'Returns relative feeds' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getRelativeFeeds(
+    @GetUser() user: User,
+    @Query() feedRequest: FeedQueryReqDto,
+  ): Promise<FeedsResDto> {
+    return await this.feedsService.getRelativeFeeds(user.id, feedRequest.page);
+  }
+
   @Get('smart')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get smart (algorithmically sorted) feeds for authenticated user' })

@@ -9,6 +9,8 @@ import { ChatController, PrivateChatController } from './controllers';
 import { Member } from '../space/entities/member.entity';
 import { ChatRepository } from './repositories/chat.repository';
 import { ChatService, LastReadService } from './services';
+import { PrivateConversationRepository } from './repositories/private-conversation.repository';
+import { PrivateMessageRepository } from './repositories/private-message.repository';
 
 import { PrivateConversation } from './entities/private-conversation.entity';
 import { PrivateMessage } from './entities/private-message.entity';
@@ -44,7 +46,9 @@ import { NotificationModule } from '../notification/notification.module';
     UserConversationStateService,
     ChatService,
     PrivateChatService,
+    PrivateConversationRepository,
+    PrivateMessageRepository,
   ],
-  exports: [ChatService, UserConversationStateService],
+  exports: [ChatService, UserConversationStateService, PrivateConversationRepository, PrivateMessageRepository],
 })
 export class ChatModule {}

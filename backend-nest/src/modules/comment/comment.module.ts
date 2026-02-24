@@ -7,10 +7,12 @@ import { CommentController } from './controllers/comment.controller';
 import { CommentService } from './services/comment.service';
 import { NotificationModule } from '../notification/notification.module';
 
+import { CommentRepository } from './repositories/comment.repository';
+
 @Module({
   imports: [TypeOrmModule.forFeature([Comment, Blog, User]), NotificationModule],
   controllers: [CommentController],
-  providers: [CommentService],
-  exports: [CommentService],
+  providers: [CommentService, CommentRepository],
+  exports: [CommentService, CommentRepository],
 })
 export class CommentModule {}

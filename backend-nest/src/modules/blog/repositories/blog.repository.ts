@@ -13,6 +13,27 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
     super(Blog, dataSource.createEntityManager());
   }
 
+  async getNetworkblogs(userId: string, blogCount: number): Promise<Pick<Blog, 'id' | 'userId' | 'timestamp'>[]> {
+    const blogs: Blog[] = await this.createQueryBuilder('blogs')
+      .select(['blogs.id As id', 'blogs.userId As userId', 'blogs.timestamp As timestamp'])
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('f.followingId')
+          .from(Follow, 'f')
+          .where('f.followerId = :userId')
+          .getQuery();
+
+        return 'blogs.userId = :userId OR blogs.userId IN ' + subQuery;
+      })
+      .setParameters({ userId })
+      .orderBy('blogs.timestamp', 'DESC')
+      .take(blogCount)
+      .getRawMany();
+
+    return blogs;
+  }
+
   async getFeeds(memberId: string, pageSize: number, offset: number): Promise<Blog[]> {
     const blogs: Blog[] = await this.createQueryBuilder('blogs')
       .select([
@@ -231,13 +252,17 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
     });
   }
 
-  // async findBySpaceId(spaceId: string, pageSize: number, offset: number): Promise<Feed[]> {
-  //   return this.find({
-  //     where: { spaceId },
-  //     relations: ['user', 'space'],
-  //     take: pageSize,
-  //     skip: offset,
-  //     order: { timestamp: 'DESC' },
-  //   });
-  // }
+  async getCommentsCount(blogId: string): Promise<number> {
+    return this.count({
+      where: { id: blogId },
+      relations: ['comments'],
+    });
+  }
+
+  async getLikesCount(blogId: string): Promise<number> {
+    return this.count({
+      where: { id: blogId },
+      relations: ['likes'],
+    });
+  }
 }

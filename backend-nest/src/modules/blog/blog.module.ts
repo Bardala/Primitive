@@ -7,6 +7,9 @@ import { ValidationModule } from '../shared/validation/validation.module';
 import { Member } from '../space/entities/member.entity';
 import { Space } from '../space/entities/space.entity';
 import { User } from '../user/entities/user.entity';
+import { ChatModule } from '../chat/chat.module';
+import { LikeModule } from '../like/like.module';
+import { CommentModule } from '../comment/comment.module';
 import { BlogController } from './controllers/blog.controller';
 import { Blog } from './entities/blog.entity';
 import { BlogRepository } from './repositories/blog.repository';
@@ -34,6 +37,9 @@ import { BlogSeries } from './entities/blog-series.entity';
       Tag,
     ]),
     ValidationModule,
+    ChatModule,
+    LikeModule,
+    CommentModule,
   ],
   controllers: [BlogController, FeedsController, BlogSeriesController],
   providers: [BlogService, BlogRepository, BlogTagService, BlogSeriesService, FeedsService],
