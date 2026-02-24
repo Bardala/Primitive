@@ -217,6 +217,8 @@ export const updateSpcApi = (input: CreateSpaceReq, spcId: string) => () =>
 export const loginApi = (login: string, password: string) =>
   postFn<LoginReq, LoginRes>(ENDPOINT.LOGIN, { login, password });
 
+export const logoutApi = () => postFn(ENDPOINT.LOGOUT);
+
 export const signUpApi = (email: string, password: string, username: string) =>
   postFn<SignUpReq, LoginRes>(ENDPOINT.SIGNUP, { email, password, username });
 

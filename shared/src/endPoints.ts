@@ -2,6 +2,7 @@ export enum ENDPOINT {
   // *Auth Routes
   SIGNUP = '/auth/signup',
   LOGIN = '/auth/login',
+  LOGOUT = '/auth/logout',
 
   // *User
   GET_USER_CARD = '/users/:id/card',

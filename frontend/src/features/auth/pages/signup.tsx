@@ -37,7 +37,8 @@ export const SignUp = () => {
 
       try {
         const currUser = await signUpApi(email, password, username);
-        localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(currUser));
+        const { jwt, ...userData } = currUser;
+        localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(userData));
         refetchCurrUser();
         nav(ROUTES.HOME);
       } catch (err) {

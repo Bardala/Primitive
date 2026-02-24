@@ -28,8 +28,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    if (currUser?.jwt) {
-      connectSocket(currUser.jwt);
+    if (currUser) {
+      connectSocket();
     } else {
       disconnectSocket();
     }

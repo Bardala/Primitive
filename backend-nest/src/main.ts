@@ -9,9 +9,11 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { LoggerService } from './common/services/logger.service';
 import { AuthenticatedSocketAdapter } from './common/adapters/authenticated-socket.adapter';
 import { JwtService } from '@nestjs/jwt';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   const configService = app.get(ConfigService);
   const jwtService = app.get(JwtService);
   const loggerService = app.get(LoggerService);

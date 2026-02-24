@@ -77,6 +77,15 @@ export class AuthenticatedSocketAdapter extends IoAdapter {
         token = socket.handshake.query.token as string;
       }
 
+      // Fallback to cookies
+      if (!token && socket.handshake.headers.cookie) {
+        const cookies = socket.handshake.headers.cookie.split(';');
+        const jwtCookie = cookies.find((c) => c.trim().startsWith('jwt='));
+        if (jwtCookie) {
+          token = jwtCookie.split('=')[1].trim();
+        }
+      }
+
       if (!token) {
         this.logger.warn(`Connection rejected: No token provided [${socket.id}]`);
         return next(new Error('Unauthorized: No token provided'));

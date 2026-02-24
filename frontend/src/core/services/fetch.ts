@@ -79,19 +79,6 @@ export const fetchFn = async <TRequest, TResponse>(
 ): Promise<TResponse> => {
   const { endpoint, method, body, params, token, queryParams } = options;
 
-  // Get auth token from localStorage
-  let authToken = token;
-  if (!authToken) {
-    const currUser = localStorage.getItem(LOCALS.CURR_USER);
-    if (currUser) {
-      try {
-        authToken = JSON.parse(currUser).jwt;
-      } catch (err) {
-        console.warn('Invalid stored authentication token');
-      }
-    }
-  }
-
   // Build URL with parameters
   const url = buildUrl(endpoint, params, queryParams);
 
@@ -100,22 +87,19 @@ export const fetchFn = async <TRequest, TResponse>(
     'Content-Type': 'application/json',
   };
 
-  if (authToken) {
-    headers['Authorization'] = `Bearer ${authToken}`;
-  }
-
   // Execute fetch request
   let response: Response;
   try {
     response = await fetch(url, {
       method,
       headers,
+      credentials: 'include',
       ...(body && { body: JSON.stringify(body) }),
     });
   } catch (err: any) {
     const errorMessage =
       err?.message === 'Failed to fetch' ? 'Connection problem…' : 'Network error occurred';
-    throw new ApiError(0, errorMessage);
+    throw new ApiError(errorMessage, 0);
   }
 
   const contentType = response.headers.get('Content-Type');
@@ -131,20 +115,18 @@ export const fetchFn = async <TRequest, TResponse>(
       else if (statusCode === 401) {
         localStorage.removeItem(LOCALS.CURR_USER);
         location.href = ROUTES.LOGIN;
-        throw new ApiError(statusCode, message || 'Unauthenticated');
+        throw new ApiError(message || 'Unauthenticated', statusCode);
       }
 
-      // Handle other errors
-      throw new ApiError(statusCode, message || response.statusText);
+      throw new ApiError(message || response.statusText, statusCode);
     }
 
     // Return parsed data on success
     return apiResponse.data as TResponse;
   }
 
-  // Handle non-JSON responses
   if (!response.ok) {
-    throw new ApiError(response.status, response.statusText);
+    throw new ApiError(response.statusText, response.status);
   }
 
   return response as unknown as TResponse;

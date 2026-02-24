@@ -4,11 +4,11 @@ import { HOST } from './config';
 
 export const socket = io(HOST, {
   autoConnect: false,
+  withCredentials: true,
 });
 
-export const connectSocket = (token: string) => {
+export const connectSocket = () => {
   if (!socket.connected) {
-    socket.auth = { token };
     socket.connect();
   }
 };
