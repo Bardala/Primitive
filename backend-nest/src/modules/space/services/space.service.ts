@@ -154,9 +154,9 @@ export class SpaceService {
       order: { timestamp: 'ASC' },
     });
 
-    if (!firstUser) 
+    if (!firstUser)
       throw new BadRequestException('No users found in database to assign as space owner');
-    
+
     return firstUser;
   }
 

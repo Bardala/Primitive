@@ -13,7 +13,10 @@ export class BlogRepository extends Repository<Blog> implements FeedsDao {
     super(Blog, dataSource.createEntityManager());
   }
 
-  async getNetworkblogs(userId: string, blogCount: number): Promise<Pick<Blog, 'id' | 'userId' | 'timestamp'>[]> {
+  async getNetworkblogs(
+    userId: string,
+    blogCount: number,
+  ): Promise<Pick<Blog, 'id' | 'userId' | 'timestamp'>[]> {
     const blogs: Blog[] = await this.createQueryBuilder('blogs')
       .select(['blogs.id As id', 'blogs.userId As userId', 'blogs.timestamp As timestamp'])
       .where((qb) => {

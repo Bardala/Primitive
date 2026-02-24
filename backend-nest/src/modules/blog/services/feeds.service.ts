@@ -16,12 +16,13 @@ export class FeedsService implements IFeedsService {
   private readonly rankedBlogIdsCache = new Map<string, { ids: string[]; timestamp: number }>();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
 
-  constructor(private readonly blogRepository: BlogRepository, 
+  constructor(
+    private readonly blogRepository: BlogRepository,
     private readonly privateConversationRepo: PrivateConversationRepository,
     private readonly likeRepo: LikeRepository,
     private readonly commentRepo: CommentRepository,
   ) {}
-  
+
   async getRelativeFeeds(userId: string, page: number): Promise<FeedsResDto> {
     const cached = this.rankedBlogIdsCache.get(userId);
     const now = Date.now();
@@ -58,9 +59,9 @@ export class FeedsService implements IFeedsService {
   // TODO: Space blogs shuold be included
   async getRelativeBlogsIds(userId: string): Promise<string[]> {
     const ProcessingFeedsCount = 200;
-    let blogs: Pick<Blog, 'id' | 'userId' | 'timestamp'>[] = 
+    const blogs: Pick<Blog, 'id' | 'userId' | 'timestamp'>[] =
       await this.blogRepository.getNetworkblogs(userId, ProcessingFeedsCount);
-    
+
     const authorSet = new Set<string>();
     blogs.forEach((blog) => {
       authorSet.add(blog.userId);
@@ -68,9 +69,24 @@ export class FeedsService implements IFeedsService {
     const authorIds = Array.from(authorSet);
 
     const [authorScoresList, blogWeightsList, blogTimeDecayList] = await Promise.all([
-      Promise.all(authorIds.map(async (id) => ({ id, score: await this.calculateUserAffinityScore(userId, id) }))),
-      Promise.all(blogs.map(async (blog) => ({ id: blog.id, weight: await this.calculateBlogWeight(blog.id) }))),
-      Promise.all(blogs.map(async (blog) => ({ id: blog.id, decay: await this.calculateTimeDecay(blog.timestamp) }))),
+      Promise.all(
+        authorIds.map(async (id) => ({
+          id,
+          score: await this.calculateUserAffinityScore(userId, id),
+        })),
+      ),
+      Promise.all(
+        blogs.map(async (blog) => ({
+          id: blog.id,
+          weight: await this.calculateBlogWeight(blog.id),
+        })),
+      ),
+      Promise.all(
+        blogs.map(async (blog) => ({
+          id: blog.id,
+          decay: await this.calculateTimeDecay(blog.timestamp),
+        })),
+      ),
     ]);
 
     const authorScores = new Map(authorScoresList.map((item) => [item.id, item.score]));
@@ -88,7 +104,9 @@ export class FeedsService implements IFeedsService {
     }
 
     // Sort blogs by rank
-   return blogs.sort((a, b) => (blogRank.get(b.id) || 0) - (blogRank.get(a.id) || 0)).map((blog) => blog.id);
+    return blogs
+      .sort((a, b) => (blogRank.get(b.id) || 0) - (blogRank.get(a.id) || 0))
+      .map((blog) => blog.id);
   }
 
   private async calculateTimeDecay(timestamp: number): Promise<number> {
@@ -99,18 +117,21 @@ export class FeedsService implements IFeedsService {
   }
 
   private async calculateBlogWeight(blogId: string): Promise<number> {
-   const commentsCount = await this.blogRepository.getCommentsCount(blogId); 
-   const likesCount = await this.blogRepository.getLikesCount(blogId);
-   const weight = (commentsCount * 6) + (likesCount * 2);
-   return weight;
+    const commentsCount = await this.blogRepository.getCommentsCount(blogId);
+    const likesCount = await this.blogRepository.getLikesCount(blogId);
+    const weight = commentsCount * 6 + likesCount * 2;
+    return weight;
   }
 
   private async calculateUserAffinityScore(userId: string, authorId: string): Promise<number> {
-    const privateMsgsCount = await this.privateConversationRepo.getConversationMsgsCount(userId, authorId);
+    const privateMsgsCount = await this.privateConversationRepo.getConversationMsgsCount(
+      userId,
+      authorId,
+    );
     const likesCount = await this.likeRepo.getFollowingLikesCount(userId, authorId);
-    const commentsCount = await this.commentRepo.getFollowingCommentsCount(userId, authorId)    ;
+    const commentsCount = await this.commentRepo.getFollowingCommentsCount(userId, authorId);
 
-    const score = (commentsCount * 5) + (likesCount * 2) + (privateMsgsCount * 10);
+    const score = commentsCount * 5 + likesCount * 2 + privateMsgsCount * 10;
     return score;
   }
 

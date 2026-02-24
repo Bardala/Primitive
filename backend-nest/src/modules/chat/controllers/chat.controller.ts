@@ -80,7 +80,6 @@ export class ChatController {
     return this.chatService.getUnifiedConversations(user.id);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   @Post(ENDPOINT.MUTE_SPACE_CHAT)
   @HttpCode(200)
   @ApiOperation({ summary: 'Toggle mute for a space' })

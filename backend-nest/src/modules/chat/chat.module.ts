@@ -49,6 +49,11 @@ import { NotificationModule } from '../notification/notification.module';
     PrivateConversationRepository,
     PrivateMessageRepository,
   ],
-  exports: [ChatService, UserConversationStateService, PrivateConversationRepository, PrivateMessageRepository],
+  exports: [
+    ChatService,
+    UserConversationStateService,
+    PrivateConversationRepository,
+    PrivateMessageRepository,
+  ],
 })
 export class ChatModule {}

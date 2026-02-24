@@ -258,11 +258,19 @@ export class InitialLegacySchema1000000000000 implements MigrationInterface {
     // 6. Indices
     await queryRunner.query(`CREATE INDEX idx_comments_blog_time ON comments (blogId, timestamp);`);
     await queryRunner.query(`CREATE INDEX idx_chat_space_time ON chat (spaceId, timestamp);`);
-    await queryRunner.query(`CREATE INDEX idx_private_msg_convo_time ON private_messages (conversationId, createdAt);`);
+    await queryRunner.query(
+      `CREATE INDEX idx_private_msg_convo_time ON private_messages (conversationId, createdAt);`,
+    );
     await queryRunner.query(`CREATE INDEX idx_space_createdAt ON blogs (spaceId, timestamp);`);
-    await queryRunner.query(`CREATE INDEX idx_notifications_user_unread ON notifications (userId, isRead, createdAt);`);
-    await queryRunner.query(`CREATE INDEX idx_user_convo_state_user ON user_conversation_state (userId);`);
-    await queryRunner.query(`CREATE INDEX idx_space_permissions_space_perm ON space_permissions (spaceId, permission);`);
+    await queryRunner.query(
+      `CREATE INDEX idx_notifications_user_unread ON notifications (userId, isRead, createdAt);`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX idx_user_convo_state_user ON user_conversation_state (userId);`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX idx_space_permissions_space_perm ON space_permissions (spaceId, permission);`,
+    );
 
     // 7. Backfills (from V25)
     await queryRunner.query(`

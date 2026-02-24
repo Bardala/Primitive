@@ -36,7 +36,14 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-      'prettier/prettier': ['off'],
+      // 'prettier/prettier': ['off'],
+      'max-len': ['error', {
+        code: 100,
+        ignoreUrls: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
+    }],
     },
   },
 );
