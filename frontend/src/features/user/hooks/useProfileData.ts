@@ -57,12 +57,12 @@ export const useProfileData = (userId: string) => {
   }, [userId, queryClient, cardKey]);
 
   const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(userId), {
-    enabled: !!currUser?.jwt && !!userId,
+    enabled: !!userId,
     refetchOnWindowFocus: false,
   });
 
   const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(userId), {
-    enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
+    enabled: !!userId && !!userCardQuery.data?.userCard,
     refetchOnWindowFocus: false,
   });
 
@@ -70,7 +70,7 @@ export const useProfileData = (userId: string) => {
     blogsKey,
     ({ pageParam = 1 }) => userBlogsApi(userId, pageParam),
     {
-      enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
+      enabled: !!userId && !!userCardQuery.data?.userCard,
       refetchOnWindowFocus: false,
       getNextPageParam: lastPage => lastPage.page + 1,
       onSuccess: data => {
@@ -105,7 +105,6 @@ export const useGetAllMissedMsgs = () => {
   const key = ['missedMsgs'];
 
   const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
-    // enabled: !!currUser?.jwt,
     enabled: false,
   });
 

@@ -85,7 +85,7 @@ export const UserProfile = () => {
 
   return (
     <MainLayout>
-      <div className="w-full flex flex-col relative min-h-screen bg-background-light dark:bg-background-dark">
+      <div className="w-full flex flex-col relative min-h-screen bg-transparent">
         {/* Sticky Header */}
         <div className="sticky top-0 z-40 bg-surface-light/80 dark:bg-black/80 backdrop-blur-md border-b border-border-light dark:border-border-dark/60 flex items-center px-4 py-2 gap-6 h-[53px]">
           <button

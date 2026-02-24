@@ -265,7 +265,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to mark space chat as read', error);
       }
     },
-    [currUser?.jwt, setSpaces]
+    [setSpaces]
   );
 
   const togglePrivateMute = useCallback(
@@ -286,7 +286,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to toggle private mute', error);
       }
     },
-    [currUser?.jwt, setPrivateConversations]
+    [setPrivateConversations]
   );
 
   const toggleSpaceMute = useCallback(
