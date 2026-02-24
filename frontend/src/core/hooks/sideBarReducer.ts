@@ -15,6 +15,7 @@ interface State {
   activeChatType?: 'private' | 'space' | null;
   activeChatName?: string | null;
   showMobileSidebar: boolean;
+  showUserMenu: boolean;
 }
 
 export type SideBarAction =
@@ -33,7 +34,9 @@ export type SideBarAction =
       payload: { id: string | null; type: 'private' | 'space' | null; name?: string | null };
     }
   | { type: 'toggleMobileSidebar' }
-  | { type: 'closeMobileSidebar' };
+  | { type: 'closeMobileSidebar' }
+  | { type: 'toggleUserMenu' }
+  | { type: 'closeUserMenu' };
 
 export const useSideBarReducer = () => {
   const sidebarReducer = (state: any, action: SideBarAction) => {
@@ -177,6 +180,16 @@ export const useSideBarReducer = () => {
           ...state,
           showMobileSidebar: false,
         };
+      case 'toggleUserMenu':
+        return {
+          ...state,
+          showUserMenu: !state.showUserMenu,
+        };
+      case 'closeUserMenu':
+        return {
+          ...state,
+          showUserMenu: false,
+        };
       default:
         return state;
     }
@@ -197,6 +210,7 @@ export const useSideBarReducer = () => {
     activeChatType: null,
     activeChatName: null,
     showMobileSidebar: false,
+    showUserMenu: false,
   } as never);
 
   return { state, dispatch };

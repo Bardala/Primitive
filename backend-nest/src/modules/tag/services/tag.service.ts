@@ -28,6 +28,8 @@ import {
   BlogValidator,
 } from 'src/modules/shared/validation/validators';
 import { ITagService } from './interfaces';
+import { PageSize } from '@nest/shared';
+import { FeedsResDto } from 'src/modules/blog/dto';
 
 @Injectable()
 export class TagService implements ITagService {
@@ -149,5 +151,19 @@ export class TagService implements ITagService {
     const space = await this.spaceValidator.validateExistsWithRelations(spaceId, ['tags']);
 
     return { tags: space.tags || [] };
+  }
+
+  async getBlogsByTag(tagId: string, page: number): Promise<FeedsResDto> {
+    const blogs = await this.blogRepository
+      .createQueryBuilder('blog')
+      .innerJoin('blog.tags', 'tag')
+      .where('tag.id = :tagId', { tagId })
+      .orWhere('tag.name = :tagId', { tagId }) // Support searching by name or ID
+      .orderBy('blog.timestamp', 'DESC')
+      .skip((page - 1) * PageSize)
+      .take(PageSize)
+      .getMany();
+
+    return new FeedsResDto(blogs, page);
   }
 }

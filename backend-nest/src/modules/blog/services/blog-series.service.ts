@@ -10,6 +10,8 @@ import { randomUUID } from 'crypto';
 import { BlogSeries } from '../entities/blog-series.entity';
 import { BlogSeriesLink } from '../entities/blog-series-links.entity';
 import { Blog } from '../entities/blog.entity';
+import { PageSize } from '@nest/shared';
+import { FeedsResDto } from '../dto';
 import {
   CreateSeriesReq,
   UpdateSeriesReq,
@@ -200,6 +202,21 @@ export class BlogSeriesService {
     });
 
     return { series: seriesList };
+  }
+
+  async getBlogsBySeries(seriesId: string, page: number): Promise<FeedsResDto> {
+    const links = await this.seriesLinkRepository.find({
+      where: { seriesId },
+      relations: ['blog'],
+      order: { position: 'ASC' },
+      skip: (page - 1) * PageSize,
+      take: PageSize,
+    });
+
+    return new FeedsResDto(
+      links.map((link) => link.blog),
+      page,
+    );
   }
 
   private mapToRes(series: BlogSeries, links: BlogSeriesLink[]): GetSeriesRes {

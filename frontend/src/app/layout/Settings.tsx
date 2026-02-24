@@ -1,9 +1,9 @@
 import { useAuthContext } from '@/core/context';
-import { logOut } from '@/core/services';
+import { useLogOut } from '@/core/services';
 import { PasswordUpdate } from '@/features/auth';
 import { LanguageSwitcher } from '@/shared';
 
-import { useQueryClient } from '@tanstack/react-query';
+
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CiLock, CiLogout } from 'react-icons/ci';
@@ -18,15 +18,16 @@ export const Settings = () => {
   const { refetchCurrUser, currUser } = useAuthContext();
   const nav = useNavigate();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
+
   const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
 
-  const handleClick = useCallback(() => {
-    queryClient.clear();
-    logOut();
+  const { logOut: performLogOut } = useLogOut();
+
+  const handleClick = useCallback(async () => {
+    await performLogOut();
     refetchCurrUser();
     nav('/login', { replace: true });
-  }, [nav, queryClient, refetchCurrUser]);
+  }, [nav, performLogOut, refetchCurrUser]);
 
   return (
     <MainLayout>

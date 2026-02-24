@@ -2,8 +2,11 @@ import { MainLayout } from '@/app/layout';
 import { useAuthContext } from '@/core/context';
 import { formatTimeShort, isArabic, ROUTES } from '@/core/utils';
 import { UserLink } from '@/features/user';
+import { useScrollSpy } from '@/core/hooks/useScrollSpy';
 
 import { DefaultSpaceId } from '@nest/shared';
+import { HiOutlineMenuAlt2 } from 'react-icons/hi';
+import { FiX } from 'react-icons/fi';
 
 import GithubSlugger from 'github-slugger';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -86,8 +89,12 @@ export const BlogDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blog?.content]);
   const hasHeadings = headings.length > 0;
+  const activeHeadingId = useScrollSpy(
+    headings.map(h => h.id),
+    100
+  );
 
-  const [showToc, setShowToc] = useState(false);
+  const [showMobileToc, setShowMobileToc] = useState(false);
 
   const goToComments = () => {
     commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -101,10 +108,6 @@ export const BlogDetails = () => {
       element.classList.add('heading-highlight');
       setTimeout(() => element.classList.remove('heading-highlight'), 2000);
     }
-  }, []);
-
-  const toggleToc = useCallback(() => {
-    setShowToc(prev => !prev);
   }, []);
 
   useEffect(() => {
@@ -121,7 +124,20 @@ export const BlogDetails = () => {
     );
 
   return (
-    <MainLayout>
+    <MainLayout
+      rightSidebar={
+        hasHeadings ? (
+          <div className="sticky top-4">
+            <TableOfContents
+              headings={headings}
+              activeId={activeHeadingId}
+              scrollTo={scrollToHeading}
+              t={t}
+            />
+          </div>
+        ) : null
+      }
+    >
       <div className="mx-auto max-w-5xl w-full px-4 py-8 sm:px-6 lg:px-8">
         {blogQuery.isError && (
           <div className="rounded-lg bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
@@ -183,36 +199,38 @@ export const BlogDetails = () => {
                   </span>
                 </div>
 
-                {/* Table of Contents */}
+                {/* Custom Mobile TOC Trigger */}
                 {hasHeadings && (
-                  <div className="mb-8 rounded-xl border border-border-light bg-background-light/50 p-4 dark:border-border-dark dark:bg-background-dark/50">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark">
-                        Contents
-                      </h3>
-                      <button
-                        onClick={toggleToc}
-                        className="rounded-lg px-3 py-1 text-sm font-medium text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-900/10"
-                      >
-                        {showToc ? t('blogDetails.hideToc') : t('blogDetails.showToc')}
-                      </button>
-                    </div>
-
-                    <div
-                      className={`transition-all duration-300 ${
-                        showToc
-                          ? 'mt-4 max-h-[500px] opacity-100'
-                          : 'max-h-0 opacity-0 overflow-hidden'
-                      }`}
+                  <div className="lg:hidden sticky top-[53px] z-30 mb-6 -mx-4 sm:mx-0">
+                    <button
+                      onClick={() => setShowMobileToc(!showMobileToc)}
+                      className="flex w-full items-center justify-between border-y border-border-light bg-surface-light/95 px-6 py-3 backdrop-blur-md dark:border-border-dark dark:bg-surface-dark/95"
                     >
-                      <TableOfContents
-                        headings={headings}
-                        show={showToc}
-                        toggle={toggleToc}
-                        scrollTo={scrollToHeading}
-                        t={t}
-                      />
-                    </div>
+                      <div className="flex items-center gap-2">
+                        <HiOutlineMenuAlt2 className="text-primary-600 dark:text-primary-400" />
+                        <span className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+                          {headings.find(h => h.id === activeHeadingId)?.text || 'Table of Contents'}
+                        </span>
+                      </div>
+                      <div className="text-xs font-medium text-text-secondary-light dark:text-[#71767b]">
+                        {headings.findIndex(h => h.id === activeHeadingId) + 1} / {headings.length}
+                      </div>
+                    </button>
+
+                    {showMobileToc && (
+                      <div className="absolute left-0 right-0 top-full max-h-[60vh] overflow-y-auto border-b border-border-light bg-surface-light shadow-xl animate-in slide-in-from-top duration-200 dark:border-border-dark dark:bg-surface-dark">
+                        <TableOfContents
+                          headings={headings}
+                          activeId={activeHeadingId}
+                          scrollTo={id => {
+                            scrollToHeading(id);
+                            setShowMobileToc(false);
+                          }}
+                          t={t}
+                          className="p-6"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 

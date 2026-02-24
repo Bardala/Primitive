@@ -12,7 +12,6 @@ import { User } from '../entities/user.entity';
 import { UserActivity } from '../entities/user-activity.entity';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { Follow } from 'src/modules/shared/entities/follow.entity';
-import { Space } from 'src/modules/space/entities/space.entity';
 import { Member } from 'src/modules/space/entities/member.entity';
 import { randomUUID } from 'crypto';
 import {
@@ -32,7 +31,6 @@ export class UserService implements IUserService, IUserFollowService {
     @InjectRepository(UserActivity) private userActivityRepository: Repository<UserActivity>,
     @InjectRepository(Follow) private followRepository: Repository<Follow>,
     @InjectRepository(Blog) private blogRepository: Repository<Blog>,
-    @InjectRepository(Space) private spaceRepository: Repository<Space>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     private presenceService: PresenceService,
   ) {}
@@ -267,15 +265,15 @@ export class UserService implements IUserService, IUserFollowService {
   }
 
   async getUserSpaces(userId: string): Promise<any[]> {
-    const spaces = await this.spaceRepository.find({
-      where: { ownerId: userId },
-      select: ['id', 'name', 'description', 'status', 'timestamp'],
+    const memberships = await this.memberRepository.find({
+      where: { memberId: userId },
+      relations: ['space'],
     });
 
-    return spaces;
+    return memberships.map((m) => m.space);
   }
 
   async updateLastActive(userId: string): Promise<void> {
     await this.userActivityRepository.upsert({ userId, lastActive: new Date() }, ['userId']);
-  }
+  } 
 }

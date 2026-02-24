@@ -1,7 +1,6 @@
 import { Home, MainLayout } from '@/app/layout';
 import { useSideBar } from '@/core/context/SideBarContext';
 import { BlogList } from '@/features/blog';
-import { Chat } from '@/features/chat';
 import { NotificationMsgsNumber } from '@/features/notification/components';
 
 import { DefaultSpaceId } from '@nest/shared';

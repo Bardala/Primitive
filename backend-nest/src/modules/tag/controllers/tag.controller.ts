@@ -8,10 +8,13 @@ import {
   UseGuards,
   HttpCode,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { ENDPOINT } from '@nest/shared';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { PublicEndpoint } from 'src/common/decorators';
+import { FeedsResDto } from 'src/modules/blog/dto';
 import { GetUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/modules/user/entities/user.entity';
 import { TagService } from '../services/tag.service';
@@ -136,5 +139,18 @@ export class TagController {
   @ApiResponse({ status: 200, description: 'Tags retrieved successfully', type: GetSpaceTagsRes })
   async getSpaceTags(@Param('spaceId', ParseUUIDPipe) spaceId: string): Promise<GetSpaceTagsRes> {
     return await this.tagService.getSpaceTags(spaceId);
+  }
+
+  @Get(ENDPOINT.GET_TAG_BLOGS)
+  @PublicEndpoint()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get blogs by tag' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Blogs retrieved successfully', type: FeedsResDto })
+  async getTagBlogs(
+    @Param('tagId') tagId: string,
+    @Query('page') page: number = 1,
+  ): Promise<FeedsResDto> {
+    return await this.tagService.getBlogsByTag(tagId, page);
   }
 }

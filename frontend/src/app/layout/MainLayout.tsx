@@ -22,9 +22,15 @@ interface MainLayoutProps {
   children: React.ReactNode;
   space?: Space;
   members?: SpaceMember[];
+  rightSidebar?: React.ReactNode;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({
+  children,
+  space,
+  members,
+  rightSidebar,
+}) => {
   const { state, dispatch } = useSideBar();
 
   const isChatActive = !!state.activeChatId;
@@ -40,7 +46,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
       </main>
 
       {/* Right Sidebar */}
-      <ChatSidebar space={space} />
+      {rightSidebar ? (
+        <aside className="hidden lg:flex flex-col w-[290px] xl:w-[350px] shrink-0 h-screen sticky top-0 px-4 py-3 overflow-y-auto no-scrollbar pt-4">
+          {rightSidebar}
+        </aside>
+      ) : (
+        <ChatSidebar space={space} />
+      )}
 
       {/* Overlays / Modals for SideBar Actions */}
       {(state.showCreateBlog ||

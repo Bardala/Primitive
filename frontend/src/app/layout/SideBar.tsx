@@ -1,5 +1,6 @@
 import { useAuthContext, useTheme } from '@/core/context';
 import { useSideBar } from '@/core/context/SideBarContext';
+import { useClickOutside } from '@/core/hooks';
 import { ROUTES } from '@/core/utils';
 import { ChatIcon } from '@/features/chat/components/ChatIcon';
 import { NotificationMsgsNumber } from '@/features/notification/components';
@@ -9,7 +10,7 @@ import { FollowedUsersList } from '@/features/user/components';
 
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FaBook,
@@ -19,6 +20,7 @@ import {
   FaPencilAlt,
   FaPlus,
   FaSignOutAlt,
+  FaTimes,
 } from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
@@ -40,6 +42,11 @@ export const ActionsSidebar: React.FC<{
   const { t } = useTranslation();
   const nav = useNavigate();
   const location = useLocation();
+
+  const menuRef = useRef<HTMLDivElement>(null);
+  useClickOutside(menuRef, () => {
+    if (state.showUserMenu) dispatch({ type: 'closeUserMenu' });
+  });
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
@@ -112,7 +119,7 @@ export const ActionsSidebar: React.FC<{
                 <NavItem
                   icon={<IoIosPeople size={26} />}
                   label={t('navbar.follow')}
-                  to={ROUTES.USER_PROFILE}
+                  to={ROUTES.USERS_LIST}
                   active={location.pathname === ROUTES.USER_PROFILE}
                   onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 />
@@ -149,18 +156,6 @@ export const ActionsSidebar: React.FC<{
                   }}
                 />
 
-                {/* <NavItem
-                  icon={
-                    <div className="h-6 w-6 rounded-full overflow-hidden bg-primary-100 flex items-center justify-center text-primary-600 font-bold text-xs ring-1 ring-border-light dark:ring-border-dark">
-                      {currUser.username.charAt(0).toUpperCase()}
-                    </div>
-                  }
-                  label={t('navbar.profile')}
-                  to={`/u/${currUser.id}`}
-                  active={location.pathname.startsWith(`/u/${currUser.id}`)}
-                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
-                /> */}
-
                 {/* Theme Toggle */}
                 <SidebarThemeToggle onClick={() => dispatch({ type: 'closeMobileSidebar' })} />
 
@@ -195,7 +190,7 @@ export const ActionsSidebar: React.FC<{
             {/* Space specific actions */}
             {space && (
               <div className="mt-6 w-full flex flex-col pt-4 border-t border-border-light dark:border-border-dark/60">
-                <div className="xl:px-4 mb-2 flex flex-col items-center xl:items-start w-full">
+                {space.id !== DefaultSpaceId && <div className="xl:px-4 mb-2 flex flex-col items-center xl:items-start w-full">
                   <h3 className="hidden xl:block truncate text-base font-bold text-text-primary-light dark:text-text-primary-dark w-full">
                     {space.name}
                   </h3>
@@ -205,7 +200,7 @@ export const ActionsSidebar: React.FC<{
                   <span className="hidden xl:block text-xs text-text-secondary-light dark:text-text-secondary-dark">
                     {members?.length || 0} Members
                   </span>
-                </div>
+                </div>}
 
                 {isMember && (
                   <SidebarItem
@@ -280,27 +275,83 @@ export const ActionsSidebar: React.FC<{
 
         {/* Bottom User Profile Summary */}
         {currUser && (
-          <div className="w-full flex items-center justify-center xl:justify-start px-2 xl:px-4 py-3 border-t border-border-light dark:border-border-dark/60 mt-auto bg-background-light dark:bg-background-dark z-10 shrink-0">
-            <Link
-              to={ROUTES.GET_USER_PROFILE(currUser.id)}
-              onClick={() => dispatch({ type: 'closeMobileSidebar' })}
-              className="flex items-center w-full gap-3 overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all p-1 xl:p-2"
-            >
-              <div className="h-10 w-10 shrink-0 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold border border-primary-200 dark:border-primary-800">
-                {currUser.username.charAt(0).toUpperCase()}
+          <div className="relative w-full px-2 xl:px-4 py-3 border-t border-border-light dark:border-border-dark/60 mt-auto bg-background-light dark:bg-background-dark z-10 shrink-0">
+            {/* User Menu Popup — anchored above this row */}
+            {state.showUserMenu && (
+              <div
+                ref={menuRef}
+                className="absolute bottom-full left-2 right-2 xl:left-4 xl:right-4 mb-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark/60 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-200 z-50"
+              >
+                {/* Close button */}
+                <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/40">
+                  <span className="font-bold text-sm text-text-primary-light dark:text-text-primary-dark">
+                    Quick Access
+                  </span>
+                  <button
+                    onClick={() => dispatch({ type: 'closeUserMenu' })}
+                    className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-text-secondary-light dark:text-text-secondary-dark transition-all"
+                  >
+                    <FaTimes size={12} />
+                  </button>
+                </div>
+
+                {/* Following Section */}
+                <div className="flex flex-col border-b border-border-light dark:border-border-dark/40">
+                  <h2 className="px-4 py-2 font-extrabold text-[15px] text-text-primary-light dark:text-text-primary-dark">
+                    {t('user.following') || 'Following'}
+                  </h2>
+                  <div className="max-h-[200px] overflow-y-auto no-scrollbar">
+                    <FollowedUsersList />
+                  </div>
+                </div>
+
+                {/* Spaces Section */}
+                <div className="flex flex-col">
+                  <h2 className="px-4 py-2 font-extrabold text-[15px] text-text-primary-light dark:text-text-primary-dark">
+                    {t('userProfile.spaces') || 'Spaces'}
+                  </h2>
+                  <div className="max-h-[200px] overflow-y-auto no-scrollbar">
+                    <UserSpacesList />
+                  </div>
+                </div>
               </div>
-              <div className="hidden xl:flex flex-col flex-1 min-w-0">
-                <span className="font-bold text-[15px] truncate text-text-primary-light dark:text-text-primary-dark leading-tight">
-                  {currUser.username}
-                </span>
-                <span className="text-text-secondary-light dark:text-text-secondary-dark text-[15px] truncate">
-                  @{currUser.id.substring(0, 8)}
-                </span>
-              </div>
-              <div className="hidden xl:block text-text-primary-light dark:text-text-primary-dark font-bold ml-auto px-1">
+            )}
+
+            {/* Bottom Row: profile link + three-dot trigger */}
+            <div className="flex items-center w-full gap-2">
+              <Link
+                to={ROUTES.GET_USER_PROFILE(currUser.id)}
+                onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                className="flex items-center flex-1 gap-3 overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all p-1 xl:p-2 min-w-0"
+              >
+                <div className="h-10 w-10 shrink-0 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold border border-primary-200 dark:border-primary-800">
+                  {currUser.username.charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden xl:flex flex-col flex-1 min-w-0">
+                  <span className="font-bold text-[15px] truncate text-text-primary-light dark:text-text-primary-dark leading-tight">
+                    {currUser.username}
+                  </span>
+                  <span className="text-text-secondary-light dark:text-text-secondary-dark text-[15px] truncate">
+                    @{currUser.id.substring(0, 8)}
+                  </span>
+                </div>
+              </Link>
+
+              {/* Three-dot button — visible on both icon-only and wide sidebar */}
+              <button
+                id="user-menu-trigger"
+                onClick={e => {
+                  e.stopPropagation();
+                  dispatch({ type: 'toggleUserMenu' });
+                }}
+                title="More options"
+                className={`shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-all hover:bg-black/10 dark:hover:bg-white/10 text-text-primary-light dark:text-text-primary-dark font-bold text-lg ${
+                  state.showUserMenu ? 'bg-black/10 dark:bg-white/10' : ''
+                }`}
+              >
                 ···
-              </div>
-            </Link>
+              </button>
+            </div>
           </div>
         )}
       </aside>

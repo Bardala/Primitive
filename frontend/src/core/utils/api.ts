@@ -1,5 +1,5 @@
 import { AuthApi } from '@/features/auth/api/auth.api';
-import { BlogApi, CommentApi, LikeApi } from '@/features/blog/api';
+import { BlogApi, CommentApi, LikeApi, SeriesApi } from '@/features/blog/api';
 import { ChatApi } from '@/features/chat/api';
 import { FeedsApi, SpaceApi } from '@/features/spaces/api';
 import { UserApi } from '@/features/user/api';
@@ -68,6 +68,7 @@ export const Api = {
   space: SpaceApi,
   feeds: FeedsApi,
   blog: BlogApi,
+  series: SeriesApi,
   comment: CommentApi,
   chat: ChatApi,
   like: LikeApi,
@@ -94,6 +95,15 @@ export const leaveSpcApi = (spcId: string) => () =>
   postFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, undefined, [spcId]);
 
 // Feed APIs
+export const publicFeedsApi = (pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.PUBLIC_FEEDS, [], undefined, { page: pageParam.toString() });
+
+export const tagBlogsApi = (tagId: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_TAG_BLOGS, [tagId], undefined, { page: pageParam.toString() });
+
+export const seriesBlogsApi = (seriesId: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_SERIES_BLOGS, [seriesId], undefined, { page: pageParam.toString() });
+
 export const feedsApi = (pageParam: number = 1) =>
   getFn<FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, [pageParam.toString()]);
 
@@ -105,8 +115,6 @@ export const personalFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.PE
 export const smartFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.SMART_FEEDS);
 
 export const mixedFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.MIXED_FEEDS);
-
-export const publicFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.PUBLIC_FEEDS);
 
 export const smartPublicFeedsApi = (query: FeedsReq) =>
   getFn<FeedsRes>(ENDPOINT.SMART_PUBLIC_FEEDS);

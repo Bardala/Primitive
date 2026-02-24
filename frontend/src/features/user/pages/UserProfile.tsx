@@ -14,7 +14,9 @@ import { FiArrowLeft, FiCalendar, FiSearch } from 'react-icons/fi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { FollowButton } from '../components/FollowButton';
+import { FollowersModal, FollowingModal } from '../components';
 import { useFollow } from '../hooks/useFollow';
+import { useFollowing } from '../hooks/useFollowing';
 import { useProfileData } from '../hooks/useProfileData';
 import { ROUTES } from '@/core/utils';
 
@@ -28,18 +30,22 @@ export const UserProfile = () => {
 
   const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage, isEnd } = useProfileData(id!);
   const { followersQuery } = useFollow(id!);
+  const { followingQuery } = useFollowing(id!);
 
   const blogs = userBlogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const spaces = isMyPage
     ? userSpacesQuery.data?.spaces
-    : userSpacesQuery.data?.spaces.filter(space => space.status === 'public');
+    : userSpacesQuery.data?.spaces?.filter(space => space.status === 'public');
   const userCard = userCardQuery.data?.userCard;
 
   const [activeTab, setActiveTab] = useState<'posts' | 'spaces' | 'series'>('posts');
   const [search, setSearch] = useState<Space[] | null>(null);
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
 
-  const followersCount = followersQuery.data?.followers?.length || 0;
+  const followersCount = userCard?.followersNum || 0;
+  const followingCount = userCard?.followingNum || 0;
 
   const handleSearch = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -169,13 +175,19 @@ export const UserProfile = () => {
             </div>
 
             <div className="flex gap-5 mt-3 text-[15px]">
-              <div className="flex gap-1 hover:underline cursor-pointer">
+              <div
+                className="flex gap-1 hover:underline cursor-pointer"
+                onClick={() => setShowFollowing(true)}
+              >
                 <span className="font-bold text-text-primary-light dark:text-text-primary-dark">
-                  54
+                  {followingCount}
                 </span>
                 <span className="text-text-secondary-light dark:text-[#71767b]">Following</span>
               </div>
-              <div className="flex gap-1 hover:underline cursor-pointer">
+              <div
+                className="flex gap-1 hover:underline cursor-pointer"
+                onClick={() => setShowFollowers(true)}
+              >
                 <span className="font-bold text-text-primary-light dark:text-text-primary-dark">
                   {followersCount}
                 </span>
@@ -184,6 +196,17 @@ export const UserProfile = () => {
             </div>
           </div>
         </div>
+
+        <FollowersModal
+          userId={id!}
+          isOpen={showFollowers}
+          onClose={() => setShowFollowers(false)}
+        />
+        <FollowingModal
+          userId={id!}
+          isOpen={showFollowing}
+          onClose={() => setShowFollowing(false)}
+        />
 
         {/* Tabs */}
         <div className="flex border-b border-border-light dark:border-border-dark/60 w-full overflow-x-auto no-scrollbar">

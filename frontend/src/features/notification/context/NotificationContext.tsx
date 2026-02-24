@@ -9,6 +9,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -26,55 +27,136 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { currUser: user } = useAuthContext();
-  const token = user?.jwt;
+  // NOTE: jwt is intentionally stripped from localStorage on login (security).
+  // Auth is cookie-based (HttpOnly). We gate on `user` (id/username) being
+  // present, not on a jwt string.
+  const isAuthenticated = !!user;
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  // ── Refs that hold mutable state without causing re-renders ──────────────
+  const esRef = useRef<EventSource | null>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const backoffAttempt = useRef(0);
+
+  // ── REST fetch (cookies sent automatically via credentials: include) ─────
   const fetchNotifications = useCallback(async () => {
-    if (!token) return;
+    if (!isAuthenticated) return;
     try {
       const data = await getNotifications();
       setNotifications(data);
-    } catch (error) {
-      console.error('Failed to fetch notifications', error);
+    } catch (err) {
+      console.error('[Notifications] REST fetch failed:', err);
     }
-  }, [token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
+  // Initial load whenever auth state changes
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchNotifications();
-  }, [fetchNotifications]);
+  }, [isAuthenticated, fetchNotifications]);
 
+  // 60-second polling fallback — keeps the badge accurate even if SSE drops
   useEffect(() => {
-    if (!token || !user) return;
+    if (!isAuthenticated) return;
+    const id = setInterval(fetchNotifications, 60_000);
+    return () => clearInterval(id);
+  }, [isAuthenticated, fetchNotifications]);
 
-    const url = `${HOST}/api/v0/notifications/stream?token=${token}`;
-    const eventSource = new EventSource(url);
+  // ── SSE connection ───────────────────────────────────────────────────────
+  // Defined as a plain function stored in a ref so the `onerror` closure
+  // always calls the latest version without stale captures.
+  const connectRef = useRef<() => void>(() => {});
 
-    eventSource.onmessage = event => {
+  connectRef.current = () => {
+    // Tear down any previous connection
+    if (esRef.current) {
+      esRef.current.close();
+      esRef.current = null;
+    }
+
+    // No ?token= needed — the HttpOnly cookie is sent automatically.
+    // withCredentials: true is required for cross-origin SSE (frontend:3000 → backend:4001).
+    const url = `${HOST}/api/v0/notifications/stream`;
+    const es = new EventSource(url, { withCredentials: true });
+    esRef.current = es;
+
+    es.onopen = () => {
+      backoffAttempt.current = 0; // reset on clean connect
+    };
+
+    es.onmessage = event => {
       try {
-        const newNotification = JSON.parse(event.data) as Notification;
-        setNotifications(prev => [newNotification, ...prev]);
-      } catch (error) {
-        console.error('Error parsing notification event', error);
+        const parsed =
+          typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+
+        // Ignore heartbeat pings (sent as { ping: true } — no `id` field)
+        if (!parsed?.id) return;
+
+        const incoming = parsed as Notification;
+
+        setNotifications(prev => {
+          if (prev.some(n => n.id === incoming.id)) return prev; // deduplicate
+          return [incoming, ...prev];
+        });
+      } catch (err) {
+        console.error('[Notifications] SSE parse error:', err);
       }
     };
 
-    eventSource.onerror = error => {
-      console.error('EventSource failed', error);
-      eventSource.close();
+    es.onerror = () => {
+      // readyState: 0 = CONNECTING (browser auto-retrying), 2 = CLOSED
+      if (es.readyState !== EventSource.CLOSED) return; // browser handles it
+
+      // Connection truly closed — schedule our own reconnect with backoff
+      esRef.current = null;
+
+      const attempt = backoffAttempt.current;
+      const delay = Math.min(1_000 * 2 ** attempt, 30_000); // 2s → 4s → … → 30s
+      backoffAttempt.current = attempt + 1;
+
+      console.warn(
+        `[Notifications] SSE closed. Reconnecting in ${delay / 1000}s (attempt ${attempt + 1})`,
+      );
+
+      reconnectTimer.current = setTimeout(() => {
+        connectRef.current(); // always calls the latest closure via ref
+      }, delay);
     };
+  };
+
+  // Start / restart SSE whenever the user logs in or out
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Clear any pending reconnect from a previous session
+    if (reconnectTimer.current) {
+      clearTimeout(reconnectTimer.current);
+      reconnectTimer.current = null;
+    }
+    backoffAttempt.current = 0;
+
+    connectRef.current();
 
     return () => {
-      eventSource.close();
+      // Cleanup on unmount or logout
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      if (esRef.current) {
+        esRef.current.close();
+        esRef.current = null;
+      }
     };
-  }, [token, user]);
+  }, [isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── Write operations ─────────────────────────────────────────────────────
   const handleMarkAsRead = async (id: string) => {
     try {
       await markAsRead(id);
       setNotifications(prev => prev.map(n => (n.id === id ? { ...n, isRead: true } : n)));
-    } catch (error) {
-      console.error('Failed to mark as read', error);
+    } catch (err) {
+      console.error('[Notifications] markAsRead failed:', err);
     }
   };
 
@@ -82,8 +164,8 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     try {
       await markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    } catch (error) {
-      console.error('Failed to mark all as read', error);
+    } catch (err) {
+      console.error('[Notifications] markAllAsRead failed:', err);
     }
   };
 

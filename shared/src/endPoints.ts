@@ -111,7 +111,10 @@ export enum ENDPOINT {
   GET_USER_SERIES = '/series/user',
   DELETE_SERIES = '/series/:seriesId',
   ADD_BLOG_TO_SERIES = '/series/:seriesId/blogs',
+  GET_SERIES_BLOGS = '/series/:seriesId/blogs-list',
   REMOVE_BLOG_FROM_SERIES = '/series/:seriesId/blogs/:blogId',
+
+  GET_TAG_BLOGS = '/tags/:tagId/blogs-list',
 
   // *Space Permissions
   GET_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',

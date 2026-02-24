@@ -171,13 +171,13 @@ export const Home = () => {
                   <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors">
                     <MdOutlineGifBox size={22} />
                   </div>
-                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
+                  <div className="h-8 w-8 rounded-full items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
                     <RiListRadio size={20} />
                   </div>
                   <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors">
                     <MdOutlineEmojiEmotions size={22} />
                   </div>
-                  <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
+                  <div className="h-8 w-8 rounded-full items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors hidden sm:flex">
                     <RiCalendarCheckLine size={20} />
                   </div>
                   <div className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors opacity-50 cursor-not-allowed">
