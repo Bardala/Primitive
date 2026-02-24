@@ -19,6 +19,7 @@
     "start": "npm-run-all --parallel start:backend start:frontend",
     "start:dev": "npm-run-all --parallel start:backend-nest start:frontend",
     "start:js": "npm-run-all --parallel start:backend:js start:frontend",
+    "start:backend-prod": "cd backend-nest && npm run start:prod",
     "lint": "prettier . --write",
     "lint:check": "prettier . --check",
     "test": "echo \"Error: no test specified\" && exit 1"
