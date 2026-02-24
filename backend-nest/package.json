@@ -11,7 +11,6 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "npm run migration:run && node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -21,7 +20,9 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate src/db/migrations/UpdateSchema -d src/db/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/db/data-source.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -d src/db/data-source.ts"
+    "migration:revert": "npm run typeorm -- migration:revert -d src/db/data-source.ts",
+    "migration:run:prod": "node dist/db/data-source.js && npm run typeorm -- migration:run -d dist/db/data-source.js",
+    "start:prod": "npm run migration:run:prod && node dist/main"
   },
   "dependencies": {
     "@nest/shared": "file:../shared",
