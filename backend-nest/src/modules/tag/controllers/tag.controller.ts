@@ -151,6 +151,19 @@ export class TagController {
     @Param('tagId') tagId: string,
     @Query('page') page: number = 1,
   ): Promise<FeedsResDto> {
-    return await this.tagService.getBlogsByTag(tagId, page);
+    return await this.tagService.getBlogsByTagId(tagId, page);
+  }
+
+  @Get(ENDPOINT.GET_TAG_BLOGS_BY_NAME)
+  @PublicEndpoint()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get blogs by tag' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Blogs retrieved successfully', type: FeedsResDto })
+  async getTagBlogsByName(
+    @Param('tagName') tagName: string,
+    @Query('page') page: number = 1,
+  ): Promise<FeedsResDto> {
+    return await this.tagService.getBlogsByTagName(tagName, page);
   }
 }

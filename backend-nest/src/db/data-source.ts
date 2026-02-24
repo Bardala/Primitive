@@ -48,7 +48,7 @@ export const entities = [
 export const AppDataSource = new DataSource({
   type: 'mysql',
   host: process.env.MYSQLHOST,
-  port: parseInt(process.env.MY_SQL_DB_PORT || '3306'),
+  port: parseInt(process.env.MYSQLPORT || '3306'),
   username: process.env.MYSQLUSER,
   password: process.env.MYSQL_ROOT_PASSWORD,
   database: process.env.MYSQL_DATABASE,

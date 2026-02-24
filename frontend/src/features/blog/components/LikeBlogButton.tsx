@@ -1,6 +1,6 @@
 import { Blog, Short } from '@nest/shared';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { FiHeart } from 'react-icons/fi';
 

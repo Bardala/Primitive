@@ -11,7 +11,7 @@ import { entities } from 'src/db/data-source';
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get<string>('MYSQLHOST'),
-        port: parseInt(configService.get<string>('MY_SQL_DB_PORT') || '3306'),
+        port: parseInt(configService.get<string>('MYSQLPORT') || '3306'),
         username: configService.get<string>('MYSQLUSER'),
         password: configService.get<string>('MYSQL_ROOT_PASSWORD'),
         database: configService.get<string>('MYSQL_DATABASE'),

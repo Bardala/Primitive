@@ -77,7 +77,7 @@ interface FetchOptions<TRequest> {
 export const fetchFn = async <TRequest, TResponse>(
   options: FetchOptions<TRequest>
 ): Promise<TResponse> => {
-  const { endpoint, method, body, params, token, queryParams } = options;
+  const { endpoint, method, body, params, queryParams } = options;
 
   // Build URL with parameters
   const url = buildUrl(endpoint, params, queryParams);

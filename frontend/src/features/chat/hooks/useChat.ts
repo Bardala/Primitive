@@ -23,7 +23,7 @@ const useGetSpcMsgs = (spaceId: string) => {
   });
 };
 
-const useCreateSpcMsg = (spaceId: string, newMsg: string) => {
+export const useCreateSpcMsg = (spaceId: string, newMsg: string) => {
   const chatKey = useMemo(() => ['chat', spaceId], [spaceId]);
   const queryClient = useQueryClient();
 

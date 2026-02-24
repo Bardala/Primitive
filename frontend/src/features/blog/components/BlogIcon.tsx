@@ -124,7 +124,7 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
             {post.tags.map(tag => (
               <Link
                 key={tag.id}
-                to={ROUTES.GET_TAG(tag.id)}
+                to={ROUTES.GET_TAG(tag.name)}
                 className="text-[10px] uppercase font-bold text-text-secondary-light dark:text-text-secondary-dark/60 hover:text-primary-600 dark:hover:text-primary-400 tracking-tight"
               >
                 #{tag.name}

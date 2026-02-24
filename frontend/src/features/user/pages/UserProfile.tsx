@@ -1,6 +1,5 @@
 import { MainLayout } from '@/app/layout';
 import { useAuthContext } from '@/core/context';
-import { useSideBar } from '@/core/context/SideBarContext';
 import { BlogList, SeriesDetail, SeriesList } from '@/features/blog';
 import { useCreatePrivateConversation } from '@/features/chat';
 
@@ -15,8 +14,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { FollowButton } from '../components/FollowButton';
 import { FollowersModal, FollowingModal } from '../components';
-import { useFollow } from '../hooks/useFollow';
-import { useFollowing } from '../hooks/useFollowing';
 import { useProfileData } from '../hooks/useProfileData';
 import { ROUTES } from '@/core/utils';
 
@@ -25,12 +22,9 @@ export const UserProfile = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { dispatch } = useSideBar();
   const { mutate: createConversation, isLoading: isCreatingConvo } = useCreatePrivateConversation();
 
   const { userCardQuery, userSpacesQuery, userBlogsQuery, isMyPage, isEnd } = useProfileData(id!);
-  const { followersQuery } = useFollow(id!);
-  const { followingQuery } = useFollowing(id!);
 
   const blogs = userBlogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const spaces = isMyPage

@@ -5,7 +5,6 @@ import { ROUTES } from '@/core/utils';
 import { ChatIcon } from '@/features/chat/components/ChatIcon';
 import { NotificationMsgsNumber } from '@/features/notification/components';
 import { NotificationIcon } from '@/features/notification/components';
-import { UserLink } from '@/features/user';
 import { FollowedUsersList } from '@/features/user/components';
 
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
@@ -25,9 +24,8 @@ import {
 import { IoIosPeople } from 'react-icons/io';
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { RiGroup2Fill } from 'react-icons/ri';
-import { TfiWrite } from 'react-icons/tfi';
 import { TiHome } from 'react-icons/ti';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { UserSpacesList } from '../../features/spaces/components/UserSpacesList';
 
@@ -40,7 +38,6 @@ export const ActionsSidebar: React.FC<{
   const { currUser } = useAuthContext();
   const { state, dispatch } = useSideBar();
   const { t } = useTranslation();
-  const nav = useNavigate();
   const location = useLocation();
 
   const menuRef = useRef<HTMLDivElement>(null);

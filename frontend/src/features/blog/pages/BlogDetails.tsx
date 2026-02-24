@@ -6,7 +6,6 @@ import { useScrollSpy } from '@/core/hooks/useScrollSpy';
 
 import { DefaultSpaceId } from '@nest/shared';
 import { HiOutlineMenuAlt2 } from 'react-icons/hi';
-import { FiX } from 'react-icons/fi';
 
 import GithubSlugger from 'github-slugger';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -241,7 +240,7 @@ export const BlogDetails = () => {
                     {blog.tags.map(tag => (
                       <Link
                         key={tag.id}
-                        to={ROUTES.GET_TAG(tag.id)}
+                        to={ROUTES.GET_TAG(tag.name)}
                         className="rounded-full bg-surface-light px-3 py-1 text-sm font-medium text-text-secondary-light ring-1 ring-border-light transition-all hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-200 dark:bg-surface-dark dark:text-text-secondary-dark dark:ring-border-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:ring-primary-800"
                       >
                         #{tag.name}

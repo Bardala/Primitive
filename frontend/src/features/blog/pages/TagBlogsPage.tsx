@@ -1,5 +1,5 @@
 import { MainLayout } from '@/app/layout';
-import { tagBlogsApi } from '@/core/utils/api';
+import { tagBlogsByNameApi } from '@/core/utils/api';
 import { BlogList } from '../components/BlogList';
 
 import { FeedsRes, PageSize } from '@nest/shared';
@@ -17,7 +17,7 @@ export const TagBlogsPage = () => {
 
   const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = useInfiniteQuery<FeedsRes>(
     ['tagBlogs', tag],
-    ({ pageParam = 1 }) => tagBlogsApi(tag!, pageParam),
+    ({ pageParam = 1 }) => tagBlogsByNameApi(tag!, pageParam),
     {
       enabled: !!tag,
       getNextPageParam: lastPage => {

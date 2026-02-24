@@ -4,7 +4,7 @@ import { PrivateChatApi } from '@/features/chat/api/private-chat.api';
 
 import { ChatMessage, PrivateMessage, SOCKET_EVENT, Space } from '@nest/shared';
 
-import React, {
+import {
   ReactNode,
   createContext,
   useCallback,
@@ -305,7 +305,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to toggle space mute', error);
       }
     },
-    [currUser?.jwt, setSpaces]
+    [setSpaces]
   );
 
   return (

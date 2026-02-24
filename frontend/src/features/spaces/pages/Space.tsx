@@ -5,7 +5,6 @@ import { NotificationMsgsNumber } from '@/features/notification/components';
 
 import { DefaultSpaceId } from '@nest/shared';
 
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaComments } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
@@ -21,7 +20,6 @@ export const Space = () => {
 
   const blogs = blogsQuery.data?.pages.flatMap(page => page.blogs) || [];
   const space = spaceQuery.data?.space;
-  const isChatActive = state.activeChatId === id;
 
   if (spaceQuery.isError)
     return (

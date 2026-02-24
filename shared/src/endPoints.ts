@@ -115,6 +115,7 @@ export enum ENDPOINT {
   REMOVE_BLOG_FROM_SERIES = '/series/:seriesId/blogs/:blogId',
 
   GET_TAG_BLOGS = '/tags/:tagId/blogs-list',
+  GET_TAG_BLOGS_BY_NAME = '/tags/:tagName/blogs-list',
 
   // *Space Permissions
   GET_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',

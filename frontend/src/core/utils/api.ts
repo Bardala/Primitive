@@ -101,6 +101,9 @@ export const publicFeedsApi = (pageParam: number = 1) =>
 export const tagBlogsApi = (tagId: string, pageParam: number = 1) =>
   getFn<FeedsRes>(ENDPOINT.GET_TAG_BLOGS, [tagId], undefined, { page: pageParam.toString() });
 
+export const tagBlogsByNameApi = (tagName: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_TAG_BLOGS_BY_NAME, [tagName], undefined, { page: pageParam.toString() });
+
 export const seriesBlogsApi = (seriesId: string, pageParam: number = 1) =>
   getFn<FeedsRes>(ENDPOINT.GET_SERIES_BLOGS, [seriesId], undefined, { page: pageParam.toString() });
 

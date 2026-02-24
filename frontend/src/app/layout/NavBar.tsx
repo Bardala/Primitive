@@ -39,7 +39,7 @@ export const NavBar = () => {
               className="h-9 w-9 cursor-pointer rounded-xl object-cover transition-transform hover:rotate-6 hover:scale-105"
               onClick={() => nav(ROUTES.HOME)}
             />
-            <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
+            <span className="bg-linear-to-r from-primary-600 to-primary-400 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
               {AppName}
             </span>
           </div>
@@ -121,16 +121,16 @@ export const NavBar = () => {
   );
 };
 
-const NavLink = ({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) => (
-  <Link
-    to={to}
-    className="group flex items-center gap-2 rounded-xl p-2.5 text-text-secondary-light transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10 dark:hover:text-primary-400 sm:px-3"
-    title={label}
-  >
-    <div className="transition-transform group-hover:scale-110">{icon}</div>
-    <span className="hidden text-sm font-bold md:inline">{label}</span>
-  </Link>
-);
+// const NavLink = ({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) => (
+//   <Link
+//     to={to}
+//     className="group flex items-center gap-2 rounded-xl p-2.5 text-text-secondary-light transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10 dark:hover:text-primary-400 sm:px-3"
+//     title={label}
+//   >
+//     <div className="transition-transform group-hover:scale-110">{icon}</div>
+//     <span className="hidden text-sm font-bold md:inline">{label}</span>
+//   </Link>
+// );
 
 const ToggleThemeButton = () => {
   const { isDarkMode, toggleTheme } = useTheme();
