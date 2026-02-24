@@ -4,6 +4,12 @@ export class InitialLegacySchema1000000000000 implements MigrationInterface {
   name = 'InitialLegacySchema1000000000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Skip in production if you want (optional)
+    if (process.env.NODE_ENV !== 'development') {
+      console.log('Skipping InitialLegacySchema migration in production');
+      return;
+    }
+
     // 1. Core Tables
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS users (
