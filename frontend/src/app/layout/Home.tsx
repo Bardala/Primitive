@@ -79,7 +79,7 @@ export const Home = () => {
     );
 
   return (
-    <MainLayout>
+    <MainLayout space={currentSpaceQuery.data?.space}>
       <div className="flex flex-col w-full h-full relative">
         {/* Sticky Header with Tabs */}
         <div className="sticky top-0 z-10 sm:z-20 w-full bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark/60 flex items-center justify-between">

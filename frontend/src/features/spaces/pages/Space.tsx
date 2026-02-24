@@ -4,6 +4,7 @@ import { BlogList } from '@/features/blog';
 import { Chat } from '@/features/chat';
 
 import { DefaultSpaceId } from '@nest/shared';
+import { NotificationMsgsNumber } from '@/features/notification/components';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,20 +45,20 @@ export const Space = () => {
               </h2>
               {isMember && (
                 <button
-                  onClick={() =>
-                    dispatch({
-                      type: 'setActiveChat',
-                      payload: { id: space!.id, type: 'space', name: space!.name },
-                    })
-                  }
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
-                    isChatActive
+                  onClick={() => {
+                    dispatch({ type: 'showChat' });
+                  }}
+                  className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
+                    state.showChat
                       ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
                       : 'bg-background-light text-primary-600 hover:bg-primary-50 dark:bg-background-dark dark:text-primary-400 dark:hover:bg-primary-900/20'
                   }`}
                   title="Open Chat"
                 >
                   <FaComments size={20} />
+                  <div className="absolute -top-1 -right-1">
+                    <NotificationMsgsNumber spaceId={id!} variant="badge" />
+                  </div>
                 </button>
               )}
             </div>
@@ -85,14 +86,10 @@ export const Space = () => {
           </div>
         )}
 
-        {/* Content Section with Split Mode Support */}
-        <div className={`flex flex-col gap-8 lg:flex-row ${isChatActive ? 'lg:items-start' : ''}`}>
+        {/* Content Section */}
+        <div className="flex flex-col gap-8 lg:flex-row">
           {/* Blogs Section */}
-          <div
-            className={`transition-all duration-500 ${
-              isChatActive ? 'w-full lg:w-[40%]' : 'w-full'
-            }`}
-          >
+          <div className="w-full">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">
                 {t('space.latestBlogs')}
@@ -100,8 +97,7 @@ export const Space = () => {
             </div>
             {blogs.length ? (
               <div className="space-y-4">
-                {/* Titles only on small screens or when chat is active on desktop */}
-                <BlogList posts={blogs} titlesOnly={isChatActive} />
+                <BlogList posts={blogs} />
                 {!isEnd && (
                   <div className="mt-8 flex justify-center">
                     <button
@@ -119,39 +115,6 @@ export const Space = () => {
               </div>
             )}
           </div>
-
-          {/* Inline Chat Section */}
-          {isChatActive && (
-            <div
-              className={`flex flex-col animate-in slide-in-from-right-10 duration-500 ${
-                isChatActive
-                  ? 'h-[600px] lg:h-[calc(100vh-12rem)] lg:flex-1 lg:sticky lg:top-24'
-                  : 'hidden'
-              }`}
-            >
-              <div className="flex h-full w-full flex-col overflow-hidden rounded-3xl border border-border-light bg-surface-light shadow-2xl dark:border-border-dark dark:bg-surface-dark">
-                <div className="flex h-14 items-center justify-between border-b border-border-light px-6 dark:border-border-dark">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="font-bold text-xs uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark font-mono">
-                      Space Chat
-                    </span>
-                  </div>
-                  <button
-                    onClick={() =>
-                      dispatch({ type: 'setActiveChat', payload: { id: null, type: null } })
-                    }
-                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-text-secondary-light transition-colors"
-                  >
-                    <FaComments size={16} />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-hidden p-1">
-                  <Chat space={space!} variant="modern" />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </MainLayout>

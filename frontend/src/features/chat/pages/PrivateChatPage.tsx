@@ -1,5 +1,6 @@
 import { MainLayout } from '@/app/layout';
 
+import { useSideBar } from '@/core/context/SideBarContext';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -25,8 +26,11 @@ export const PrivateChatPage: React.FC = () => {
     }
   }, [searchParams, activeConversationId]);
 
+  const { dispatch } = useSideBar();
+
   const handleSelectConversation = (id: string, name: string, type: 'private' | 'space') => {
     if (type === 'space') {
+      dispatch({ type: 'showChat' });
       navigate(`/space/${id}`);
       return;
     }

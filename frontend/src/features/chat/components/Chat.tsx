@@ -9,6 +9,7 @@ import { BiSend } from 'react-icons/bi';
 
 import { useChatContext } from '../context/ChatContext';
 import { useChat } from '../hooks/useChat';
+import { TbBell, TbBellOff } from 'react-icons/tb';
 
 const formatMessageTime = (date: Date | string | number | undefined): string => {
   if (!date) return '';
@@ -49,7 +50,9 @@ export const Chat: React.FC<{ space: Space; variant?: 'default' | 'modern' }> = 
     if (msgMutate.isSuccess) setNewMsg('');
   };
 
-  const { markSpaceAsRead, setActiveConversation } = useChatContext();
+  const { markSpaceAsRead, setActiveConversation, spaces, toggleSpaceMute } = useChatContext();
+  const currentSpace = spaces.find(s => s.id === space.id);
+  const isMuted = currentSpace?.isMuted;
 
   useEffect(() => {
     setActiveConversation(space.id, 'space');
@@ -99,6 +102,24 @@ export const Chat: React.FC<{ space: Space; variant?: 'default' | 'modern' }> = 
           : {}
       }
     >
+      {isModern && (
+        <div className="flex items-center justify-between border-b border-border-light bg-surface-light px-4 py-2 dark:border-border-dark dark:bg-surface-dark">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+              {space.name}
+            </span>
+          </div>
+          <button
+            onClick={() => toggleSpaceMute(space.id, !isMuted)}
+            className={`rounded-full p-2 transition-colors hover:bg-black/5 dark:hover:bg-white/5 ${
+              isMuted ? 'text-red-500' : 'text-text-secondary-light dark:text-text-secondary-dark'
+            }`}
+            title={isMuted ? 'Unmute' : 'Mute Notifications'}
+          >
+            {isMuted ? <TbBellOff size={20} /> : <TbBell size={20} />}
+          </button>
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <ul className="flex flex-col gap-2">
           {chatQuery.data?.messages.length === 0 ? (
@@ -133,7 +154,7 @@ export const Chat: React.FC<{ space: Space; variant?: 'default' | 'modern' }> = 
                         </span>
                       )}
                       <p
-                        className={`whitespace-pre-wrap break-words pr-12 ${
+                        className={`whitespace-pre-wrap wrap-break-word pr-12 ${
                           isArabic(msg.content) ? 'text-right' : 'text-left'
                         }`}
                       >

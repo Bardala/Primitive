@@ -2,11 +2,18 @@ import { useGetSpcMissedMsgs } from '@/features/spaces';
 
 import { BiSolidBellRing } from 'react-icons/bi';
 
-export const NotificationMsgsNumber: React.FC<{ spaceId: string }> = ({ spaceId }) => {
+export const NotificationMsgsNumber: React.FC<{
+  spaceId: string;
+  variant?: 'full' | 'badge';
+}> = ({ spaceId, variant = 'full' }) => {
   const { numOfUnReadMsgs } = useGetSpcMissedMsgs(spaceId);
   const unRead = numOfUnReadMsgs.data?.numOfUnReadMsgs;
 
   if (unRead && unRead > 0) {
+    if (variant === 'badge') {
+      return <>{unRead > 99 ? '99+' : unRead}</>;
+    }
+
     return (
       <div className="flex items-center gap-1.5 ml-auto">
         <BiSolidBellRing className="text-red-500 animate-pulse" size={18} />

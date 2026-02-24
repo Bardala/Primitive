@@ -220,8 +220,29 @@ export class ChatService implements IChatService {
       relations: ['space'],
     });
 
+    const spaceIds = members.map((m) => m.spaceId);
+    let allSpacesMember = [...members];
+
+    // Ensure default space is included if user is not a member
+    if (!spaceIds.includes('1')) {
+      const defaultSpace = await this.spaceRepository.findOne({ where: { id: '1' } });
+      if (defaultSpace) {
+        // Auto-join user to default space
+        try {
+          const member = new Member();
+          member.spaceId = '1';
+          member.memberId = userId;
+          member.isAdmin = false;
+          const savedMember = await this.memberRepository.save(member);
+          allSpacesMember.push({ ...savedMember, space: defaultSpace } as Member);
+        } catch (e) {
+          // might fail if already exists but not fetched (race condition)
+        }
+      }
+    }
+
     const spacesWithUnread = await Promise.all(
-      members.map(async (m) => {
+      allSpacesMember.map(async (m) => {
         const state = await this.userConversationStateService.getOrCreate(
           userId,
           m.spaceId,

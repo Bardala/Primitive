@@ -216,7 +216,7 @@ export const ActionsSidebar: React.FC<{
                       dispatch({ type: 'closeMobileSidebar' });
                     }}
                     active={state.showChat}
-                    badge={<NotificationMsgsNumber spaceId={space.id} />}
+                    badge={<NotificationMsgsNumber spaceId={space.id} variant="badge" />}
                   />
                 )}
 
