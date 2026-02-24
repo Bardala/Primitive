@@ -75,7 +75,7 @@ export function App() {
                 </SideBarProvider>
               </NotificationProvider>
             </ChatProvider>
-            <ReactQueryDevtools />
+            {/* <ReactQueryDevtools /> */}
           </AuthContextProvider>
         </ThemeProvider>
       </QueryClientProvider>

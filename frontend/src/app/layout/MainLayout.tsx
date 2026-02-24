@@ -30,12 +30,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, space, members
   const isChatActive = !!state.activeChatId;
 
   return (
-    <div className="flex w-full justify-center lg:gap-6 xl:gap-8 max-w-[1265px] mx-auto overflow-x-hidden sm:overflow-visible min-h-screen">
+    <div className="flex w-full justify-center lg:gap-6 xl:gap-8 max-w-[1536px] mx-auto overflow-x-hidden sm:overflow-visible min-h-screen">
       {/* Left Sidebar */}
       <ActionsSidebar space={space} members={members} />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full sm:w-[750px] sm:max-w-[750px] border-r border-border-light dark:border-border-dark/60 min-h-screen pb-20 sm:pb-0 relative">
+      <main className="flex-1 w-full sm:w-[1024px] sm:max-w-[1024px] border-r border-border-light dark:border-border-dark/60 min-h-screen pb-20 sm:pb-0 relative">
         {children}
       </main>
 
