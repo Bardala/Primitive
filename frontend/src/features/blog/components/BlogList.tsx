@@ -24,9 +24,7 @@ export const BlogList = ({
 
   return (
     <div
-      className={`flex flex-col transition-all ${
-        finalViewMode === 'titles-only' ? 'gap-2' : ''
-      }`}
+      className={`flex flex-col transition-all ${finalViewMode === 'titles-only' ? 'gap-2' : ''}`}
     >
       {uniquePosts.map(post => (
         <BlogIcon post={post as Blog} key={post.id} viewMode={finalViewMode as any} />

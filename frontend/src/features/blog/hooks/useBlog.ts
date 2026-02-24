@@ -19,7 +19,13 @@ import { BlogApi } from '../api';
 const getSpcKey = (spaceId: string) =>
   spaceId === DefaultSpaceId ? ['feeds'] : ['blogs', spaceId];
 
-export const useCreateBlog = (spaceId: string, title: string, content: string, seriesId?: string, tagNames?: string[]) => {
+export const useCreateBlog = (
+  spaceId: string,
+  title: string,
+  content: string,
+  seriesId?: string,
+  tagNames?: string[]
+) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const navToSpace = () =>

@@ -1,6 +1,6 @@
 import { MainLayout } from '@/app/layout';
 import { useAuthContext } from '@/core/context';
-import { formatTimeShort, isArabic } from '@/core/utils';
+import { formatTimeShort, isArabic, ROUTES } from '@/core/utils';
 import { UserLink } from '@/features/user';
 
 import { DefaultSpaceId } from '@nest/shared';
@@ -126,7 +126,7 @@ export const BlogDetails = () => {
         {blogQuery.isError && (
           <div className="rounded-lg bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
             {t('state.error')}
-          </div>
+          </div> 
         )}
         {blogQuery.isLoading && (
           <div className="animate-pulse p-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
@@ -156,7 +156,7 @@ export const BlogDetails = () => {
                     <>
                       <span className="text-gray-300 dark:text-gray-600">•</span>
                       <Link
-                        to={`/space/${blog.space.id}`}
+                        to={ROUTES.GET_SPACE(blog.space.id)}
                         className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300"
                       >
                         <RiGroup2Fill /> {blog.space.name}
@@ -169,7 +169,7 @@ export const BlogDetails = () => {
                       <>
                         <span className="text-gray-300 dark:text-gray-600">•</span>
                         <Link
-                          to={`/series/${blog.seriesLinks[0].series.id}`}
+                          to={ROUTES.GET_SERIES(blog.seriesLinks[0].series.id)}
                           className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300"
                         >
                           <RiStackLine /> {blog.seriesLinks[0].series.name}
@@ -223,7 +223,7 @@ export const BlogDetails = () => {
                     {blog.tags.map(tag => (
                       <Link
                         key={tag.id}
-                        to={`/tag/${tag.id}`}
+                        to={ROUTES.GET_TAG(tag.id)}
                         className="rounded-full bg-surface-light px-3 py-1 text-sm font-medium text-text-secondary-light ring-1 ring-border-light transition-all hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-200 dark:bg-surface-dark dark:text-text-secondary-dark dark:ring-border-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:ring-primary-800"
                       >
                         #{tag.name}

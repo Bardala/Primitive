@@ -68,7 +68,7 @@ export const ActionsSidebar: React.FC<{
             {/* App Logo for Desktop */}
             <div className="hidden sm:flex w-full items-center justify-center xl:justify-start mb-2 px-3">
               <Link
-                to="/"
+                to={ROUTES.HOME}
                 onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 className="flex items-center justify-center xl:justify-start h-14 w-14 xl:w-full rounded-full transition-all hover:bg-black/5 dark:hover:bg-white/10 text-text-primary-light dark:text-text-primary-dark"
               >
@@ -80,7 +80,7 @@ export const ActionsSidebar: React.FC<{
             {currUser && (
               <div className="flex sm:hidden flex-col w-full px-4 pt-2 pb-6 mb-2 border-b border-border-light dark:border-border-dark/60">
                 <Link
-                  to={`/u/${currUser.id}`}
+                  to={ROUTES.GET_USER_PROFILE(currUser.id)}
                   onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 >
                   <div className="h-12 w-12 mb-3 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold border border-primary-200 dark:border-primary-800 text-lg shadow-sm">
@@ -102,40 +102,40 @@ export const ActionsSidebar: React.FC<{
             <NavItem
               icon={<TiHome size={26} />}
               label={t('navbar.home')}
-              to="/"
-              active={location.pathname === '/'}
+              to={ROUTES.HOME}
+              active={location.pathname === ROUTES.HOME}
               onClick={() => dispatch({ type: 'closeMobileSidebar' })}
             />
 
             {currUser && (
               <>
-              <NavItem
-                icon={<IoIosPeople size={26} />}
-                label={t('navbar.follow')}
-                to="/u"
-                active={location.pathname === '/u'}
-                onClick={() => dispatch({ type: 'closeMobileSidebar' })}
-              />
+                <NavItem
+                  icon={<IoIosPeople size={26} />}
+                  label={t('navbar.follow')}
+                  to={ROUTES.USER_PROFILE}
+                  active={location.pathname === ROUTES.USER_PROFILE}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                />
 
                 <NavItem
                   icon={<NotificationIcon />}
                   label={t('navbar.notifications')}
-                  to="/notifications"
-                  active={location.pathname === '/notifications'}
+                  to={ROUTES.NOTIFICATIONS}
+                  active={location.pathname === ROUTES.NOTIFICATIONS}
                   onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 />
                 <NavItem
                   icon={<ChatIcon />}
                   label={t('sidebar.chat') || 'Chat'}
-                  to="/chat"
-                  active={location.pathname === '/chat'}
+                  to={ROUTES.CHAT}
+                  active={location.pathname === ROUTES.CHAT}
                   onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 />
                 <NavItem
                   icon={<FaCog size={24} />}
                   label={t('navbar.settings')}
-                  to="/settings"
-                  active={location.pathname === '/settings'}
+                  to={ROUTES.SETTINGS}
+                  active={location.pathname === ROUTES.SETTINGS}
                   onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 />
 
@@ -282,7 +282,7 @@ export const ActionsSidebar: React.FC<{
         {currUser && (
           <div className="w-full flex items-center justify-center xl:justify-start px-2 xl:px-4 py-3 border-t border-border-light dark:border-border-dark/60 mt-auto bg-background-light dark:bg-background-dark z-10 shrink-0">
             <Link
-              to={`/u/${currUser.id}`}
+              to={ROUTES.GET_USER_PROFILE(currUser.id)}
               onClick={() => dispatch({ type: 'closeMobileSidebar' })}
               className="flex items-center w-full gap-3 overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all p-1 xl:p-2"
             >

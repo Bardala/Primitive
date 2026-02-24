@@ -2,7 +2,6 @@ import { AuthContextProvider, ThemeProvider } from '@/core/context';
 import { SideBarProvider } from '@/core/context/SideBarContext';
 import { requireAuth } from '@/core/hoc';
 import { ErrorBoundary } from '@/core/hoc';
-
 import { ROUTES } from '@/core/utils';
 import { Login, SignUp } from '@/features/auth';
 import { BlogDetails, CreateBlogPage } from '@/features/blog';

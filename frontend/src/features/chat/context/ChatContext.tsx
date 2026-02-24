@@ -116,9 +116,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         // Play sound if:
         // 1. It's from others
         // 2. AND (If notification: backend said playSound, If in-room: it's not muted and not the active chat)
-        const shouldPlay = isFromOthers && (
-          isNotification ? playSound : (!convo?.isMuted && !isActiveConversation)
-        );
+        const shouldPlay =
+          isFromOthers && (isNotification ? playSound : !convo?.isMuted && !isActiveConversation);
 
         if (shouldPlay) {
           playNotificationSound();
@@ -165,9 +164,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         // Play sound if:
         // 1. It's from others
         // 2. AND (If notification: backend said playSound, If in-room: it's not muted and not the active space)
-        const shouldPlay = isFromOthers && (
-          isNotification ? playSound : (!space?.isMuted && !isActiveSpace)
-        );
+        const shouldPlay =
+          isFromOthers && (isNotification ? playSound : !space?.isMuted && !isActiveSpace);
 
         if (shouldPlay) {
           playNotificationSound();

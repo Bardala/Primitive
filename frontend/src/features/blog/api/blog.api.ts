@@ -13,14 +13,16 @@ import {
 export const BlogApi = {
   getBlog: (blogId: string) => getFn<BlogRes>(ENDPOINT.GET_BLOG, [blogId]),
 
-  createBlog: (title: string, content: string, spaceId: string, seriesId?: string, tagNames?: string[]) => () =>
-    postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, {
-      title,
-      content,
-      spaceId,
-      seriesId,
-      tagNames,
-    }),
+  createBlog:
+    (title: string, content: string, spaceId: string, seriesId?: string, tagNames?: string[]) =>
+    () =>
+      postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, {
+        title,
+        content,
+        spaceId,
+        seriesId,
+        tagNames,
+      }),
 
   createShort: (title: string, content: string, spaceId: string) => () =>
     postFn<CreateBlogReq, CreateBlogRes>(ENDPOINT.CREATE_BLOG, {

@@ -1,4 +1,4 @@
-import { formatTimeShort, isArabic } from '@/core/utils';
+import { formatTimeShort, isArabic, ROUTES } from '@/core/utils';
 import { UserLink } from '@/features/user';
 
 import { Blog, DefaultSpaceId } from '@nest/shared';
@@ -36,7 +36,7 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
         {!isTitlesOnly && post.space && post.spaceId !== DefaultSpaceId && (
           <div className="mb-2">
             <Link
-              to={`/space/${post.spaceId}`}
+              to={ROUTES.GET_SPACE(post.spaceId)}
               className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 hover:underline"
             >
               <RiGroup2Fill size={12} />
@@ -47,7 +47,7 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
 
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1">
-            <Link to={`/b/${post.id}`} className="block">
+            <Link to={ROUTES.GET_BLOG_DETAILS(post.id)} className="block">
               <h2
                 className={`font-bold text-text-primary-light transition-colors hover:text-primary-600 dark:text-text-primary-dark dark:hover:text-primary-400 ${
                   isTitlesOnly ? 'text-base' : 'text-xl md:text-2xl mb-1'
@@ -58,17 +58,20 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
             </Link>
 
             {/* Series name below title */}
-            {!isTitlesOnly && post.seriesLinks && post.seriesLinks.length > 0 && post.seriesLinks[0].series && (
-              <div className="mb-2">
-                <Link
-                  to={`/series/${post.seriesLinks[0].series.id}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary-600 dark:hover:text-primary-400"
-                >
-                  <RiStackLine size={14} />
-                  {post.seriesLinks[0].series.name}
-                </Link>
-              </div>
-            )}
+            {!isTitlesOnly &&
+              post.seriesLinks &&
+              post.seriesLinks.length > 0 &&
+              post.seriesLinks[0].series && (
+                <div className="mb-2">
+                  <Link
+                    to={ROUTES.GET_SERIES(post.seriesLinks[0].series.id)}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    <RiStackLine size={14} />
+                    {post.seriesLinks[0].series.name}
+                  </Link>
+                </div>
+              )}
           </div>
 
           {isTitlesOnly && (
@@ -121,7 +124,7 @@ export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
             {post.tags.map(tag => (
               <Link
                 key={tag.id}
-                to={`/tag/${tag.id}`}
+                to={ROUTES.GET_TAG(tag.id)}
                 className="text-[10px] uppercase font-bold text-text-secondary-light dark:text-text-secondary-dark/60 hover:text-primary-600 dark:hover:text-primary-400 tracking-tight"
               >
                 #{tag.name}

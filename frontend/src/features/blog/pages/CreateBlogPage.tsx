@@ -7,13 +7,11 @@ import { FiBold, FiCode, FiImage, FiItalic, FiLink, FiList, FiType } from 'react
 import { MdFormatQuote } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 
+// import '../styles/create-blog-page.css';
+import { BlogForm } from '../components/BlogForm';
 import { MyMarkdown } from '../components/MyMarkdown';
 import { useCreateBlog } from '../hooks/useBlog';
 import { useUserSeries } from '../hooks/useSeries';
-
-// import '../styles/create-blog-page.css';
-
-import { BlogForm } from '../components/BlogForm';
 
 export const CreateBlogPage: React.FC = () => {
   const { spaceId, spaceName } = useParams();

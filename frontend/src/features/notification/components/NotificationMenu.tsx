@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { useNotifications } from '../hooks/useNotifications';
 import { NotificationItem } from './NotificationItem';
+import { ROUTES } from '@/core/utils';
 
 export const NotificationMenu = () => {
   const { notifications, unreadCount, markAsRead } = useNotifications();
@@ -40,7 +41,7 @@ export const NotificationMenu = () => {
               Notifications
             </h3>
             <Link
-              to="/notifications"
+              to={ROUTES.NOTIFICATIONS}
               onClick={() => setShowNotification(false)}
               className="text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300"
             >

@@ -16,6 +16,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FollowButton } from '../components/FollowButton';
 import { useFollow } from '../hooks/useFollow';
 import { useProfileData } from '../hooks/useProfileData';
+import { ROUTES } from '@/core/utils';
 
 export const UserProfile = () => {
   const { currUser } = useAuthContext();
@@ -245,7 +246,7 @@ export const UserProfile = () => {
                   space =>
                     space.id !== '1' && (
                       <Link
-                        to={`/space/${space.id}`}
+                        to={ROUTES.GET_SPACE(space.id)}
                         key={space.id}
                         className="p-4 border-b border-border-light dark:border-border-dark/60 hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex justify-between items-center"
                       >

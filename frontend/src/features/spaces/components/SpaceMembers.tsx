@@ -1,3 +1,4 @@
+import { ROUTES } from '@/core/utils';
 import { Space, SpaceMember } from '@nest/shared';
 
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ export const SpaceMembers: React.FC<{ users: SpaceMember[]; space: Space }> = ({
           users.map(user => (
             <li key={user.memberId}>
               <Link
-                to={`/u/${user.memberId}`}
+                to={ROUTES.GET_USER_PROFILE(user.memberId)}
                 className="flex items-center gap-3 rounded-xl border border-border-light bg-background-light p-3 transition-all hover:border-primary-500 hover:bg-primary-50 dark:border-border-dark dark:bg-background-dark dark:hover:border-primary-500/50 dark:hover:bg-primary-900/10"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">

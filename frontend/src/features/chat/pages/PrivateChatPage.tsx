@@ -1,6 +1,6 @@
 import { MainLayout } from '@/app/layout';
-
 import { useSideBar } from '@/core/context/SideBarContext';
+
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 

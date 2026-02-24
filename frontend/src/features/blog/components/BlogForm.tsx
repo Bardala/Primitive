@@ -1,11 +1,13 @@
-import React, { FormEvent, useRef, useState, useEffect } from 'react';
 import { isArabic } from '@/core/utils';
+
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiBold, FiCode, FiImage, FiItalic, FiLink, FiList, FiType } from 'react-icons/fi';
 import { MdFormatQuote } from 'react-icons/md';
-import { MyMarkdown } from './MyMarkdown';
+
 import { useCreateBlog } from '../hooks/useBlog';
 import { useUserSeries } from '../hooks/useSeries';
+import { MyMarkdown } from './MyMarkdown';
 
 interface BlogFormProps {
   spaceId: string;
@@ -269,19 +271,19 @@ export const BlogForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSucces
             ></textarea>
 
             {selectionToolbar && (
-              <div 
+              <div
                 className="fixed z-100 flex items-center gap-1 rounded-lg bg-surface-light p-1 shadow-xl ring-1 ring-border-light dark:bg-surface-dark dark:ring-border-dark animate-in fade-in zoom-in-95 duration-200"
-                style={{ 
-                  left: `${selectionToolbar.x}px`, 
+                style={{
+                  left: `${selectionToolbar.x}px`,
                   top: `${selectionToolbar.y}px`,
-                  transform: 'translateX(-50%)'
+                  transform: 'translateX(-50%)',
                 }}
               >
                 {formattingOptions.map((option, index) => (
                   <button
                     key={index}
                     type="button"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       option.action();
                     }}

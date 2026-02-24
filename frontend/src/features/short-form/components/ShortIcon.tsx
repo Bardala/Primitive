@@ -1,4 +1,4 @@
-import { isArabic } from '@/core/utils';
+import { isArabic, ROUTES } from '@/core/utils';
 import { LikeBlogButton } from '@/features/blog';
 
 import { Short } from '@nest/shared';
@@ -21,7 +21,7 @@ export const ShortIcon: React.FC<{ post: Short }> = ({ post }) => {
       <div className="flex items-center justify-between text-xs text-text-secondary-light dark:text-text-secondary-dark">
         <div className="flex items-center gap-2">
           <Link
-            to={`/u/${post.userId}`}
+            to={ROUTES.GET_USER_PROFILE(post.userId)}
             className="font-semibold text-text-primary-light hover:underline dark:text-text-primary-dark"
           >
             {post.author}
@@ -34,7 +34,7 @@ export const ShortIcon: React.FC<{ post: Short }> = ({ post }) => {
 
         {post.spaceId !== '1' && (
           <Link
-            to={`/space/${post?.spaceId}`}
+            to={ROUTES.GET_SPACE(post.spaceId)}
             className="rounded-full bg-primary-50 px-2 py-0.5 font-medium text-primary-600 hover:bg-primary-100 dark:bg-primary-900/20 dark:text-primary-400 dark:hover:bg-primary-900/40"
           >
             Space

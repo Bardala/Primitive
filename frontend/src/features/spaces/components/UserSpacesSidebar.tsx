@@ -1,4 +1,5 @@
 // import '../styles/userSpacesSidebar.css';
+import { ROUTES } from '@/core/utils';
 import { Space } from '@nest/shared';
 
 import { FormEvent, useState } from 'react';
@@ -63,7 +64,7 @@ export const UserSpacesSidebar = ({ spaces, isLoading, isError }: UserSpacesSide
         <div className="flex flex-col gap-1">
           {filteredSpaces?.map(space => (
             <Link
-              to={`/space/${space.id}`}
+              to={ROUTES.GET_SPACE(space.id)}
               className="group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-primary-900/10"
               key={space.id}
               title={space.name}
@@ -95,7 +96,7 @@ export const UserSpacesSidebar = ({ spaces, isLoading, isError }: UserSpacesSide
               {t('userProfile.noSpaces')}
             </p>
             <Link
-              to="/spaces"
+              to={ROUTES.SPACE}
               className="flex items-center gap-2 rounded-lg bg-primary-50 px-4 py-2 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-100 dark:bg-primary-900/20 dark:text-primary-400 dark:hover:bg-primary-900/40"
             >
               <FiPlus className="" />
@@ -107,7 +108,7 @@ export const UserSpacesSidebar = ({ spaces, isLoading, isError }: UserSpacesSide
 
       <div className="border-t border-border-light p-4 dark:border-border-dark">
         <Link
-          to="/spaces"
+          to={ROUTES.SPACE}
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-border-light p-2 text-sm font-medium text-text-secondary-light transition-colors hover:bg-gray-50 hover:text-primary-600 dark:border-border-dark dark:text-text-secondary-dark dark:hover:bg-primary-900/10 dark:hover:text-primary-400"
         >
           View All Spaces

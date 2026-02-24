@@ -16,4 +16,6 @@ export const ROUTES = {
   GET_BLOG_DETAILS: (id: string) => `/b/${id}`,
   GET_USER_PROFILE: (id: string | number) => `/u/${id}`,
   GET_CREATE_BLOG: (spaceName: string, spaceId: string) => `/new/b/${spaceName}/${spaceId}`,
+  GET_SERIES: (id: string) => `/series/${id}`,
+  GET_TAG: (tag: string) => `/tag/${tag}`,
 } as const;
