@@ -6,6 +6,7 @@ import { Space } from '../entities/space.entity';
 import { Member } from '../entities/member.entity';
 import { UpdateSpacePermissionReq, GetSpacePermissionsRes } from '../dto/space-permissions.dto';
 import { SpacePermissionType, AllowedRole } from '@nest/shared';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class SpacePermissionService {
@@ -41,7 +42,7 @@ export class SpacePermissionService {
     if (!permission) {
       // Should exist from seeding, but handle creation if missing
       permission = new SpacePermission();
-      permission.id = crypto.randomUUID();
+      permission.id = randomUUID();
       permission.spaceId = spaceId;
       permission.permission = req.permission;
     }

@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { ChatMessage } from 'src/modules/chat/entities/chat-message.entity';
 import { User } from 'src/modules/user/entities/user.entity';

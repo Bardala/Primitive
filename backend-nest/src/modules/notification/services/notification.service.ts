@@ -5,7 +5,7 @@ import { Notification } from '../entities/notification.entity';
 import { NotificationType } from '@nest/shared';
 import { Subject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 export interface MessageEvent {
   data: string | object;

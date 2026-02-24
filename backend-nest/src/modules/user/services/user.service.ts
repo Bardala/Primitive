@@ -13,7 +13,7 @@ import { UserActivity } from '../entities/user-activity.entity';
 import { Blog } from 'src/modules/blog/entities/blog.entity';
 import { Follow } from 'src/modules/shared/entities/follow.entity';
 import { Member } from 'src/modules/space/entities/member.entity';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import {
   CreateUserDto,
   UpdateUserDto,

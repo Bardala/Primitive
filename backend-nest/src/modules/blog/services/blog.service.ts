@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { Blog } from '../entities/blog.entity';
 import { CreateBlogReq, CreateBlogRes } from '../dto/create-blog.dto';
 import { UpdateBlogReq, UpdateBlogRes } from '../dto/update-blog.dto';
