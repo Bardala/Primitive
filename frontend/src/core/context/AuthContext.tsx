@@ -1,13 +1,14 @@
 import { LoginRes } from '@nest/shared';
 
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext, useEffect } from 'react';
 
 import { isLoggedIn } from '../services';
+import { connectSocket, disconnectSocket } from '../utils';
 import { LOCALS } from '../utils/localStorage';
 
 type UserContext = {
-  currUser?: LoginRes;
+  currUser?: LoginRes | null;
   refetchCurrUser: () => void;
 };
 
@@ -17,14 +18,23 @@ export const useAuthContext = () => useContext(AuthContext);
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const key = ['getCurrUser'];
   const queryFn = () => {
-    const currUser = JSON.parse(localStorage.getItem(LOCALS.CURR_USER) || '{}');
-    return currUser as LoginRes;
+    const userStr = localStorage.getItem(LOCALS.CURR_USER);
+    if (!userStr) return null;
+    return JSON.parse(userStr) as LoginRes;
   };
 
   const { data: currUser, refetch: refetchCurrUser } = useQuery(key, queryFn, {
     enabled: isLoggedIn(),
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (currUser) {
+      connectSocket();
+    } else {
+      disconnectSocket();
+    }
+  }, [currUser]);
 
   return (
     <AuthContext.Provider value={{ currUser, refetchCurrUser }}>{children}</AuthContext.Provider>

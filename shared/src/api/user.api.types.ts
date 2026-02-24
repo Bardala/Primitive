@@ -40,11 +40,12 @@ export interface UnFollowUserRes {
 
 export interface GetFollowersReq {}
 export interface GetFollowersRes {
-  followers: Pick<User, 'id' | 'username'>[];
+  followers: (Pick<User, 'id' | 'username'> & { isOnline?: boolean; lastSeen?: Date | string })[];
 }
 
 export interface UserBlogsReq {}
 export interface UserBlogsRes {
+  // Includes space, tags, series info
   blogs: Blog[];
   page: number;
 }

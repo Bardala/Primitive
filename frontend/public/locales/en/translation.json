@@ -27,6 +27,7 @@
     "login": "Login",
     "home": "Home",
     "users": "Users",
+    "follow": "Follow",
     "notifications": "Notifications",
     "settings": "Settings",
     "toggleTheme": "Toggle theme",
@@ -98,6 +99,14 @@
     "title": "List of users",
     "error": "Failed to load users",
     "loading": "Loading users..."
+  },
+  "user": {
+    "online": "Active Now",
+    "offline": "Offline",
+    "lastSeen": "Last seen",
+    "ago": "ago",
+    "noFollowings": "No followed users yet",
+    "following": "Following"
   },
   "followButton": {
     "follow": "Follow",
@@ -178,7 +187,11 @@
     "url": "url",
     "nothingToPreview": "Nothing to preview yet",
     "publish": "Publish Blog",
-    "publishing": "Publishing..."
+    "publishing": "Publishing...",
+    "selectSeries": "Select Series",
+    "noSeries": "None (Personal Post)",
+    "tags": "Tags",
+    "tagsPlaceholder": "Add tags (press Enter or comma)"
   },
   "shortForm": {
     "create": "Create",

@@ -10,8 +10,6 @@ import { FiCode, FiEdit, FiEye, FiFolder, FiX } from 'react-icons/fi';
 import { useUpdateBlog } from '../hooks';
 import { MyMarkdown } from './MyMarkdown';
 
-import '../styles/editBlogModal.css';
-
 interface EditBlogModalProps {
   blog: Blog;
   isOpen: boolean;
@@ -58,164 +56,207 @@ export const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, isOpen, onCl
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>
-            <FiEdit className="modal-icon" />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-opacity"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-surface-light shadow-2xl ring-1 ring-border-light dark:bg-surface-dark dark:ring-border-dark"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border-light px-6 py-4 dark:border-border-dark">
+          <h3 className="flex items-center gap-2 text-xl font-bold text-text-primary-light dark:text-text-primary-dark">
+            <FiEdit className="text-primary-600 dark:text-primary-400" />
             {t('editBlogModal.title')}
           </h3>
-          <div className="modal-header-actions">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handlePreviewToggle}
-              className="btn-icon"
+              className="rounded-lg p-2 text-text-secondary-light hover:bg-gray-100 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
               title={isPreview ? t('editBlogModal.switchToEdit') : t('editBlogModal.preview')}
             >
-              {isPreview ? <FiCode /> : <FiEye />}
+              {isPreview ? <FiCode size={20} /> : <FiEye size={20} />}
             </button>
-            <button className="modal-close" onClick={onClose}>
-              <FiX />
+            <button
+              className="rounded-lg p-2 text-text-secondary-light hover:bg-red-50 hover:text-red-500 dark:text-text-secondary-dark dark:hover:bg-red-900/20 dark:hover:text-red-400"
+              onClick={onClose}
+            >
+              <FiX size={20} />
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="edit-blog-form">
-          {!isPreview ? (
-            <>
-              <div className="form-group">
-                <label htmlFor="title">{t('editBlogModal.fields.title')}</label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  placeholder={t('editBlogModal.placeholders.title')}
-                  required
-                  className={isArabic(title) ? 'arabic' : 'english'}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="content">{t('editBlogModal.fields.content')}</label>
-                <textarea
-                  id="content"
-                  value={content}
-                  onChange={e => setContent(e.target.value)}
-                  placeholder={t('editBlogModal.placeholders.content')}
-                  rows={10}
-                  required
-                  className={isArabic(content) ? 'arabic' : 'english'}
-                />
-              </div>
-
-              {/* Space Selection Section */}
-              <div className="form-group">
-                <label htmlFor="space" className="space-label">
-                  <FiFolder className="space-icon" />
-                  {t('editBlogModal.fields.space')}
-                </label>
-
-                {/* Current Space Display */}
-                <div className="current-space-info">
-                  <span className="current-space-label">{t('editBlogModal.currentSpace')}:</span>
-                  <span className="current-space-name">{getCurrentSpaceName()}</span>
+        <div className="custom-scrollbar flex-1 overflow-y-auto p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            {!isPreview ? (
+              <>
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="title"
+                    className="font-medium text-text-primary-light dark:text-text-primary-dark"
+                  >
+                    {t('editBlogModal.fields.title')}
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    placeholder={t('editBlogModal.placeholders.title')}
+                    required
+                    className={`input-base ${isArabic(title) ? 'text-right' : 'text-left'}`}
+                  />
                 </div>
 
-                {/* Move to Another Space Dropdown */}
-                {getAvailableSpaces().length > 0 && (
-                  <div className="space-selection">
-                    <label htmlFor="move-to-space" className="move-space-label">
-                      {t('editBlogModal.moveToSpace')}
-                    </label>
-                    <select
-                      id="move-to-space"
-                      value={spaceId}
-                      onChange={e => setSpaceId(e.target.value)}
-                      className="space-select"
-                    >
-                      <option value={blog.spaceId}>{t('editBlogModal.keepInCurrentSpace')}</option>
-                      {getAvailableSpaces().map(space => (
-                        <option key={space.id} value={space.id}>
-                          {space.name}
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="content"
+                    className="font-medium text-text-primary-light dark:text-text-primary-dark"
+                  >
+                    {t('editBlogModal.fields.content')}
+                  </label>
+                  <textarea
+                    id="content"
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    placeholder={t('editBlogModal.placeholders.content')}
+                    rows={12}
+                    required
+                    className={`input-base min-h-[200px] resize-y font-mono text-sm ${
+                      isArabic(content) ? 'text-right' : 'text-left'
+                    }`}
+                  />
+                </div>
+
+                {/* Space Selection Section */}
+                <div className="rounded-xl border border-border-light bg-gray-50 p-4 dark:border-border-dark dark:bg-background-dark/50">
+                  <label
+                    htmlFor="space"
+                    className="mb-3 flex items-center gap-2 font-semibold text-text-primary-light dark:text-text-primary-dark"
+                  >
+                    <FiFolder className="text-primary-600 dark:text-primary-400" />
+                    {t('editBlogModal.fields.space')}
+                  </label>
+
+                  {/* Current Space Display */}
+                  <div className="mb-4 rounded-lg bg-surface-light p-3 shadow-sm ring-1 ring-border-light dark:bg-surface-dark dark:ring-border-dark">
+                    <span className="mr-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                      {t('editBlogModal.currentSpace')}:
+                    </span>
+                    <span className="font-semibold text-primary-600 dark:text-primary-400">
+                      {getCurrentSpaceName()}
+                    </span>
+                  </div>
+
+                  {/* Move to Another Space Dropdown */}
+                  {getAvailableSpaces().length > 0 && (
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="move-to-space"
+                        className="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark"
+                      >
+                        {t('editBlogModal.moveToSpace')}
+                      </label>
+                      <select
+                        id="move-to-space"
+                        value={spaceId}
+                        onChange={e => setSpaceId(e.target.value)}
+                        className="input-base"
+                      >
+                        <option value={blog.spaceId}>
+                          {t('editBlogModal.keepInCurrentSpace')}
                         </option>
-                      ))}
-                    </select>
-                    <div className="space-selection-help">
+                        {getAvailableSpaces().map(space => (
+                          <option key={space.id} value={space.id}>
+                            {space.name}
+                          </option>
+                        ))}
+                      </select>
+
                       {spaceId !== blog.spaceId && (
-                        <span className="space-change-warning">
+                        <p className="mt-1 text-xs font-medium text-amber-600 dark:text-amber-400">
                           {t('editBlogModal.spaceChangeWarning')}
-                        </span>
+                        </p>
                       )}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {userSpacesQuery.isLoading && (
-                  <div className="space-loading">{t('editBlogModal.loadingSpaces')}</div>
-                )}
+                  {userSpacesQuery.isLoading && (
+                    <div className="text-center text-sm italic text-text-secondary-light dark:text-text-secondary-dark">
+                      {t('editBlogModal.loadingSpaces')}
+                    </div>
+                  )}
 
-                {userSpacesQuery.isError && (
-                  <div className="space-error">{t('editBlogModal.errorLoadingSpaces')}</div>
-                )}
+                  {userSpacesQuery.isError && (
+                    <div className="rounded bg-red-50 p-2 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                      {t('editBlogModal.errorLoadingSpaces')}
+                    </div>
+                  )}
 
-                {getAvailableSpaces().length === 0 && !userSpacesQuery.isLoading && (
-                  <div className="no-other-spaces">{t('editBlogModal.noOtherSpaces')}</div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="preview-container">
-              <div className="preview-header">{t('editBlogModal.previewHeader')}</div>
-              <article className="preview-content">
-                <h2 className="preview-title">{title || t('editBlogModal.untitled')}</h2>
-                <div className="preview-space-info">
-                  <FiFolder className="preview-space-icon" />
-                  <span className="preview-space-name">
-                    {spaceId === blog.spaceId
-                      ? getCurrentSpaceName()
-                      : userSpaces.find(space => space.id === spaceId)?.name ||
-                        getCurrentSpaceName()}
-                  </span>
-                  {spaceId !== blog.spaceId && (
-                    <span className="preview-space-change">({t('editBlogModal.willBeMoved')})</span>
+                  {getAvailableSpaces().length === 0 && !userSpacesQuery.isLoading && (
+                    <div className="text-center text-sm italic text-text-secondary-light dark:text-text-secondary-dark">
+                      {t('editBlogModal.noOtherSpaces')}
+                    </div>
                   )}
                 </div>
-                <div className="preview-markdown">
-                  <MyMarkdown markdown={content || t('editBlogModal.noContent')} />
+              </>
+            ) : (
+              <div className="space-y-6">
+                <div className="border-b border-border-light pb-4 dark:border-border-dark">
+                  <h2 className="text-2xl font-bold text-text-primary-light dark:text-text-primary-dark">
+                    {title || t('editBlogModal.untitled')}
+                  </h2>
+                  <div className="mt-2 flex items-center gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                    <FiFolder className="text-primary-600 dark:text-primary-400" />
+                    <span className="font-medium">
+                      {spaceId === blog.spaceId
+                        ? getCurrentSpaceName()
+                        : userSpaces.find(space => space.id === spaceId)?.name ||
+                          getCurrentSpaceName()}
+                    </span>
+                    {spaceId !== blog.spaceId && (
+                      <span className="font-medium text-amber-600 dark:text-amber-400">
+                        ({t('editBlogModal.willBeMoved')})
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </article>
-            </div>
-          )}
+                <article className="prose prose-slate dark:prose-invert max-w-none">
+                  <MyMarkdown markdown={content || t('editBlogModal.noContent')} />
+                </article>
+              </div>
+            )}
 
-          <div className="form-actions">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn-secondary"
-              disabled={updateBlogMutation.isLoading}
-            >
-              {t('common.cancel')}
-            </button>
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={updateBlogMutation.isLoading || !title.trim() || !content.trim()}
-            >
-              {updateBlogMutation.isLoading
-                ? t('editBlogModal.updating')
-                : spaceId !== blog.spaceId
-                ? t('editBlogModal.updateAndMove')
-                : t('editBlogModal.update')}
-            </button>
-          </div>
+            {updateBlogMutation.isError && (
+              <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                {updateBlogMutation.error.message || t('editBlogModal.error')}
+              </div>
+            )}
 
-          {updateBlogMutation.isError && (
-            <div className="error-message">
-              {updateBlogMutation.error.message || t('editBlogModal.error')}
+            <div className="sticky bottom-0 mt-4 flex items-center justify-end gap-3 border-t border-border-light bg-surface-light pt-4 dark:border-border-dark dark:bg-surface-dark">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary-light transition-colors hover:bg-gray-100 hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-text-primary-dark"
+                disabled={updateBlogMutation.isLoading}
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={updateBlogMutation.isLoading || !title.trim() || !content.trim()}
+              >
+                {updateBlogMutation.isLoading
+                  ? t('editBlogModal.updating')
+                  : spaceId !== blog.spaceId
+                  ? t('editBlogModal.updateAndMove')
+                  : t('editBlogModal.update')}
+              </button>
             </div>
-          )}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

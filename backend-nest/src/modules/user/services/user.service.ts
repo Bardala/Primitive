@@ -1,0 +1,279 @@
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
+import { PresenceService } from '../../presence/presence.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { User } from '../entities/user.entity';
+import { UserActivity } from '../entities/user-activity.entity';
+import { Blog } from 'src/modules/blog/entities/blog.entity';
+import { Follow } from 'src/modules/shared/entities/follow.entity';
+import { Member } from 'src/modules/space/entities/member.entity';
+import { randomUUID } from 'node:crypto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  GetUserCardRes,
+  UpdatePasswordReq,
+  UserBlogsRes,
+} from '../dto';
+import { DefaultSpaceId } from '@nest/shared';
+import { IUserService, IUserFollowService } from './interfaces';
+
+@Injectable()
+export class UserService implements IUserService, IUserFollowService {
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserActivity) private userActivityRepository: Repository<UserActivity>,
+    @InjectRepository(Follow) private followRepository: Repository<Follow>,
+    @InjectRepository(Blog) private blogRepository: Repository<Blog>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
+    private presenceService: PresenceService,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // Check for existing email
+    const existingEmail = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (existingEmail) {
+      throw new ConflictException('Email already exists');
+    }
+
+    // Check for existing username
+    const existingUsername = await this.userRepository.findOne({
+      where: { username: createUserDto.username },
+    });
+    if (existingUsername) {
+      throw new ConflictException('Username already exists');
+    }
+
+    const user = this.userRepository.create(createUserDto);
+    const member = this.memberRepository.create({
+      memberId: randomUUID(),
+      spaceId: DefaultSpaceId,
+    });
+    await this.memberRepository.save(member);
+    return await this.userRepository.save(user);
+  }
+
+  async findAll(): Promise<{ id: string; username: string }[]> {
+    const users = await this.userRepository.find({
+      select: ['id', 'username'],
+    });
+    return users;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['activity'],
+    });
+
+    if (user) {
+      (user as any).isOnline = this.presenceService.isOnline(id);
+      (user as any).lastSeen = user.activity?.lastActive;
+    }
+
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email },
+    });
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { username },
+    });
+  }
+
+  async findByLogin(login: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: [{ email: login }, { username: login }],
+    });
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.userRepository.update(id, updateUserDto);
+    return await this.findById(id);
+  }
+
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordReq): Promise<void> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Verify old password
+    const isOldPasswordValid = await bcrypt.compare(updatePasswordDto.oldPassword, user.password);
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('Incorrect password');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(updatePasswordDto.newPassword, 12);
+    await this.userRepository.update(id, { password: hashedPassword });
+  }
+
+  async getUserCard(currentUserId: string, targetUserId: string): Promise<GetUserCardRes> {
+    const user = await this.userRepository.findOne({
+      where: { id: targetUserId },
+      select: ['id', 'username', 'email', 'timestamp'],
+      relations: ['activity'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Set real-time online status
+    (user as any).isOnline = this.presenceService.isOnline(targetUserId);
+    (user as any).lastSeen = user.activity?.lastActive;
+
+    // Check if current user is following target user
+    const isFollowing = await this.followRepository.findOne({
+      where: {
+        followerId: currentUserId,
+        followingId: targetUserId,
+      },
+    });
+
+    // Get follower count
+    const followerCount = await this.followRepository.count({
+      where: { followingId: targetUserId },
+    });
+
+    // Get following count
+    const followingCount = await this.followRepository.count({
+      where: { followerId: targetUserId },
+    });
+
+    const userCardDto = new GetUserCardRes();
+    userCardDto.userCard = {
+      ...user,
+      isFollowing: isFollowing ? 1 : 0,
+      followersNum: followerCount,
+      followingNum: followingCount,
+    };
+
+    return userCardDto;
+  }
+
+  async getFollowers(userId: string): Promise<{ id: string; username: string }[]> {
+    const followers = await this.followRepository.find({
+      where: { followingId: userId },
+      relations: ['follower'],
+    });
+
+    return followers.map((follow) => ({
+      id: follow.follower.id,
+      username: follow.follower.username,
+    }));
+  }
+
+  async getFollowing(userId: string): Promise<any[]> {
+    const followings = await this.followRepository.find({
+      where: { followerId: userId },
+      relations: ['following', 'following.activity'],
+    });
+
+    return followings.map((follow) => {
+      const u = follow.following;
+      return {
+        id: u.id,
+        username: u.username,
+        isOnline: this.presenceService.isOnline(u.id),
+        lastSeen: u.activity?.lastActive,
+      };
+    });
+  }
+
+  async createFollow(followerId: string, followingId: string): Promise<void> {
+    if (followerId === followingId) {
+      throw new BadRequestException('Cannot follow yourself');
+    }
+
+    const existingFollow = await this.followRepository.findOne({
+      where: { followerId, followingId },
+    });
+
+    if (existingFollow) {
+      throw new BadRequestException('Already following this user');
+    }
+
+    const follow = this.followRepository.create({
+      followerId,
+      followingId,
+    });
+
+    await this.followRepository.save(follow);
+  }
+
+  async deleteFollow(followerId: string, followingId: string): Promise<void> {
+    const follow = await this.followRepository.findOne({
+      where: { followerId, followingId },
+    });
+
+    if (!follow) {
+      throw new BadRequestException('Not following this user');
+    }
+
+    await this.followRepository.remove(follow);
+  }
+
+  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    const follow = await this.followRepository.findOne({
+      where: { followerId, followingId },
+    });
+    return !!follow;
+  }
+
+  async getUserBlogs(
+    userId: string,
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<UserBlogsRes> {
+    const offset = (page - 1) * pageSize;
+
+    const [blogs, _total] = await this.blogRepository.findAndCount({
+      where: { userId },
+      relations: ['user', 'space', 'seriesLinks', 'seriesLinks.series', 'tags'],
+      order: { timestamp: 'DESC' },
+      skip: offset,
+      take: pageSize,
+    });
+
+    return {
+      blogs: blogs
+        // todo: implement it in the database
+        .filter((b) => b.space.status !== 'private')
+        .map((b) => ({ ...b, content: b.content.substring(0, 500) })),
+      page,
+    };
+  }
+
+  async getUserSpaces(userId: string): Promise<any[]> {
+    const memberships = await this.memberRepository.find({
+      where: { memberId: userId },
+      relations: ['space'],
+    });
+
+    return memberships.map((m) => m.space);
+  }
+
+  async updateLastActive(userId: string): Promise<void> {
+    await this.userActivityRepository.upsert({ userId, lastActive: new Date() }, ['userId']);
+  } 
+}

@@ -30,11 +30,12 @@ export const useLoginMutation = () => {
     },
 
     onSuccess: (user: LoginRes) => {
-      // Update localStorage
-      localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(user));
+      // Update localStorage with non-sensitive user data
+      const { jwt, ...userData } = user;
+      localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(userData));
 
       // Update React Query cache
-      queryClient.setQueryData(['currentUser'], user);
+      queryClient.setQueryData(['currentUser'], userData);
 
       // Navigate to the intended page
       const from = location.state?.from?.pathname || ROUTES.HOME;

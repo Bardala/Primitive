@@ -1,12 +1,5 @@
 import { ApiError } from '@/core/services';
-import {
-  ROUTES,
-  createBlogApi,
-  createShortApi,
-  deleteBlogApi,
-  numOfCommsApi,
-  updateBlogApi,
-} from '@/core/utils';
+import { ROUTES, deleteBlogApi, numOfCommsApi, updateBlogApi } from '@/core/utils';
 
 import {
   Blog,
@@ -21,17 +14,25 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
+import { BlogApi } from '../api';
+
 const getSpcKey = (spaceId: string) =>
   spaceId === DefaultSpaceId ? ['feeds'] : ['blogs', spaceId];
 
-export const useCreateBlog = (spaceId: string, title: string, content: string) => {
+export const useCreateBlog = (
+  spaceId: string,
+  title: string,
+  content: string,
+  seriesId?: string,
+  tagNames?: string[]
+) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const navToSpace = () =>
     spaceId === DefaultSpaceId ? nav(ROUTES.HOME) : nav(ROUTES.GET_SPACE(spaceId));
 
   const createBlogMutation = useMutation<CreateBlogRes, ApiError>(
-    createBlogApi(title, content, spaceId),
+    BlogApi.createBlog(title, content, spaceId, seriesId, tagNames),
     {
       onSuccess: data => {
         queryClient.invalidateQueries(getSpcKey(spaceId));
@@ -47,7 +48,7 @@ export const useCreateShort = (spaceId: string, title: string, content: string) 
   const queryClient = useQueryClient();
 
   const createShortMutation = useMutation<CreateBlogRes, ApiError>(
-    createShortApi(title, content, spaceId),
+    BlogApi.createShort(title, content, spaceId),
     {
       onSuccess: data => queryClient.invalidateQueries(getSpcKey(spaceId)),
     }

@@ -1,77 +1,135 @@
 export enum ENDPOINT {
   // *Auth Routes
-  SIGNUP = '/api/v0/signup',
-  LOGIN = '/api/v0/login',
+  SIGNUP = '/auth/signup',
+  LOGIN = '/auth/login',
+  LOGOUT = '/auth/logout',
 
   // *User
-  GET_USER_CARD = '/api/v0/user/:id',
-  FOLLOW_USER = '/api/v0/user/:id/follow',
-  UNFOLLOW_USER = '/api/v0/user/:id/unfollow',
-  GET_FOLLOWERS = '/api/v0/user/:id/followers',
-  GET_USERS_LIST = '/api/v0/users',
-  GET_USER_BLOGS = '/api/v0/user/:id/blogs/:page',
-  GET_ALL_USER_BLOGS = '/api/v0/user/blogs/:page/all',
-  GET_USER_SPACES = '/api/v0/user/:id/spaces',
-  GET_ALL_UNREAD_MSGS = '/api/v0/user/msgs/missed',
-  UPDATE_USER_PASSWORD = '/api/v0/user/password',
+  GET_USER_CARD = '/users/:id/card',
+  FOLLOW_USER = '/users/:id/follow',
+  UNFOLLOW_USER = '/users/:id/unfollow',
+  GET_FOLLOWERS = '/users/:id/followers',
+  GET_FOLLOWING = '/users/:id/following',
+  GET_USERS_LIST = '/users',
+  GET_USER_BLOGS = '/users/:id/blogs',
+  GET_ALL_USER_BLOGS = '/users/blogs/:page/all',
+  GET_USER_SPACES = '/users/:id/spaces',
+  GET_ALL_UNREAD_MSGS = '/users/messages/unread',
+  UPDATE_USER_PASSWORD = '/users/password',
 
   // *Blog
-  CREATE_BLOG = '/api/v0/blog',
-  UPDATE_BLOG = '/api/v0/blog/:blogId',
-  GET_BLOG = '/api/v0/blog/:blogId',
-  DELETE_BLOG = '/api/v0/blog/:blogId',
+  CREATE_BLOG = '/blogs',
+  UPDATE_BLOG = '/blogs/:blogId',
+  GET_BLOG = '/blogs/:blogId',
+  DELETE_BLOG = '/blogs/:blogId',
 
-  GET_BLOG_COMMENTS = '/api/v0/blog/:blogId/comments',
-  GET_BLOG_LIKES = '/api/v0/blog/:blogId/likes',
-  GET_BLOG_LIKES_LIST = '/api/v0/blog/:blogId/likes/list',
-  LIKE_BLOG = '/api/v0/blog/:blogId/like',
-  UNLIKE_BLOG = '/api/v0/blog/:blogId/unlike',
-  NUM_OF_COMMENTS = '/api/v0/blog/:blogId/num-of-comments',
+  GET_BLOG_COMMENTS = '/blogs/:blogId/comments',
+  GET_BLOG_LIKES = '/blogs/:blogId/likes',
+  GET_BLOG_LIKES_LIST = '/blogs/:blogId/likes-list',
+  LIKE_BLOG = '/blogs/:blogId/like',
+  UNLIKE_BLOG = '/blogs/:blogId/like',
+  NUM_OF_COMMENTS = '/blogs/:blogId/comments-count',
 
   //* Short
-  CREATE_SHORT = '/api/v0/space/:spaceId/short',
-  UPDATE_SHORT = '/api/v0/short/:shortId',
-  GET_SHORT = '/api/v0/short/:shortId',
-  DELETE_SHORT = '/api/v0/short/:shortId',
+  CREATE_SHORT = '/shorts/:spaceId/short',
+  UPDATE_SHORT = '/shorts/:shortId',
+  GET_SHORT = '/shorts/:shortId',
+  DELETE_SHORT = '/shorts/:shortId',
 
-  GET_SHORT_COMMENTS = '/api/v0/short/:shortId/comments',
-  GET_SHORT_LIKES = '/api/v0/short/:shortId/likes',
-  GET_SHORT_LIKES_LIST = '/api/v0/short/:shortId/likes/list',
-  LIKE_SHORT = '/api/v0/short/:shortId/like',
-  UNLIKE_SHORT = '/api/v0/short/:shortId/unlike',
+  GET_SHORT_COMMENTS = '/shorts/:shortId/comments',
+  GET_SHORT_LIKES = '/shorts/:shortId/likes',
+  GET_SHORT_LIKES_LIST = '/shorts/:shortId/likes-list',
+  LIKE_SHORT = '/shorts/:shortId/like',
+  UNLIKE_SHORT = '/shorts/:shortId/like',
 
   // *Comment
-  CREATE_COMMENT = '/api/v0/blog/:blogId/comment',
-  UPDATE_COMMENT = '/api/v0/comment/:commentId',
-  DELETE_COMMENT = '/api/v0/comment/:commentId',
+  CREATE_COMMENT = '/comments/:blogId',
+  UPDATE_COMMENT = '/comments',
+  DELETE_COMMENT = '/comments/:commentId',
 
   // *Space
-  CREATE_SPACE = '/api/v0/space',
-  UPDATE_SPACE = '/api/v0/space/:spaceId',
-  GET_SPACE = '/api/v0/space/:spaceId',
-  DELETE_SPACE = '/api/v0/space/:spaceId',
+  CREATE_SPACE = '/spaces',
+  UPDATE_SPACE = '/spaces/:spaceId',
+  GET_SPACE = '/spaces/:spaceId',
+  DELETE_SPACE = '/spaces/:spaceId',
 
-  GET_SPACE_BLOGS = '/api/v0/space/:spaceId/blogs/:page',
-  GET_DEFAULT_SPACE = '/api/v0/space',
-  JOIN_SPACE = '/api/v0/space/:spaceId/join',
-  ADD_MEMBER = '/api/v0/space/:spaceId/member',
-  GET_SPACE_MEMBERS = '/api/v0/space/:spaceId/members',
-  Get_SPACE_CHAT = '/api/v0/space/:spaceId/chat',
-  DELETE_MEMBER = '/api/v0/space/:spaceId/member/:memberId',
-  LEAVE_SPACE = '/api/v0/space/:spaceId/leave',
-  GET_UNREAD_MSGS_NUM = '/api/v0/space/:spaceId/unread-msgs',
+  GET_SPACE_BLOGS = '/spaces/:spaceId/blogs',
+  GET_DEFAULT_SPACE_BLOGS = '/spaces/default/blogs',
+  GET_DEFAULT_SPACE = '/spaces/default',
+  JOIN_SPACE = '/spaces/:spaceId/join',
+  ADD_MEMBER = '/spaces/:spaceId/members',
+  GET_SPACE_MEMBERS = '/spaces/:spaceId/members',
+  Get_SPACE_CHAT = '/spaces/:spaceId/messages',
+  DELETE_MEMBER = '/spaces/:spaceId/members/:memberId',
+  LEAVE_SPACE = '/spaces/:spaceId/leave',
+  GET_UNREAD_MSGS_NUM = '/spaces/:spaceId/unread-msgs',
 
-  //* Message
-  CREATE_MESSAGE = '/api/v0/space/:spaceId/message',
-  DELETE_MESSAGE = '/api/v0/message/:msgId',
+  //* Message (Chat)
+  CREATE_MESSAGE = '/chats/:spaceId/message',
+  DELETE_MESSAGE = '/chats/:msgId',
 
   // *Like
-  LIKE_POST = '/api/v0/post/:postId/like',
-  UNLIKE_POST = '/api/v0/post/:postId/unlike',
-  GET_POST_LIKES = '/api/v0/post/:postId/likes',
+  LIKE_POST = '/likes/:postId/like',
+  UNLIKE_POST = '/likes/:postId/unlike',
+  GET_POST_LIKES = '/likes/:postId/likes',
 
   // *Feeds
-  GET_FEEDS = '/api/v0/feeds',
-  GET_FEEDS_PAGE = '/api/v0/feeds/:page',
-  Get_SMART_FEEDS = '/api/v0/feeds/smart/:page',
+  GET_FEEDS = '/blogs',
+  GET_FEEDS_PAGE = '/blogs/:page',
+  Get_SMART_FEEDS = '/blogs/smart/:page',
+
+  PERSONAL_FEEDS = '/feeds/personal',
+  SMART_FEEDS = '/feeds/smart',
+  MIXED_FEEDS = '/feeds/mixed',
+  PUBLIC_FEEDS = '/feeds/public',
+  SMART_PUBLIC_FEEDS = '/feeds/public/smart',
+  USER_FEEDS = '/feeds/user/:userId',
+
+  // *Tags
+  GET_TAGS = '/tags',
+  CREATE_TAG = '/tags',
+  GET_USER_TAGS = '/tags/user',
+  ADD_USER_TAG = '/tags/user',
+  REMOVE_USER_TAG = '/tags/user/:tagId',
+  ADD_BLOG_TAG = '/tags/:blogId/add',
+  REMOVE_BLOG_TAG = '/tags/:blogId/:tagId',
+  GET_BLOG_TAGS = '/tags/:blogId/blog-tags',
+  ADD_SPACE_TAG = '/tags/space/:spaceId/add',
+  REMOVE_SPACE_TAG = '/tags/space/:spaceId/:tagId',
+  GET_SPACE_TAGS = '/tags/space/:spaceId/tags',
+
+  // *Notifications
+  // *Notifications
+  GET_NOTIFICATIONS = '/notifications',
+  MARK_AS_READ = '/notifications/:id/read',
+  MARK_ALL_AS_READ = '/notifications/read-all',
+
+  // *Blog Series
+  CREATE_SERIES = '/series',
+  UPDATE_SERIES = '/series/:seriesId',
+  GET_SERIES = '/series/:seriesId',
+  GET_USER_SERIES = '/series/user',
+  DELETE_SERIES = '/series/:seriesId',
+  ADD_BLOG_TO_SERIES = '/series/:seriesId/blogs',
+  GET_SERIES_BLOGS = '/series/:seriesId/blogs-list',
+  REMOVE_BLOG_FROM_SERIES = '/series/:seriesId/blogs/:blogId',
+
+  GET_TAG_BLOGS = '/tags/:tagId/blogs-list',
+  GET_TAG_BLOGS_BY_NAME = '/tags/:tagName/blogs-list',
+
+  // *Space Permissions
+  GET_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',
+  UPDATE_SPACE_PERMISSIONS = '/spaces/:spaceId/permissions',
+
+  // *Private Chat
+  GET_PRIVATE_CONVERSATIONS = '/chats/private',
+  GET_PRIVATE_MESSAGES = '/chats/private/:conversationId',
+  CREATE_PRIVATE_CONVERSATION = '/chats/private',
+  SEND_PRIVATE_MESSAGE = '/chats/private/:conversationId/message',
+  MARK_PRIVATE_CHAT_AS_READ = '/chats/private/:conversationId/read',
+
+  // *Space Chat Read Tracking
+  MARK_SPACE_CHAT_AS_READ = '/spaces/:spaceId/messages/read',
+  MUTE_PRIVATE_CHAT = '/chats/private/:conversationId/mute',
+  MUTE_SPACE_CHAT = '/spaces/:spaceId/mute',
 }

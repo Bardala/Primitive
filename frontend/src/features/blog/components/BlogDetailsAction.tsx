@@ -30,26 +30,28 @@ export const BlogDetailsAction: React.FC<{
 
   return (
     <>
-      <div className="blog-actions">
+      <div className="flex items-center gap-2">
         <button
           onClick={() => setIsEditModalOpen(true)}
-          className="btn-icon"
+          className="flex items-center justify-center rounded-lg p-2 text-text-secondary-light transition-colors hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
           title={t('blogActions.editBlog')}
         >
-          <FiEdit />
+          <FiEdit size={18} />
         </button>
 
         {currUserOwnBlog && (
           <button
             onClick={() => setIsDeleteModalOpen(true)}
             disabled={deleteBlogMutate.isLoading}
-            className="btn-icon danger"
+            className="flex items-center justify-center rounded-lg p-2 text-text-secondary-light transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-text-secondary-dark dark:hover:bg-red-900/20 dark:hover:text-red-400"
             title={t('blogActions.deleteBlog')}
           >
-            <FiTrash2 />
+            <FiTrash2 size={18} />
           </button>
         )}
-        {deleteBlogMutate.isError && <p className="error">{deleteBlogMutate.error.message}</p>}
+        {deleteBlogMutate.isError && (
+          <p className="text-sm text-red-500">{deleteBlogMutate.error.message}</p>
+        )}
       </div>
 
       <EditBlogModal

@@ -1,230 +1,475 @@
-import { useAuthContext } from '@/core/context';
-import { useSideBarReducer } from '@/core/hooks/sideBarReducer';
-import { Chat } from '@/features/chat';
+import { useAuthContext, useTheme } from '@/core/context';
+import { useSideBar } from '@/core/context/SideBarContext';
+import { useClickOutside } from '@/core/hooks';
+import { ROUTES } from '@/core/utils';
+import { ChatIcon } from '@/features/chat/components/ChatIcon';
 import { NotificationMsgsNumber } from '@/features/notification/components';
-import { ShortForm } from '@/features/short-form';
-import { AddMember, CreateSpace, EditSpaceForm, LeaveSpc, SpaceMembers } from '@/features/spaces';
+import { NotificationIcon } from '@/features/notification/components';
+import { FollowedUsersList } from '@/features/user/components';
 
 import { DefaultSpaceId, Space, SpaceMember } from '@nest/shared';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa';
+import {
+  FaBook,
+  FaCog,
+  FaComments,
+  FaLock,
+  FaPencilAlt,
+  FaPlus,
+  FaSignOutAlt,
+  FaTimes,
+} from 'react-icons/fa';
 import { IoIosPeople } from 'react-icons/io';
+import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { RiGroup2Fill } from 'react-icons/ri';
-import { TfiWrite } from 'react-icons/tfi';
-import { useNavigate } from 'react-router-dom';
+import { TiHome } from 'react-icons/ti';
+import { Link, useLocation } from 'react-router-dom';
 
-import '../styles/sidebar.css';
+import { UserSpacesList } from '../../features/spaces/components/UserSpacesList';
 
-export const ActionBar: React.FC<{
+const AppIcon = '/PrimitiveIcon.ico';
+
+export const ActionsSidebar: React.FC<{
   space?: Space;
   members?: SpaceMember[];
-  numOfUnReadingMsgs?: number;
-}> = ({ space, members, numOfUnReadingMsgs = 0 }) => {
+}> = ({ space, members }) => {
   const { currUser } = useAuthContext();
-  const { state, dispatch } = useSideBarReducer();
+  const { state, dispatch } = useSideBar();
   const { t } = useTranslation();
-  const [list, setList] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const nav = useNavigate();
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  const menuRef = useRef<HTMLDivElement>(null);
+  useClickOutside(menuRef, () => {
+    if (state.showUserMenu) dispatch({ type: 'closeUserMenu' });
+  });
 
   const isMember = members?.some(member => member.memberId === currUser?.id);
   const isAdmin =
     space?.ownerId === currUser?.id ||
     members?.some(member => member.memberId === currUser?.id && member.isAdmin);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-
-  // Handle click outside to close sidebar
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isSidebarOpen &&
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target as Node) &&
-        !(event.target as Element).closest('.floating-sidebar-toggle')
-      ) {
-        closeSidebar();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isSidebarOpen]);
-
   return (
     <>
-      {/* Floating toggle button */}
-      <button
-        className="floating-sidebar-toggle"
-        onClick={toggleSidebar}
-        aria-label={t('sidebar.toggle')}
-      >
-        {isSidebarOpen ? <FaTimes /> : <FaPlus />}
-        {numOfUnReadingMsgs > 0 && (
-          <span className="notification-badge floating-badge">
-            {numOfUnReadingMsgs > 99 ? '99+' : numOfUnReadingMsgs}
-          </span>
-        )}
-      </button>
-
-      {/* Overlay */}
-      {isSidebarOpen && (
+      {/* Mobile Sidebar Backdrop */}
+      {state.showMobileSidebar && (
         <div
-          className="sidebar-overlay"
-          onClick={closeSidebar}
-          style={{ opacity: 1, visibility: 'visible' }}
-        ></div>
+          className="fixed inset-0 z-90 bg-black/60 backdrop-blur-sm sm:hidden animate-in fade-in duration-300"
+          onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+        />
       )}
 
-      <aside ref={sidebarRef} className={`action-bar ${isSidebarOpen ? 'open' : ''}`}>
-        {space && (
-          <div className="action-bar-header">
-            {isMember && (
-              <div className="action-bar-nav">
-                <h3 className="space-name">{space?.name}</h3>
-                <button
-                  title={t('sidebar.toggleList')}
-                  onClick={() => setList(!list)}
-                  className="toggle-list-btn"
+      <aside
+        className={`fixed left-0 sm:left-auto sm:sticky top-0 z-100 h-screen flex-col overflow-hidden bg-background-light dark:bg-background-dark shrink-0 transition-all border-r border-border-light dark:border-border-dark/60 ${
+          state.showMobileSidebar
+            ? 'flex w-[275px] animate-in slide-in-from-left-8 duration-300'
+            : 'hidden sm:flex'
+        } sm:w-[88px] xl:w-[275px]`}
+      >
+        <div className="flex-1 overflow-y-auto no-scrollbar py-4 px-2 xl:px-4 w-full">
+          <div className="flex flex-col items-center xl:items-start w-full">
+            {/* App Logo for Desktop */}
+            <div className="hidden sm:flex w-full items-center justify-center xl:justify-start mb-2 px-3">
+              <Link
+                to={ROUTES.HOME}
+                onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                className="flex items-center justify-center xl:justify-start h-14 w-14 xl:w-full rounded-full transition-all hover:bg-black/5 dark:hover:bg-white/10 text-text-primary-light dark:text-text-primary-dark"
+              >
+                <img src={AppIcon} alt="Primitive" className="h-10 w-10 object-cover rounded-xl" />
+              </Link>
+            </div>
+
+            {/* User Profile Header for Mobile (Like X.com) */}
+            {currUser && (
+              <div className="flex sm:hidden flex-col w-full px-4 pt-2 pb-6 mb-2 border-b border-border-light dark:border-border-dark/60">
+                <Link
+                  to={ROUTES.GET_USER_PROFILE(currUser.id)}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
                 >
-                  {!list ? '🙈' : '🙉'}
-                </button>
+                  <div className="h-12 w-12 mb-3 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold border border-primary-200 dark:border-primary-800 text-lg shadow-sm">
+                    {currUser.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-[19px] text-text-primary-light dark:text-text-primary-dark leading-tight">
+                      {currUser.username}
+                    </span>
+                    <span className="text-text-secondary-light dark:text-text-secondary-dark text-[15px]">
+                      @{currUser.id.substring(0, 8)}
+                    </span>
+                  </div>
+                </Link>
               </div>
             )}
 
-            <div className="space-info">
-              <div className="space-members-count">
-                <IoIosPeople size={16} />
-                <span>{t('sidebar.membersCount', { count: members?.length || 0 })}</span>
+            {/* Main Navigation */}
+            <NavItem
+              icon={<TiHome size={26} />}
+              label={t('navbar.home')}
+              to={ROUTES.HOME}
+              active={location.pathname === ROUTES.HOME}
+              onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+            />
+
+            {currUser && (
+              <>
+                <NavItem
+                  icon={<IoIosPeople size={26} />}
+                  label={t('navbar.follow')}
+                  to={ROUTES.USERS_LIST}
+                  active={location.pathname === ROUTES.USER_PROFILE}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                />
+
+                <NavItem
+                  icon={<NotificationIcon />}
+                  label={t('navbar.notifications')}
+                  to={ROUTES.NOTIFICATIONS}
+                  active={location.pathname === ROUTES.NOTIFICATIONS}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                />
+                <NavItem
+                  icon={<ChatIcon />}
+                  label={t('sidebar.chat') || 'Chat'}
+                  to={ROUTES.CHAT}
+                  active={location.pathname === ROUTES.CHAT}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                />
+                <NavItem
+                  icon={<FaCog size={24} />}
+                  label={t('navbar.settings')}
+                  to={ROUTES.SETTINGS}
+                  active={location.pathname === ROUTES.SETTINGS}
+                  onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                />
+
+                <NavItem
+                  icon={<FaBook size={24} />}
+                  label="Series"
+                  to="#"
+                  onClick={() => {
+                    dispatch({ type: 'showCreateSeries' });
+                    dispatch({ type: 'closeMobileSidebar' });
+                  }}
+                />
+
+                {/* Theme Toggle */}
+                <SidebarThemeToggle onClick={() => dispatch({ type: 'closeMobileSidebar' })} />
+
+                {/* Space Navigation if active */}
+                {!space && (
+                  <SidebarItem
+                    icon={<RiGroup2Fill size={26} />}
+                    label={t('sidebar.space')}
+                    onClick={() => {
+                      dispatch({ type: 'showCreateSpace' });
+                      dispatch({ type: 'closeMobileSidebar' });
+                    }}
+                    active={state.showCreateSpace}
+                  />
+                )}
+
+                {/* Post Button */}
+                <div className="mt-4 w-full flex justify-center xl:justify-start xl:px-2 px-4">
+                  <button
+                    onClick={() => {
+                      dispatch({ type: 'showCreateBlog' });
+                      dispatch({ type: 'closeMobileSidebar' });
+                    }}
+                    className="flex items-center justify-center w-full xl:w-[90%] h-[52px] bg-primary-600 text-white rounded-full shadow-md hover:bg-primary-700 transition-all active:scale-95"
+                  >
+                    <span className="font-bold text-[17px]">Post</span>
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Space specific actions */}
+            {space && (
+              <div className="mt-6 w-full flex flex-col pt-4 border-t border-border-light dark:border-border-dark/60">
+                {space.id !== DefaultSpaceId && <div className="xl:px-4 mb-2 flex flex-col items-center xl:items-start w-full">
+                  <h3 className="hidden xl:block truncate text-base font-bold text-text-primary-light dark:text-text-primary-dark w-full">
+                    {space.name}
+                  </h3>
+                  <div className="xl:hidden flex h-10 w-10 items-center justify-center rounded-full bg-surface-light dark:bg-surface-dark font-bold border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark">
+                    {space.name.charAt(0)}
+                  </div>
+                  <span className="hidden xl:block text-xs text-text-secondary-light dark:text-text-secondary-dark">
+                    {members?.length || 0} Members
+                  </span>
+                </div>}
+
+                {isMember && (
+                  <SidebarItem
+                    icon={<FaComments size={24} />}
+                    label={t('sidebar.chat')}
+                    onClick={() => {
+                      dispatch({ type: 'showChat' });
+                      dispatch({ type: 'closeMobileSidebar' });
+                    }}
+                    active={state.showChat}
+                    badge={<NotificationMsgsNumber spaceId={space.id} variant="badge" />}
+                  />
+                )}
+
+                {isMember && (
+                  <>
+                    <SidebarItem
+                      icon={<IoIosPeople size={24} />}
+                      label={t('sidebar.members')}
+                      onClick={() => {
+                        dispatch({ type: 'showMembers' });
+                        dispatch({ type: 'closeMobileSidebar' });
+                      }}
+                      active={state.showMembers}
+                    />
+                    {isAdmin && (
+                      <>
+                        <SidebarItem
+                          icon={<FaPlus size={20} />}
+                          label={t('sidebar.addMember')}
+                          onClick={() => {
+                            dispatch({ type: 'showAddMember' });
+                            dispatch({ type: 'closeMobileSidebar' });
+                          }}
+                          active={state.showAddMember}
+                        />
+                        <SidebarItem
+                          icon={<FaPencilAlt size={20} />}
+                          label={t('sidebar.editSpace')}
+                          onClick={() => {
+                            dispatch({ type: 'showEditSpace' });
+                            dispatch({ type: 'closeMobileSidebar' });
+                          }}
+                          active={state.showEditSpace}
+                        />
+                        <SidebarItem
+                          icon={<FaLock size={20} />}
+                          label="Permissions"
+                          onClick={() => {
+                            dispatch({ type: 'showPermissions' });
+                            dispatch({ type: 'closeMobileSidebar' });
+                          }}
+                          active={state.showPermissions}
+                        />
+                      </>
+                    )}
+                    <SidebarItem
+                      icon={<FaSignOutAlt size={20} />}
+                      label={t('sidebar.leaveSpace')}
+                      onClick={() => {
+                        dispatch({ type: 'showLeaveSpc' });
+                        dispatch({ type: 'closeMobileSidebar' });
+                      }}
+                      className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10"
+                    />
+                  </>
+                )}
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bottom User Profile Summary */}
+        {currUser && (
+          <div className="relative w-full px-2 xl:px-4 py-3 border-t border-border-light dark:border-border-dark/60 mt-auto bg-background-light dark:bg-background-dark z-10 shrink-0">
+            {/* User Menu Popup — anchored above this row */}
+            {state.showUserMenu && (
+              <div
+                ref={menuRef}
+                className="absolute bottom-full left-2 right-2 xl:left-4 xl:right-4 mb-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark/60 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-200 z-50"
+              >
+                {/* Close button */}
+                <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/40">
+                  <span className="font-bold text-sm text-text-primary-light dark:text-text-primary-dark">
+                    Quick Access
+                  </span>
+                  <button
+                    onClick={() => dispatch({ type: 'closeUserMenu' })}
+                    className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-text-secondary-light dark:text-text-secondary-dark transition-all"
+                  >
+                    <FaTimes size={12} />
+                  </button>
+                </div>
+
+                {/* Following Section */}
+                <div className="flex flex-col border-b border-border-light dark:border-border-dark/40">
+                  <h2 className="px-4 py-2 font-extrabold text-[15px] text-text-primary-light dark:text-text-primary-dark">
+                    {t('user.following') || 'Following'}
+                  </h2>
+                  <div className="max-h-[200px] overflow-y-auto no-scrollbar">
+                    <FollowedUsersList />
+                  </div>
+                </div>
+
+                {/* Spaces Section */}
+                <div className="flex flex-col">
+                  <h2 className="px-4 py-2 font-extrabold text-[15px] text-text-primary-light dark:text-text-primary-dark">
+                    {t('userProfile.spaces') || 'Spaces'}
+                  </h2>
+                  <div className="max-h-[200px] overflow-y-auto no-scrollbar">
+                    <UserSpacesList />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Row: profile link + three-dot trigger */}
+            <div className="flex items-center w-full gap-2">
+              <Link
+                to={ROUTES.GET_USER_PROFILE(currUser.id)}
+                onClick={() => dispatch({ type: 'closeMobileSidebar' })}
+                className="flex items-center flex-1 gap-3 overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all p-1 xl:p-2 min-w-0"
+              >
+                <div className="h-10 w-10 shrink-0 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold border border-primary-200 dark:border-primary-800">
+                  {currUser.username.charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden xl:flex flex-col flex-1 min-w-0">
+                  <span className="font-bold text-[15px] truncate text-text-primary-light dark:text-text-primary-dark leading-tight">
+                    {currUser.username}
+                  </span>
+                  <span className="text-text-secondary-light dark:text-text-secondary-dark text-[15px] truncate">
+                    @{currUser.id.substring(0, 8)}
+                  </span>
+                </div>
+              </Link>
+
+              {/* Three-dot button — visible on both icon-only and wide sidebar */}
+              <button
+                id="user-menu-trigger"
+                onClick={e => {
+                  e.stopPropagation();
+                  dispatch({ type: 'toggleUserMenu' });
+                }}
+                title="More options"
+                className={`shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-all hover:bg-black/10 dark:hover:bg-white/10 text-text-primary-light dark:text-text-primary-dark font-bold text-lg ${
+                  state.showUserMenu ? 'bg-black/10 dark:bg-white/10' : ''
+                }`}
+              >
+                ···
+              </button>
             </div>
           </div>
         )}
-
-        <div className="action-bar-content">
-          <div className="action-buttons">
-            {!(!!space && !isMember) && (
-              <button
-                title={t('sidebar.createShort')}
-                onClick={() => dispatch({ type: 'showCreateBlog' })}
-                className={`action-btn ${state.showCreateBlog ? 'active' : ''}`}
-              >
-                <span className="btn-icon">
-                  <FaPencilAlt size={18} />
-                </span>
-                <span className="btn-text">{t('sidebar.short')}</span>
-              </button>
-            )}
-
-            {!((!!space && !isMember) || (space && !list)) && (
-              <button
-                title={t('sidebar.createBlog')}
-                onClick={() => {
-                  nav(`/new/b/${space?.name || 'Default'}/${space?.id || DefaultSpaceId}`);
-                  closeSidebar();
-                }}
-                className="action-btn"
-              >
-                <span className="btn-icon">
-                  <TfiWrite size={18} />
-                </span>
-                <span className="btn-text">{t('sidebar.blog')}</span>
-              </button>
-            )}
-
-            {!!space && isMember && (
-              <button
-                title={t('sidebar.showChat')}
-                className="chat-btn"
-                onClick={() => {
-                  dispatch({ type: 'showChat' });
-                  setList(false);
-                }}
-              >
-                <span className="btn-icon">💬</span>
-                <span className="btn-text">{t('sidebar.chat')}</span>
-                <NotificationMsgsNumber spaceId={space?.id!} />
-              </button>
-            )}
-
-            {!space && (
-              <button
-                title={t('sidebar.createSpace')}
-                onClick={() => dispatch({ type: 'showCreateSpace' })}
-                className={`action-btn ${state.showCreateSpace ? 'active' : ''}`}
-              >
-                <span className="btn-icon">
-                  <RiGroup2Fill size={18} />
-                </span>
-                <span className="btn-text">{t('sidebar.space')}</span>
-              </button>
-            )}
-          </div>
-
-          {list && space && isMember && (
-            <div className="space-management">
-              <h4 className="management-title">{t('sidebar.management')}</h4>
-
-              <button
-                title={t('sidebar.showMembers')}
-                onClick={() => dispatch({ type: 'showMembers' })}
-                className={`management-btn ${state.showMembers ? 'active' : ''}`}
-              >
-                <span className="btn-icon">
-                  <IoIosPeople size={18} />
-                </span>
-                <span className="btn-text">{t('sidebar.members')}</span>
-              </button>
-
-              {isAdmin && (
-                <>
-                  <button
-                    title={t('sidebar.addMember')}
-                    onClick={() => dispatch({ type: 'showAddMember' })}
-                    className={`management-btn ${state.showAddMember ? 'active' : ''}`}
-                  >
-                    <span className="btn-icon">+</span>
-                    <span className="btn-text">{t('sidebar.addMember')}</span>
-                  </button>
-
-                  <button
-                    title={t('sidebar.editSpace')}
-                    onClick={() => dispatch({ type: 'showEditSpace' })}
-                    className={`management-btn ${state.showEditSpace ? 'active' : ''}`}
-                  >
-                    <span className="btn-icon">✏️</span>
-                    <span className="btn-text">{t('sidebar.editSpace')}</span>
-                  </button>
-                </>
-              )}
-
-              <button
-                title={t('sidebar.leaveSpace')}
-                onClick={() => dispatch({ type: 'showLeaveSpc' })}
-                className="management-btn leave-btn"
-              >
-                <span className="btn-icon">🚪</span>
-                <span className="btn-text">{t('sidebar.leaveSpace')}</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Modals and Forms */}
-        {state.showCreateBlog && <ShortForm />}
-        {state.showCreateSpace && <CreateSpace />}
-        {state.showMembers && list && <SpaceMembers space={space!} users={members!} />}
-        {state.showAddMember && list && <AddMember />}
-        {state.showEditSpace && list && <EditSpaceForm />}
-        {state.showChat && <Chat space={space!} />}
-        {state.showLeaveSpc && list && <LeaveSpc dispatch={dispatch} spaceId={space?.id!} />}
       </aside>
     </>
+  );
+};
+
+export const ChatSidebar: React.FC<{ space?: Space }> = ({ space }) => {
+  const { t } = useTranslation();
+
+  return (
+    <aside className="hidden lg:flex flex-col w-[290px] xl:w-[350px] shrink-0 h-screen sticky top-0 px-4 py-3 overflow-y-auto no-scrollbar pt-4">
+      <div className="flex flex-col gap-4">
+        {/* Following Section */}
+        <div className="flex flex-col bg-surface-light dark:bg-[#16181c] border border-border-light dark:border-border-dark/60 rounded-2xl overflow-hidden pb-3">
+          <h2 className="px-4 py-3 font-extrabold text-[20px] text-text-primary-light dark:text-text-primary-dark">
+            {t('user.following') || 'Following'}
+          </h2>
+          <div className="flex-1">
+            <FollowedUsersList />
+          </div>
+        </div>
+
+        {/* Spaces Section */}
+        <div className="flex flex-col bg-surface-light dark:bg-[#16181c] border border-border-light dark:border-border-dark/60 rounded-2xl overflow-hidden pb-3">
+          <h2 className="px-4 py-3 font-extrabold text-[20px] text-text-primary-light dark:text-text-primary-dark">
+            {t('userProfile.spaces') || 'Spaces'}
+          </h2>
+          <div className="flex-1">
+            <UserSpacesList />
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+};
+
+// UI Helpers
+const NavItem = ({
+  icon,
+  label,
+  to,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  to: string;
+  active?: boolean;
+  onClick?: () => void;
+}) => (
+  <Link
+    to={to}
+    className="w-full flex items-center justify-start sm:justify-center xl:justify-start group py-1"
+    onClick={onClick}
+  >
+    <div
+      className={`flex items-center gap-5 xl:px-4 py-3 rounded-full transition-all group-hover:bg-black/10 dark:group-hover:bg-white/10 ${
+        active
+          ? 'font-bold text-text-primary-light dark:text-text-primary-dark'
+          : 'text-text-primary-light dark:text-white/90'
+      }`}
+    >
+      <div className="flex items-center justify-center h-[26px] w-[26px] shrink-0">{icon}</div>
+      <span
+        className={`inline sm:hidden xl:inline text-xl ${active ? 'font-bold' : 'font-normal'}`}
+      >
+        {label}
+      </span>
+    </div>
+  </Link>
+);
+
+const SidebarItem = ({ icon, label, onClick, active, badge, className = '' }: any) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center justify-start sm:justify-center xl:justify-start group py-1`}
+  >
+    <div
+      className={`flex items-center gap-5 xl:px-4 py-3 rounded-full transition-all group-hover:bg-black/10 dark:group-hover:bg-white/10 ${
+        active
+          ? 'font-bold text-text-primary-light dark:text-text-primary-dark'
+          : 'text-text-primary-light dark:text-white/90'
+      } ${className}`}
+    >
+      <div className="flex items-center justify-center h-[26px] w-[26px] shrink-0 relative">
+        {icon}
+        {badge && (
+          <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold">
+            {badge}
+          </div>
+        )}
+      </div>
+      <span
+        className={`inline sm:hidden xl:inline text-xl ${
+          active ? 'font-bold' : 'font-normal'
+        } truncate`}
+      >
+        {label}
+      </span>
+    </div>
+  </button>
+);
+
+const SidebarThemeToggle = ({ onClick }: { onClick?: () => void }) => {
+  const { isDarkMode, toggleTheme } = useTheme();
+
+  return (
+    <button
+      onClick={() => {
+        toggleTheme();
+        if (onClick) onClick();
+      }}
+      className="w-full flex items-center justify-start sm:justify-center xl:justify-start group py-1 mt-2"
+    >
+      <div className="flex items-center gap-5 xl:px-4 py-3 rounded-full transition-all group-hover:bg-black/10 dark:group-hover:bg-white/10 text-text-primary-light dark:text-white/90">
+        <div className="flex items-center justify-center h-[26px] w-[26px] shrink-0">
+          {isDarkMode ? <MdOutlineDarkMode size={26} /> : <MdOutlineLightMode size={26} />}
+        </div>
+        <span className="inline sm:hidden xl:inline text-xl font-normal">Theme</span>
+      </div>
+    </button>
   );
 };

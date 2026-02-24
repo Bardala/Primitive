@@ -4,3 +4,5 @@
 
 export * from './BlogDetails';
 export * from './CreateBlogPage';
+export * from './TagBlogsPage';
+export * from './SeriesBlogsPage';

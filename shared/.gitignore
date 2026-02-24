@@ -2,3 +2,11 @@
 .env.*
 package-lock.json
 node_modules
+
+*.js
+*.js.map
+*.d.ts
+
+dist/
+build/
+lib/

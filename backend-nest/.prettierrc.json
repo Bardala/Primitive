@@ -1,0 +1,18 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "importOrder": [
+    "^@nestjs/(.*)$",
+    "^[a-zA-Z0-9@].*$",
+    "^@app/(.*)$",
+    "^@modules/(.*)$",
+    "^@shared/(.*)$",
+    "src/(.*)$",
+    "^[./].*$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "printWidth": 100,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "parser": "babel-ts"
+}

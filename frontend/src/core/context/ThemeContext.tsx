@@ -13,9 +13,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('bg-calm-night');
       localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('bg-calm-night');
       localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);

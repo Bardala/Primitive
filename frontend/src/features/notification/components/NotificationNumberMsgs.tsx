@@ -2,36 +2,27 @@ import { useGetSpcMissedMsgs } from '@/features/spaces';
 
 import { BiSolidBellRing } from 'react-icons/bi';
 
-export const NotificationMsgsNumber: React.FC<{ spaceId: string }> = ({ spaceId }) => {
+export const NotificationMsgsNumber: React.FC<{
+  spaceId: string;
+  variant?: 'full' | 'badge';
+}> = ({ spaceId, variant = 'full' }) => {
   const { numOfUnReadMsgs } = useGetSpcMissedMsgs(spaceId);
   const unRead = numOfUnReadMsgs.data?.numOfUnReadMsgs;
 
-  if (unRead! > 0) {
+  if (unRead && unRead > 0) {
+    if (variant === 'badge') {
+      return <>{unRead > 99 ? '99+' : unRead}</>;
+    }
+
     return (
-      <>
-        <BiSolidBellRing
-          className="ring"
-          style={{
-            fontSize: '1.2rem',
-            color: 'red',
-            margin: '0 0.2rem',
-          }}
-        />
-        <span
-          className="unread-count"
-          style={{
-            backgroundColor: 'white',
-            color: 'red',
-            borderRadius: '50%',
-            padding: '0 0.2rem',
-            fontSize: '0.8rem',
-          }}
-        >
-          {unRead}
+      <div className="flex items-center gap-1.5 ml-auto">
+        <BiSolidBellRing className="text-red-500 animate-pulse" size={18} />
+        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm">
+          {unRead > 99 ? '99+' : unRead}
         </span>
-      </>
+      </div>
     );
   }
 
-  return <></>;
+  return null;
 };

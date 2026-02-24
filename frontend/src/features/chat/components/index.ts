@@ -3,3 +3,5 @@
  */
 
 export * from './Chat';
+export * from './PrivateChatList';
+export * from './PrivateChatWindow';

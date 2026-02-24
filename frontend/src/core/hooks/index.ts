@@ -3,6 +3,8 @@
  */
 
 export * from './useAuth';
+
+export * from './sideBarReducer';
 export * from './useClickOutside';
 export * from './useLocalStorage';
 export * from './useScroll';

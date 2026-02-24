@@ -1,26 +1,18 @@
-import { useClickOutside } from '@/core/hooks';
-import { useGetAllMissedMsgs } from '@/features/user';
+import { TbBell } from 'react-icons/tb';
 
-import React, { useRef, useState } from 'react';
-import { TbMessageCirclePlus } from 'react-icons/tb';
+import { useNotifications } from '../hooks/useNotifications';
 
-import '../styles/notificationIcon.css';
-
-export const NotificationIcon = () => {
-  const { missedMsgs } = useGetAllMissedMsgs();
-  const [showNotification, setShowNotification] = useState(false);
-  const notificationRef = useRef<HTMLDivElement>(null);
-  const numOfMissedMsgs = missedMsgs?.reduce((acc, curr) => acc + curr.unread_count, 0) as number;
-
-  useClickOutside(notificationRef, () => setShowNotification(false));
+export const NotificationIcon = ({ className = '' }: { className?: string }) => {
+  const { unreadCount } = useNotifications();
 
   return (
-    <div className="notification-container" ref={notificationRef}>
-      <TbMessageCirclePlus
-        className={`notification-icon ${numOfMissedMsgs! > 0 ? 'active' : ''}`}
-        onClick={() => setShowNotification(!showNotification)}
-      />
-      {numOfMissedMsgs > 0 && <span className="notification-badge">{numOfMissedMsgs}</span>}
+    <div className={`relative inline-block ${className}`}>
+      <TbBell className="text-2xl align-middle" />
+      {unreadCount > 0 && (
+        <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[0.7rem] font-bold text-white">
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </span>
+      )}
     </div>
   );
 };

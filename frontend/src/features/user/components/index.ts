@@ -4,5 +4,8 @@
 
 export * from './FollowButton';
 export * from './FollowersModal';
+export * from './FollowingModal';
 export * from './UserInfoCard';
 export * from './UserLink';
+export * from './UserStatus';
+export * from './FollowedUsersList';

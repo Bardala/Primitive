@@ -1,3 +1,9 @@
+import { AuthApi } from '@/features/auth/api/auth.api';
+import { BlogApi, CommentApi, LikeApi, SeriesApi } from '@/features/blog/api';
+import { ChatApi } from '@/features/chat/api';
+import { FeedsApi, SpaceApi } from '@/features/spaces/api';
+import { UserApi } from '@/features/user/api';
+
 import {
   AddMemberReq,
   AddMemberRes,
@@ -15,24 +21,29 @@ import {
   CreateLikeRes,
   CreateMsgReq,
   CreateMsgRes,
+  CreatePrivateConvoReq,
   CreateSpaceReq,
   CreateSpaceRes,
   DeleteBlogRes,
   DeleteCommentRes,
   ENDPOINT,
+  FeedsReq,
   FeedsRes,
   FollowUserReq,
   FollowUserRes,
+  GetConversationsRes,
   GetFollowersRes,
   GetUserCardRes,
   GetUsersListRes,
   JoinSpaceReq,
   JoinSpaceRes,
+  LeaveSpaceReq,
   LeaveSpaceRes,
   LoginReq,
   LoginRes,
   MembersRes,
   NumOfCommentsRes,
+  PrivateConversation,
   RemoveLikeRes,
   SignUpReq,
   SpaceBlogsRes,
@@ -53,11 +64,26 @@ import {
 
 import { deleteFn, getFn, postFn, putFn } from '../services';
 
+export const Api = {
+  space: SpaceApi,
+  feeds: FeedsApi,
+  blog: BlogApi,
+  series: SeriesApi,
+  comment: CommentApi,
+  chat: ChatApi,
+  like: LikeApi,
+  user: UserApi,
+  auth: AuthApi,
+};
+
 // Space APIs
 export const spcApi = (spcId: string) => () => getFn<SpaceRes>(ENDPOINT.GET_SPACE, [spcId]);
+export const defaultSpcApi = () => () => getFn<SpaceRes>(ENDPOINT.GET_DEFAULT_SPACE);
 
 export const blogsApi = (spcId: string, pageParam: number = 1) =>
-  getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spcId, pageParam.toString()]);
+  getFn<SpaceBlogsRes>(ENDPOINT.GET_SPACE_BLOGS, [spcId], undefined, {
+    page: pageParam.toString(),
+  });
 
 export const membersApi = (spcId: string) => () =>
   getFn<MembersRes>(ENDPOINT.GET_SPACE_MEMBERS, [spcId]);
@@ -66,14 +92,46 @@ export const joinSpcApi = (spcId: string) => () =>
   postFn<JoinSpaceReq, JoinSpaceRes>(ENDPOINT.JOIN_SPACE, undefined, [spcId]);
 
 export const leaveSpcApi = (spcId: string) => () =>
-  deleteFn<LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, [spcId]);
+  postFn<LeaveSpaceReq, LeaveSpaceRes>(ENDPOINT.LEAVE_SPACE, undefined, [spcId]);
 
 // Feed APIs
+export const publicFeedsApi = (pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.PUBLIC_FEEDS, [], undefined, { page: pageParam.toString() });
+
+export const tagBlogsApi = (tagId: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_TAG_BLOGS, [tagId], undefined, { page: pageParam.toString() });
+
+export const tagBlogsByNameApi = (tagName: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_TAG_BLOGS_BY_NAME, [tagName], undefined, { page: pageParam.toString() });
+
+export const seriesBlogsApi = (seriesId: string, pageParam: number = 1) =>
+  getFn<FeedsRes>(ENDPOINT.GET_SERIES_BLOGS, [seriesId], undefined, { page: pageParam.toString() });
+
 export const feedsApi = (pageParam: number = 1) =>
   getFn<FeedsRes>(ENDPOINT.GET_FEEDS_PAGE, [pageParam.toString()]);
 
 export const smarterFeedsApi = (pageParam: number = 1) =>
   getFn<FeedsRes>(ENDPOINT.Get_SMART_FEEDS, [pageParam.toString()]);
+
+export const personalFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.PERSONAL_FEEDS);
+
+export const smartFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.SMART_FEEDS);
+
+export const mixedFeedsApi = (query: FeedsReq) => getFn<FeedsRes>(ENDPOINT.MIXED_FEEDS);
+
+export const smartPublicFeedsApi = (query: FeedsReq) =>
+  getFn<FeedsRes>(ENDPOINT.SMART_PUBLIC_FEEDS);
+
+export const userFeedsApi = (userId: string, query: FeedsReq) =>
+  getFn<FeedsRes>(ENDPOINT.USER_FEEDS, [userId]);
+
+export const createPrivateConversationApi = (otherUserId: string) => () =>
+  postFn<CreatePrivateConvoReq, PrivateConversation>(ENDPOINT.CREATE_PRIVATE_CONVERSATION, {
+    otherUserId,
+  });
+
+export const getPrivateConversationsApi = () => () =>
+  getFn<GetConversationsRes>(ENDPOINT.GET_PRIVATE_CONVERSATIONS);
 
 // Blog APIs
 export const blogApi = (blogId: string) => () => getFn<BlogRes>(ENDPOINT.GET_BLOG, [blogId]);
@@ -140,12 +198,15 @@ export const userSpacesApi = (userId: string) => () =>
   getFn<UserSpacesRes>(ENDPOINT.GET_USER_SPACES, [userId]);
 
 export const userBlogsApi = (userId: string, pageParam: number = 1) =>
-  getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId, pageParam.toString()]);
+  getFn<UserBlogsRes>(ENDPOINT.GET_USER_BLOGS, [userId], undefined, { page: pageParam });
 
 export const userListApi = () => getFn<GetUsersListRes>(ENDPOINT.GET_USERS_LIST);
 
 export const userFollowersApi = (userId: string) => () =>
   getFn<GetFollowersRes>(ENDPOINT.GET_FOLLOWERS, [userId]);
+
+export const userFollowingApi = (userId: string) => () =>
+  getFn<GetFollowersRes>(ENDPOINT.GET_FOLLOWING, [userId]);
 
 export const followUserApi = (userId: string) => () =>
   postFn<FollowUserReq, FollowUserRes>(ENDPOINT.FOLLOW_USER, undefined, [userId]);
@@ -166,6 +227,8 @@ export const updateSpcApi = (input: CreateSpaceReq, spcId: string) => () =>
 // Auth APIs (Public endpoints)
 export const loginApi = (login: string, password: string) =>
   postFn<LoginReq, LoginRes>(ENDPOINT.LOGIN, { login, password });
+
+export const logoutApi = () => postFn(ENDPOINT.LOGOUT);
 
 export const signUpApi = (email: string, password: string, username: string) =>
   postFn<SignUpReq, LoginRes>(ENDPOINT.SIGNUP, { email, password, username });

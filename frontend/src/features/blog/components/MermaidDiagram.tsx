@@ -1,5 +1,13 @@
 import mermaid from 'mermaid';
 import React, { FC, memo, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiMaximize2,
+  FiMinus,
+  FiPlus,
+  FiRefreshCw,
+} from 'react-icons/fi';
 
 interface MermaidDiagramProps {
   chart: string;
@@ -13,33 +21,26 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check if mobile on mount and resize
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Initialize Mermaid once
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
       theme: isDark ? 'dark' : 'default',
       securityLevel: 'loose',
-      fontFamily: 'var(--font-family-mono)',
+      fontFamily: 'inherit',
       logLevel: 5,
       suppressErrorRendering: true,
     });
   }, [isDark]);
 
-  // Cache key based on chart + theme
   const cacheKey = useMemo(() => `${isDark ? 'dark' : 'light'}-${chart}`, [chart, isDark]);
 
-  // Render the mermaid diagram only when chart or theme changes
   useEffect(() => {
     if (!containerRef.current || !chart || isCollapsed) return;
 
@@ -47,7 +48,6 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
     const renderId = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
     let isCancelled = false;
 
-    // Use cached SVG if available
     const cachedSvg = svgCache.current[cacheKey];
     if (cachedSvg) {
       container.innerHTML = cachedSvg;
@@ -55,39 +55,34 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
       return;
     }
 
-    // Otherwise render new diagram
     container.innerHTML = '';
     mermaid
       .render(renderId, chart)
       .then(({ svg }) => {
         if (isCancelled) return;
-        svgCache.current[cacheKey] = svg; // cache it
+        svgCache.current[cacheKey] = svg;
         container.innerHTML = svg;
         applyScale(container, scale);
       })
       .catch(err => {
         if (isCancelled) return;
         console.error('Mermaid rendering error:', err);
-        container.innerHTML = `<div style="color:red;padding:10px;border:1px solid red;border-radius:4px">
-          Mermaid diagram error: ${err instanceof Error ? err.message : String(err)}
+        container.innerHTML = `<div class="rounded-lg border border-red-200 bg-red-50 p-4 text-xs text-red-600 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
+          <strong>Mermaid Error:</strong> ${err instanceof Error ? err.message : String(err)}
         </div>`;
       });
 
     return () => {
       isCancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey, chart, isCollapsed, isDark]);
+  }, [cacheKey, chart, isCollapsed, isDark, scale]);
 
-  // Scale effect runs independently — no re-render of diagram
   useEffect(() => {
     const container = containerRef.current;
     if (!container || isCollapsed) return;
-
     requestAnimationFrame(() => applyScale(container, scale));
   }, [scale, isCollapsed]);
 
-  // Touch gesture handling for mobile zoom
   useEffect(() => {
     if (!containerRef.current || !isMobile || isCollapsed) return;
 
@@ -106,11 +101,7 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
         const currentDistance = getTouchDistance(e.touches);
         const scaleChange = currentDistance / initialDistance;
 
-        setScale(prev => {
-          const newScale = prev * scaleChange;
-          return Math.max(0.5, Math.min(newScale, 3));
-        });
-
+        setScale(prev => Math.max(0.5, Math.min(prev * scaleChange, 3)));
         initialDistance = currentDistance;
         e.preventDefault();
       }
@@ -145,108 +136,69 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, isDark }) => {
   const toggleCollapse = () => setIsCollapsed(prev => !prev);
 
   return (
-    <div
-      style={{
-        background: 'var(--code-block-background)',
-        border: '1px solid var(--code-block-border)',
-        borderRadius: 'var(--border-radius-md)',
-        padding: 'var(--spacing-md)',
-        margin: 'var(--spacing-lg) 0',
-        overflow: 'hidden',
-        position: 'relative',
-      }}
-    >
-      {/* Control Buttons - Hidden on mobile except collapse */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '8px',
-          right: '8px',
-          display: 'flex',
-          gap: '4px',
-          zIndex: 10,
-          background: 'var(--code-block-background)',
-          borderRadius: 'var(--border-radius-sm)',
-          padding: '4px',
-          border: '1px solid var(--code-block-border)',
-        }}
-      >
+    <div className="relative my-8 overflow-hidden rounded-2xl border border-border-light bg-surface-light/50 shadow-sm backdrop-blur-sm transition-all dark:border-border-dark dark:bg-surface-dark/50">
+      {/* Controls Overlay */}
+      <div className="absolute top-3 right-3 z-10 flex gap-1 rounded-xl border border-border-light bg-white/80 p-1 shadow-sm backdrop-blur-md dark:border-border-dark dark:bg-surface-dark/80">
         <button
           onClick={toggleCollapse}
-          title={isCollapsed ? 'Expand' : 'Collapse'}
-          style={{ fontSize: '14px' }}
+          className="rounded-lg p-1.5 text-text-secondary-light transition-colors hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
+          title={isCollapsed ? 'Expand Diagram' : 'Collapse Diagram'}
         >
-          {isCollapsed ? '↔' : '✕'}
+          {isCollapsed ? <FiChevronDown /> : <FiChevronUp />}
         </button>
 
-        {/* Show resize buttons only on desktop */}
-        {!isCollapsed && !isMobile && (
+        {!isCollapsed && (
           <>
-            <button onClick={decreaseSize} title="Zoom Out" style={{ fontSize: '14px' }}>
-              -
+            <div className="mx-0.5 w-px bg-border-light dark:bg-border-dark"></div>
+            <button
+              onClick={decreaseSize}
+              className="rounded-lg p-1.5 text-text-secondary-light transition-colors hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
+              title="Zoom Out"
+            >
+              <FiMinus />
             </button>
-            <button onClick={resetSize} title="Reset Zoom" style={{ fontSize: '12px' }}>
-              ↺
+            <button
+              onClick={resetSize}
+              className="rounded-lg p-1.5 text-text-secondary-light transition-colors hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
+              title="Reset Zoom"
+            >
+              <FiRefreshCw size={14} />
             </button>
-            <button onClick={increaseSize} title="Zoom In" style={{ fontSize: '14px' }}>
-              +
+            <button
+              onClick={increaseSize}
+              className="rounded-lg p-1.5 text-text-secondary-light transition-colors hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
+              title="Zoom In"
+            >
+              <FiPlus />
             </button>
           </>
         )}
       </div>
 
       {!isCollapsed ? (
-        <div
-          ref={containerRef}
-          style={{
-            textAlign: 'center',
-            overflowX: 'auto',
-            minHeight: '100px',
-            paddingTop: isMobile ? '20px' : '40px',
-            touchAction: isMobile ? 'none' : 'auto',
-            cursor: isMobile ? 'grab' : 'default',
-            userSelect: 'none',
-          }}
-          onTouchStart={e => {
-            // Allow touch scrolling but prevent text selection
-            if (e.touches.length === 1) {
-              e.currentTarget.style.cursor = 'grabbing';
-            }
-          }}
-          onTouchEnd={e => {
-            e.currentTarget.style.cursor = 'grab';
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            padding: '20px',
-            textAlign: 'center',
-            color: 'var(--color-text-secondary)',
-            cursor: 'pointer',
-            userSelect: 'none',
-          }}
-          onClick={toggleCollapse}
-        >
-          Mermaid diagram {isMobile ? '(tap to expand)' : '(click to expand)'}
-        </div>
-      )}
+        <div className="relative flex min-h-[150px] flex-col overflow-hidden">
+          <div
+            ref={containerRef}
+            className={`flex w-full items-center justify-center pt-16 pb-8 transition-transform ${
+              isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'
+            }`}
+            style={{ touchAction: isMobile ? 'none' : 'auto' }}
+          />
 
-      {/* Mobile instructions */}
-      {!isCollapsed && isMobile && (
-        <div
-          style={{
-            fontSize: '12px',
-            color: 'var(--color-text-secondary)',
-            textAlign: 'center',
-            marginTop: '8px',
-            padding: '4px',
-            background: 'var(--code-block-background)',
-            borderTop: '1px solid var(--code-block-border)',
-          }}
-        >
-          Pinch to zoom • Drag to pan
+          {isMobile && (
+            <div className="border-t border-border-light/50 bg-background-light/80 py-2 text-center text-[10px] font-bold uppercase tracking-wider text-text-secondary-light backdrop-blur-sm dark:border-border-dark/50 dark:bg-background-dark/80 dark:text-text-secondary-dark">
+              Pinch to zoom • Drag to pan
+            </div>
+          )}
         </div>
+      ) : (
+        <button
+          onClick={toggleCollapse}
+          className="flex w-full items-center justify-center gap-2 py-6 text-sm font-bold text-text-secondary-light transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400"
+        >
+          <FiMaximize2 />
+          Mermaid Diagram (Click to expand)
+        </button>
       )}
     </div>
   );
@@ -256,7 +208,8 @@ function applyScale(container: HTMLDivElement, scale: number) {
   const svgEl = container.querySelector('svg');
   if (svgEl) {
     svgEl.style.transform = `scale(${scale})`;
-    svgEl.style.transformOrigin = 'top left';
+    svgEl.style.transformOrigin = 'center center';
+    svgEl.style.transition = 'transform 0.2s ease-out';
   }
 }
 

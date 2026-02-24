@@ -27,6 +27,7 @@
     "login": "تسجيل الدخول",
     "home": "الرئيسية",
     "users": "المستخدمون",
+    "follow": "متابعة",
     "notifications": "الإشعارات",
     "settings": "الإعدادات",
     "toggleTheme": "تبديل الوضع",
@@ -177,7 +178,11 @@
     "url": "رابط",
     "nothingToPreview": "لا يوجد محتوى للمعاينة بعد",
     "publish": "نشر المدونة",
-    "publishing": "جارٍ النشر..."
+    "publishing": "جارٍ النشر...",
+    "selectSeries": "اختر سلسلة",
+    "noSeries": "لا شيء (منشور شخصي)",
+    "tags": "الوسوم",
+    "tagsPlaceholder": "أضف وسوماً (اضغط Enter أو فاصلة)"
   },
   "shortForm": {
     "create": "إنشاء",

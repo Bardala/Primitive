@@ -3,6 +3,7 @@ import { useScroll } from '@/core/hooks';
 import { ApiError } from '@/core/services';
 import {
   blogsApi,
+  defaultSpcApi,
   feedsApi,
   getNumOfUnReadMsgsApi,
   joinSpcApi,
@@ -24,6 +25,8 @@ import {
 
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+
+import { SpaceApi } from '../api';
 
 export const useSpace = (id: string) => {
   const { currUser } = useAuthContext();
@@ -70,14 +73,18 @@ export const useSpace = (id: string) => {
   };
 };
 
+export const useGetDefaultSpace = () =>
+  useQuery<SpaceRes, ApiError>(['defaultSpace'], () => SpaceApi.getDefaultSpace());
+
 export const useGetSpcMissedMsgs = (id: string) => {
+  const { currUser } = useAuthContext();
   const msgsNumKey = ['unreadMsgsNum', id];
 
   const numOfUnReadMsgs = useQuery<UnReadMsgsNumRes, ApiError>(
     msgsNumKey,
     () => getNumOfUnReadMsgsApi(id),
     {
-      enabled: !!id && id !== DefaultSpaceId,
+      enabled: !!currUser && !!id && id !== DefaultSpaceId,
     }
   );
 
@@ -90,9 +97,7 @@ export const useFeeds = () => {
   const key = ['feeds'];
 
   const spcKey = ['space', DefaultSpaceId];
-  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
-    enabled: !!DefaultSpaceId,
-  });
+  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, defaultSpcApi());
 
   const feedsQuery = useInfiniteQuery<FeedsRes, ApiError>(
     key,
@@ -122,9 +127,7 @@ export const useSmartFeeds = () => {
   const smarterKey = ['smartFeeds'];
 
   const spcKey = ['space', DefaultSpaceId];
-  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, spcApi(DefaultSpaceId), {
-    enabled: !!DefaultSpaceId,
-  });
+  const spaceQuery = useQuery<SpaceRes, ApiError>(spcKey, defaultSpcApi());
 
   const smartFeedsQuery = useInfiniteQuery<FeedsRes, ApiError>(
     smarterKey,

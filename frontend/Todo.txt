@@ -1,0 +1,7 @@
+Todo:
+
+In blog detail page, add to series featuer. [Update styles, Add "enter blog position in series"]
+In user page, create series feature, series list feature. [Update styles]
+In blog card. [appear space name, and series name if exists]
+In series details and series list, [Update styles]
+if new notification connects with another unread notification and connecting with the same entity (blog, comment, space, etc) then merge them.

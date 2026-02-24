@@ -11,24 +11,58 @@ import {
   UserSpacesRes,
 } from '@nest/shared';
 
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+
+import { PrivateChatSocketApi } from '../../chat/api/private-chat-socket.api';
 
 export const useProfileData = (userId: string) => {
   const { currUser } = useAuthContext();
+  const queryClient = useQueryClient();
   const isMyPage = currUser?.id === userId;
-  const cardKey = ['userCard', userId];
-  const spacesKey = ['userSpaces', userId];
-  const blogsKey = ['userBlogs', userId];
+
+  const cardKey = useMemo(() => ['userCard', userId], [userId]);
+  const spacesKey = useMemo(() => ['userSpaces', userId], [userId]);
+  const blogsKey = useMemo(() => ['userBlogs', userId], [userId]);
+
   const [isEnd, setIsEnd] = useState(false);
 
+  // Listen for user status changes to update the profile card
+  useEffect(() => {
+    if (!userId) return;
+
+    const cleanup = PrivateChatSocketApi.onUserStatusChange(data => {
+      if (data.userId === userId) {
+        queryClient.setQueryData<GetUserCardRes>(cardKey, oldData => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            userCard: {
+              ...oldData.userCard,
+              isOnline: data.isOnline,
+              lastSeen: data.lastActive || (oldData.userCard as any).lastSeen,
+              activity: data.lastActive
+                ? {
+                    ...(oldData.userCard as any).activity,
+                    lastActive: data.lastActive,
+                  }
+                : (oldData.userCard as any).activity,
+            } as any,
+          };
+        });
+      }
+    });
+
+    return cleanup;
+  }, [userId, queryClient, cardKey]);
+
   const userCardQuery = useQuery<GetUserCardRes, ApiError>(cardKey, userCardApi(userId), {
-    enabled: !!currUser?.jwt && !!userId,
+    enabled: !!userId,
     refetchOnWindowFocus: false,
   });
 
   const userSpacesQuery = useQuery<UserSpacesRes, ApiError>(spacesKey, userSpacesApi(userId), {
-    enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
+    enabled: !!userId && !!userCardQuery.data?.userCard,
     refetchOnWindowFocus: false,
   });
 
@@ -36,7 +70,7 @@ export const useProfileData = (userId: string) => {
     blogsKey,
     ({ pageParam = 1 }) => userBlogsApi(userId, pageParam),
     {
-      enabled: !!currUser?.jwt && !!userId && !!userCardQuery.data?.userCard,
+      enabled: !!userId && !!userCardQuery.data?.userCard,
       refetchOnWindowFocus: false,
       getNextPageParam: lastPage => lastPage.page + 1,
       onSuccess: data => {
@@ -63,12 +97,15 @@ export const useGetAllUserSpaces = (userId: string) =>
     enabled: !!userId,
   });
 
+/**
+ * Un-enabled
+ * @returns
+ */
 export const useGetAllMissedMsgs = () => {
-  const { currUser } = useAuthContext();
   const key = ['missedMsgs'];
 
   const query = useQuery<AllUnReadMsgsRes, ApiError>(key, getAllUnReadMsgsApi(), {
-    enabled: !!currUser?.jwt,
+    enabled: false,
   });
 
   return { missedMsgs: query.data?.numberOfMsgs, refetch: query.refetch };

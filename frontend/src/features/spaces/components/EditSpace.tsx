@@ -43,8 +43,16 @@ export const EditSpaceForm = () => {
         state={state}
         initialSpace={space}
       />
-      {updateSpaceMutation.isError && <p className="error">{updateSpaceMutation.error.message}</p>}
-      {updateSpaceMutation.isSuccess && <p className="success">{t('editSpace.success')}</p>}
+      {updateSpaceMutation.isError && (
+        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+          {updateSpaceMutation.error.message}
+        </p>
+      )}
+      {updateSpaceMutation.isSuccess && (
+        <p className="mt-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400">
+          {t('editSpace.success')}
+        </p>
+      )}
     </>
   );
 };

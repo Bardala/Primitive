@@ -1,10 +1,18 @@
 import { useAuthContext } from '@/core/context';
 import { ApiError } from '@/core/services';
-import { followUserApi, unfollowUserApi, userFollowersApi } from '@/core/utils';
+import { followUserApi, unfollowUserApi, userFollowersApi, userFollowingApi } from '@/core/utils';
 
 import { FollowUserRes, GetFollowersRes, UnFollowUserRes } from '@nest/shared';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
+
+export const useFollowing = (userId: string) => {
+  const key = ['following', userId];
+  return useQuery<GetFollowersRes, ApiError>(key, userFollowingApi(userId), {
+    enabled: !!userId,
+    refetchInterval: 30000, // Refetch presence every 30s
+  });
+};
 
 export const useFollow = (userId: string) => {
   const { currUser } = useAuthContext();

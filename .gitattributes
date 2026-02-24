@@ -1,0 +1,5 @@
+# Force all text files to use LF in repo
+* text=auto eol=lf
+
+# Example: keep CRLF for batch scripts
+*.bat text eol=crlf

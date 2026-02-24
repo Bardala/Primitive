@@ -100,12 +100,17 @@ export const PasswordUpdate = () => {
     formData.newPassword === formData.confirmPassword;
 
   return (
-    <div className="password-update-container">
-      <h3 className="password-update-title">🔒 {t('settings.password.title')}</h3>
+    <div className="mx-auto w-full max-w-lg rounded-2xl border border-border-light bg-surface-light p-6 shadow-sm dark:border-border-dark dark:bg-surface-dark">
+      <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-text-primary-light dark:text-text-primary-dark">
+        <span>🔒</span> {t('settings.password.title')}
+      </h3>
 
-      <form onSubmit={handleSubmit} className="password-update-form">
-        <div className="form-group">
-          <label htmlFor="oldPassword" className="form-label">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-1">
+          <label
+            htmlFor="oldPassword"
+            className="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+          >
             {t('settings.password.oldPassword')}
           </label>
           <input
@@ -114,15 +119,18 @@ export const PasswordUpdate = () => {
             name="oldPassword"
             value={formData.oldPassword}
             onChange={handleChange}
-            className="form-input"
+            className="input-base w-full"
             placeholder={t('settings.password.oldPasswordPlaceholder')}
             required
             minLength={8}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="newPassword" className="form-label">
+        <div className="space-y-1">
+          <label
+            htmlFor="newPassword"
+            className="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+          >
             {t('settings.password.newPassword')}
           </label>
           <input
@@ -131,17 +139,22 @@ export const PasswordUpdate = () => {
             name="newPassword"
             value={formData.newPassword}
             onChange={handleChange}
-            className="form-input"
+            className="input-base w-full"
             placeholder={t('settings.password.newPasswordPlaceholder')}
             required
             minLength={8}
             maxLength={20}
           />
-          <small className="form-help">{t('settings.password.lengthHint')}</small>
+          <small className="block text-xs text-text-secondary-light dark:text-text-secondary-dark">
+            {t('settings.password.lengthHint')}
+          </small>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword" className="form-label">
+        <div className="space-y-1">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-text-primary-light dark:text-text-primary-dark"
+          >
             {t('settings.password.confirmPassword')}
           </label>
           <input
@@ -150,7 +163,7 @@ export const PasswordUpdate = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="form-input"
+            className="input-base w-full"
             placeholder={t('settings.password.confirmPasswordPlaceholder')}
             required
             minLength={8}
@@ -158,18 +171,30 @@ export const PasswordUpdate = () => {
         </div>
 
         {clientErrors.length > 0 && (
-          <div className="error-message">
+          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
             {clientErrors.map((error, index) => (
               <div key={index}>{error}</div>
             ))}
           </div>
         )}
 
-        {error && <div className="error-message">{getErrorMessage(error)}</div>}
+        {error && (
+          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+            {getErrorMessage(error)}
+          </div>
+        )}
 
-        {successMessage && <div className="success">{successMessage}</div>}
+        {successMessage && (
+          <div className="rounded-lg bg-green-50 p-3 text-sm text-green-600 dark:bg-green-900/20 dark:text-green-400">
+            {successMessage}
+          </div>
+        )}
 
-        <button type="submit" className="update-password-btn" disabled={isLoading || !isFormValid}>
+        <button
+          type="submit"
+          className="btn-primary mt-2 w-full justify-center"
+          disabled={isLoading || !isFormValid}
+        >
           {isLoading ? t('settings.password.updating') : t('settings.password.updateButton')}
         </button>
       </form>

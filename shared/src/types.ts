@@ -1,3 +1,5 @@
+// todo: make all timestamp fields consistent (number vs string vs Date)
+
 export interface Blog {
   id: string;
   title: string;
@@ -6,6 +8,9 @@ export interface Blog {
   spaceId: string;
   author?: string;
   timestamp?: number;
+  space?: Space;
+  seriesLinks?: (BlogSeriesLink & { series: BlogSeries })[];
+  tags?: Tag[];
 }
 
 export interface Comment {
@@ -40,7 +45,7 @@ export interface SpaceMember {
 export interface LastReadMsg {
   userId: string;
   spaceId: string;
-  msgId: string;
+  lastReadId: string;
 }
 
 export interface UnReadMsgs {
@@ -55,6 +60,8 @@ export interface User {
   email: string;
   password: string;
   timestamp?: number;
+  isOnline?: boolean;
+  lastSeen?: Date | string;
 }
 
 export interface UserCard {
@@ -65,6 +72,8 @@ export interface UserCard {
   followersNum: number;
   followingNum: number;
   isFollowing: number;
+  isOnline?: boolean;
+  lastSeen?: Date | string;
 }
 
 export type ChatMessage = {
@@ -105,12 +114,12 @@ export interface PrivateMessage {
   conversationId: string;
   senderId: string;
   content: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 export interface UserActivity {
   userId: string;
-  lastActive: string; // ISO datetime
+  lastActive: Date;
 }
 
 export interface Tag {
@@ -138,7 +147,7 @@ export interface BlogSeries {
   name: string;
   description?: string;
   createdBy: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 export interface BlogSeriesLink {
@@ -147,7 +156,13 @@ export interface BlogSeriesLink {
   position: number;
 }
 
-export type NotificationType = 'message' | 'mention' | 'comment' | 'system';
+export enum NotificationType {
+  MESSAGE = 'message',
+  MENTION = 'mention',
+  COMMENT = 'comment',
+  LIKE = 'like',
+  SYSTEM = 'system',
+}
 
 export interface Notification {
   id: string;
@@ -156,22 +171,35 @@ export interface Notification {
   refId?: string;
   payload?: Record<string, any>;
   isRead: boolean;
-  createdAt: string; // ISO string
+  createdAt: Date;
 }
 
-export type ConversationType = 'space' | 'private';
+export enum ConversationType {
+  SPACE = 'space',
+  PRIVATE = 'private',
+}
 
 export interface UserConversationState {
   id: string;
   userId: string;
   conversationId: string;
   conversationType: ConversationType;
-  lastReadAt?: string; // ISO timestamp
-  lastSoundPlayedAt?: string;
+  lastReadAt?: Date;
+  lastSoundPlayedAt?: Date;
+  isMuted?: boolean;
 }
 
-export type SpacePermissionType = 'post_blog' | 'send_chat';
-export type AllowedRole = 'owner' | 'admin' | 'member' | 'everyone';
+export enum SpacePermissionType {
+  POST_BLOG = 'post_blog',
+  SEND_CHAT = 'send_chat',
+}
+
+export enum AllowedRole {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  EVERYONE = 'everyone',
+}
 
 export interface SpacePermission {
   id: string;
@@ -194,4 +222,17 @@ export type StatusMessage =
 
 export type WithError<T> = T & { error: string };
 
-export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type RestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+/**
+ * Unified API Response type used across frontend and backend
+ * Wraps the actual response data with metadata
+ * Used for both success (with data) and error responses (with message)
+ */
+export interface ApiResponse<T = any> {
+  data?: T;
+  statusCode: number;
+  timestamp: string;
+  path: string;
+  message?: string;
+}
