@@ -45,12 +45,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Fonts -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link 
+      rel="preload" 
+      href="/fonts/cairo/Cairo-VariableFont_slnt,wght.ttf" 
+      as="font" 
+      type="font/ttf" 
+      crossorigin="anonymous" 
     />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    
+    <!-- If you want to be extra safe, preload the most common weights -->
+    <link 
+      rel="preload" 
+      href="/fonts/cairo/static/Cairo-Regular.ttf" 
+      as="font" 
+      type="font/ttf" 
+      crossorigin="anonymous" 
+    />
+    <link 
+      rel="preload" 
+      href="/fonts/cairo/static/Cairo-Medium.ttf" 
+      as="font" 
+      type="font/ttf" 
+      crossorigin="anonymous" 
+    />
 
     <!-- Preload CSS -->
     <link

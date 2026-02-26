@@ -1,8 +1,85 @@
+/* Font-face declarations for Cairo - Self Hosted */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('../public/fonts//cairo/Cairo-VariableFont_slnt,wght.ttf') format('truetype-variations');
+  /* Fallback for browsers that don't support variations syntax */
+  src: url('../public/fonts//cairo/Cairo-VariableFont_slnt,wght.ttf') format('truetype') tech('variations'), 
+       url('../public/fonts//cairo/Cairo-VariableFont_slnt,wght.ttf') format('truetype');
+}
+
+/* Fallback for browsers without variable font support */
+@supports not (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../public/fonts//cairo/static/Cairo-ExtraLight.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 300;
+    src: url('../public/fonts//cairo/static/Cairo-Light.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../public/fonts//cairo/static/Cairo-Regular.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 500;
+    src: url('../public/fonts//cairo/static/Cairo-Medium.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../public/fonts//cairo/static/Cairo-SemiBold.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../public/fonts//cairo/static/Cairo-Bold.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../public/fonts//cairo/static/Cairo-ExtraBold.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Cairo';
+    font-style: normal;
+    font-weight: 900;
+    src: url('../public/fonts//cairo/static/Cairo-Black.ttf') format('truetype');
+  }
+}
+
+/* Your existing imports */
+@import 'tailwindcss';
+@config "../tailwind.config.js";
+
+/* Rest of your CSS... */
+
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap'); */
 @import 'tailwindcss';
 @config "../tailwind.config.js";
 
 /* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 @theme {
   /* Your existing theme variables remain unchanged */
@@ -34,7 +111,7 @@
   --color-border-light: #e2e8f0;
   --color-border-dark: rgba(255, 255, 255, 0.08);
 
-  --font-family-sans: 'Quicksand', 'Inter', sans-serif;
+  --font-family-sans: 'Cairo', sans-serif;
   --font-family-serif: 'Merriweather', serif;
 
   /* Calm night specific tokens for easy theming */
@@ -59,6 +136,7 @@
     @apply text-text-primary-dark;
   }
 }
+
 /* @layer utilities: For custom utility classes you want to create */
 @layer utilities {
   .glass-dark {
@@ -78,13 +156,11 @@
    * 3. Gentle vignette for focus (pseudo ::after)
    */
   .bg-calm-night {
-    background: radial-gradient(
-      circle at 50% 40%,
-      var(--color-night-glow) 0%,
-      var(--color-night-mid) 35%,
-      var(--color-night-deep) 65%,
-      var(--color-night-core) 90%
-    );
+    background: radial-gradient(circle at 50% 40%,
+        var(--color-night-glow) 0%,
+        var(--color-night-mid) 35%,
+        var(--color-night-deep) 65%,
+        var(--color-night-core) 90%);
     position: relative;
     isolation: isolate;
   }
@@ -119,11 +195,9 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(
-      circle at center,
-      transparent 40%,
-      rgba(0, 0, 0, var(--vignette-opacity, 0.3)) 100%
-    );
+    background: radial-gradient(circle at center,
+        transparent 40%,
+        rgba(0, 0, 0, var(--vignette-opacity, 0.3)) 100%);
   }
 
   /* Optional: Light theme variant for future use */

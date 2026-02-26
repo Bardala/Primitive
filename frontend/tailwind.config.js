@@ -63,7 +63,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Quicksand', 'Inter', 'sans-serif'],
+        sans: ['Cairo', 'sans-serif'],
         serif: ['Merriweather', 'serif'], // For reading mode
       },
       spacing: {
