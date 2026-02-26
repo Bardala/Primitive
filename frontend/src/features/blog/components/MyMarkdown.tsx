@@ -93,9 +93,9 @@ export const MyMarkdown: FC<{ markdown: string }> = ({ markdown }) => {
 
   return (
     <div
-      className={`prose prose-neutral max-w-none dark:prose-invert prose-headings:font-extrabold prose-headings:tracking-tight prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-lg ${
-        isArabic(markdown) ? 'text-right [direction:rtl]' : 'text-left [direction:ltr]'
-      }`}
+      className={`prose prose-neutral max-w-none dark:prose-invert prose-headings:font-extrabold prose-headings:tracking-tight prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-lg 
+        ${isArabic(markdown) ? 'text-right [direction:rtl]' : 'text-left [direction:ltr]'}`
+    }
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

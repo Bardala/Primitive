@@ -7,7 +7,7 @@ import { Member } from 'src/modules/space/entities';
 
 @Injectable()
 export class BlogRepository extends Repository<Blog> implements FeedsDao {
-  private readonly blogIconLength = 200; // Adjust as needed
+  private readonly blogIconLength = 500;
 
   constructor(dataSource: DataSource) {
     super(Blog, dataSource.createEntityManager());

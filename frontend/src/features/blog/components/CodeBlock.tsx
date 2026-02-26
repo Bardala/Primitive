@@ -16,7 +16,7 @@ export const CodeBlock: FC<{ language: string; children: string }> = ({ language
   };
 
   return (
-    <div className="group relative my-6 overflow-hidden rounded-xl border border-border-light bg-[#f9f9f9] dark:border-border-dark dark:bg-[#1e1e1e]">
+    <div className="group relative overflow-hidden rounded-xl border border-border-light bg-[#f9f9f9] dark:border-border-dark dark:bg-[#1e1e1e]">
       {/* Header with Language and Copy Button */}
       <div className="flex items-center justify-between bg-gray-100/50 px-4 py-2 dark:bg-black/20">
         <span className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark">
