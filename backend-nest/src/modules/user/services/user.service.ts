@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PresenceService } from '../../presence/presence.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
 import { UserActivity } from '../entities/user-activity.entity';
@@ -84,19 +84,19 @@ export class UserService implements IUserService, IUserFollowService {
 
   async findByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: { email },
+      where: { email: ILike(email) },
     });
   }
 
   async findByUsername(username: string): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: { username },
+      where: { username: ILike(username) },
     });
   }
 
   async findByLogin(login: string): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: [{ email: login }, { username: login }],
+      where: [{ email: ILike(login) }, { username: ILike(login) }],
     });
   }
 

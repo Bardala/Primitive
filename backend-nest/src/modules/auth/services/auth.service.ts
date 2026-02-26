@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'node:crypto';
@@ -28,6 +28,18 @@ export class AuthService implements IAuthService {
     const { email, username, password } = registerDto;
 
     this.validateUsername(username);
+
+    // Check if username already exists
+    const existingUserByUsername = await this.userService.findByUsername(username);
+    if (existingUserByUsername) {
+      throw new ConflictException('Username already taken');
+    }
+
+    // Check if email already exists
+    const existingUserByEmail = await this.userService.findByEmail(email);
+    if (existingUserByEmail) {
+      throw new ConflictException('Email already registered');
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
