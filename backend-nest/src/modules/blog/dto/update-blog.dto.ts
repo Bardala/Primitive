@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsOptional, ValidateIf } from 'class-validator';
 import { updateBlogReq as IUpdateBlogReq, updateBlogRes as IUpdateBlogRes } from '@nest/shared';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -27,6 +27,7 @@ export class UpdateBlogReq implements IUpdateBlogReq {
     required: true,
   })
   @IsOptional()
+  @ValidateIf((o) => o.spaceId !== '1')
   @IsUUID()
   spaceId!: string;
 }

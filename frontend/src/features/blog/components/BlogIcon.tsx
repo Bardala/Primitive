@@ -17,12 +17,95 @@ interface BlogIconProps {
   viewMode: 'titles-only' | 'full-blogs';
 }
 
+// utils/contentCleaner.ts
+export function cleanPostContent(content: string, options?: {
+  maxLength?: number;
+  removeDiagrams?: boolean;
+  removeCodeBlocks?: boolean;
+}) {
+  if (!content) return '';
+  
+  const {
+    maxLength,
+    removeDiagrams = true,
+    removeCodeBlocks = true
+  } = options || {};
+  
+  let inMermaidBlock = false;
+  let inCodeBlock = false;
+  const lines = content.split('\n');
+  const cleanedLines = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    
+    // Handle mermaid blocks
+    if (removeDiagrams && trimmed === '```mermaid') {
+      inMermaidBlock = true;
+      cleanedLines.push('[Diagram]');
+      continue;
+    }
+    
+    // Handle code blocks
+    if (removeCodeBlocks && trimmed === '```' && !inMermaidBlock) {
+      if (!inCodeBlock) {
+        inCodeBlock = true;
+        cleanedLines.push('[Code]');
+      } else {
+        inCodeBlock = false;
+      }
+      continue;
+    }
+    
+    // Handle block closing
+    if (trimmed === '```') {
+      if (inMermaidBlock) inMermaidBlock = false;
+      if (inCodeBlock) inCodeBlock = false;
+      continue;
+    }
+    
+    // Skip content inside blocks
+    if (inMermaidBlock || inCodeBlock) {
+      continue;
+    }
+    
+    // Filter ASCII diagrams
+    if (removeDiagrams) {
+      const hasBoxChars = /[┌─┐│└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬►◄•·…→←↑↓⇄⇆]/.test(line);
+      
+      if (hasBoxChars) {
+        const symbols = (line.match(/[^a-zA-Z0-9\u0600-\u06FF\s]/g) || []).length;
+        const text = (line.match(/[a-zA-Z0-9\u0600-\u06FF]/g) || []).length;
+        
+        if (symbols > text * 2) {
+          continue;
+        }
+      }
+    }
+    
+    cleanedLines.push(line);
+  }
+  
+  let result = cleanedLines.join('\n');
+  
+  // Apply max length if specified
+  if (maxLength && result.length > maxLength) {
+    result = result.substring(0, maxLength) + '...';
+  }
+  
+  return result;
+}
+
 export const BlogIcon: React.FC<BlogIconProps> = ({ post, viewMode }) => {
   const { numOfComments } = useCommCounts(post.id!);
   const nav = useNavigate();
   const { t } = useTranslation();
 
   const isTitlesOnly = viewMode === 'titles-only';
+  post.content = !isTitlesOnly 
+    ? cleanPostContent(post.content, { removeDiagrams: true, removeCodeBlocks: true })
+    : '';
 
   return (
     <div
