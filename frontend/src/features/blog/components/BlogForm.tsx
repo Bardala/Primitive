@@ -1,7 +1,6 @@
 import { useTheme } from '@/core/context';
-import { isArabic } from '@/core/utils';
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FiBold,
@@ -27,7 +26,7 @@ import { useUserSeries } from '../hooks/useSeries';
 import { MyMarkdown } from './MyMarkdown';
 
 export const BlogForm: React.FC = () => {
-  const { spaceId, spaceName } = useParams<{ spaceId: string; spaceName: string }>();
+  const { spaceId } = useParams<{ spaceId: string; spaceName: string }>();
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -76,16 +75,19 @@ export const BlogForm: React.FC = () => {
     };
   }, [isMobileMenuOpen]);
 
-  const handleSubmit = (e: MouseEvent | FormEvent) => {
-    e.preventDefault();
-    createBlogMutation.mutate({
-      title,
-      spaceId: spaceId!,
-      content,
-      seriesId: selectedSeriesId || undefined,
-      tagNames: tags.length > 0 ? tags : undefined,
-    });
-  };
+  const handlePublish = useCallback(
+    (e: KeyboardEvent | FormEvent) => {
+      e.preventDefault();
+      createBlogMutation.mutate({
+        title,
+        spaceId: spaceId!,
+        content,
+        seriesId: selectedSeriesId || undefined,
+        tagNames: tags.length > 0 ? tags : undefined,
+      });
+    },
+    [title, spaceId, content, selectedSeriesId, tags, createBlogMutation]
+  );
 
   const wrapSelection = (prefix: string, suffix: string = '') => {
     if (!textareaRef.current) return;
@@ -182,7 +184,7 @@ export const BlogForm: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        handleSubmit(e as unknown as FormEvent);
+        handlePublish(e);
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
         e.preventDefault();
@@ -192,7 +194,7 @@ export const BlogForm: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, content, title, tags, selectedSeriesId]);
+  }, [activeTab, content, title, tags, selectedSeriesId, handlePublish]);
 
   // Metadata Panel Content Component
   const MetadataPanel = () => (
@@ -364,7 +366,7 @@ export const BlogForm: React.FC = () => {
 
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={handlePublish}
             disabled={createBlogMutation.isLoading || !title.trim() || !content.trim()}
             className="flex h-8 items-center gap-1 rounded-lg bg-primary-600 px-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-primary-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed sm:h-9 sm:gap-2 sm:px-4 sm:text-sm"
           >

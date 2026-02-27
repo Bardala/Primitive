@@ -1,8 +1,10 @@
 import { useAuthContext } from '@/core/context';
-import { useSideBar } from '@/core/context/SideBarContext';
 import { useLocalStorage } from '@/core/hooks';
+import { ROUTES } from '@/core/utils';
 import { BlogList } from '@/features/blog';
 import { useGetDefaultSpace, usePublicFeeds, useSmartPublicFeeds } from '@/features/spaces';
+
+import { DefaultSpaceId } from '@nest/shared';
 
 import { useTranslation } from 'react-i18next';
 import { CiLocationOn } from 'react-icons/ci';
@@ -10,7 +12,7 @@ import { FiGrid, FiList } from 'react-icons/fi';
 import { IoImageOutline } from 'react-icons/io5';
 import { MdOutlineEmojiEmotions, MdOutlineGifBox } from 'react-icons/md';
 import { RiCalendarCheckLine, RiListRadio } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 import { MainLayout } from './MainLayout';
 
@@ -36,7 +38,6 @@ export const Home = () => {
   const { feedType, viewMode } = preferences;
   const { t } = useTranslation();
   const { currUser } = useAuthContext();
-  const { dispatch } = useSideBar();
 
   const handleFeedTypeChange = (newFeedType: FeedType) => {
     setPreferences(prev => ({ ...prev, feedType: newFeedType }));
@@ -145,7 +146,9 @@ export const Home = () => {
         {currUser && (
           <div
             className="flex px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/60 cursor-pointer"
-            onClick={() => dispatch({ type: 'showCreateBlog' })}
+            onClick={() =>
+              Navigate({ to: ROUTES.GET_CREATE_BLOG('Primitive', DefaultSpaceId.toString()) })
+            }
           >
             {/* Avatar */}
             <div className="mr-3 shrink-0">
