@@ -3,6 +3,7 @@ import { ROUTES, deleteBlogApi, numOfCommsApi, updateBlogApi } from '@/core/util
 
 import {
   Blog,
+  CreateBlogReq,
   CreateBlogRes,
   DefaultSpaceId,
   DeleteBlogRes,
@@ -21,18 +22,14 @@ const getSpcKey = (spaceId: string) =>
 
 export const useCreateBlog = (
   spaceId: string,
-  title: string,
-  content: string,
-  seriesId?: string,
-  tagNames?: string[]
 ) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const navToSpace = () =>
     spaceId === DefaultSpaceId ? nav(ROUTES.HOME) : nav(ROUTES.GET_SPACE(spaceId));
 
-  const createBlogMutation = useMutation<CreateBlogRes, ApiError>(
-    BlogApi.createBlog(title, content, spaceId, seriesId, tagNames),
+  const createBlogMutation = useMutation<CreateBlogRes, ApiError,CreateBlogReq>(
+    (data)=> BlogApi.createBlog(data),
     {
       onSuccess: data => {
         queryClient.invalidateQueries(getSpcKey(spaceId));

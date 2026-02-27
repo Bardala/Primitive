@@ -1,5 +1,3 @@
-import { isArabic } from '@/core/utils';
-
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiBold, FiCode, FiImage, FiItalic, FiLink, FiList, FiType } from 'react-icons/fi';
@@ -15,6 +13,7 @@ interface BlogFormProps {
   onSuccess?: () => void;
 }
 
+// TODO: Make it simpler
 export const ShortForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSuccess }) => {
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
@@ -27,13 +26,7 @@ export const ShortForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSucce
   const [selectionToolbar, setSelectionToolbar] = useState<{ x: number; y: number } | null>(null);
 
   const { data: userSeries } = useUserSeries();
-  const { createBlogMutation } = useCreateBlog(
-    spaceId,
-    title,
-    content,
-    selectedSeriesId || undefined,
-    tags.length > 0 ? tags : undefined
-  );
+  const { createBlogMutation } = useCreateBlog(spaceId);
 
   useEffect(() => {
     if (createBlogMutation.isSuccess) {
@@ -47,7 +40,13 @@ export const ShortForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSucce
 
   const handleSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
-    createBlogMutation.mutate();
+    createBlogMutation.mutate({
+      title,
+      content,
+      spaceId,
+      seriesId: selectedSeriesId || undefined,
+      tagNames: tags.length > 0 ? tags : undefined,
+    });
   };
 
   const wrapSelection = (prefix: string, suffix: string = '') => {
@@ -155,14 +154,13 @@ export const ShortForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSucce
 
       <div className="mb-2">
         <input
-          className={`w-full rounded-lg border border-border-light bg-background-light p-3 text-xl font-bold text-text-primary-light placeholder-text-secondary-light focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 dark:border-border-dark dark:bg-background-dark dark:text-text-primary-dark dark:placeholder-text-secondary-dark dark:focus:border-primary-400 dark:focus:ring-primary-400 ${
-            isArabic(title) ? 'text-right' : 'text-left'
-          }`}
+          className={`w-full rounded-lg border border-border-light bg-background-light p-3 text-xl font-bold text-text-primary-light placeholder-text-secondary-light focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 dark:border-border-dark dark:bg-background-dark dark:text-text-primary-dark dark:placeholder-text-secondary-dark dark:focus:border-primary-400 dark:focus:ring-primary-400`}
           type="text"
           required
           value={title}
           placeholder={t('createBlog.titlePlaceholder')}
           onChange={e => setTitle(e.target.value)}
+          dir="auto"
         />
       </div>
 
@@ -262,12 +260,11 @@ export const ShortForm: React.FC<BlogFormProps> = ({ spaceId, spaceName, onSucce
             <textarea
               ref={textareaRef}
               placeholder={t('createBlog.contentPlaceholder')}
-              className={`min-h-[200px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-relaxed text-text-primary-light focus:outline-none dark:text-text-primary-dark ${
-                isArabic(content) ? 'text-right' : 'text-left'
-              }`}
+              className={`min-h-[200px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-relaxed text-text-primary-light focus:outline-none dark:text-text-primary-dark`}
               value={content}
               onChange={e => setContent(e.target.value)}
               onSelect={handleSelect}
+              dir="auto"
             ></textarea>
 
             {selectionToolbar && (
