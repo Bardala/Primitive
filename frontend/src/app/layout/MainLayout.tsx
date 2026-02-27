@@ -1,7 +1,7 @@
 import { useSideBar } from '@/core/context/SideBarContext';
 import { CreateSeriesModal } from '@/features/blog';
 import { Chat, PrivateChatWindow } from '@/features/chat';
-import { ShortForm } from '@/features/short-form';
+import { CreateShort } from '@/features/short-form';
 import {
   AddMember,
   CreateSpace,
@@ -23,6 +23,8 @@ interface MainLayoutProps {
   space?: Space;
   members?: SpaceMember[];
   rightSidebar?: React.ReactNode;
+  viewLeftSidebar?: boolean;
+  viewRightSidebar?: boolean;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({
@@ -30,6 +32,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   space,
   members,
   rightSidebar,
+  viewLeftSidebar = true,
+  viewRightSidebar = true,
 }) => {
   const { state, dispatch } = useSideBar();
 
@@ -38,7 +42,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <div className="flex w-full justify-center lg:gap-6 xl:gap-8 max-w-[1536px] mx-auto overflow-x-hidden sm:overflow-visible min-h-screen">
       {/* Left Sidebar */}
-      <ActionsSidebar space={space} members={members} />
+      {viewLeftSidebar && <ActionsSidebar space={space} members={members} />}
 
       {/* Main Content Area */}
       <main className="flex-1 w-full sm:w-[1024px] sm:max-w-[1024px] border-r border-border-light dark:border-border-dark/60 min-h-screen pb-20 sm:pb-0 relative">
@@ -46,12 +50,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       </main>
 
       {/* Right Sidebar */}
-      {rightSidebar ? (
+      {viewRightSidebar && rightSidebar ? (
         <aside className="hidden lg:flex flex-col w-[290px] xl:w-[350px] shrink-0 h-screen sticky top-0 px-4 py-3 overflow-y-auto no-scrollbar pt-4">
           {rightSidebar}
         </aside>
       ) : (
-        <ChatSidebar space={space} />
+        viewRightSidebar && <ChatSidebar space={space} />
       )}
 
       {/* Overlays / Modals for SideBar Actions */}
@@ -82,7 +86,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             </button>
 
             <div className="mt-2">
-              {state.showCreateBlog && <ShortForm />}
+              {state.showCreateBlog && <CreateShort />}
               <CreateSeriesModal
                 isOpen={state.showCreateSeries}
                 onClose={() => dispatch({ type: 'closeAll' })}

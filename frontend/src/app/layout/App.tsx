@@ -16,12 +16,11 @@ import { NotFound } from '@/shared';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { Home } from './Home';
-import { NavBar } from './NavBar';
 import { Settings } from './Settings';
+import { NavbarLayout } from './NavbarLayout';
+import { PlainLayout } from './PlainLayout';
 
 const ProtectedCreateBlogPage = requireAuth(CreateBlogPage);
 const ProtectedNotificationPage = requireAuth(NotificationPage);
@@ -35,23 +34,28 @@ function AppContent() {
   return (
     <div className="relative">
       <BrowserRouter>
-        <NavBar />
-        <ToastContainer />
         <Routes>
-          <Route path={ROUTES.HOME} element={<Home />} />
-          <Route path={ROUTES.SIGNUP} element={<SignUp />} />
-          <Route path={ROUTES.LOGIN} element={<Login />} />
-          <Route path={ROUTES.BLOG_DETAILS} element={<BlogDetails />} />
-          <Route path={ROUTES.SPACE} element={<ProtectedSpace />} />
-          <Route path={ROUTES.USER_PROFILE} element={<ProtectUserProfile />} />
-          <Route path={ROUTES.USERS_LIST} element={<ProtectedUserList />} />
-          <Route path={ROUTES.NOTIFICATIONS} element={<ProtectedNotificationPage />} />
-          <Route path={ROUTES.CREATE_BLOG} element={<ProtectedCreateBlogPage />} />
-          <Route path={ROUTES.SETTINGS} element={<ProtectedSettings />} />
-          <Route path={ROUTES.CHAT} element={<ProtectedPrivateChatPage />} />
-          <Route path={ROUTES.GET_TAG(':tag')} element={<TagBlogsPage />} />
-          <Route path={ROUTES.GET_SERIES(':id')} element={<SeriesBlogsPage />} />
-          <Route path="*" element={<NotFound />} />
+          {/* Routes without navbar */}
+          <Route element={<PlainLayout/>} >
+            <Route path={ROUTES.CREATE_BLOG} element={<ProtectedCreateBlogPage />} />
+          </Route>
+
+          {/* Routes with navbar */}
+          <Route element={<NavbarLayout/>} >
+            <Route path={ROUTES.HOME} element={<Home />} />
+            <Route path={ROUTES.SIGNUP} element={<SignUp />} />
+            <Route path={ROUTES.LOGIN} element={<Login />} />
+            <Route path={ROUTES.BLOG_DETAILS} element={<BlogDetails />} />
+            <Route path={ROUTES.SPACE} element={<ProtectedSpace />} />
+            <Route path={ROUTES.USER_PROFILE} element={<ProtectUserProfile />} />
+            <Route path={ROUTES.USERS_LIST} element={<ProtectedUserList />} />
+            <Route path={ROUTES.NOTIFICATIONS} element={<ProtectedNotificationPage />} />
+            <Route path={ROUTES.SETTINGS} element={<ProtectedSettings />} />
+            <Route path={ROUTES.CHAT} element={<ProtectedPrivateChatPage />} />
+            <Route path={ROUTES.GET_TAG(':tag')} element={<TagBlogsPage />} />
+            <Route path={ROUTES.GET_SERIES(':id')} element={<SeriesBlogsPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </BrowserRouter>
 

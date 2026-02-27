@@ -25,7 +25,7 @@ import { IoIosPeople } from 'react-icons/io';
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { RiGroup2Fill } from 'react-icons/ri';
 import { TiHome } from 'react-icons/ti';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 
 import { UserSpacesList } from '../../features/spaces/components/UserSpacesList';
 
@@ -39,6 +39,7 @@ export const ActionsSidebar: React.FC<{
   const { state, dispatch } = useSideBar();
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => {
@@ -156,8 +157,7 @@ export const ActionsSidebar: React.FC<{
                 {/* Theme Toggle */}
                 <SidebarThemeToggle onClick={() => dispatch({ type: 'closeMobileSidebar' })} />
 
-                {/* Space Navigation if active */}
-                {!space && (
+                {(
                   <SidebarItem
                     icon={<RiGroup2Fill size={26} />}
                     label={t('sidebar.space')}
@@ -173,8 +173,10 @@ export const ActionsSidebar: React.FC<{
                 <div className="mt-4 w-full flex justify-center xl:justify-start xl:px-2 px-4">
                   <button
                     onClick={() => {
-                      dispatch({ type: 'showCreateBlog' });
-                      dispatch({ type: 'closeMobileSidebar' });
+                      const match = matchPath(ROUTES.SPACE, document.location.pathname);
+                      const id = match?.params.id || DefaultSpaceId;
+                      const spaceName = id === DefaultSpaceId ? 'Primitive' : "Current Space";
+                      navigate(ROUTES.GET_CREATE_BLOG(spaceName, id));
                     }}
                     className="flex items-center justify-center w-full xl:w-[90%] h-[52px] bg-primary-600 text-white rounded-full shadow-md hover:bg-primary-700 transition-all active:scale-95"
                   >
