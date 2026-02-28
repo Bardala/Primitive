@@ -12,7 +12,7 @@ import { FiGrid, FiList } from 'react-icons/fi';
 import { IoImageOutline } from 'react-icons/io5';
 import { MdOutlineEmojiEmotions, MdOutlineGifBox } from 'react-icons/md';
 import { RiCalendarCheckLine, RiListRadio } from 'react-icons/ri';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { MainLayout } from './MainLayout';
 
@@ -30,6 +30,7 @@ const defaultPreferences: FeedPreferences = {
 };
 
 export const Home = () => {
+  const navigate = useNavigate();
   const [preferences, setPreferences] = useLocalStorage<FeedPreferences>(
     'FEED_PREFERENCES',
     defaultPreferences
@@ -146,9 +147,7 @@ export const Home = () => {
         {currUser && (
           <div
             className="flex px-4 pt-3 pb-2 border-b border-border-light dark:border-border-dark/60 cursor-pointer"
-            onClick={() =>
-              Navigate({ to: ROUTES.GET_CREATE_BLOG('Primitive', DefaultSpaceId.toString()) })
-            }
+            onClick={() => navigate(ROUTES.GET_CREATE_BLOG('Primitive', DefaultSpaceId.toString()))}
           >
             {/* Avatar */}
             <div className="mr-3 shrink-0">
