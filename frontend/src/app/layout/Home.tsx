@@ -161,7 +161,7 @@ export const Home = () => {
             {/* Composer Body */}
             <div className="flex-1 flex flex-col justify-center min-w-0 pb-1">
               <div className="py-2 text-xl text-text-secondary-light dark:text-gray-500">
-                What is happening?!
+                What is in your mind?
               </div>
 
               <div className="flex items-center justify-between mt-3 mb-1">

@@ -6,9 +6,9 @@ import { FollowUserRes, GetFollowersRes, UnFollowUserRes } from '@nest/shared';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-export const useFollowing = (userId: string) => {
+export const useFollowing = (userId: string | null) => {
   const key = ['following', userId];
-  return useQuery<GetFollowersRes, ApiError>(key, userFollowingApi(userId), {
+  return useQuery<GetFollowersRes, ApiError>(key, userFollowingApi(userId!), {
     enabled: !!userId,
     refetchInterval: 30000, // Refetch presence every 30s
   });
@@ -22,6 +22,8 @@ export const useFollow = (userId: string) => {
     enabled: !!userId,
   });
 
+  const followingQuery = useFollowing(currUser?.id || null);
+
   const followMutation = useMutation<FollowUserRes, ApiError>(followUserApi(userId), {
     onSuccess: () => followersQuery.refetch(),
   });
@@ -31,11 +33,13 @@ export const useFollow = (userId: string) => {
   });
 
   const isFollowing = followersQuery.data?.followers.some(follower => follower.id === currUser?.id);
+  const isFollowed = followingQuery.data?.followers.some(follower => follower.id === userId);
 
   return {
     followMutation,
     unfollowMutation,
     isFollowing,
+    isFollowed,
     followersQuery,
   };
 };

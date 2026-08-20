@@ -1,13 +1,16 @@
 import { useTheme } from '@/core/context';
 
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FiBold,
   FiBookOpen,
   FiCode,
-  FiEdit3,
-  FiEye,
   FiHash,
   FiImage,
   FiItalic,
@@ -20,17 +23,16 @@ import {
 } from 'react-icons/fi';
 import { MdClose, MdFormatQuote, MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
+import { Markdown } from 'tiptap-markdown';
 
 import { useCreateBlog } from '../hooks/useBlog';
 import { useUserSeries } from '../hooks/useSeries';
-import { MyMarkdown } from './MyMarkdown';
 
 export const BlogForm: React.FC = () => {
   const { spaceId } = useParams<{ spaceId: string; spaceName: string }>();
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -39,11 +41,59 @@ export const BlogForm: React.FC = () => {
   const [readTime, setReadTime] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef(content);
   const { isDarkMode, toggleTheme } = useTheme();
 
   const { data: userSeries } = useUserSeries();
   const { createBlogMutation } = useCreateBlog(spaceId!);
+
+  // TipTap editor setup
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        codeBlock: {
+          HTMLAttributes: {
+            class: 'rounded-lg bg-gray-900 p-4 text-sm font-mono text-gray-100 overflow-x-auto',
+          },
+        },
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class:
+            'font-bold text-primary-600 no-underline decoration-primary-500/30 decoration-2 underline-offset-4 transition-all hover:text-primary-700 hover:underline dark:text-primary-400 dark:decoration-primary-400/30 dark:hover:text-primary-300',
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'rounded-2xl shadow-lg max-w-full',
+        },
+      }),
+      Placeholder.configure({
+        placeholder: t('createBlog.fullScreenContentPlaceholder'),
+        emptyEditorClass:
+          'before:content-[attr(data-placeholder)] before:text-text-secondary-light/50 dark:before:text-text-secondary-dark/50 before:float-left before:h-0 before:pointer-events-none',
+      }),
+      Markdown.configure({
+        html: true,
+        transformPastedText: true,
+        transformCopiedText: true,
+      }),
+    ],
+    content: '',
+    onUpdate: ({ editor }) => {
+      const md = (editor.storage as any).markdown.getMarkdown();
+      contentRef.current = md;
+      setContent(md);
+    },
+    editorProps: {
+      attributes: {
+        class:
+          'prose prose-sm sm:prose-base dark:prose-invert max-w-none min-h-[calc(100vh-250px)] outline-none prose-headings:font-extrabold prose-headings:tracking-tight prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-lg prose-code:rounded-lg prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-[0.85em] prose-code:font-bold prose-code:text-red-500 dark:prose-code:bg-white/5 dark:prose-code:text-red-400 prose-blockquote:border-l-4 prose-blockquote:border-primary-500 prose-blockquote:bg-primary-50/30 prose-blockquote:py-2 prose-blockquote:pr-4 prose-blockquote:pl-6 prose-blockquote:italic dark:prose-blockquote:bg-primary-900/10',
+        dir: 'auto',
+      },
+    },
+  });
 
   // Calculate word count and reading time
   useEffect(() => {
@@ -81,84 +131,77 @@ export const BlogForm: React.FC = () => {
       createBlogMutation.mutate({
         title,
         spaceId: spaceId!,
-        content,
+        content: contentRef.current,
         seriesId: selectedSeriesId || undefined,
         tagNames: tags.length > 0 ? tags : undefined,
       });
     },
-    [title, spaceId, content, selectedSeriesId, tags, createBlogMutation]
+    [title, spaceId, selectedSeriesId, tags, createBlogMutation]
   );
 
-  const wrapSelection = (prefix: string, suffix: string = '') => {
-    if (!textareaRef.current) return;
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = content.substring(start, end);
-    const newText =
-      content.substring(0, start) + prefix + selectedText + suffix + content.substring(end);
-
-    setContent(newText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, end + prefix.length);
-    }, 0);
-  };
-
-  const insertAtCursor = (text: string) => {
-    if (!textareaRef.current) return;
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const newText = content.substring(0, start) + text + content.substring(end);
-
-    setContent(newText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + text.length, start + text.length);
-    }, 0);
-  };
-
+  // Toolbar actions using TipTap commands
   const formattingOptions = [
     {
       icon: <FiBold size={18} />,
-      action: () => wrapSelection('**', '**'),
+      action: () => editor?.chain().focus().toggleBold().run(),
       title: t('createBlog.bold'),
+      isActive: () => editor?.isActive('bold'),
     },
     {
       icon: <FiItalic size={18} />,
-      action: () => wrapSelection('*', '*'),
+      action: () => editor?.chain().focus().toggleItalic().run(),
       title: t('createBlog.italic'),
+      isActive: () => editor?.isActive('italic'),
     },
     {
       icon: <FiLink size={18} />,
-      action: () => insertAtCursor('[link text](https://)'),
+      action: () => {
+        if (editor?.isActive('link')) {
+          editor.chain().focus().unsetLink().run();
+        } else {
+          const url = window.prompt('URL');
+          if (url) {
+            editor?.chain().focus().setLink({ href: url }).run();
+          }
+        }
+      },
       title: t('createBlog.insertLink'),
+      isActive: () => editor?.isActive('link'),
     },
     {
       icon: <FiCode size={18} />,
-      action: () => wrapSelection('`', '`'),
+      action: () => editor?.chain().focus().toggleCode().run(),
       title: t('createBlog.inlineCode'),
+      isActive: () => editor?.isActive('code'),
     },
     {
       icon: <FiImage size={18} />,
-      action: () => insertAtCursor('![alt text](image-url)'),
+      action: () => {
+        const url = window.prompt('Image URL');
+        if (url) {
+          editor?.chain().focus().setImage({ src: url }).run();
+        }
+      },
       title: t('createBlog.insertImage'),
+      isActive: () => false,
     },
     {
       icon: <FiList size={18} />,
-      action: () => insertAtCursor('- List item'),
+      action: () => editor?.chain().focus().toggleBulletList().run(),
       title: t('createBlog.list'),
+      isActive: () => editor?.isActive('bulletList'),
     },
     {
       icon: <MdFormatQuote size={18} />,
-      action: () => insertAtCursor('> '),
+      action: () => editor?.chain().focus().toggleBlockquote().run(),
       title: t('createBlog.quote'),
+      isActive: () => editor?.isActive('blockquote'),
     },
     {
       icon: <FiType size={18} />,
-      action: () => wrapSelection('```\n', '\n```'),
+      action: () => editor?.chain().focus().toggleCodeBlock().run(),
       title: t('createBlog.codeBlock'),
+      isActive: () => editor?.isActive('codeBlock'),
     },
   ];
 
@@ -186,15 +229,11 @@ export const BlogForm: React.FC = () => {
         e.preventDefault();
         handlePublish(e);
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        e.preventDefault();
-        setActiveTab(activeTab === 'write' ? 'preview' : 'write');
-      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, content, title, tags, selectedSeriesId, handlePublish]);
+  }, [content, title, tags, selectedSeriesId, handlePublish]);
 
   // Metadata Panel Content Component
   const MetadataPanel = () => (
@@ -298,9 +337,11 @@ export const BlogForm: React.FC = () => {
           {t('createBlog.tips')}
         </h3>
         <div className="space-y-2 text-xs text-text-secondary-light dark:text-text-secondary-dark">
-          {/* <p>• <span className="font-mono">Ctrl/Cmd + S</span> {t('createBlog.saveTip')}</p> */}
           <p>
-            • <span className="font-mono">Ctrl/Cmd + P</span> {t('createBlog.previewTip')}
+            • <span className="font-mono">Ctrl/Cmd + B</span> {t('createBlog.bold')}
+          </p>
+          <p>
+            • <span className="font-mono">Ctrl/Cmd + I</span> {t('createBlog.italic')}
           </p>
           <p>• {t('createBlog.markdownTip')}</p>
         </div>
@@ -324,9 +365,6 @@ export const BlogForm: React.FC = () => {
           </button>
           <div className="h-5 w-px bg-border-light dark:bg-border-dark sm:h-6" />
           <div className="flex items-center gap-1 sm:gap-2">
-            {/* <span className="hiddefn text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark sm:inline sm:text-sm">
-              {t('createBlog.draft')}
-            </span> */}
             <span className="rounded-full bg-yellow-100 px-1.5 py-0.5 text-[10px] font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 sm:px-2 sm:py-0.5 sm:text-xs">
               {wordCount} {t('createBlog.words')} · {readTime} min
             </span>
@@ -428,55 +466,20 @@ export const BlogForm: React.FC = () => {
                     type="button"
                     onClick={option.action}
                     title={option.title}
-                    className="rounded p-1.5 text-text-secondary-light hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10 dark:hover:text-primary-400 sm:p-2"
+                    className={`rounded p-1.5 sm:p-2 transition-colors ${
+                      option.isActive?.()
+                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+                        : 'text-text-secondary-light hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10 dark:hover:text-primary-400'
+                    }`}
                   >
                     {option.icon}
                   </button>
                 ))}
-                <div className="ml-auto flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('write')}
-                    className={`rounded p-1.5 sm:p-2 ${
-                      activeTab === 'write'
-                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
-                        : 'text-text-secondary-light hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10'
-                    }`}
-                    title={t('createBlog.write')}
-                  >
-                    <FiEdit3 size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('preview')}
-                    className={`rounded p-1.5 sm:p-2 ${
-                      activeTab === 'preview'
-                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
-                        : 'text-text-secondary-light hover:bg-primary-50 hover:text-primary-600 dark:text-text-secondary-dark dark:hover:bg-white/10'
-                    }`}
-                    title={t('createBlog.preview')}
-                  >
-                    <FiEye size={16} />
-                  </button>
-                </div>
               </div>
             </div>
 
-            {/* Editor/Preview Area */}
-            {activeTab === 'write' ? (
-              <textarea
-                ref={textareaRef}
-                placeholder={t('createBlog.fullScreenContentPlaceholder')}
-                className={`min-h-[calc(100vh-250px)] w-full resize-none border-none bg-transparent font-mono text-sm leading-relaxed text-text-primary-light outline-none focus:ring-0 dark:text-text-primary-dark sm:text-base`}
-                value={content}
-                onChange={e => setContent(e.target.value)}
-                dir="auto"
-              />
-            ) : (
-              <div className="prose prose-sm dark:prose-invert min-h-[calc(100vh-250px)] max-w-none sm:prose-base">
-                <MyMarkdown markdown={content || `*${t('createBlog.nothingToPreview')}*`} />
-              </div>
-            )}
+            {/* WYSIWYG Editor */}
+            <EditorContent editor={editor} />
           </div>
         </div>
 
